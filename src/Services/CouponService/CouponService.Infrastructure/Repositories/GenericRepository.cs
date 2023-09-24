@@ -69,48 +69,20 @@ namespace CouponService.Infrastructure.Repositories
             return resultList;
         }
 
-        [Obsolete("Deprecated")]
-        public async Task<IEnumerable<T>> GetAllAsync(QueryParameters queryParameters)
+        public async Task<T> AddAsync(T entity)
         {
-            var query = _dbSet.AsQueryable();
-
-            query = ApplySearch(query, queryParameters);
-
-            // Apply sorting
-            if (!string.IsNullOrEmpty(queryParameters.SortBy))
-            {
-                // (mustang) apply sorting mechanism
-                //query = queryParameters.SortOrder.ToLower() == "asc"
-                //    ? query.OrderBy(queryParameters.SortBy)
-                //    : query.OrderByDescending(queryParameters.SortBy);
-            }
-
-            return await query
-                .Skip((queryParameters.PageNumber - 1) * queryParameters.PageSize)
-                .Take(queryParameters.PageSize)
-                .ToListAsync();
+            await _context.Set<T>().AddAsync(entity);
+            return entity;
         }
 
-        public async Task AddAsync(T entity)
+        public void UpdateAsync(T entity)
         {
-            await _dbSet.AddAsync(entity);
+            _context.Set<T>().Update(entity);
         }
 
-        public Task UpdateAsync(T entity)
-        {
-            _dbSet.Update(entity);
-            return Task.CompletedTask;
-        }
-
-        public Task DeleteAsync(T entity)
+        public void DeleteAsync(T entity)
         {
             _dbSet.Remove(entity);
-            return Task.CompletedTask;
-        }
-
-        public async Task<int> SaveChangesAsync()
-        {
-            return await _context.SaveChangesAsync();
         }
 
         private IQueryable<T> ApplySearch(IQueryable<T> query, QueryParameters parameters)

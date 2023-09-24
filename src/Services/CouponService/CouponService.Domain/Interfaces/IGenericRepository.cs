@@ -11,10 +11,8 @@ namespace CouponService.Domain.Interfaces
     {
         Task<dynamic> GetByIdAsync(Guid id, Type dtoType);
         Task<IEnumerable<dynamic>> GetAllAsync(QueryParameters queryParameters, Type dtoType);
-        Task<IEnumerable<T>> GetAllAsync(QueryParameters queryParameters);
-        Task AddAsync(T entity);
-        Task UpdateAsync(T entity);
-        Task DeleteAsync(T entity);
-        Task<int> SaveChangesAsync();
+        Task<T> AddAsync(T entity);
+        void UpdateAsync(T entity);
+        void DeleteAsync(T entity);
     }
 }

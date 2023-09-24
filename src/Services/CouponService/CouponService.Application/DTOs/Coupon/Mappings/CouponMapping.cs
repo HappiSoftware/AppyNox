@@ -19,7 +19,7 @@ namespace CouponService.Application.DTOs.Coupon.Mappings
 
             CreateMap<CouponEntity, CouponDTO>();
 
-            CreateMap<CouponEntity, CouponWithIdDTO>();
+            CreateMap<CouponEntity, CouponWithIdDTO>().ReverseMap();
 
         }
     }

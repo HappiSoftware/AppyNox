@@ -21,13 +21,15 @@ namespace CouponService.Application.Services.Implementations
         private readonly IMapper _mapper;
         private readonly DTOMappingRegistry _dtoMappingRegistry;
         private readonly Type _detailLevelsEnum;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public GenericService(IGenericRepository<TEntity> repository, IMapper mapper, DTOMappingRegistry dtoMappingRegistry)
+        public GenericService(IGenericRepository<TEntity> repository, IMapper mapper, DTOMappingRegistry dtoMappingRegistry, IUnitOfWork unitOfWork)
         {
             _repository = repository;
             _mapper = mapper;
             _dtoMappingRegistry = dtoMappingRegistry;
             _detailLevelsEnum = _dtoMappingRegistry.GetDetailLevelType(typeof(TEntity));
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<IEnumerable<dynamic>> GetAllAsync(QueryParameters queryParameters, string? detailLevel)
@@ -63,7 +65,7 @@ namespace CouponService.Application.Services.Implementations
         {
             var entity = _mapper.Map<TEntity>(dto);
             await _repository.AddAsync(entity);
-            await _repository.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync();
             var createdObject = _mapper.Map<TDto>(entity);
             return (entity.Id, createdObject);
         }
@@ -71,15 +73,15 @@ namespace CouponService.Application.Services.Implementations
         public async Task UpdateAsync(TUpdateDTO dto)
         {
             var entity = _mapper.Map<TEntity>(dto);
-            await _repository.UpdateAsync(entity);
-            await _repository.SaveChangesAsync();
+            _repository.UpdateAsync(entity);
+            await _unitOfWork.SaveChangesAsync();
         }
 
         public async Task DeleteAsync(TDto dto)
         {
             var entity = _mapper.Map<TEntity>(dto);
-            await _repository.DeleteAsync(entity);
-            await _repository.SaveChangesAsync();
+            _repository.DeleteAsync(entity);
+            await _unitOfWork.SaveChangesAsync();
         }
 
         #region [ Private Methods ]

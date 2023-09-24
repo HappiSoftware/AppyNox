@@ -15,11 +15,11 @@ namespace CouponService.WebAPI.Controllers.v1
     [Route("api/[controller]")]
     public class CouponsController : ControllerBase
     {
-        private readonly IGenericService<CouponEntity, CouponDTO, CouponCreateDTO, CouponUpdateDTO> _couponService;
+        private readonly IGenericService<CouponEntity, CouponWithIdDTO, CouponCreateDTO, CouponUpdateDTO> _couponService;
         private readonly IValidator<CouponCreateDTO> _couponValidator;
 
         public CouponsController(
-            IGenericService<CouponEntity, CouponDTO, CouponCreateDTO, CouponUpdateDTO> couponService,
+            IGenericService<CouponEntity, CouponWithIdDTO, CouponCreateDTO, CouponUpdateDTO> couponService,
             IValidator<CouponCreateDTO> couponValidator)
         {
             _couponService = couponService;
@@ -67,8 +67,8 @@ namespace CouponService.WebAPI.Controllers.v1
             var validationResult = _couponValidator.Validate(couponDTO);
             ValidationHandler.HandleValidationResult(ModelState, validationResult);
 
-            var existingFamily = await _couponService.GetByIdAsync(id);
-            if (existingFamily == null)
+            var existingCoupon = await _couponService.GetByIdAsync(id);
+            if (existingCoupon == null)
             {
                 return NotFound(new ApiResponse(404, $"Coupon with id {id} not found"));
             }
@@ -80,7 +80,7 @@ namespace CouponService.WebAPI.Controllers.v1
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var coupon = (CouponDTO) await _couponService.GetByIdAsync(id);
+            var coupon = (CouponWithIdDTO) await _couponService.GetByIdAsync(id, "WithId");
             if (coupon == null)
             {
                 return NotFound(new ApiResponse(404, $"Coupon with id {id} not found"));

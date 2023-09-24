@@ -32,6 +32,7 @@ builder.Services.AddAutoMapper(Assembly.Load("CouponService.Application"));
 builder.Services.AddValidatorsFromAssembly(Assembly.Load("CouponService.Application"));
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped(typeof(IGenericService<,,,>), typeof(GenericService<,,,>));
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddSingleton<DTOMappingRegistry>();
 
 var app = builder.Build();
