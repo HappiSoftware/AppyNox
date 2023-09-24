@@ -1,0 +1,36 @@
+﻿{
+  "$schema": "http://json.schemastore.org/launchsettings.json",
+
+  "profiles": {
+    "CouponAPI-Development": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "applicationUrl": "https://localhost:7001",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    "CouponAPI-Staging": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "applicationUrl": "https://localhost:7001",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Staging"
+      }
+    },
+    "CouponAPI-Production": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "applicationUrl": "https://localhost:7001",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Producton"
+      }
+    }
+  }
+}

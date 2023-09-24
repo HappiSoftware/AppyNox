@@ -3,9 +3,50 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34004.107
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{13BAFC88-5121-40D1-A62E-015667098D4A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CouponService", "CouponService", "{7DB2D038-AB81-42F3-A016-FE76A264FA37}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CouponService.Domain", "src\Services\CouponService\CouponService.Domain\CouponService.Domain.csproj", "{BD32773E-0D9C-40B3-9CBD-2398101AE893}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CouponService.Infrastructure", "src\Services\CouponService\CouponService.Infrastructure\CouponService.Infrastructure.csproj", "{71449B94-54EF-4864-8C67-50147088DA98}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CouponService.Application", "src\Services\CouponService\CouponService.Application\CouponService.Application.csproj", "{5D876B96-D649-4F12-845B-7BB5589AB265}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CouponService.WebAPI", "src\Services\CouponService\CouponService.WebAPI\CouponService.WebAPI.csproj", "{BF811F91-55A7-44D9-BBF5-C25F664D024C}"
+EndProject
 Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BD32773E-0D9C-40B3-9CBD-2398101AE893}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD32773E-0D9C-40B3-9CBD-2398101AE893}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD32773E-0D9C-40B3-9CBD-2398101AE893}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD32773E-0D9C-40B3-9CBD-2398101AE893}.Release|Any CPU.Build.0 = Release|Any CPU
+		{71449B94-54EF-4864-8C67-50147088DA98}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{71449B94-54EF-4864-8C67-50147088DA98}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{71449B94-54EF-4864-8C67-50147088DA98}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{71449B94-54EF-4864-8C67-50147088DA98}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5D876B96-D649-4F12-845B-7BB5589AB265}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5D876B96-D649-4F12-845B-7BB5589AB265}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5D876B96-D649-4F12-845B-7BB5589AB265}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5D876B96-D649-4F12-845B-7BB5589AB265}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BF811F91-55A7-44D9-BBF5-C25F664D024C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BF811F91-55A7-44D9-BBF5-C25F664D024C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BF811F91-55A7-44D9-BBF5-C25F664D024C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BF811F91-55A7-44D9-BBF5-C25F664D024C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{7DB2D038-AB81-42F3-A016-FE76A264FA37} = {13BAFC88-5121-40D1-A62E-015667098D4A}
+		{BD32773E-0D9C-40B3-9CBD-2398101AE893} = {7DB2D038-AB81-42F3-A016-FE76A264FA37}
+		{71449B94-54EF-4864-8C67-50147088DA98} = {7DB2D038-AB81-42F3-A016-FE76A264FA37}
+		{5D876B96-D649-4F12-845B-7BB5589AB265} = {7DB2D038-AB81-42F3-A016-FE76A264FA37}
+		{BF811F91-55A7-44D9-BBF5-C25F664D024C} = {7DB2D038-AB81-42F3-A016-FE76A264FA37}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EA4F2302-DC43-4149-814A-609940BEC847}
