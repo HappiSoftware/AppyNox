@@ -30,7 +30,7 @@ namespace AppyNox.Services.Coupon.Infrastructure.Data
                 Console.WriteLine($"Environment: {environment}");
                 // Build config
                 IConfiguration config = new ConfigurationBuilder()
-                    .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "../CouponService.WebAPI"))
+                    .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "../AppyNox.Services.Coupon.WebAPI"))
                     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                     .AddJsonFile($"appsettings.{environment}.json", optional: true)
                     .AddEnvironmentVariables()

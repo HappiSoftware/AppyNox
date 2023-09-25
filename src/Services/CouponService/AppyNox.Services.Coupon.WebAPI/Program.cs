@@ -28,8 +28,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<CouponDbContext>(options =>
     options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddAutoMapper(Assembly.Load("CouponService.Application"));
-builder.Services.AddValidatorsFromAssembly(Assembly.Load("CouponService.Application"));
+builder.Services.AddAutoMapper(Assembly.Load("AppyNox.Services.Coupon.Application"));
+builder.Services.AddValidatorsFromAssembly(Assembly.Load("AppyNox.Services.Coupon.Application"));
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped(typeof(IGenericService<,,,>), typeof(GenericService<,,,>));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
