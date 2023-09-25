@@ -55,7 +55,7 @@ namespace AppyNox.Services.Authentication.Infrastructure.Data
             modelBuilder.Entity<IdentityRole>().HasData(adminRole);
 
             // Create Users
-            var adminUser = new IdentityUser { Id = adminUserId, UserName = "admin", NormalizedUserName = "ADMIN", Email = "admin@email.com", NormalizedEmail = "ADMIN@EMAIL.COM", EmailConfirmed = true, PasswordHash = hasher.HashPassword(null, "Admin@123") };
+            var adminUser = new IdentityUser { Id = adminUserId, UserName = "admin", NormalizedUserName = "ADMIN", Email = "admin@email.com", NormalizedEmail = "ADMIN@EMAIL.COM", EmailConfirmed = true, PasswordHash = hasher.HashPassword(new IdentityUser(), "Admin@123") };
             modelBuilder.Entity<IdentityUser>().HasData(adminUser);
 
             // Add Role Claims

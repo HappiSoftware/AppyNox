@@ -18,26 +18,25 @@ namespace AppyNox.Services.Authentication.WebAPI.Utilities
             _roleManager = roleManager;
         }
 
-        protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, PermissionRequirement requirement)
+        protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, PermissionRequirement requirement)
         {
             if (context.User.HasClaim(c => c.Type == ClaimTypes.NameIdentifier))
             {
                 if (context.User.HasClaim(c => c.Value == requirement.Permission))
                 {
                     context.Succeed(requirement);
-                    return;
                 }
                 else
                 {
                     context.Fail();
-                    return;
                 }
             }
             else
             {
                 context.Fail();
-                return;
             }
+
+            return Task.CompletedTask;
         }
     }
 }

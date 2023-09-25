@@ -9,7 +9,7 @@ namespace AppyNox.Services.Coupon.Application.Validators.SharedRules
 {
     public static class GenericValidationRules
     {
-        public static IRuleBuilderOptions<T, string> ValidateDescription<T>(this IRuleBuilder<T, string> ruleBuilder)
+        public static IRuleBuilderOptions<T, string?> ValidateDescription<T>(this IRuleBuilder<T, string?> ruleBuilder)
         {
             return ruleBuilder
                 .NotNull().NotEmpty().WithMessage("Description cannot be null")
