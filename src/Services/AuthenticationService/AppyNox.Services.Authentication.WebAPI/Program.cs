@@ -1,5 +1,4 @@
-
-using AppyNox.Services.Authentication.Application.DTOs.DtoUtilities;
+using AppyNox.Services.Authentication.Application.DtoUtilities;
 using AppyNox.Services.Authentication.Infrastructure.Data;
 using AppyNox.Services.Authentication.WebAPI.Configuration;
 using AppyNox.Services.Authentication.WebAPI.Helpers;

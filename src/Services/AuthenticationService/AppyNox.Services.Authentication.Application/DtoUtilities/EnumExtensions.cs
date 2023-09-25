@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AppyNox.Services.Authentication.Application.DTOs.DtoUtilities
+namespace AppyNox.Services.Authentication.Application.DtoUtilities
 {
     internal static class EnumExtensions
     {

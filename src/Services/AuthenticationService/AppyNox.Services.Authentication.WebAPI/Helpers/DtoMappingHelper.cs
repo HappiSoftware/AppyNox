@@ -1,4 +1,4 @@
-﻿using AppyNox.Services.Authentication.Application.DTOs.DtoUtilities;
+﻿using AppyNox.Services.Authentication.Application.DtoUtilities;
 using Microsoft.AspNetCore.Identity;
 
 namespace AppyNox.Services.Authentication.WebAPI.Helpers

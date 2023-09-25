@@ -5,7 +5,7 @@ using AppyNox.Services.Authentication.Application.Utilities;
 using Microsoft.AspNetCore.Identity;
 using System.Reflection;
 
-namespace AppyNox.Services.Authentication.Application.DTOs.DtoUtilities
+namespace AppyNox.Services.Authentication.Application.DtoUtilities
 {
     public class DTOMappingRegistry
     {
@@ -24,7 +24,7 @@ namespace AppyNox.Services.Authentication.Application.DTOs.DtoUtilities
             // Scan for DTOs in the Application assembly
             var dtoTypes = Assembly.GetAssembly(typeof(IdentityRoleDTO))?
                 .GetTypes()
-                .Where(t => t.Namespace != null && t.Namespace.StartsWith("Authentication.Application.DTOs"))
+                .Where(t => t.Namespace != null && t.Namespace.Contains("Application.DTOs") && t.Namespace.EndsWith("Models"))
                 .ToList();
 
             if (dtoTypes == null)
