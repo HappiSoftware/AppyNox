@@ -7,13 +7,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{13
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CouponService", "CouponService", "{7DB2D038-AB81-42F3-A016-FE76A264FA37}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CouponService.Domain", "src\Services\CouponService\CouponService.Domain\CouponService.Domain.csproj", "{BD32773E-0D9C-40B3-9CBD-2398101AE893}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Authentication", "Authentication", "{AD2F15A2-813D-422E-A37D-BED8810752C6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CouponService.Infrastructure", "src\Services\CouponService\CouponService.Infrastructure\CouponService.Infrastructure.csproj", "{71449B94-54EF-4864-8C67-50147088DA98}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppyNox.Services.Coupon.Application", "src\Services\CouponService\AppyNox.Services.Coupon.Application\AppyNox.Services.Coupon.Application.csproj", "{3DB023E9-CBF3-426F-B88D-880A245127C8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CouponService.Application", "src\Services\CouponService\CouponService.Application\CouponService.Application.csproj", "{5D876B96-D649-4F12-845B-7BB5589AB265}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppyNox.Services.Coupon.Domain", "src\Services\CouponService\AppyNox.Services.Coupon.Domain\AppyNox.Services.Coupon.Domain.csproj", "{07B0F981-2F18-4EB2-9581-3D561BB1D2D4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CouponService.WebAPI", "src\Services\CouponService\CouponService.WebAPI\CouponService.WebAPI.csproj", "{BF811F91-55A7-44D9-BBF5-C25F664D024C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppyNox.Services.Coupon.Infrastructure", "src\Services\CouponService\AppyNox.Services.Coupon.Infrastructure\AppyNox.Services.Coupon.Infrastructure.csproj", "{F911D5D1-7078-46E7-946B-E68DE5F849BF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppyNox.Services.Coupon.WebAPI", "src\Services\CouponService\AppyNox.Services.Coupon.WebAPI\AppyNox.Services.Coupon.WebAPI.csproj", "{566BBC52-05A4-4629-BA78-25781BE4A360}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,32 +23,33 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{BD32773E-0D9C-40B3-9CBD-2398101AE893}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BD32773E-0D9C-40B3-9CBD-2398101AE893}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BD32773E-0D9C-40B3-9CBD-2398101AE893}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BD32773E-0D9C-40B3-9CBD-2398101AE893}.Release|Any CPU.Build.0 = Release|Any CPU
-		{71449B94-54EF-4864-8C67-50147088DA98}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{71449B94-54EF-4864-8C67-50147088DA98}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{71449B94-54EF-4864-8C67-50147088DA98}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{71449B94-54EF-4864-8C67-50147088DA98}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5D876B96-D649-4F12-845B-7BB5589AB265}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5D876B96-D649-4F12-845B-7BB5589AB265}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5D876B96-D649-4F12-845B-7BB5589AB265}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5D876B96-D649-4F12-845B-7BB5589AB265}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BF811F91-55A7-44D9-BBF5-C25F664D024C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BF811F91-55A7-44D9-BBF5-C25F664D024C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BF811F91-55A7-44D9-BBF5-C25F664D024C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BF811F91-55A7-44D9-BBF5-C25F664D024C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3DB023E9-CBF3-426F-B88D-880A245127C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3DB023E9-CBF3-426F-B88D-880A245127C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3DB023E9-CBF3-426F-B88D-880A245127C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3DB023E9-CBF3-426F-B88D-880A245127C8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{07B0F981-2F18-4EB2-9581-3D561BB1D2D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07B0F981-2F18-4EB2-9581-3D561BB1D2D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07B0F981-2F18-4EB2-9581-3D561BB1D2D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07B0F981-2F18-4EB2-9581-3D561BB1D2D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F911D5D1-7078-46E7-946B-E68DE5F849BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F911D5D1-7078-46E7-946B-E68DE5F849BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F911D5D1-7078-46E7-946B-E68DE5F849BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F911D5D1-7078-46E7-946B-E68DE5F849BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{566BBC52-05A4-4629-BA78-25781BE4A360}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{566BBC52-05A4-4629-BA78-25781BE4A360}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{566BBC52-05A4-4629-BA78-25781BE4A360}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{566BBC52-05A4-4629-BA78-25781BE4A360}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{7DB2D038-AB81-42F3-A016-FE76A264FA37} = {13BAFC88-5121-40D1-A62E-015667098D4A}
-		{BD32773E-0D9C-40B3-9CBD-2398101AE893} = {7DB2D038-AB81-42F3-A016-FE76A264FA37}
-		{71449B94-54EF-4864-8C67-50147088DA98} = {7DB2D038-AB81-42F3-A016-FE76A264FA37}
-		{5D876B96-D649-4F12-845B-7BB5589AB265} = {7DB2D038-AB81-42F3-A016-FE76A264FA37}
-		{BF811F91-55A7-44D9-BBF5-C25F664D024C} = {7DB2D038-AB81-42F3-A016-FE76A264FA37}
+		{AD2F15A2-813D-422E-A37D-BED8810752C6} = {13BAFC88-5121-40D1-A62E-015667098D4A}
+		{3DB023E9-CBF3-426F-B88D-880A245127C8} = {7DB2D038-AB81-42F3-A016-FE76A264FA37}
+		{07B0F981-2F18-4EB2-9581-3D561BB1D2D4} = {7DB2D038-AB81-42F3-A016-FE76A264FA37}
+		{F911D5D1-7078-46E7-946B-E68DE5F849BF} = {7DB2D038-AB81-42F3-A016-FE76A264FA37}
+		{566BBC52-05A4-4629-BA78-25781BE4A360} = {7DB2D038-AB81-42F3-A016-FE76A264FA37}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EA4F2302-DC43-4149-814A-609940BEC847}
