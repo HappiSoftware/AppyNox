@@ -2,6 +2,7 @@
 using AppyNox.Services.Coupon.Application.Services.Interfaces;
 using AppyNox.Services.Coupon.Domain.Common;
 using AppyNox.Services.Coupon.Domain.Interfaces;
+using AppyNox.Services.Coupon.Infrastructure.ExceptionExtensions;
 using AutoMapper;
 using System;
 using System.Collections.Generic;
@@ -50,15 +51,28 @@ namespace AppyNox.Services.Coupon.Application.Services.Implementations
             return new List<dynamic>();
         }
 
-        public async Task<dynamic> GetByIdAsync(Guid id, string? detailLevel)
+        public async Task<dynamic?> GetByIdAsync(Guid id, string? detailLevel)
         {
-            if (string.IsNullOrEmpty(detailLevel))
+            try
             {
-                detailLevel = GetBasicDetailLevel();
+                if (string.IsNullOrEmpty(detailLevel))
+                {
+                    detailLevel = GetBasicDetailLevel();
+                }
+                var dtoType = _dtoMappingRegistry.GetDTOType(_detailLevelsEnum, typeof(TEntity), detailLevel);
+                var entity = await _repository.GetByIdAsync(id, dtoType);
+                return _mapper.Map(entity, entity.GetType(), dtoType);
             }
-            var dtoType = _dtoMappingRegistry.GetDTOType(_detailLevelsEnum, typeof(TEntity), detailLevel);
-            var entity = await _repository.GetByIdAsync(id, dtoType);
-            return _mapper.Map(entity, entity.GetType(), dtoType);
+            catch (EntityNotFoundException<TEntity>)
+            {
+                // Handle the specific case if needed when the entity is not found
+                return null;
+            }
+            catch (Exception ex)
+            {
+                // (mustang) Log the error, return an appropriate response, or rethrow if needed
+                throw;
+            }
         }
 
         public async Task<(Guid guid, TDto basicDto)> AddAsync(TCreateDTO dto)

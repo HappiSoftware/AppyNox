@@ -9,15 +9,15 @@ using AppyNox.Services.Coupon.Domain.Common;
 
 namespace AppyNox.Services.Coupon.Infrastructure.Repositories
 {
-    public class GenericRepository<T> : IGenericRepository<T> where T : class, IEntityWithGuid
+    public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : class, IEntityWithGuid
     {
         private readonly CouponDbContext _context;
-        private readonly DbSet<T> _dbSet;
+        private readonly DbSet<TEntity> _dbSet;
 
         public GenericRepository(CouponDbContext context)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
-            _dbSet = _context.Set<T>();
+            _dbSet = _context.Set<TEntity>();
         }
 
         public async Task<dynamic> GetByIdAsync(Guid id, Type dtoType)
@@ -33,7 +33,7 @@ namespace AppyNox.Services.Coupon.Infrastructure.Repositories
 
             if (entity == null)
             {
-                throw new NotFoundException($"Entity with id {id} could not be found");
+                throw new EntityNotFoundException<TEntity>(id);
             }
 
             return entity;
@@ -67,38 +67,38 @@ namespace AppyNox.Services.Coupon.Infrastructure.Repositories
             return resultList;
         }
 
-        public async Task<T> AddAsync(T entity)
+        public async Task<TEntity> AddAsync(TEntity entity)
         {
-            await _context.Set<T>().AddAsync(entity);
+            await _context.Set<TEntity>().AddAsync(entity);
             return entity;
         }
 
-        public void UpdateAsync(T entity)
+        public void UpdateAsync(TEntity entity)
         {
-            _context.Set<T>().Update(entity);
+            _context.Set<TEntity>().Update(entity);
         }
 
-        public void DeleteAsync(T entity)
+        public void DeleteAsync(TEntity entity)
         {
             _dbSet.Remove(entity);
         }
 
-        private IQueryable<T> ApplySearch(IQueryable<T> query, QueryParameters parameters)
+        private IQueryable<TEntity> ApplySearch(IQueryable<TEntity> query, QueryParameters parameters)
         {
             if (!string.IsNullOrEmpty(parameters.SearchTerm) && !string.IsNullOrEmpty(parameters.SearchColumns))
             {
                 var columnsToSearch = parameters.SearchColumns.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList();
 
-                var properties = typeof(T).GetProperties();
+                var properties = typeof(TEntity).GetProperties();
 
                 // Initialize a predicate with no condition (always false)
-                Expression<Func<T, bool>> predicate = e => false;
+                Expression<Func<TEntity, bool>> predicate = e => false;
 
                 foreach (var property in properties)
                 {
                     if (columnsToSearch.Contains(property.Name, StringComparer.OrdinalIgnoreCase))
                     {
-                        var parameterExp = Expression.Parameter(typeof(T), "type");
+                        var parameterExp = Expression.Parameter(typeof(TEntity), "type");
                         var propertyExp = Expression.Property(parameterExp, property.Name);
                         MethodInfo? method = typeof(string).GetMethod("Contains", new[] { typeof(string) });
                         if (method is null)
@@ -108,7 +108,7 @@ namespace AppyNox.Services.Coupon.Infrastructure.Repositories
                         var someValue = Expression.Constant(parameters.SearchTerm, typeof(string));
                         var containsMethodExp = Expression.Call(propertyExp, method, someValue);
 
-                        var lambda = Expression.Lambda<Func<T, bool>>(containsMethodExp, parameterExp);
+                        var lambda = Expression.Lambda<Func<TEntity, bool>>(containsMethodExp, parameterExp);
                         predicate = predicate.Or(lambda);
                     }
                 }
@@ -119,9 +119,9 @@ namespace AppyNox.Services.Coupon.Infrastructure.Repositories
             return query;
         }
 
-        private Expression<Func<T, dynamic>> CreateProjection(List<string> propertyNames)
+        private Expression<Func<TEntity, dynamic>> CreateProjection(List<string> propertyNames)
         {
-            var entityParameter = Expression.Parameter(typeof(T), "entity");
+            var entityParameter = Expression.Parameter(typeof(TEntity), "entity");
             var memberBindings = new List<MemberBinding>();
 
             foreach (var propertyName in propertyNames)
@@ -137,8 +137,8 @@ namespace AppyNox.Services.Coupon.Infrastructure.Repositories
             }
 
             // Create a MemberInitExpression without a constructor
-            var memberInit = Expression.MemberInit(Expression.New(typeof(T)), memberBindings);
-            var selector = Expression.Lambda<Func<T, dynamic>>(memberInit, entityParameter);
+            var memberInit = Expression.MemberInit(Expression.New(typeof(TEntity)), memberBindings);
+            var selector = Expression.Lambda<Func<TEntity, dynamic>>(memberInit, entityParameter);
 
             return selector;
         }

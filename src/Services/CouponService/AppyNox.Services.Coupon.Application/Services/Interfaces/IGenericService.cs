@@ -15,7 +15,7 @@ namespace AppyNox.Services.Coupon.Application.Services.Interfaces
     {
         Task<IEnumerable<dynamic>> GetAllAsync(QueryParameters queryParameters, string? detailLevel);
 
-        Task<dynamic> GetByIdAsync(Guid id, string? detailLevel = null);
+        Task<dynamic?> GetByIdAsync(Guid id, string? detailLevel = null);
 
         Task<(Guid guid, TDto basicDto)> AddAsync(TCreateDTO dto);
 

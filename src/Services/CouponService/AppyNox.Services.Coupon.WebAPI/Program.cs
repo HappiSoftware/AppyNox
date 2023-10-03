@@ -2,12 +2,14 @@ using AppyNox.Services.Coupon.Application.DTOUtilities;
 using AppyNox.Services.Coupon.Application.Services.Implementations;
 using AppyNox.Services.Coupon.Application.Services.Interfaces;
 using AppyNox.Services.Coupon.Domain.Interfaces;
+using AppyNox.Services.Coupon.Infrastructure;
 using AppyNox.Services.Coupon.Infrastructure.Data;
 using AppyNox.Services.Coupon.Infrastructure.Repositories;
 using AppyNox.Services.Coupon.WebAPI.Filters;
 using AutoWrapper;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Reflection;
 
@@ -25,15 +27,8 @@ builder.Services.AddControllers(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<CouponDbContext>(options =>
-    options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
-
-builder.Services.AddAutoMapper(Assembly.Load("AppyNox.Services.Coupon.Application"));
-builder.Services.AddValidatorsFromAssembly(Assembly.Load("AppyNox.Services.Coupon.Application"));
-builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-builder.Services.AddScoped(typeof(IGenericService<,,,>), typeof(GenericService<,,,>));
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-builder.Services.AddSingleton<DTOMappingRegistry>();
+AppyNox.Services.Coupon.Infrastructure.DependencyInjection.ConfigureServices(builder.Services, configuration);
+AppyNox.Services.Coupon.Application.DependencyInjection.ConfigureServices(builder.Services, configuration);
 
 var app = builder.Build();
 
@@ -50,21 +45,8 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.UseApiResponseAndExceptionWrapper(new AutoWrapperOptions { UseApiProblemDetailsException = true });
-
-ApplyMigration();
+app.UseApiResponseAndExceptionWrapper(new AutoWrapperOptions { IsApiOnly = true, ShowApiVersion = true, ApiVersion = "1.0", UseApiProblemDetailsException = true });
 
 app.Run();
 
-
-void ApplyMigration()
-{
-    using (var scope = app.Services.CreateScope())
-    {
-        var _db = scope.ServiceProvider.GetRequiredService<CouponDbContext>();
-        if(_db.Database.GetPendingMigrations().Count() > 0)
-        {
-            _db.Database.Migrate();
-        }
-    }
-}
+AppyNox.Services.Coupon.Infrastructure.DependencyInjection.ApplyMigrations(app.Services);
