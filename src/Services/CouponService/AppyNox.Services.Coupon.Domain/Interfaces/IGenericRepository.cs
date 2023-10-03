@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace AppyNox.Services.Coupon.Domain.Interfaces
 {
-    public interface IGenericRepository<T> where T : class, IEntityWithGuid
+    public interface IGenericRepository<TEntity> where TEntity : class, IEntityWithGuid
     {
         Task<dynamic> GetByIdAsync(Guid id, Type dtoType);
         Task<IEnumerable<dynamic>> GetAllAsync(QueryParameters queryParameters, Type dtoType);
-        Task<T> AddAsync(T entity);
-        void UpdateAsync(T entity);
-        void DeleteAsync(T entity);
+        Task<TEntity> AddAsync(TEntity entity);
+        void UpdateAsync(TEntity entity);
+        void DeleteAsync(TEntity entity);
     }
 }

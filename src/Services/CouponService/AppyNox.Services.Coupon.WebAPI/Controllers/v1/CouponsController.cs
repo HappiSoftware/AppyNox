@@ -4,6 +4,7 @@ using AppyNox.Services.Coupon.Application.Services.Interfaces;
 using AppyNox.Services.Coupon.Domain.Common;
 using AppyNox.Services.Coupon.Domain.Entities;
 using AppyNox.Services.Coupon.WebAPI.Helpers;
+using Asp.Versioning;
 using AutoWrapper.Wrappers;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
@@ -11,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace AppyNox.Services.Coupon.WebAPI.Controllers.v1
 {
     [ApiController]
+    [ApiVersion("1.0")]
     [Route("api/[controller]")]
     public class CouponsController : ControllerBase
     {
@@ -40,14 +42,14 @@ namespace AppyNox.Services.Coupon.WebAPI.Controllers.v1
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(Guid id, string? detailLevel)
+        public async Task<ApiResponse> GetById(Guid id, string? detailLevel)
         {
             var coupon = await _couponService.GetByIdAsync(id, detailLevel);
             if (coupon == null)
             {
-                return NotFound(new ApiResponse(404, $"Coupon with id {id} not found"));
+                throw new ApiProblemDetailsException($"Record with id: {id} does not exist.", 404);
             }
-            return Ok(coupon);
+            return new ApiResponse(coupon);
         }
 
         [HttpPost]
