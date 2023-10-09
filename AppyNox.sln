@@ -6,6 +6,11 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{13BAFC88-5121-40D1-A62E-015667098D4A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CouponService", "CouponService", "{7DB2D038-AB81-42F3-A016-FE76A264FA37}"
+	ProjectSection(SolutionItems) = preProject
+		.dockerignore = .dockerignore
+		src\Services\CouponService\docker-compose.yml = src\Services\CouponService\docker-compose.yml
+		src\Services\CouponService\Dockerfile = src\Services\CouponService\Dockerfile
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Authentication", "Authentication", "{AD2F15A2-813D-422E-A37D-BED8810752C6}"
 EndProject
@@ -17,9 +22,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppyNox.Services.Coupon.Inf
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppyNox.Services.Coupon.WebAPI", "src\Services\CouponService\AppyNox.Services.Coupon.WebAPI\AppyNox.Services.Coupon.WebAPI.csproj", "{566BBC52-05A4-4629-BA78-25781BE4A360}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppyNox.Services.Authentication.Application", "src\Services\AuthenticationService\AppyNox.Services.Authentication.Application\AppyNox.Services.Authentication.Application.csproj", "{81CC2F92-1356-4A35-8FB0-FE409C11CDF4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppyNox.Services.Authentication.Application", "src\Services\AuthenticationService\AppyNox.Services.Authentication.Application\AppyNox.Services.Authentication.Application.csproj", "{81CC2F92-1356-4A35-8FB0-FE409C11CDF4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppyNox.Services.Authentication.Infrastructure", "src\Services\AuthenticationService\AppyNox.Services.Authentication.Infrastructure\AppyNox.Services.Authentication.Infrastructure.csproj", "{B2D6D09D-10E2-4015-A765-038A32259DE5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppyNox.Services.Authentication.Infrastructure", "src\Services\AuthenticationService\AppyNox.Services.Authentication.Infrastructure\AppyNox.Services.Authentication.Infrastructure.csproj", "{B2D6D09D-10E2-4015-A765-038A32259DE5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppyNox.Services.Authentication.WebAPI", "src\Services\AuthenticationService\AppyNox.Services.Authentication.WebAPI\AppyNox.Services.Authentication.WebAPI.csproj", "{B2D3EB24-3B60-4F8F-80C7-9D07E8E22F36}"
 EndProject

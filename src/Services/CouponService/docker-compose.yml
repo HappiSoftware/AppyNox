@@ -1,0 +1,24 @@
+version: '3'
+services:
+  coupon-service:
+    image: coupon-service:latest
+    ports:
+      - "7001:7001"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:7001
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/coupon-service.pfx 
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=happi2023
+    volumes:
+      - ./AppyNox.Services.Coupon.WebAPI/ssl:/https
+
+  # mssql:
+  #   image: mcr.microsoft.com/mssql/server:latest
+  #   environment:
+  #     SA_PASSWORD: "YourStrong!Passw0rd"
+  #     ACCEPT_EULA: Y
+  #     MSSQL_DB: AppyNox_Coupon
+  #     MSSQL_USER: 'coupon_user'
+  #     MSSQL_PASSWORD: 'coupon_password'
+  #   ports:
+  #     - "1433:1433"
