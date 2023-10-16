@@ -37,7 +37,7 @@ namespace AppyNox.Services.Coupon.Infrastructure.Data
                     .Build();
                 var connectionString = config.GetConnectionString("DefaultConnection");
                 Console.WriteLine($"Connection String: {connectionString}");
-                optionsBuilder.UseSqlServer(connectionString);
+                optionsBuilder.UseNpgsql(connectionString);
             }
         }
 
