@@ -3,17 +3,17 @@ using System;
 using AppyNox.Services.Coupon.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace CouponService.Infrastructure.Migrations
+namespace AppyNox.Services.Coupon.Infrastructure.Migrations
 {
     [DbContext(typeof(CouponDbContext))]
-    [Migration("20230923222932_AddInitialDataToCoupon")]
-    partial class AddInitialDataToCoupon
+    [Migration("20231015204711_Initdb")]
+    partial class Initdb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -21,31 +21,34 @@ namespace CouponService.Infrastructure.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.11")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("CouponService.Domain.Entities.CouponEntity", b =>
+            modelBuilder.Entity("AppyNox.Services.Coupon.Domain.Entities.CouponEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Code")
                         .IsRequired()
                         .HasMaxLength(5)
-                        .HasColumnType("nvarchar(5)");
+                        .HasColumnType("character varying(5)");
 
                     b.Property<string>("Description")
                         .HasMaxLength(60)
                         .IsUnicode(true)
-                        .HasColumnType("nvarchar(60)");
+                        .HasColumnType("character varying(60)");
+
+                    b.Property<int>("DetailValue")
+                        .HasColumnType("integer");
 
                     b.Property<double>("DiscountAmount")
-                        .HasColumnType("float");
+                        .HasColumnType("double precision");
 
                     b.Property<int>("MinAmount")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -54,17 +57,19 @@ namespace CouponService.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("7383188c-a775-4b39-ad7f-6a44d38bdd63"),
+                            Id = new Guid("a2e73b34-000c-4fd1-809b-fd4a02c7fdba"),
                             Code = "EXF50",
                             Description = "Description",
+                            DetailValue = 0,
                             DiscountAmount = 10.65,
                             MinAmount = 100
                         },
                         new
                         {
-                            Id = new Guid("eb2264f1-6b31-412c-ba3b-8b4c4b607535"),
+                            Id = new Guid("1260115d-98bc-45a2-ad5d-4e18f20309c6"),
                             Code = "EXF60",
                             Description = "Description2",
+                            DetailValue = 0,
                             DiscountAmount = 20.550000000000001,
                             MinAmount = 200
                         });

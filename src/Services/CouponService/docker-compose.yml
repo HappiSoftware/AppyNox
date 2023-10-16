@@ -1,24 +1,44 @@
-version: '3'
-services:
-  coupon-service:
-    image: coupon-service:latest
-    ports:
-      - "7001:7001"
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Production
-      - ASPNETCORE_URLS=http://+:7001
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/coupon-service.pfx 
-      - ASPNETCORE_Kestrel__Certificates__Default__Password=happi2023
-    volumes:
-      - ./AppyNox.Services.Coupon.WebAPI/ssl:/https
+version: '3.4'
 
-  # mssql:
-  #   image: mcr.microsoft.com/mssql/server:latest
-  #   environment:
-  #     SA_PASSWORD: "YourStrong!Passw0rd"
-  #     ACCEPT_EULA: Y
-  #     MSSQL_DB: AppyNox_Coupon
-  #     MSSQL_USER: 'coupon_user'
-  #     MSSQL_PASSWORD: 'coupon_password'
-  #   ports:
-  #     - "1433:1433"
+networks:
+  dev:
+    driver: bridge
+
+
+services:
+ coupon-service:
+   image: coupon-service:latest
+   depends_on:
+     - "postgres"
+   ports:
+     - "7001:7001"
+   build:
+     context: .
+     dockerfile: Dockerfile
+   environment:
+     - ASPNETCORE_ENVIRONMENT=Production
+     - ASPNETCORE_URLS=https://+:7001
+     - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/coupon-service.pfx 
+     - ASPNETCORE_Kestrel__Certificates__Default__Password=happi2023
+     - ConnectionStrings__DefaultConnection=User ID=postgres;Password=coupon_password;Server=postgres;Port=5432;Database=AppyNox_Coupon;IntegratedSecurity=true;Pooling=true
+   volumes:
+     - ./AppyNox.Services.Coupon.WebAPI/ssl:/https
+   networks:
+     - dev
+
+ postgres:
+   image: postgres:latest
+   environment:
+     POSTGRES_DB: AppyNox_Coupon
+     POSTGRES_USER: postgres
+     POSTGRES_PASSWORD: coupon_password
+   restart: always
+   ports:
+     - "5433:5432"
+   volumes:
+     - app_data:/var/lib/postgresql/data
+   networks:
+     - dev
+
+volumes:
+  app_data:

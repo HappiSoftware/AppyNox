@@ -66,6 +66,6 @@ app.MapControllers();
 
 app.UseApiResponseAndExceptionWrapper(new AutoWrapperOptions { IsApiOnly = true, ShowApiVersion = true, ApiVersion = "1.0", UseApiProblemDetailsException = true });
 
-app.Run();
-
 AppyNox.Services.Coupon.Infrastructure.DependencyInjection.ApplyMigrations(app.Services);
+
+app.Run();
