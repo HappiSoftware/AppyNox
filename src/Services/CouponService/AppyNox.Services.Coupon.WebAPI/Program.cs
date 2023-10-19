@@ -1,20 +1,6 @@
-using AppyNox.Services.Coupon.Application.DTOUtilities;
-using AppyNox.Services.Coupon.Application.Services.Implementations;
-using AppyNox.Services.Coupon.Application.Services.Interfaces;
-using AppyNox.Services.Coupon.Domain.Interfaces;
-using AppyNox.Services.Coupon.Infrastructure;
-using AppyNox.Services.Coupon.Infrastructure.Data;
-using AppyNox.Services.Coupon.Infrastructure.Repositories;
 using AppyNox.Services.Coupon.WebAPI.Filters;
 using AutoWrapper;
-using FluentValidation;
-using Microsoft.AspNetCore.Server.Kestrel.Https;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Net.WebSockets;
-using System.Reflection;
-using System.Security.Cryptography.X509Certificates;
+
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
