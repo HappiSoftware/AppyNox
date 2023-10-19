@@ -45,14 +45,7 @@ namespace AppyNox.Services.Coupon.Infrastructure.Repositories
 
             query = ApplySearch(query, queryParameters);
 
-            // Apply sorting
-            if (!string.IsNullOrEmpty(queryParameters.SortBy))
-            {
-                // (mustang) apply sorting mechanism
-                //query = queryParameters.SortOrder.ToLower() == "asc"
-                //    ? query.OrderBy(queryParameters.SortBy)
-                //    : query.OrderByDescending(queryParameters.SortBy);
-            }
+            query = ApplySort(query, queryParameters);
 
             // Create a list of property names from the DTO
             var dtoPropertyNames = dtoType.GetProperties().Select(p => p.Name).ToList();
@@ -89,17 +82,17 @@ namespace AppyNox.Services.Coupon.Infrastructure.Repositories
             {
                 var columnsToSearch = parameters.SearchColumns.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList();
 
-                var properties = typeof(TEntity).GetProperties();
-
                 // Initialize a predicate with no condition (always false)
                 Expression<Func<TEntity, bool>> predicate = e => false;
 
-                foreach (var property in properties)
+                foreach (var column in columnsToSearch)
                 {
-                    if (columnsToSearch.Contains(property.Name, StringComparer.OrdinalIgnoreCase))
+                    var parameterExp = Expression.Parameter(typeof(TEntity), "type");
+                    var propertyExp = Expression.Property(parameterExp, column);
+
+                    if (propertyExp.Type == typeof(string))
                     {
-                        var parameterExp = Expression.Parameter(typeof(TEntity), "type");
-                        var propertyExp = Expression.Property(parameterExp, property.Name);
+                        // Search logic for string properties
                         MethodInfo? method = typeof(string).GetMethod("Contains", new[] { typeof(string) });
                         if (method is null)
                         {
@@ -111,11 +104,73 @@ namespace AppyNox.Services.Coupon.Infrastructure.Repositories
                         var lambda = Expression.Lambda<Func<TEntity, bool>>(containsMethodExp, parameterExp);
                         predicate = predicate.Or(lambda);
                     }
+                    else if (propertyExp.Type == typeof(Guid))
+                    {
+                        // Search logic for Guid properties
+                        if (Guid.TryParse(parameters.SearchTerm, out var searchGuid))
+                        {
+                            var guidEqualityExp = Expression.Equal(propertyExp, Expression.Constant(searchGuid));
+                            var lambda = Expression.Lambda<Func<TEntity, bool>>(guidEqualityExp, parameterExp);
+                            predicate = predicate.Or(lambda);
+                        }
+                    }
+                    else if (propertyExp.Type == typeof(int))
+                    {
+                        // Search logic for int properties
+                        if (int.TryParse(parameters.SearchTerm, out var searchInt))
+                        {
+                            var intEqualityExp = Expression.Equal(propertyExp, Expression.Constant(searchInt));
+                            var lambda = Expression.Lambda<Func<TEntity, bool>>(intEqualityExp, parameterExp);
+                            predicate = predicate.Or(lambda);
+                        }
+                    }
+                    else if (propertyExp.Type == typeof(DateTime))
+                    {
+                        // Search logic for DateTime properties
+                        if (DateTime.TryParse(parameters.SearchTerm, out var searchDateTime))
+                        {
+                            var dateTimeEqualityExp = Expression.Equal(propertyExp, Expression.Constant(searchDateTime));
+                            var lambda = Expression.Lambda<Func<TEntity, bool>>(dateTimeEqualityExp, parameterExp);
+                            predicate = predicate.Or(lambda);
+                        }
+                    }
                 }
 
                 query = query.Where(predicate);
             }
 
+            return query;
+        }
+
+        private IQueryable<TEntity> ApplySort(IQueryable<TEntity> query, QueryParameters parameters)
+        {
+            // Apply sorting
+            if (!string.IsNullOrEmpty(parameters.SortBy))
+            {
+                // Get the property with the specified name using reflection from TEntity
+                var property = typeof(TEntity).GetProperty(parameters.SortBy, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+
+                if (property != null)
+                {
+                    // Build the sorting expression dynamically
+                    var parameter = Expression.Parameter(typeof(TEntity), "x");
+                    var propertyAccess = Expression.Property(parameter, property);
+                    var orderByExp = Expression.Lambda(propertyAccess, parameter);
+
+                    // Determine the sort direction
+                    var methodName = parameters.SortOrder.ToLower() == "asc" ? "OrderBy" : "OrderByDescending";
+
+                    // Use reflection to get the appropriate method
+                    var queryableType = typeof(Queryable);
+                    var method = queryableType.GetMethods()
+                        .Where(m => m.Name == methodName)
+                        .Single(m => m.GetParameters().Length == 2)
+                        .MakeGenericMethod(typeof(TEntity), property.PropertyType);
+
+                    // Apply the sorting
+                    query = (IQueryable<TEntity>)method.Invoke(null, new object[] { query, orderByExp });
+                }
+            }
             return query;
         }
 
