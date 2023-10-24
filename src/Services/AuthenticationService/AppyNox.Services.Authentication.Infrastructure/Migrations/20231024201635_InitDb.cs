@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
@@ -8,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace AppyNox.Services.Authentication.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class InitializeAuthDb : Migration
+    public partial class InitDb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -17,10 +18,10 @@ namespace AppyNox.Services.Authentication.Infrastructure.Migrations
                 name: "AspNetRoles",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    NormalizedName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    Name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    NormalizedName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -31,21 +32,21 @@ namespace AppyNox.Services.Authentication.Infrastructure.Migrations
                 name: "AspNetUsers",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    NormalizedEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
-                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    SecurityStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumberConfirmed = table.Column<bool>(type: "bit", nullable: false),
-                    TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    LockoutEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    AccessFailedCount = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    NormalizedEmail = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    EmailConfirmed = table.Column<bool>(type: "boolean", nullable: false),
+                    PasswordHash = table.Column<string>(type: "text", nullable: true),
+                    SecurityStamp = table.Column<string>(type: "text", nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "text", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "text", nullable: true),
+                    PhoneNumberConfirmed = table.Column<bool>(type: "boolean", nullable: false),
+                    TwoFactorEnabled = table.Column<bool>(type: "boolean", nullable: false),
+                    LockoutEnd = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    LockoutEnabled = table.Column<bool>(type: "boolean", nullable: false),
+                    AccessFailedCount = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -56,11 +57,11 @@ namespace AppyNox.Services.Authentication.Infrastructure.Migrations
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    RoleId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    RoleId = table.Column<string>(type: "text", nullable: false),
+                    ClaimType = table.Column<string>(type: "text", nullable: true),
+                    ClaimValue = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -77,11 +78,11 @@ namespace AppyNox.Services.Authentication.Infrastructure.Migrations
                 name: "AspNetUserClaims",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserId = table.Column<string>(type: "text", nullable: false),
+                    ClaimType = table.Column<string>(type: "text", nullable: true),
+                    ClaimValue = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -98,10 +99,10 @@ namespace AppyNox.Services.Authentication.Infrastructure.Migrations
                 name: "AspNetUserLogins",
                 columns: table => new
                 {
-                    LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ProviderKey = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ProviderDisplayName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    LoginProvider = table.Column<string>(type: "text", nullable: false),
+                    ProviderKey = table.Column<string>(type: "text", nullable: false),
+                    ProviderDisplayName = table.Column<string>(type: "text", nullable: true),
+                    UserId = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -118,8 +119,8 @@ namespace AppyNox.Services.Authentication.Infrastructure.Migrations
                 name: "AspNetUserRoles",
                 columns: table => new
                 {
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    RoleId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    UserId = table.Column<string>(type: "text", nullable: false),
+                    RoleId = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -142,10 +143,10 @@ namespace AppyNox.Services.Authentication.Infrastructure.Migrations
                 name: "AspNetUserTokens",
                 columns: table => new
                 {
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Value = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    UserId = table.Column<string>(type: "text", nullable: false),
+                    LoginProvider = table.Column<string>(type: "text", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    Value = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -161,34 +162,34 @@ namespace AppyNox.Services.Authentication.Infrastructure.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "b57e7ebb-bc1a-4cb2-a83d-d41ad0fbd7ba", null, "Admin", "ADMIN" });
+                values: new object[] { "57bc3893-07a8-4043-a460-4da563f8624f", null, "Admin", "ADMIN" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { "046b5321-5947-4a79-8c1e-54bf1ce5e751", 0, "eeac19b4-b8f6-4f41-ba31-ea67efa793ca", "admin@email.com", true, false, null, "ADMIN@EMAIL.COM", "ADMIN", "AQAAAAIAAYagAAAAENz5nvSQuNF0z/7+lsO5nunBGt+6DaA0TKxRk+RedsYwh0G6sum+/SAKJkibteaeDQ==", null, false, "4e0b5f4f-8840-48ce-94a6-f69c73466500", false, "admin" });
+                values: new object[] { "019b4122-60ba-4fd4-a82c-627c421d8679", 0, "e1257daa-06d1-49ae-a4c8-f66a6b413d62", "admin@email.com", true, false, null, "ADMIN@EMAIL.COM", "ADMIN", "AQAAAAIAAYagAAAAEMw822zMGK4mqYy63blq3q2ek1mBN+QbTuXj040G32G4/CvETHA9IgKHbkkqOdrPfw==", null, false, "1a84dd4c-8130-45b6-b284-c99b176aae7f", false, "admin" });
 
             migrationBuilder.InsertData(
                 table: "AspNetRoleClaims",
                 columns: new[] { "Id", "ClaimType", "ClaimValue", "RoleId" },
                 values: new object[,]
                 {
-                    { 1, "Permission", "Users.View", "b57e7ebb-bc1a-4cb2-a83d-d41ad0fbd7ba" },
-                    { 2, "Permission", "Users.Create", "b57e7ebb-bc1a-4cb2-a83d-d41ad0fbd7ba" },
-                    { 3, "Permission", "Users.Edit", "b57e7ebb-bc1a-4cb2-a83d-d41ad0fbd7ba" },
-                    { 4, "Permission", "Users.Delete", "b57e7ebb-bc1a-4cb2-a83d-d41ad0fbd7ba" },
-                    { 5, "Permission", "Roles.View", "b57e7ebb-bc1a-4cb2-a83d-d41ad0fbd7ba" },
-                    { 6, "Permission", "Roles.Create", "b57e7ebb-bc1a-4cb2-a83d-d41ad0fbd7ba" },
-                    { 7, "Permission", "Roles.Edit", "b57e7ebb-bc1a-4cb2-a83d-d41ad0fbd7ba" },
-                    { 8, "Permission", "Roles.Delete", "b57e7ebb-bc1a-4cb2-a83d-d41ad0fbd7ba" },
-                    { 9, "Permission", "Roles.AssignPermission", "b57e7ebb-bc1a-4cb2-a83d-d41ad0fbd7ba" },
-                    { 10, "Permission", "Roles.WithdrawPermission", "b57e7ebb-bc1a-4cb2-a83d-d41ad0fbd7ba" }
+                    { 1, "Permission", "Users.View", "57bc3893-07a8-4043-a460-4da563f8624f" },
+                    { 2, "Permission", "Users.Create", "57bc3893-07a8-4043-a460-4da563f8624f" },
+                    { 3, "Permission", "Users.Edit", "57bc3893-07a8-4043-a460-4da563f8624f" },
+                    { 4, "Permission", "Users.Delete", "57bc3893-07a8-4043-a460-4da563f8624f" },
+                    { 5, "Permission", "Roles.View", "57bc3893-07a8-4043-a460-4da563f8624f" },
+                    { 6, "Permission", "Roles.Create", "57bc3893-07a8-4043-a460-4da563f8624f" },
+                    { 7, "Permission", "Roles.Edit", "57bc3893-07a8-4043-a460-4da563f8624f" },
+                    { 8, "Permission", "Roles.Delete", "57bc3893-07a8-4043-a460-4da563f8624f" },
+                    { 9, "Permission", "Roles.AssignPermission", "57bc3893-07a8-4043-a460-4da563f8624f" },
+                    { 10, "Permission", "Roles.WithdrawPermission", "57bc3893-07a8-4043-a460-4da563f8624f" }
                 });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserRoles",
                 columns: new[] { "RoleId", "UserId" },
-                values: new object[] { "b57e7ebb-bc1a-4cb2-a83d-d41ad0fbd7ba", "046b5321-5947-4a79-8c1e-54bf1ce5e751" });
+                values: new object[] { "57bc3893-07a8-4043-a460-4da563f8624f", "019b4122-60ba-4fd4-a82c-627c421d8679" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -199,8 +200,7 @@ namespace AppyNox.Services.Authentication.Infrastructure.Migrations
                 name: "RoleNameIndex",
                 table: "AspNetRoles",
                 column: "NormalizedName",
-                unique: true,
-                filter: "[NormalizedName] IS NOT NULL");
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetUserClaims_UserId",
@@ -226,8 +226,7 @@ namespace AppyNox.Services.Authentication.Infrastructure.Migrations
                 name: "UserNameIndex",
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
-                unique: true,
-                filter: "[NormalizedUserName] IS NOT NULL");
+                unique: true);
         }
 
         /// <inheritdoc />

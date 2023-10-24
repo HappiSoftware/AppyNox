@@ -3,8 +3,8 @@ using System;
 using AppyNox.Services.Authentication.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
@@ -18,40 +18,39 @@ namespace AppyNox.Services.Authentication.Infrastructure.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.11")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("character varying(256)");
 
                     b.Property<string>("NormalizedName")
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("character varying(256)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedName")
                         .IsUnique()
-                        .HasDatabaseName("RoleNameIndex")
-                        .HasFilter("[NormalizedName] IS NOT NULL");
+                        .HasDatabaseName("RoleNameIndex");
 
                     b.ToTable("AspNetRoles", (string)null);
 
                     b.HasData(
                         new
                         {
-                            Id = "b57e7ebb-bc1a-4cb2-a83d-d41ad0fbd7ba",
+                            Id = "57bc3893-07a8-4043-a460-4da563f8624f",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });
@@ -61,19 +60,19 @@ namespace AppyNox.Services.Authentication.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ClaimType")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ClaimValue")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("RoleId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -87,124 +86,124 @@ namespace AppyNox.Services.Authentication.Infrastructure.Migrations
                             Id = 1,
                             ClaimType = "Permission",
                             ClaimValue = "Users.View",
-                            RoleId = "b57e7ebb-bc1a-4cb2-a83d-d41ad0fbd7ba"
+                            RoleId = "57bc3893-07a8-4043-a460-4da563f8624f"
                         },
                         new
                         {
                             Id = 2,
                             ClaimType = "Permission",
                             ClaimValue = "Users.Create",
-                            RoleId = "b57e7ebb-bc1a-4cb2-a83d-d41ad0fbd7ba"
+                            RoleId = "57bc3893-07a8-4043-a460-4da563f8624f"
                         },
                         new
                         {
                             Id = 3,
                             ClaimType = "Permission",
                             ClaimValue = "Users.Edit",
-                            RoleId = "b57e7ebb-bc1a-4cb2-a83d-d41ad0fbd7ba"
+                            RoleId = "57bc3893-07a8-4043-a460-4da563f8624f"
                         },
                         new
                         {
                             Id = 4,
                             ClaimType = "Permission",
                             ClaimValue = "Users.Delete",
-                            RoleId = "b57e7ebb-bc1a-4cb2-a83d-d41ad0fbd7ba"
+                            RoleId = "57bc3893-07a8-4043-a460-4da563f8624f"
                         },
                         new
                         {
                             Id = 5,
                             ClaimType = "Permission",
                             ClaimValue = "Roles.View",
-                            RoleId = "b57e7ebb-bc1a-4cb2-a83d-d41ad0fbd7ba"
+                            RoleId = "57bc3893-07a8-4043-a460-4da563f8624f"
                         },
                         new
                         {
                             Id = 6,
                             ClaimType = "Permission",
                             ClaimValue = "Roles.Create",
-                            RoleId = "b57e7ebb-bc1a-4cb2-a83d-d41ad0fbd7ba"
+                            RoleId = "57bc3893-07a8-4043-a460-4da563f8624f"
                         },
                         new
                         {
                             Id = 7,
                             ClaimType = "Permission",
                             ClaimValue = "Roles.Edit",
-                            RoleId = "b57e7ebb-bc1a-4cb2-a83d-d41ad0fbd7ba"
+                            RoleId = "57bc3893-07a8-4043-a460-4da563f8624f"
                         },
                         new
                         {
                             Id = 8,
                             ClaimType = "Permission",
                             ClaimValue = "Roles.Delete",
-                            RoleId = "b57e7ebb-bc1a-4cb2-a83d-d41ad0fbd7ba"
+                            RoleId = "57bc3893-07a8-4043-a460-4da563f8624f"
                         },
                         new
                         {
                             Id = 9,
                             ClaimType = "Permission",
                             ClaimValue = "Roles.AssignPermission",
-                            RoleId = "b57e7ebb-bc1a-4cb2-a83d-d41ad0fbd7ba"
+                            RoleId = "57bc3893-07a8-4043-a460-4da563f8624f"
                         },
                         new
                         {
                             Id = 10,
                             ClaimType = "Permission",
                             ClaimValue = "Roles.WithdrawPermission",
-                            RoleId = "b57e7ebb-bc1a-4cb2-a83d-d41ad0fbd7ba"
+                            RoleId = "57bc3893-07a8-4043-a460-4da563f8624f"
                         });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUser", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<int>("AccessFailedCount")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("character varying(256)");
 
                     b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("character varying(256)");
 
                     b.Property<string>("NormalizedUserName")
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("character varying(256)");
 
                     b.Property<string>("PasswordHash")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("SecurityStamp")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("character varying(256)");
 
                     b.HasKey("Id");
 
@@ -213,25 +212,24 @@ namespace AppyNox.Services.Authentication.Infrastructure.Migrations
 
                     b.HasIndex("NormalizedUserName")
                         .IsUnique()
-                        .HasDatabaseName("UserNameIndex")
-                        .HasFilter("[NormalizedUserName] IS NOT NULL");
+                        .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("AspNetUsers", (string)null);
 
                     b.HasData(
                         new
                         {
-                            Id = "046b5321-5947-4a79-8c1e-54bf1ce5e751",
+                            Id = "019b4122-60ba-4fd4-a82c-627c421d8679",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "eeac19b4-b8f6-4f41-ba31-ea67efa793ca",
+                            ConcurrencyStamp = "e1257daa-06d1-49ae-a4c8-f66a6b413d62",
                             Email = "admin@email.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@EMAIL.COM",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAENz5nvSQuNF0z/7+lsO5nunBGt+6DaA0TKxRk+RedsYwh0G6sum+/SAKJkibteaeDQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEMw822zMGK4mqYy63blq3q2ek1mBN+QbTuXj040G32G4/CvETHA9IgKHbkkqOdrPfw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "4e0b5f4f-8840-48ce-94a6-f69c73466500",
+                            SecurityStamp = "1a84dd4c-8130-45b6-b284-c99b176aae7f",
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         });
@@ -241,19 +239,19 @@ namespace AppyNox.Services.Authentication.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ClaimType")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ClaimValue")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -265,17 +263,17 @@ namespace AppyNox.Services.Authentication.Infrastructure.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ProviderKey")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ProviderDisplayName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.HasKey("LoginProvider", "ProviderKey");
 
@@ -287,10 +285,10 @@ namespace AppyNox.Services.Authentication.Infrastructure.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
                 {
                     b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("RoleId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.HasKey("UserId", "RoleId");
 
@@ -301,24 +299,24 @@ namespace AppyNox.Services.Authentication.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = "046b5321-5947-4a79-8c1e-54bf1ce5e751",
-                            RoleId = "b57e7ebb-bc1a-4cb2-a83d-d41ad0fbd7ba"
+                            UserId = "019b4122-60ba-4fd4-a82c-627c421d8679",
+                            RoleId = "57bc3893-07a8-4043-a460-4da563f8624f"
                         });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
                     b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Value")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
