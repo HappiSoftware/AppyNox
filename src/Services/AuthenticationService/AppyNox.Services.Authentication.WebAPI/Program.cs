@@ -18,8 +18,28 @@ using System.Reflection;
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
-// Add services to the container.
+#region [ SSL Configuration ]
+builder.WebHost.ConfigureKestrel(serverOptions =>
+{
+    string fileName = string.Empty;
 
+    if (builder.Environment.IsDevelopment())
+    {
+        fileName = Directory.GetCurrentDirectory() + "/ssl/authentication-service.pfx";
+    }
+    else if (builder.Environment.IsProduction())
+    {
+        fileName = "/https/authentication-service.pfx";
+    }
+
+    serverOptions.ConfigureEndpointDefaults(listenOptions =>
+    {
+        listenOptions.UseHttps(fileName ?? throw new InvalidOperationException("SSL certificate file path could not be determined."), "happi2023");
+    });
+});
+#endregion
+
+// Add services to the container.
 builder.Services.AddControllers();
 
 builder.Services.AddApiVersioning(options => {
@@ -32,10 +52,6 @@ builder.Services.AddApiVersioning(options => {
 builder.Services.AddSwaggerGen(options => {
     options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "Web API v1", Version = "version 1" });
 });
-
-// Add DbContext
-builder.Services.AddDbContext<IdentityDbContext>(options =>
-    options.UseSqlServer(configuration.GetConnectionString("Default")));
 
 // Add Identity
 builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddSignInManager()
@@ -50,6 +66,8 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Password.RequireUppercase = true;
     options.Password.RequireLowercase = true;
 });
+
+AppyNox.Services.Authentication.Infrastructure.DependencyInjection.ConfigureServices(builder.Services, configuration);
 
 builder.Services.AddValidatorsFromAssembly(Assembly.Load("AppyNox.Services.Authentication.Application"));
 builder.Services.AddAutoMapper(Assembly.Load("AppyNox.Services.Authentication.Application"));
@@ -125,19 +143,6 @@ app.MapControllers();
 
 app.UseApiResponseAndExceptionWrapper(new AutoWrapperOptions { UseApiProblemDetailsException = true });
 
-ApplyMigration();
+AppyNox.Services.Authentication.Infrastructure.DependencyInjection.ApplyMigrations(app.Services);
 
 app.Run();
-
-
-void ApplyMigration()
-{
-    using (var scope = app.Services.CreateScope())
-    {
-        var _db = scope.ServiceProvider.GetRequiredService<IdentityDbContext>();
-        if (_db.Database.GetPendingMigrations().Count() > 0)
-        {
-            _db.Database.Migrate();
-        }
-    }
-}

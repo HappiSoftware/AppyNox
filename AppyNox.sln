@@ -6,13 +6,8 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{13BAFC88-5121-40D1-A62E-015667098D4A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CouponService", "CouponService", "{7DB2D038-AB81-42F3-A016-FE76A264FA37}"
-	ProjectSection(SolutionItems) = preProject
-		.dockerignore = .dockerignore
-		src\Services\CouponService\docker-compose.yml = src\Services\CouponService\docker-compose.yml
-		src\Services\CouponService\Dockerfile = src\Services\CouponService\Dockerfile
-	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Authentication", "Authentication", "{AD2F15A2-813D-422E-A37D-BED8810752C6}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AuthenticationService", "AuthenticationService", "{AD2F15A2-813D-422E-A37D-BED8810752C6}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppyNox.Services.Coupon.Application", "src\Services\CouponService\AppyNox.Services.Coupon.Application\AppyNox.Services.Coupon.Application.csproj", "{3DB023E9-CBF3-426F-B88D-880A245127C8}"
 EndProject
@@ -27,6 +22,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppyNox.Services.Authentication.Infrastructure", "src\Services\AuthenticationService\AppyNox.Services.Authentication.Infrastructure\AppyNox.Services.Authentication.Infrastructure.csproj", "{B2D6D09D-10E2-4015-A765-038A32259DE5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppyNox.Services.Authentication.WebAPI", "src\Services\AuthenticationService\AppyNox.Services.Authentication.WebAPI\AppyNox.Services.Authentication.WebAPI.csproj", "{B2D3EB24-3B60-4F8F-80C7-9D07E8E22F36}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{1A4309A8-D26E-4684-9717-B2AF2D6A1BEF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -62,6 +59,10 @@ Global
 		{B2D3EB24-3B60-4F8F-80C7-9D07E8E22F36}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B2D3EB24-3B60-4F8F-80C7-9D07E8E22F36}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B2D3EB24-3B60-4F8F-80C7-9D07E8E22F36}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A4309A8-D26E-4684-9717-B2AF2D6A1BEF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A4309A8-D26E-4684-9717-B2AF2D6A1BEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A4309A8-D26E-4684-9717-B2AF2D6A1BEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A4309A8-D26E-4684-9717-B2AF2D6A1BEF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

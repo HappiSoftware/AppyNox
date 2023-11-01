@@ -38,7 +38,7 @@ namespace AppyNox.Services.Authentication.Infrastructure.Data
                     .Build();
                 var connectionString = config.GetConnectionString("Default");
                 Console.WriteLine($"Connection String: {connectionString}");
-                optionsBuilder.UseSqlServer(connectionString);
+                optionsBuilder.UseNpgsql(connectionString);
             }
         }
 

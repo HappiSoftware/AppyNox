@@ -6,7 +6,6 @@ using AppyNox.Services.Authentication.WebAPI.Utilities;
 using Asp.Versioning;
 using AutoMapper;
 using AutoWrapper.Wrappers;
-using Azure;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;

@@ -5,25 +5,19 @@ using AutoWrapper;
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
+#region [ SSL Configuration ]
 builder.WebHost.ConfigureKestrel(serverOptions =>
 {
     string fileName = string.Empty;
 
-    if (builder.Environment.IsDevelopment())
-    {
-        fileName = Directory.GetCurrentDirectory() + "/ssl/coupon-service.pfx";
-    }
-    else if (builder.Environment.IsProduction())
-    {
-        fileName = "/https/coupon-service.pfx";
-    }
+    fileName = "../https/coupon-service.pfx";
 
     serverOptions.ConfigureEndpointDefaults(listenOptions =>
     {
         listenOptions.UseHttps(fileName ?? throw new InvalidOperationException("SSL certificate file path could not be determined."), "happi2023");
     });
 });
-
+#endregion
 
 // Add services to the container.
 builder.Services.AddControllers(options =>
