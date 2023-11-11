@@ -6,12 +6,22 @@ namespace AppyNox.Services.Coupon.WebAPI.Filters
     [Obsolete("Deprecated!")]
     public class ValidateQueryParametersAttribute : ActionFilterAttribute
     {
+        #region [ Fields ]
+
         private readonly Type _dtoType;
+
+        #endregion
+
+        #region [ Public Constructors ]
 
         public ValidateQueryParametersAttribute(Type dtoType)
         {
             _dtoType = dtoType;
         }
+
+        #endregion
+
+        #region [ Public Methods ]
 
         public override void OnActionExecuting(ActionExecutingContext context)
         {
@@ -40,5 +50,7 @@ namespace AppyNox.Services.Coupon.WebAPI.Filters
                 }
             }
         }
+
+        #endregion
     }
 }

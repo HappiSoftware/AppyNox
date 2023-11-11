@@ -1,18 +1,14 @@
-﻿using FluentValidation;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AppyNox.Services.Authentication.Application.DTOs.IdentityUserDTOs.Models;
+﻿using AppyNox.Services.Authentication.Application.DTOs.IdentityUserDTOs.Models;
 using AppyNox.Services.Authentication.Application.Validators.SharedRules;
 using AppyNox.Services.Authentication.Infrastructure.Data;
+using FluentValidation;
 
 namespace AppyNox.Services.Authentication.Application.Validators
 {
     public class IdentityUserCreateDTOValidator : AbstractValidator<IdentityUserCreateDTO>
     {
+        #region [ Public Constructors ]
+
         public IdentityUserCreateDTOValidator(IdentityDbContext context)
         {
             RuleFor(user => user.UserName).CheckUserNameValidity(context);
@@ -21,7 +17,6 @@ namespace AppyNox.Services.Authentication.Application.Validators
             RuleFor(x => x.Email).CheckEmailValidity(context);
         }
 
+        #endregion
     }
-
-
 }

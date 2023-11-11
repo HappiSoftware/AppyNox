@@ -1,24 +1,29 @@
-﻿using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using AppyNox.Services.Coupon.Domain.Interfaces;
 using AppyNox.Services.Coupon.Infrastructure.Data;
-using AppyNox.Services.Coupon.Domain.Interfaces;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace AppyNox.Services.Coupon.Infrastructure.Repositories
 {
     public class UnitOfWork : IUnitOfWork
     {
+        #region [ Fields ]
+
         private readonly CouponDbContext _dbContext;
+
         private IDbContextTransaction? _transaction;
+
+        #endregion
+
+        #region [ Public Constructors ]
 
         public UnitOfWork(CouponDbContext dbContext)
         {
             _dbContext = dbContext;
         }
+
+        #endregion
+
+        #region [ Public Methods ]
 
         public void BeginTransaction()
         {
@@ -53,6 +58,7 @@ namespace AppyNox.Services.Coupon.Infrastructure.Repositories
         {
             _transaction?.Dispose();
         }
-    }
 
+        #endregion
+    }
 }

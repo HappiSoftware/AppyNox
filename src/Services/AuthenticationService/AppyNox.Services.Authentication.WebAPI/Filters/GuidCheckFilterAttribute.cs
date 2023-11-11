@@ -1,25 +1,33 @@
-﻿using System;
+﻿using AppyNox.Services.Authentication.Application.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using System.Text.Json;
-using System.IO;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Routing;
 using System.Text;
-using AppyNox.Services.Authentication.Application.DTOs;
+using System.Text.Json;
 
 public class GuidCheckFilterAttribute : ActionFilterAttribute
 {
-    public List<string> RouteParameters { get; set; }
+    #region [ Public Constructors ]
+
     public GuidCheckFilterAttribute()
     {
         RouteParameters = new List<string> { "id" };
     }
+
     public GuidCheckFilterAttribute(string[] routeParameters)
     {
         RouteParameters = new List<string>(routeParameters);
     }
+
+    #endregion
+
+    #region [ Properties ]
+
+    public List<string> RouteParameters { get; set; }
+
+    #endregion
+
+    #region [ Public Methods ]
+
     public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
         // Get the route data to access the URL parameters
@@ -82,4 +90,6 @@ public class GuidCheckFilterAttribute : ActionFilterAttribute
 
         await next();
     }
+
+    #endregion
 }

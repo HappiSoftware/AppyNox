@@ -1,7 +1,6 @@
 ﻿using AppyNox.Services.Coupon.Application.DTOUtilities;
 using AppyNox.Services.Coupon.Application.Services.Implementations;
 using AppyNox.Services.Coupon.Application.Services.Interfaces;
-using AppyNox.Services.Coupon.Domain.Interfaces;
 using FluentValidation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,6 +10,8 @@ namespace AppyNox.Services.Coupon.Application
 {
     public static class DependencyInjection
     {
+        #region [ Public Methods ]
+
         public static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
             services.AddAutoMapper(Assembly.Load("AppyNox.Services.Coupon.Application"));
@@ -19,5 +20,7 @@ namespace AppyNox.Services.Coupon.Application
             services.AddScoped(typeof(IGenericService<,,,>), typeof(GenericService<,,,>));
             services.AddSingleton<DTOMappingRegistry>();
         }
+
+        #endregion
     }
 }

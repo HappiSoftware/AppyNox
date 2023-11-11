@@ -16,8 +16,15 @@ namespace AppyNox.Services.Coupon.WebAPI.Controllers.v1
     [Route("api/[controller]")]
     public class CouponsController : ControllerBase
     {
+        #region [ Fields ]
+
         private readonly IGenericService<CouponEntity, CouponWithIdDTO, CouponCreateDTO, CouponUpdateDTO> _couponService;
+
         private readonly IValidator<CouponCreateDTO> _couponValidator;
+
+        #endregion
+
+        #region [ Public Constructors ]
 
         public CouponsController(
             IGenericService<CouponEntity, CouponWithIdDTO, CouponCreateDTO, CouponUpdateDTO> couponService,
@@ -26,6 +33,10 @@ namespace AppyNox.Services.Coupon.WebAPI.Controllers.v1
             _couponService = couponService;
             _couponValidator = couponValidator;
         }
+
+        #endregion
+
+        #region [ Public Methods ]
 
         [HttpGet]
         public async Task<ApiResponse> GetAll([FromQuery] QueryParameters queryParameters)
@@ -90,5 +101,7 @@ namespace AppyNox.Services.Coupon.WebAPI.Controllers.v1
             await _couponService.DeleteAsync(coupon);
             return NoContent();
         }
+
+        #endregion
     }
 }

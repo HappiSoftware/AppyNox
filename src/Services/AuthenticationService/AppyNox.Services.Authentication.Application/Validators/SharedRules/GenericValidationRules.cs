@@ -1,17 +1,14 @@
-﻿using FluentValidation;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using AppyNox.Services.Authentication.Infrastructure.Data;
+using FluentValidation;
 using FluentValidation.Results;
-using AppyNox.Services.Authentication.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace AppyNox.Services.Authentication.Application.Validators.SharedRules
 {
     public static class GenericValidationRules
     {
+        #region [ Public Methods ]
+
         public static IRuleBuilderOptions<T, string> CheckEmailValidity<T>(this IRuleBuilder<T, string> ruleBuilder, IdentityDbContext? dbContext)
         {
             if (dbContext == null)
@@ -52,5 +49,7 @@ namespace AppyNox.Services.Authentication.Application.Validators.SharedRules
                 }
             });
         }
+
+        #endregion
     }
 }

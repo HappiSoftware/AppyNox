@@ -2,24 +2,30 @@
 using AppyNox.Services.Coupon.Infrastructure.Data.Configurations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AppyNox.Services.Coupon.Infrastructure.Data
 {
     public class CouponDbContext : DbContext
     {
+        #region [ Public Constructors ]
+
         public CouponDbContext()
         {
-
         }
+
         public CouponDbContext(DbContextOptions<CouponDbContext> options) : base(options)
         {
-
         }
+
+        #endregion
+
+        #region [ Properties ]
+
+        public DbSet<CouponEntity> Coupons { get; set; }
+
+        #endregion
+
+        #region [ Protected Methods ]
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -28,6 +34,7 @@ namespace AppyNox.Services.Coupon.Infrastructure.Data
                 // Get environment
                 string? environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
                 Console.WriteLine($"Environment: {environment}");
+
                 // Build config
                 IConfiguration config = new ConfigurationBuilder()
                     .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "../AppyNox.Services.Coupon.WebAPI"))
@@ -41,14 +48,16 @@ namespace AppyNox.Services.Coupon.Infrastructure.Data
             }
         }
 
-        public DbSet<CouponEntity> Coupons { get; set; }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
             ConfigureCoupon(modelBuilder);
         }
+
+        #endregion
+
+        #region [ Private Methods ]
 
         private void ConfigureCoupon(ModelBuilder modelBuilder)
         {
@@ -80,5 +89,7 @@ namespace AppyNox.Services.Coupon.Infrastructure.Data
                     MinAmount = 200
                 });
         }
+
+        #endregion
     }
 }

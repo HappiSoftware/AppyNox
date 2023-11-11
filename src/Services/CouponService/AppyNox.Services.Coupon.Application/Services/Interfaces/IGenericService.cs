@@ -1,9 +1,4 @@
 ﻿using AppyNox.Services.Coupon.Domain.Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AppyNox.Services.Coupon.Application.Services.Interfaces
 {
@@ -13,6 +8,8 @@ namespace AppyNox.Services.Coupon.Application.Services.Interfaces
     where TCreateDTO : class
     where TUpdateDTO : class
     {
+        #region [ Public Methods ]
+
         Task<IEnumerable<dynamic>> GetAllAsync(QueryParameters queryParameters, string? detailLevel);
 
         Task<dynamic?> GetByIdAsync(Guid id, string? detailLevel = null);
@@ -23,5 +20,6 @@ namespace AppyNox.Services.Coupon.Application.Services.Interfaces
 
         Task DeleteAsync(TDto dto);
 
+        #endregion
     }
 }

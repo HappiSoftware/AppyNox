@@ -2,17 +2,13 @@
 using AppyNox.Services.Authentication.Application.DTOs.IdentityRoleDTOs.Models;
 using AppyNox.Services.Authentication.WebAPI.Filters;
 using AppyNox.Services.Authentication.WebAPI.Helpers;
-using AppyNox.Services.Authentication.WebAPI.Utilities;
 using Asp.Versioning;
 using AutoMapper;
 using AutoWrapper.Wrappers;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Security;
 using System.Security.Claims;
 using static AppyNox.Services.Authentication.WebAPI.Utilities.Permissions;
 
@@ -24,10 +20,19 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
     [JwtTokenValidate]
     public class RolesController : ControllerBase
     {
+        #region [ Fields ]
+
         private readonly RoleManager<IdentityRole> _roleManager;
+
         private readonly IRoleValidator<IdentityRole> _roleValidator;
+
         private readonly IMapper _mapper;
+
         private readonly DtoMappingHelper<IdentityRole> _dtoMappingHelper;
+
+        #endregion
+
+        #region [ Public Constructors ]
 
         public RolesController(IMapper mapper, RoleManager<IdentityRole> roleManager,
             IRoleValidator<IdentityRole> roleValidator, DtoMappingHelper<IdentityRole> dtoMappingHelper)
@@ -37,6 +42,8 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
             _roleValidator = roleValidator;
             _dtoMappingHelper = dtoMappingHelper;
         }
+
+        #endregion
 
         #region [ CRUD Operations ]
 

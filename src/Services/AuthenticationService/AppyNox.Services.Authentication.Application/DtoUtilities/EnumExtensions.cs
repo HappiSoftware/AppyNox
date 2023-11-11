@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 
 namespace AppyNox.Services.Authentication.Application.DtoUtilities
 {
     internal static class EnumExtensions
     {
+        #region [ Public Methods ]
+
         public static Enum GetEnumValueFromDescription(Type enumType, string description)
         {
             foreach (var field in enumType.GetFields())
@@ -21,5 +18,7 @@ namespace AppyNox.Services.Authentication.Application.DtoUtilities
             }
             throw new ArgumentException($"No enum value found for description {description} in {enumType}");
         }
+
+        #endregion
     }
 }

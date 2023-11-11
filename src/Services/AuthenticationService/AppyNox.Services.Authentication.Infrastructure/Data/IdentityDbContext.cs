@@ -2,25 +2,24 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 
 namespace AppyNox.Services.Authentication.Infrastructure.Data
 {
     public class IdentityDbContext : IdentityDbContext<IdentityUser>
     {
+        #region [ Public Constructors ]
+
         public IdentityDbContext()
         {
-
         }
+
         public IdentityDbContext(DbContextOptions<IdentityDbContext> options) : base(options)
         {
-
         }
+
+        #endregion
+
+        #region [ Protected Methods ]
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -29,6 +28,7 @@ namespace AppyNox.Services.Authentication.Infrastructure.Data
                 // Get environment
                 string? environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
                 Console.WriteLine($"Environment: {environment}");
+
                 // Build config
                 IConfiguration config = new ConfigurationBuilder()
                     .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "../AppyNox.Services.Authentication.WebAPI"))
@@ -50,6 +50,7 @@ namespace AppyNox.Services.Authentication.Infrastructure.Data
 
             string adminUserId = Guid.NewGuid().ToString();
             string adminRoleId = Guid.NewGuid().ToString();
+
             // Create Roles
             var adminRole = new IdentityRole { Id = adminRoleId, Name = "Admin", NormalizedName = "ADMIN" };
             modelBuilder.Entity<IdentityRole>().HasData(adminRole);
@@ -78,5 +79,7 @@ namespace AppyNox.Services.Authentication.Infrastructure.Data
                 new IdentityUserRole<string> { RoleId = adminRoleId, UserId = adminUserId }
             );
         }
+
+        #endregion
     }
 }

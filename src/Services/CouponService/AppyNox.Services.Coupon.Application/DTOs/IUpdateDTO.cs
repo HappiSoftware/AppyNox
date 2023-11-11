@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AppyNox.Services.Coupon.Application.DTOs
+﻿namespace AppyNox.Services.Coupon.Application.DTOs
 {
     public interface IUpdateDTO
     {
+        #region [ Properties ]
+
         Guid Id { get; set; }
+
+        #endregion
     }
 }

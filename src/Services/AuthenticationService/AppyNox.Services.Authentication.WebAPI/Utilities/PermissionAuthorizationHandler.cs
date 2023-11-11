@@ -7,9 +7,17 @@ namespace AppyNox.Services.Authentication.WebAPI.Utilities
 {
     internal class PermissionAuthorizationHandler : AuthorizationHandler<PermissionRequirement>
     {
+        #region [ Fields ]
+
         private readonly IdentityDbContext _db;
+
         private readonly UserManager<IdentityUser> _userManager;
+
         private readonly RoleManager<IdentityRole> _roleManager;
+
+        #endregion
+
+        #region [ Public Constructors ]
 
         public PermissionAuthorizationHandler(IdentityDbContext db, UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager)
         {
@@ -17,6 +25,10 @@ namespace AppyNox.Services.Authentication.WebAPI.Utilities
             _userManager = userManager;
             _roleManager = roleManager;
         }
+
+        #endregion
+
+        #region [ Protected Methods ]
 
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, PermissionRequirement requirement)
         {
@@ -38,5 +50,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Utilities
 
             return Task.CompletedTask;
         }
+
+        #endregion
     }
 }

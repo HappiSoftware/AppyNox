@@ -5,6 +5,8 @@ namespace AppyNox.Services.Coupon.WebAPI.Filters
 {
     public class QueryParametersActionFilter : IActionFilter
     {
+        #region [ Public Methods ]
+
         public void OnActionExecuting(ActionExecutingContext context)
         {
             var queryParameters = new QueryParameters
@@ -23,7 +25,8 @@ namespace AppyNox.Services.Coupon.WebAPI.Filters
 
         public void OnActionExecuted(ActionExecutedContext context)
         {
-
         }
+
+        #endregion
     }
 }

@@ -2,16 +2,13 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AppyNox.Services.Authentication.Infrastructure
 {
     public static class DependencyInjection
     {
+        #region [ Public Methods ]
+
         public static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
             services.AddDbContext<IdentityDbContext>(options =>
@@ -30,5 +27,6 @@ namespace AppyNox.Services.Authentication.Infrastructure
             }
         }
 
+        #endregion
     }
 }

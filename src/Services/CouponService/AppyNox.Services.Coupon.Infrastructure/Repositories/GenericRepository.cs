@@ -1,24 +1,35 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AppyNox.Services.Coupon.Domain.Common;
+using AppyNox.Services.Coupon.Domain.Interfaces;
+using AppyNox.Services.Coupon.Infrastructure.Data;
+using AppyNox.Services.Coupon.Infrastructure.ExceptionExtensions;
+using LinqKit;
+using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using System.Reflection;
-using LinqKit;
-using AppyNox.Services.Coupon.Infrastructure.Data;
-using AppyNox.Services.Coupon.Domain.Interfaces;
-using AppyNox.Services.Coupon.Infrastructure.ExceptionExtensions;
-using AppyNox.Services.Coupon.Domain.Common;
 
 namespace AppyNox.Services.Coupon.Infrastructure.Repositories
 {
     public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : class, IEntityWithGuid
     {
+        #region [ Fields ]
+
         private readonly CouponDbContext _context;
+
         private readonly DbSet<TEntity> _dbSet;
+
+        #endregion
+
+        #region [ Public Constructors ]
 
         public GenericRepository(CouponDbContext context)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _dbSet = _context.Set<TEntity>();
         }
+
+        #endregion
+
+        #region [ Public Methods ]
 
         public async Task<dynamic> GetByIdAsync(Guid id, Type dtoType)
         {
@@ -75,6 +86,10 @@ namespace AppyNox.Services.Coupon.Infrastructure.Repositories
         {
             _dbSet.Remove(entity);
         }
+
+        #endregion
+
+        #region [ Private Methods ]
 
         private IQueryable<TEntity> ApplySearch(IQueryable<TEntity> query, QueryParameters parameters)
         {
@@ -198,5 +213,6 @@ namespace AppyNox.Services.Coupon.Infrastructure.Repositories
             return selector;
         }
 
+        #endregion
     }
 }

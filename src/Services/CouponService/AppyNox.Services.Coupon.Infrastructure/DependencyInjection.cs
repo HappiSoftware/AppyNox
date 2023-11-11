@@ -4,16 +4,13 @@ using AppyNox.Services.Coupon.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AppyNox.Services.Coupon.Infrastructure
 {
     public static class DependencyInjection
     {
+        #region [ Public Methods ]
+
         public static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
             services.AddDbContext<CouponDbContext>(options =>
@@ -28,6 +25,7 @@ namespace AppyNox.Services.Coupon.Infrastructure
             using (var scope = serviceProvider.CreateScope())
             {
                 var _db = scope.ServiceProvider.GetRequiredService<CouponDbContext>();
+
                 //if (_db.Database.GetPendingMigrations().Any())
                 //{
                 //    _db.Database.Migrate();
@@ -35,5 +33,6 @@ namespace AppyNox.Services.Coupon.Infrastructure
             }
         }
 
+        #endregion
     }
 }

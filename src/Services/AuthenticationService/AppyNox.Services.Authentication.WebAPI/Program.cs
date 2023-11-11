@@ -11,7 +11,6 @@ using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Reflection;
 
@@ -19,6 +18,7 @@ var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
 #region [ SSL Configuration ]
+
 builder.WebHost.ConfigureKestrel(serverOptions =>
 {
     string fileName = string.Empty;
@@ -37,19 +37,22 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
         listenOptions.UseHttps(fileName ?? throw new InvalidOperationException("SSL certificate file path could not be determined."), "happi2023");
     });
 });
+
 #endregion
 
 // Add services to the container.
 builder.Services.AddControllers();
 
-builder.Services.AddApiVersioning(options => {
+builder.Services.AddApiVersioning(options =>
+{
     options.ReportApiVersions = true;
     options.AssumeDefaultVersionWhenUnspecified = true;
     options.DefaultApiVersion = new ApiVersion(1, 0);
     options.ApiVersionReader = new HeaderApiVersionReader("X-API-Version");
 });
 
-builder.Services.AddSwaggerGen(options => {
+builder.Services.AddSwaggerGen(options =>
+{
     options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "Web API v1", Version = "version 1" });
 });
 
@@ -106,7 +109,8 @@ builder.Services.AddScoped<ICustomTokenManager, JwtTokenManager>();
 builder.Services.AddScoped<ICustomUserManager, CustomUserManager>();
 
 // Add Policy-based Authorization
-builder.Services.AddAuthorization(options => {
+builder.Services.AddAuthorization(options =>
+{
     List<string> _claims = new List<string>();
     _claims.AddRange(Permissions.Users._metrics);
     _claims.AddRange(Permissions.Roles._metrics);

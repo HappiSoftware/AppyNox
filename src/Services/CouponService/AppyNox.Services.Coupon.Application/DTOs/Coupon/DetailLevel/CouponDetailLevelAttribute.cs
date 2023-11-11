@@ -1,23 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 
 namespace AppyNox.Services.Coupon.Application.DTOs.Coupon.DetailLevel
 {
-    public class CouponDetailLevelAttribute : Attribute
-    {
-        public CouponDetailLevel DetailLevel { get; }
-
-        public CouponDetailLevelAttribute(CouponDetailLevel level)
-        {
-            DetailLevel = level;
-        }
-
-    }
-
     public enum CouponDetailLevel
     {
         [Description("Basic")]
@@ -28,5 +12,23 @@ namespace AppyNox.Services.Coupon.Application.DTOs.Coupon.DetailLevel
 
         [Description("WithAllProperties")]
         WithAllProperties
+    }
+
+    public class CouponDetailLevelAttribute : Attribute
+    {
+        #region [ Public Constructors ]
+
+        public CouponDetailLevelAttribute(CouponDetailLevel level)
+        {
+            DetailLevel = level;
+        }
+
+        #endregion
+
+        #region [ Properties ]
+
+        public CouponDetailLevel DetailLevel { get; }
+
+        #endregion
     }
 }

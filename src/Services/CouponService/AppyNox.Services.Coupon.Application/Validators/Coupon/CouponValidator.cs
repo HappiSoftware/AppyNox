@@ -1,16 +1,12 @@
 ﻿using AppyNox.Services.Coupon.Application.DTOs.Coupon.Models;
-using AppyNox.Services.Coupon.Application.Validators;
 using FluentValidation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AppyNox.Services.Coupon.Application.Validators.Coupon
 {
     public class CouponValidator : BaseDTOValidator<CouponCreateDTO>
     {
+        #region [ Public Constructors ]
+
         public CouponValidator()
         {
             RuleFor(coupon => coupon.Code)
@@ -25,5 +21,7 @@ namespace AppyNox.Services.Coupon.Application.Validators.Coupon
                 .NotNull().WithMessage("MinAmount cannot be null")
                 .NotEqual(0).WithMessage("MinAmount cannot be equal to 0.");
         }
+
+        #endregion
     }
 }
