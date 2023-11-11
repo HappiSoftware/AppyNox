@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AppyNox.Services.Coupon.Application.DTOs
+﻿namespace AppyNox.Services.Coupon.Application.DTOs
 {
     public abstract class BaseDTO
     {
+        #region [ Properties ]
+
         public string? Description { get; set; }
+
+        #endregion
     }
 }

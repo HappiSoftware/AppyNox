@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AppyNox.Services.Coupon.Application.ExceptionExtensions
+﻿namespace AppyNox.Services.Coupon.Application.ExceptionExtensions
 {
     public class DetailLevelNotFoundException : Exception
     {
+        #region [ Public Constructors ]
+
         public DetailLevelNotFoundException()
         { }
 
@@ -18,5 +14,7 @@ namespace AppyNox.Services.Coupon.Application.ExceptionExtensions
         public DetailLevelNotFoundException(string message, Exception innerException)
             : base(message, innerException)
         { }
+
+        #endregion
     }
 }

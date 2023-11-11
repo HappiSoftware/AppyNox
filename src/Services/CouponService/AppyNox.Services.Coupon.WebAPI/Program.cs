@@ -1,11 +1,11 @@
 using AppyNox.Services.Coupon.WebAPI.Filters;
 using AutoWrapper;
 
-
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
 #region [ SSL Configuration ]
+
 builder.WebHost.ConfigureKestrel(serverOptions =>
 {
     string fileName = string.Empty;
@@ -17,6 +17,7 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
         listenOptions.UseHttps(fileName ?? throw new InvalidOperationException("SSL certificate file path could not be determined."), "happi2023");
     });
 });
+
 #endregion
 
 // Add services to the container.

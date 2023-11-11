@@ -7,15 +7,28 @@ namespace AppyNox.Services.Authentication.WebAPI.Managers.Implementations
 {
     public class CustomUserManager : ICustomUserManager
     {
+        #region [ Fields ]
+
         private readonly ICustomTokenManager customTokenManager;
+
         private readonly SignInManager<IdentityUser> _signInManager;
+
         private readonly UserManager<IdentityUser> _userManager;
+
+        #endregion
+
+        #region [ Public Constructors ]
+
         public CustomUserManager(ICustomTokenManager customTokenManager, SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager)
         {
             this.customTokenManager = customTokenManager;
             _signInManager = signInManager;
             _userManager = userManager;
         }
+
+        #endregion
+
+        #region [ Public Methods ]
 
         public async Task<(string jwtToken, string refreshToken)> Authenticate(LoginDTO user)
         {
@@ -39,9 +52,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Managers.Implementations
 
             // Account is locked
             if (result.IsLockedOut) throw new ApiProblemDetailsException("I am a teapot", 418);
-
             else throw new ApiProblemDetailsException("Wrong credentials", 400);
-
         }
 
         public async Task<bool> SaveRefreshToken(string userId, string refreshToken)
@@ -80,5 +91,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Managers.Implementations
                 throw new ApiProblemDetailsException("No refresh token found. Please re-login to get a new one.", 400);
             }
         }
+
+        #endregion
     }
 }

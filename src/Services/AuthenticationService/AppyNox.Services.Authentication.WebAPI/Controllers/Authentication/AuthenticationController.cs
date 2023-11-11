@@ -5,16 +5,23 @@ using AppyNox.Services.Authentication.WebAPI.Managers.Interfaces;
 using AutoWrapper.Wrappers;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json.Linq;
 
 namespace AppyNox.Services.Authentication.WebAPI.Controllers.Authentication
 {
     [ApiController]
     public class AuthenticationController : ControllerBase
     {
+        #region [ Fields ]
+
         private readonly ICustomUserManager _customUserManager;
+
         private readonly ICustomTokenManager _customTokenManager;
+
         private readonly IValidator<LoginDTO> _loginDtoValidator;
+
+        #endregion
+
+        #region [ Public Constructors ]
 
         public AuthenticationController(ICustomUserManager customUserManager,
             ICustomTokenManager customTokenManager, IValidator<LoginDTO> loginDtoValidator)
@@ -23,6 +30,8 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers.Authentication
             _customTokenManager = customTokenManager;
             _loginDtoValidator = loginDtoValidator;
         }
+
+        #endregion
 
         #region [ JWT Operations ]
 
@@ -34,7 +43,6 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers.Authentication
             ValidationHandler.HandleValidationResult(ModelState, validationResult);
 
             var tokens = await _customUserManager.Authenticate(userCredential);
-
 
             if (string.IsNullOrEmpty(tokens.jwtToken) || string.IsNullOrEmpty(tokens.refreshToken))
             {
@@ -86,6 +94,5 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers.Authentication
         }
 
         #endregion
-
     }
 }

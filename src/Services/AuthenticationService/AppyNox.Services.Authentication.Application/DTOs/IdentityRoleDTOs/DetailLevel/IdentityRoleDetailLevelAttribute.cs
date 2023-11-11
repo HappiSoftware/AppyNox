@@ -1,23 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 
 namespace AppyNox.Services.Authentication.Application.DTOs.IdentityRoleDTOs.DetailLevel
 {
-    public class IdentityRoleDetailLevelAttribute : Attribute
-    {
-        public IdentityRoleDetailLevel DetailLevel { get; }
-
-        public IdentityRoleDetailLevelAttribute(IdentityRoleDetailLevel level)
-        {
-            DetailLevel = level;
-        }
-
-    }
-
     public enum IdentityRoleDetailLevel
     {
         [Description("Basic")]
@@ -28,5 +12,23 @@ namespace AppyNox.Services.Authentication.Application.DTOs.IdentityRoleDTOs.Deta
 
         [Description("WithAllProperties")]
         WithAllProperties
+    }
+
+    public class IdentityRoleDetailLevelAttribute : Attribute
+    {
+        #region [ Public Constructors ]
+
+        public IdentityRoleDetailLevelAttribute(IdentityRoleDetailLevel level)
+        {
+            DetailLevel = level;
+        }
+
+        #endregion
+
+        #region [ Properties ]
+
+        public IdentityRoleDetailLevel DetailLevel { get; }
+
+        #endregion
     }
 }

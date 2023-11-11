@@ -6,6 +6,8 @@ namespace AppyNox.Services.Coupon.WebAPI.Helpers
 {
     public static class ValidationHandler
     {
+        #region [ Public Methods ]
+
         public static void HandleValidationResult(ModelStateDictionary modelState, ValidationResult validationResult)
         {
             if (!validationResult.IsValid)
@@ -17,5 +19,7 @@ namespace AppyNox.Services.Coupon.WebAPI.Helpers
                 throw new ApiProblemDetailsException(modelState);
             }
         }
+
+        #endregion
     }
 }

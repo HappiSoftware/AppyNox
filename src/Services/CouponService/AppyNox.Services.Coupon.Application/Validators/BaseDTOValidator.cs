@@ -1,16 +1,13 @@
 ﻿using AppyNox.Services.Coupon.Application.DTOs;
 using AppyNox.Services.Coupon.Application.Validators.SharedRules;
 using FluentValidation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AppyNox.Services.Coupon.Application.Validators
 {
     public class BaseDTOValidator<T> : AbstractValidator<T> where T : BaseDTO
     {
+        #region [ Public Constructors ]
+
         public BaseDTOValidator()
         {
             RuleFor(dto => dto.Description).ValidateDescription();
@@ -23,8 +20,9 @@ namespace AppyNox.Services.Coupon.Application.Validators
                 // After check for id
                 RuleFor(updateDto => ((IUpdateDTO)updateDto).Id).ValidateId()
                     .When(updateDto => updateDto is IUpdateDTO);
-
             }
         }
+
+        #endregion
     }
 }

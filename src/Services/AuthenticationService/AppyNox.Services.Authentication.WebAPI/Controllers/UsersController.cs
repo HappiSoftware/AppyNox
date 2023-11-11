@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Security;
 
 namespace AppyNox.Services.Authentication.WebAPI.Controllers
 {
@@ -21,14 +20,27 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
     [JwtTokenValidate]
     public class UsersController : ControllerBase
     {
+        #region [ Fields ]
+
         private readonly UserManager<IdentityUser> _userManager;
+
         private readonly RoleManager<IdentityRole> _roleManager;
+
         private readonly IUserValidator<IdentityUser> _userValidator;
+
         private readonly IMapper _mapper;
+
         private readonly DtoMappingHelper<IdentityUser> _dtoMappingHelper;
+
         private readonly PasswordValidator<IdentityUser> _passwordValidator;
+
         private readonly PasswordHasher<IdentityUser> _passwordHasher;
+
         private readonly IdentityUserCreateDTOValidator _identityUserCreateDTOValidator;
+
+        #endregion
+
+        #region [ Public Constructors ]
 
         public UsersController(IMapper mapper, UserManager<IdentityUser> userManager,
             DtoMappingHelper<IdentityUser> dtoMappingHelper,
@@ -45,6 +57,8 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
             _passwordHasher = passwordHasher;
             _identityUserCreateDTOValidator = identityUserCreateDTOValidator;
         }
+
+        #endregion
 
         #region [ CRUD Operations ]
 

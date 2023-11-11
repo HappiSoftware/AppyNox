@@ -9,8 +9,15 @@ namespace AppyNox.Services.Authentication.Application.DtoUtilities
 {
     public class DTOMappingRegistry
     {
+        #region [ Fields ]
+
         private readonly Dictionary<(Type entity, Enum detailLevel), Type> _mappings;
+
         private readonly IDictionary<Type, Type> _entityEnumMappings;
+
+        #endregion
+
+        #region [ Public Constructors ]
 
         public DTOMappingRegistry()
         {
@@ -18,6 +25,10 @@ namespace AppyNox.Services.Authentication.Application.DtoUtilities
             _entityEnumMappings = new Dictionary<Type, Type>();
             RegisterDTOs();
         }
+
+        #endregion
+
+        #region [ Public Methods ]
 
         public void RegisterDTOs()
         {
@@ -47,15 +58,6 @@ namespace AppyNox.Services.Authentication.Application.DtoUtilities
             }
         }
 
-        private void RegisterMapping(Type entityType, Type dtoType, Enum level)
-        {
-            _mappings[(entityType, level)] = dtoType;
-            if (!_entityEnumMappings.ContainsKey(entityType))
-            {
-                _entityEnumMappings.Add(entityType, level.GetType());
-            }
-        }
-
         public Type GetDTOType(Type detailLevelEnumType, Type entityType, string detailLevelDescription)
         {
             Enum level = EnumExtensions.GetEnumValueFromDescription(detailLevelEnumType, detailLevelDescription);
@@ -79,6 +81,20 @@ namespace AppyNox.Services.Authentication.Application.DtoUtilities
         {
             return "Basic";
         }
-    }
 
+        #endregion
+
+        #region [ Private Methods ]
+
+        private void RegisterMapping(Type entityType, Type dtoType, Enum level)
+        {
+            _mappings[(entityType, level)] = dtoType;
+            if (!_entityEnumMappings.ContainsKey(entityType))
+            {
+                _entityEnumMappings.Add(entityType, level.GetType());
+            }
+        }
+
+        #endregion
+    }
 }

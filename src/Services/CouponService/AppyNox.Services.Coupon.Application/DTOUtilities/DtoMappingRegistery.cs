@@ -2,19 +2,21 @@
 using AppyNox.Services.Coupon.Application.DTOs.Coupon.Models;
 using AppyNox.Services.Coupon.Application.ExceptionExtensions;
 using AppyNox.Services.Coupon.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AppyNox.Services.Coupon.Application.DTOUtilities
 {
     public class DTOMappingRegistry
     {
+        #region [ Fields ]
+
         private readonly Dictionary<(Type entity, Enum detailLevel), Type> _mappings;
+
         private readonly IDictionary<Type, Type> _entityEnumMappings;
+
+        #endregion
+
+        #region [ Public Constructors ]
 
         public DTOMappingRegistry()
         {
@@ -22,6 +24,10 @@ namespace AppyNox.Services.Coupon.Application.DTOUtilities
             _entityEnumMappings = new Dictionary<Type, Type>();
             RegisterDTOs();
         }
+
+        #endregion
+
+        #region [ Public Methods ]
 
         public void RegisterDTOs()
         {
@@ -47,15 +53,6 @@ namespace AppyNox.Services.Coupon.Application.DTOUtilities
             }
         }
 
-        private void RegisterMapping(Type entityType, Type dtoType, Enum level)
-        {
-            _mappings[(entityType, level)] = dtoType;
-            if (!_entityEnumMappings.ContainsKey(entityType))
-            {
-                _entityEnumMappings.Add(entityType, level.GetType());
-            }
-        }
-
         public Type GetDTOType(Type detailLevelEnumType, Type entityType, string detailLevelDescription)
         {
             Enum level = EnumExtensions.GetEnumValueFromDescription(detailLevelEnumType, detailLevelDescription);
@@ -74,5 +71,20 @@ namespace AppyNox.Services.Coupon.Application.DTOUtilities
             }
             throw new InvalidOperationException($"No detail level type found for entity type {entityType.FullName}.");
         }
+
+        #endregion
+
+        #region [ Private Methods ]
+
+        private void RegisterMapping(Type entityType, Type dtoType, Enum level)
+        {
+            _mappings[(entityType, level)] = dtoType;
+            if (!_entityEnumMappings.ContainsKey(entityType))
+            {
+                _entityEnumMappings.Add(entityType, level.GetType());
+            }
+        }
+
+        #endregion
     }
 }

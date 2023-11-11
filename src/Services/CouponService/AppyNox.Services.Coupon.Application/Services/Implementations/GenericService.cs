@@ -4,11 +4,6 @@ using AppyNox.Services.Coupon.Domain.Common;
 using AppyNox.Services.Coupon.Domain.Interfaces;
 using AppyNox.Services.Coupon.Infrastructure.ExceptionExtensions;
 using AutoMapper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AppyNox.Services.Coupon.Application.Services.Implementations
 {
@@ -18,11 +13,21 @@ namespace AppyNox.Services.Coupon.Application.Services.Implementations
     where TCreateDTO : class
     where TUpdateDTO : class
     {
+        #region [ Fields ]
+
         private readonly IGenericRepository<TEntity> _repository;
+
         private readonly IMapper _mapper;
+
         private readonly DTOMappingRegistry _dtoMappingRegistry;
+
         private readonly Type _detailLevelsEnum;
+
         private readonly IUnitOfWork _unitOfWork;
+
+        #endregion
+
+        #region [ Public Constructors ]
 
         public GenericService(IGenericRepository<TEntity> repository, IMapper mapper, DTOMappingRegistry dtoMappingRegistry, IUnitOfWork unitOfWork)
         {
@@ -32,6 +37,10 @@ namespace AppyNox.Services.Coupon.Application.Services.Implementations
             _detailLevelsEnum = _dtoMappingRegistry.GetDetailLevelType(typeof(TEntity));
             _unitOfWork = unitOfWork;
         }
+
+        #endregion
+
+        #region [ Public Methods ]
 
         public async Task<IEnumerable<dynamic>> GetAllAsync(QueryParameters queryParameters, string? detailLevel)
         {
@@ -97,6 +106,8 @@ namespace AppyNox.Services.Coupon.Application.Services.Implementations
             _repository.DeleteAsync(entity);
             await _unitOfWork.SaveChangesAsync();
         }
+
+        #endregion
 
         #region [ Private Methods ]
 

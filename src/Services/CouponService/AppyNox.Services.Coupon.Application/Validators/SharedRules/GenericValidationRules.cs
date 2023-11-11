@@ -1,14 +1,11 @@
 ﻿using FluentValidation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AppyNox.Services.Coupon.Application.Validators.SharedRules
 {
     public static class GenericValidationRules
     {
+        #region [ Public Methods ]
+
         public static IRuleBuilderOptions<T, string?> ValidateDescription<T>(this IRuleBuilder<T, string?> ruleBuilder)
         {
             return ruleBuilder
@@ -23,5 +20,7 @@ namespace AppyNox.Services.Coupon.Application.Validators.SharedRules
                 .NotEmpty()
                 .WithMessage("Id cannot be null");
         }
+
+        #endregion
     }
 }

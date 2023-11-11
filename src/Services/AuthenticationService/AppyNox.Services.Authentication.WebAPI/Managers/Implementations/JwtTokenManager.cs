@@ -2,23 +2,28 @@
 using AppyNox.Services.Authentication.WebAPI.Managers.Interfaces;
 using AutoWrapper.Wrappers;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using System.Data;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
-using System.Text;
 
 namespace AppyNox.Services.Authentication.WebAPI.Managers.Implementations
 {
     public class JwtTokenManager : ICustomTokenManager
     {
-        private JwtSecurityTokenHandler _tokenHandler;
+        #region [ Fields ]
+
         private readonly UserManager<IdentityUser> _userManager;
+
         private readonly RoleManager<IdentityRole> _roleManager;
+
         private readonly JwtConfiguration _jwtConfiguration;
+
+        private JwtSecurityTokenHandler _tokenHandler;
+
+        #endregion
+
+        #region [ Public Constructors ]
 
         public JwtTokenManager(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, JwtConfiguration jwtConfiguration)
         {
@@ -27,6 +32,8 @@ namespace AppyNox.Services.Authentication.WebAPI.Managers.Implementations
             _tokenHandler = new JwtSecurityTokenHandler();
             _jwtConfiguration = jwtConfiguration;
         }
+
+        #endregion
 
         #region [ JWT Token ]
 
@@ -44,7 +51,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Managers.Implementations
             //create an empty list for userClaims
             IEnumerable<Claim> userClaims = Enumerable.Empty<Claim>();
 
-            //fill userClaim with associated claims 
+            //fill userClaim with associated claims
             foreach (var item in roles)
             {
                 var role = await _roleManager.FindByNameAsync(item);
@@ -68,8 +75,8 @@ namespace AppyNox.Services.Authentication.WebAPI.Managers.Implementations
 
             var token = _tokenHandler.CreateToken(tokenDescriptor);
             return _tokenHandler.WriteToken(token);
-
         }
+
         public string GetUserInfoByToken(string token)
         {
             if (string.IsNullOrWhiteSpace(token)) return string.Empty;
