@@ -1,14 +1,14 @@
-﻿using AppyNox.Services.Authentication.Application.DTOs.ClaimDTOs;
-using AppyNox.Services.Authentication.Application.DTOs.IdentityRoleDTOs.DetailLevel;
+﻿using AppyNox.Services.Authentication.Application.Dtos.ClaimDtos;
+using AppyNox.Services.Authentication.Application.Dtos.IdentityRoleDtos.DetailLevel;
 
-namespace AppyNox.Services.Authentication.Application.DTOs.IdentityRoleDTOs.Models
+namespace AppyNox.Services.Authentication.Application.Dtos.IdentityRoleDtos.Models
 {
     [IdentityRoleDetailLevel(IdentityRoleDetailLevel.WithClaims)]
-    public class IdentityRoleWithClaimsDTO : IdentityRoleDTO
+    public class IdentityRoleWithClaimsDto : IdentityRoleDto
     {
         #region [ Properties ]
 
-        public IList<ClaimDTO>? Claims { get; set; }
+        public IList<ClaimDto>? Claims { get; set; }
 
         #endregion
     }

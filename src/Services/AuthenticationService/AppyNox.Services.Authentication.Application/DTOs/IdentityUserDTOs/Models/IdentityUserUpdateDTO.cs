@@ -1,6 +1,6 @@
-﻿namespace AppyNox.Services.Authentication.Application.DTOs.IdentityUserDTOs.Models
+﻿namespace AppyNox.Services.Authentication.Application.Dtos.IdentityUserDtos.Models
 {
-    public class IdentityUserUpdateDTO
+    public class IdentityUserUpdateDto
     {
         #region [ Properties ]
 

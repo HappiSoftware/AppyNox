@@ -1,6 +1,6 @@
-﻿namespace AppyNox.Services.Authentication.Application.DTOs.ClaimDTOs
+﻿namespace AppyNox.Services.Authentication.Application.Dtos.ClaimDtos
 {
-    public class ClaimDTO
+    public class ClaimDto
     {
         #region [ Properties ]
 

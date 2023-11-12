@@ -1,6 +1,6 @@
-﻿namespace AppyNox.Services.Authentication.Application.DTOs.RefreshTokenDTOs
+﻿namespace AppyNox.Services.Authentication.Application.Dtos.RefreshTokenDtos
 {
-    public class RefreshTokenDTO
+    public class RefreshTokenDto
     {
         #region [ Properties ]
 

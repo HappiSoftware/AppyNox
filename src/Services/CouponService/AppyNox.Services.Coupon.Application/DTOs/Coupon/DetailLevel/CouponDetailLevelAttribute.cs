@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace AppyNox.Services.Coupon.Application.DTOs.Coupon.DetailLevel
+namespace AppyNox.Services.Coupon.Application.Dtos.Coupon.DetailLevel
 {
     public enum CouponDetailLevel
     {
@@ -14,6 +14,7 @@ namespace AppyNox.Services.Coupon.Application.DTOs.Coupon.DetailLevel
         WithAllProperties
     }
 
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
     public class CouponDetailLevelAttribute : Attribute
     {
         #region [ Public Constructors ]

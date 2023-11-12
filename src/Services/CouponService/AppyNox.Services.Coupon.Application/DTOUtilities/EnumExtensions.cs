@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace AppyNox.Services.Coupon.Application.DTOUtilities
+namespace AppyNox.Services.Coupon.Application.DtoUtilities
 {
     internal static class EnumExtensions
     {

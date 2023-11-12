@@ -1,8 +1,8 @@
-﻿using AppyNox.Services.Authentication.Application.DTOs.IdentityRoleDTOs.Models;
+﻿using AppyNox.Services.Authentication.Application.Dtos.IdentityRoleDtos.Models;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 
-namespace AppyNox.Services.Authentication.Application.DTOs.IdentityRoleDTOs.Mappings
+namespace AppyNox.Services.Authentication.Application.Dtos.IdentityRoleDtos.Mappings
 {
     public class IdentityRoleMapping : Profile
     {
@@ -10,11 +10,11 @@ namespace AppyNox.Services.Authentication.Application.DTOs.IdentityRoleDTOs.Mapp
 
         public IdentityRoleMapping()
         {
-            CreateMap<IdentityRoleCreateDTO, IdentityRole>();
-            CreateMap<IdentityRoleDTO, IdentityRole>().ReverseMap();
-            CreateMap<IdentityRoleUpdateDTO, IdentityRole>();
-            CreateMap<IdentityRole, IdentityRoleWithClaimsDTO>();
-            CreateMap<IdentityRole, IdentityRoleWithAllPropertiesDTO>();
+            CreateMap<IdentityRoleCreateDto, IdentityRole>();
+            CreateMap<IdentityRoleDto, IdentityRole>().ReverseMap();
+            CreateMap<IdentityRoleUpdateDto, IdentityRole>();
+            CreateMap<IdentityRole, IdentityRoleWithClaimsDto>();
+            CreateMap<IdentityRole, IdentityRoleWithAllPropertiesDto>();
         }
 
         #endregion

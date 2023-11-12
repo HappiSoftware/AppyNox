@@ -59,7 +59,7 @@ namespace AppyNox.Services.Coupon.Infrastructure.Data
 
         #region [ Private Methods ]
 
-        private void ConfigureCoupon(ModelBuilder modelBuilder)
+        private static void ConfigureCoupon(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new CouponConfiguration());
 

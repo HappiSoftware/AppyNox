@@ -1,40 +1,40 @@
-﻿using AppyNox.Services.Coupon.Application.DTOs.Coupon.DetailLevel;
-using AppyNox.Services.Coupon.Application.DTOs.Coupon.Models;
+﻿using AppyNox.Services.Coupon.Application.Dtos.Coupon.DetailLevel;
+using AppyNox.Services.Coupon.Application.Dtos.Coupon.Models;
 using AppyNox.Services.Coupon.Application.ExceptionExtensions;
 using AppyNox.Services.Coupon.Domain.Entities;
 using System.Reflection;
 
-namespace AppyNox.Services.Coupon.Application.DTOUtilities
+namespace AppyNox.Services.Coupon.Application.DtoUtilities
 {
-    public class DTOMappingRegistry
+    public class DtoMappingRegistry
     {
         #region [ Fields ]
 
         private readonly Dictionary<(Type entity, Enum detailLevel), Type> _mappings;
 
-        private readonly IDictionary<Type, Type> _entityEnumMappings;
+        private readonly Dictionary<Type, Type> _entityEnumMappings;
 
         #endregion
 
         #region [ Public Constructors ]
 
-        public DTOMappingRegistry()
+        public DtoMappingRegistry()
         {
             _mappings = new Dictionary<(Type, Enum), Type>();
             _entityEnumMappings = new Dictionary<Type, Type>();
-            RegisterDTOs();
+            RegisterDtos();
         }
 
         #endregion
 
         #region [ Public Methods ]
 
-        public void RegisterDTOs()
+        public void RegisterDtos()
         {
-            // Scan for DTOs in the Application assembly
-            var dtoTypes = Assembly.GetAssembly(typeof(CouponDTO))?
+            // Scan for Dtos in the Application assembly
+            var dtoTypes = Assembly.GetAssembly(typeof(CouponDto))?
                 .GetTypes()
-                .Where(t => t.Namespace != null && t.Namespace.Contains("Application.DTOs") && t.Namespace.EndsWith("Models"))
+                .Where(t => t.Namespace != null && t.Namespace.Contains("Application.Dtos") && t.Namespace.EndsWith("Models"))
                 .ToList();
 
             if (dtoTypes == null)
@@ -53,14 +53,14 @@ namespace AppyNox.Services.Coupon.Application.DTOUtilities
             }
         }
 
-        public Type GetDTOType(Type detailLevelEnumType, Type entityType, string detailLevelDescription)
+        public Type GetDtoType(Type detailLevelEnumType, Type entityType, string detailLevelDescription)
         {
             Enum level = EnumExtensions.GetEnumValueFromDescription(detailLevelEnumType, detailLevelDescription);
             if (_mappings.TryGetValue((entityType, level), out var dtoType))
             {
                 return dtoType;
             }
-            throw new DetailLevelNotFoundException($"No DTO type mapping found for entity type {entityType} and detail level {level}.");
+            throw new DetailLevelNotFoundException($"No Dto type mapping found for entity type {entityType} and detail level {level}.");
         }
 
         public Type GetDetailLevelType(Type entityType)

@@ -22,14 +22,12 @@ namespace AppyNox.Services.Coupon.Infrastructure
 
         public static void ApplyMigrations(IServiceProvider serviceProvider)
         {
-            using (var scope = serviceProvider.CreateScope())
-            {
-                var _db = scope.ServiceProvider.GetRequiredService<CouponDbContext>();
+            using var scope = serviceProvider.CreateScope();
+            var _db = scope.ServiceProvider.GetRequiredService<CouponDbContext>();
 
-                //if (_db.Database.GetPendingMigrations().Any())
-                //{
-                //    _db.Database.Migrate();
-                //}
+            if (_db.Database.GetPendingMigrations().Any())
+            {
+                _db.Database.Migrate();
             }
         }
 

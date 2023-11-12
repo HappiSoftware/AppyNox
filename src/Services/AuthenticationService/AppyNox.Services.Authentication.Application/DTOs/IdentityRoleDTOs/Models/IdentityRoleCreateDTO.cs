@@ -1,6 +1,6 @@
-﻿namespace AppyNox.Services.Authentication.Application.DTOs.IdentityRoleDTOs.Models
+﻿namespace AppyNox.Services.Authentication.Application.Dtos.IdentityRoleDtos.Models
 {
-    public class IdentityRoleCreateDTO
+    public class IdentityRoleCreateDto
     {
         #region [ Properties ]
 

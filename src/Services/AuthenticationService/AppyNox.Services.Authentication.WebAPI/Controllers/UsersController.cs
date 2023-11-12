@@ -1,6 +1,7 @@
-﻿using AppyNox.Services.Authentication.Application.DTOs.IdentityRoleDTOs.Models;
-using AppyNox.Services.Authentication.Application.DTOs.IdentityUserDTOs.Models;
+﻿using AppyNox.Services.Authentication.Application.Dtos.IdentityRoleDtos.Models;
+using AppyNox.Services.Authentication.Application.Dtos.IdentityUserDtos.Models;
 using AppyNox.Services.Authentication.Application.Validators;
+using AppyNox.Services.Authentication.WebAPI.ControllerDependencies;
 using AppyNox.Services.Authentication.WebAPI.Filters;
 using AppyNox.Services.Authentication.WebAPI.Helpers;
 using AppyNox.Services.Authentication.WebAPI.Utilities;
@@ -22,40 +23,19 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
     {
         #region [ Fields ]
 
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly IdentityUserCreateDtoValidator _identityUserCreateDtoValidator;
 
-        private readonly RoleManager<IdentityRole> _roleManager;
-
-        private readonly IUserValidator<IdentityUser> _userValidator;
-
-        private readonly IMapper _mapper;
-
-        private readonly DtoMappingHelper<IdentityUser> _dtoMappingHelper;
-
-        private readonly PasswordValidator<IdentityUser> _passwordValidator;
-
-        private readonly PasswordHasher<IdentityUser> _passwordHasher;
-
-        private readonly IdentityUserCreateDTOValidator _identityUserCreateDTOValidator;
+        private readonly UsersControllerBaseDependencies _baseDependencies;
 
         #endregion
 
         #region [ Public Constructors ]
 
-        public UsersController(IMapper mapper, UserManager<IdentityUser> userManager,
-            DtoMappingHelper<IdentityUser> dtoMappingHelper,
-            IUserValidator<IdentityUser> userValidator, RoleManager<IdentityRole> roleManager, PasswordValidator<IdentityUser> passwordValidator,
-            PasswordHasher<IdentityUser> passwordHasher,
-            IdentityUserCreateDTOValidator identityUserCreateDTOValidator)
+        public UsersController(UsersControllerBaseDependencies usersControllerBaseDependencies,
+            IdentityUserCreateDtoValidator identityUserCreateDtoValidator)
         {
-            _mapper = mapper;
-            _userManager = userManager;
-            _dtoMappingHelper = dtoMappingHelper;
-            _userValidator = userValidator;
-            _roleManager = roleManager;
-            _passwordValidator = passwordValidator;
-            _passwordHasher = passwordHasher;
-            _identityUserCreateDTOValidator = identityUserCreateDTOValidator;
+            _baseDependencies = usersControllerBaseDependencies;
+            _identityUserCreateDtoValidator = identityUserCreateDtoValidator;
         }
 
         #endregion
@@ -66,11 +46,11 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
         [Authorize(Permissions.Users.View)]
         public async Task<ApiResponse> GetAll([FromQuery] string? detailLevel)
         {
-            var entities = await _userManager.Users.ToListAsync();
+            var entities = await _baseDependencies.UserManager.Users.ToListAsync();
             object response = new
             {
-                count = _userManager.Users.Count().ToString(),
-                roles = _mapper.Map(entities, entities.GetType(), typeof(IEnumerable<>).MakeGenericType(_dtoMappingHelper.GetLeveledDtoType(detailLevel)))
+                count = _baseDependencies.UserManager.Users.Count().ToString(),
+                roles = _baseDependencies.Mapper.Map(entities, entities.GetType(), typeof(IEnumerable<>).MakeGenericType(_baseDependencies.DtoMappingHelper.GetLeveledDtoType(detailLevel)))
             };
 
             return new ApiResponse(response);
@@ -81,36 +61,36 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
         [GuidCheckFilter]
         public async Task<ApiResponse> GetById(string id, [FromQuery] string? detailLevel)
         {
-            var identityUser = await _userManager.FindByIdAsync(id);
+            var identityUser = await _baseDependencies.UserManager.FindByIdAsync(id);
 
             if (identityUser == null)
             {
                 throw new ApiProblemDetailsException("Not Found", 404);
             }
 
-            return new ApiResponse(_mapper.Map(identityUser, identityUser.GetType(), _dtoMappingHelper.GetLeveledDtoType(detailLevel)));
+            return new ApiResponse(_baseDependencies.Mapper.Map(identityUser, identityUser.GetType(), _baseDependencies.DtoMappingHelper.GetLeveledDtoType(detailLevel)));
         }
 
         [HttpPut("{id}")]
         [Authorize(Permissions.Users.Edit)]
         [GuidCheckFilter]
-        public async Task<IActionResult> Put(string id, IdentityUserUpdateDTO identityUserUpdateDTO)
+        public async Task<IActionResult> Put(string id, IdentityUserUpdateDto identityUserUpdateDto)
         {
-            if (id != identityUserUpdateDTO.Id)
+            if (id != identityUserUpdateDto.Id)
             {
                 throw new ApiProblemDetailsException("Ids don't match", 422);
             }
 
-            var existingUser = await _userManager.FindByIdAsync(id);
+            var existingUser = await _baseDependencies.UserManager.FindByIdAsync(id);
             if (existingUser == null)
             {
                 throw new ApiProblemDetailsException("Role Not Found", 404);
             }
 
             var concurrencyStamp = existingUser.ConcurrencyStamp;
-            existingUser.UserName = identityUserUpdateDTO.UserName;
+            existingUser.UserName = identityUserUpdateDto.UserName;
 
-            var result = await _userValidator.ValidateAsync(_userManager, existingUser);
+            var result = await _baseDependencies.UserValidator.ValidateAsync(_baseDependencies.UserManager, existingUser);
             if (!result.Succeeded)
             {
                 foreach (var error in result.Errors)
@@ -123,7 +103,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
             try
             {
                 existingUser.ConcurrencyStamp = concurrencyStamp;
-                IdentityResult identityResuls = await _userManager.UpdateAsync(existingUser);
+                IdentityResult identityResuls = await _baseDependencies.UserManager.UpdateAsync(existingUser);
                 if (!identityResuls.Succeeded)
                 {
                     foreach (var item in identityResuls.Errors)
@@ -150,9 +130,9 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
 
         [HttpPost]
         [Authorize(Permissions.Users.Create)]
-        public async Task<ApiResponse> Post(IdentityUserCreateDTO registerDTO)
+        public async Task<ApiResponse> Post(IdentityUserCreateDto registerDto)
         {
-            var dtoValidationResult = await _identityUserCreateDTOValidator.ValidateAsync(registerDTO);
+            var dtoValidationResult = await _identityUserCreateDtoValidator.ValidateAsync(registerDto);
             if (!dtoValidationResult.IsValid)
             {
                 foreach (var error in dtoValidationResult.Errors)
@@ -162,8 +142,8 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
                 throw new ApiProblemDetailsException(ModelState);
             }
 
-            var userEntity = _mapper.Map<IdentityUser>(registerDTO);
-            var result = await _userValidator.ValidateAsync(_userManager, userEntity);
+            var userEntity = _baseDependencies.Mapper.Map<IdentityUser>(registerDto);
+            var result = await _baseDependencies.UserValidator.ValidateAsync(_baseDependencies.UserManager, userEntity);
             if (!result.Succeeded)
             {
                 foreach (var error in result.Errors)
@@ -173,7 +153,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
                 throw new ApiProblemDetailsException(ModelState);
             }
 
-            var passwordResult = await _passwordValidator.ValidateAsync(_userManager, userEntity, registerDTO.Password);
+            var passwordResult = await _baseDependencies.PasswordValidator.ValidateAsync(_baseDependencies.UserManager, userEntity, registerDto.Password);
 
             if (!passwordResult.Succeeded)
             {
@@ -184,13 +164,13 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
                 throw new ApiProblemDetailsException(ModelState);
             }
 
-            userEntity.PasswordHash = _passwordHasher.HashPassword(userEntity, registerDTO.Password);
-            await _userManager.CreateAsync(userEntity);
+            userEntity.PasswordHash = _baseDependencies.PasswordHasher.HashPassword(userEntity, registerDto.Password);
+            await _baseDependencies.UserManager.CreateAsync(userEntity);
 
             object response = new
             {
                 id = userEntity.Id,
-                value = registerDTO
+                value = registerDto
             };
 
             return new ApiResponse("New record has been created in the database.", response, 201);
@@ -201,13 +181,13 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
         [GuidCheckFilter]
         public async Task<IActionResult> Delete(string id)
         {
-            var identityUser = await _userManager.FindByIdAsync(id);
+            var identityUser = await _baseDependencies.UserManager.FindByIdAsync(id);
             if (identityUser == null)
             {
                 throw new ApiProblemDetailsException("Not Found", 404);
             }
 
-            await _userManager.DeleteAsync(identityUser);
+            await _baseDependencies.UserManager.DeleteAsync(identityUser);
 
             return NoContent();
         }
@@ -218,7 +198,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
 
         private async Task<bool> IdentityUserExists(string id)
         {
-            return await _userManager.Users.AnyAsync(u => id == u.Id);
+            return await _baseDependencies.UserManager.Users.AnyAsync(u => id == u.Id);
         }
 
         #endregion
@@ -228,40 +208,40 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
         [HttpGet]
         [Authorize(Permissions.Users.View)]
         [Route("/api/Users/{uid}/Roles")]
-        [GuidCheckFilter(new string[] { "uid" })]
+        [GuidCheckFilter("uid")]
         public async Task<ApiResponse> GetRoles(string uid)
         {
-            var user = await _userManager.FindByIdAsync(uid);
+            var user = await _baseDependencies.UserManager.FindByIdAsync(uid);
             if (user == null)
                 throw new ApiProblemDetailsException($"Record with id: {uid} does not exist.", 404);
-            IList<string> roleNames = await _userManager.GetRolesAsync(user);
-            IList<IdentityRoleDTO> roles = new List<IdentityRoleDTO>();
+            IList<string> roleNames = await _baseDependencies.UserManager.GetRolesAsync(user);
+            List<IdentityRoleDto> roles = new List<IdentityRoleDto>();
 
             foreach (var item in roleNames)
             {
-                roles.Add(_mapper.Map<IdentityRoleDTO>(await _roleManager.FindByNameAsync(item)));
+                roles.Add(_baseDependencies.Mapper.Map<IdentityRoleDto>(await _baseDependencies.RoleManager.FindByNameAsync(item)));
             }
 
-            var userWithRolesDTO = _mapper.Map<IdentityUserWithRolesDTO>(user);
-            userWithRolesDTO.Roles = roles;
-            return new ApiResponse(userWithRolesDTO);
+            var userWithRolesDto = _baseDependencies.Mapper.Map<IdentityUserWithRolesDto>(user);
+            userWithRolesDto.Roles = roles;
+            return new ApiResponse(userWithRolesDto);
         }
 
         [HttpPost]
         [Authorize(Permissions.Users.Edit)]
         [Route("/api/Users/{uid}/Roles/{rid}")]
-        [GuidCheckFilter(new string[] { "uid", "rid" })]
+        [GuidCheckFilter("uid,rid")]
         public async Task<ApiResponse> AssignRole(string uid, string rid)
         {
-            var user = await _userManager.FindByIdAsync(uid);
-            var role = await _roleManager.FindByIdAsync(rid);
+            var user = await _baseDependencies.UserManager.FindByIdAsync(uid);
+            var role = await _baseDependencies.RoleManager.FindByIdAsync(rid);
             if (user == null)
                 throw new ApiProblemDetailsException($"Record with id: {uid} does not exist.", 404);
             if (role == null || string.IsNullOrEmpty(role.Name))
                 throw new ApiProblemDetailsException($"Record with id: {rid} does not exist.", 404);
 
             //Assign the role from user
-            IdentityResult response = await _userManager.AddToRoleAsync(user, role.Name);
+            IdentityResult response = await _baseDependencies.UserManager.AddToRoleAsync(user, role.Name);
             if (!response.Succeeded)
             {
                 foreach (var error in response.Errors)
@@ -270,36 +250,36 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
                 }
                 throw new ApiProblemDetailsException(ModelState);
             }
-            IList<string> roleNames = await _userManager.GetRolesAsync(user);
+            IList<string> roleNames = await _baseDependencies.UserManager.GetRolesAsync(user);
 
-            IList<IdentityRoleDTO> roles = new List<IdentityRoleDTO>();
+            List<IdentityRoleDto> roles = new List<IdentityRoleDto>();
 
             foreach (var item in roleNames)
             {
-                roles.Add(_mapper.Map<IdentityRoleDTO>(await _roleManager.FindByNameAsync(item)));
+                roles.Add(_baseDependencies.Mapper.Map<IdentityRoleDto>(await _baseDependencies.RoleManager.FindByNameAsync(item)));
             }
 
-            var userWithRolesDTO = _mapper.Map<IdentityUserWithRolesDTO>(user);
-            userWithRolesDTO.Roles = roles;
+            var userWithRolesDto = _baseDependencies.Mapper.Map<IdentityUserWithRolesDto>(user);
+            userWithRolesDto.Roles = roles;
 
-            return new ApiResponse("Role assigned to user successfully.", userWithRolesDTO);
+            return new ApiResponse("Role assigned to user successfully.", userWithRolesDto);
         }
 
         [HttpDelete]
         [Authorize(Permissions.Users.Edit)]
         [Route("/api/Users/{uid}/Roles/{rid}")]
-        [GuidCheckFilter(new string[] { "uid", "rid" })]
+        [GuidCheckFilter("uid,rid")]
         public async Task<IActionResult> WithdrawRole(string uid, string rid)
         {
-            var user = await _userManager.FindByIdAsync(uid);
-            var role = await _roleManager.FindByIdAsync(rid);
+            var user = await _baseDependencies.UserManager.FindByIdAsync(uid);
+            var role = await _baseDependencies.RoleManager.FindByIdAsync(rid);
             if (user == null)
                 throw new ApiProblemDetailsException($"Record with id: {uid} does not exist.", 404);
             if (role == null || string.IsNullOrEmpty(role.Name))
                 throw new ApiProblemDetailsException($"Record with id: {rid} does not exist.", 404);
 
             //Withdraw the role from user
-            IdentityResult response = await _userManager.RemoveFromRoleAsync(user, role.Name);
+            IdentityResult response = await _baseDependencies.UserManager.RemoveFromRoleAsync(user, role.Name);
 
             if (!response.Succeeded)
             {

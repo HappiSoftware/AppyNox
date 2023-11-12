@@ -1,4 +1,4 @@
-﻿namespace AppyNox.Services.Authentication.Application.DTOs
+﻿namespace AppyNox.Services.Authentication.Application.Dtos
 {
     public interface IHasGuid
     {

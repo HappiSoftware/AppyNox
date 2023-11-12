@@ -1,8 +1,8 @@
-﻿using AppyNox.Services.Authentication.Application.DTOs.IdentityUserDTOs.Models;
+﻿using AppyNox.Services.Authentication.Application.Dtos.IdentityUserDtos.Models;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 
-namespace AppyNox.Services.Authentication.Application.DTOs.IdentityUserDTOs.Mappings
+namespace AppyNox.Services.Authentication.Application.Dtos.IdentityUserDtos.Mappings
 {
     public class IdentityUserMapping : Profile
     {
@@ -10,11 +10,11 @@ namespace AppyNox.Services.Authentication.Application.DTOs.IdentityUserDTOs.Mapp
 
         public IdentityUserMapping()
         {
-            CreateMap<IdentityUserCreateDTO, IdentityUser>();
-            CreateMap<IdentityUserDTO, IdentityUser>().ReverseMap();
-            CreateMap<IdentityUserUpdateDTO, IdentityUser>();
-            CreateMap<IdentityUser, IdentityUserWithRolesDTO>();
-            CreateMap<IdentityUser, IdentityUserWithAllPropertiesDTO>();
+            CreateMap<IdentityUserCreateDto, IdentityUser>();
+            CreateMap<IdentityUserDto, IdentityUser>().ReverseMap();
+            CreateMap<IdentityUserUpdateDto, IdentityUser>();
+            CreateMap<IdentityUser, IdentityUserWithRolesDto>();
+            CreateMap<IdentityUser, IdentityUserWithAllPropertiesDto>();
         }
 
         #endregion

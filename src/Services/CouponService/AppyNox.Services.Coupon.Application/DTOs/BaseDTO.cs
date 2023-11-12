@@ -1,6 +1,6 @@
-﻿namespace AppyNox.Services.Coupon.Application.DTOs
+﻿namespace AppyNox.Services.Coupon.Application.Dtos
 {
-    public abstract class BaseDTO
+    public abstract class BaseDto
     {
         #region [ Properties ]
 

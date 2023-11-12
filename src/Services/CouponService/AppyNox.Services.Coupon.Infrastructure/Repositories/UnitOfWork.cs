@@ -12,6 +12,8 @@ namespace AppyNox.Services.Coupon.Infrastructure.Repositories
 
         private IDbContextTransaction? _transaction;
 
+        private bool _disposed = false;
+
         #endregion
 
         #region [ Public Constructors ]
@@ -24,6 +26,11 @@ namespace AppyNox.Services.Coupon.Infrastructure.Repositories
         #endregion
 
         #region [ Public Methods ]
+
+        ~UnitOfWork()
+        {
+            Dispose(false);
+        }
 
         public void BeginTransaction()
         {
@@ -56,7 +63,21 @@ namespace AppyNox.Services.Coupon.Infrastructure.Repositories
 
         public void Dispose()
         {
-            _transaction?.Dispose();
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    _transaction?.Dispose();
+                }
+
+                _disposed = true;
+            }
         }
 
         #endregion

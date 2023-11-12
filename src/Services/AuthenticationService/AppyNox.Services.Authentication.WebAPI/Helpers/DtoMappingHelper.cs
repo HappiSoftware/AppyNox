@@ -6,7 +6,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Helpers
     {
         #region [ Fields ]
 
-        private readonly DTOMappingRegistry _dtoMappingRegistry;
+        private readonly DtoMappingRegistry _dtoMappingRegistry;
 
         private readonly Type _detailLevelsEnumType;
 
@@ -14,7 +14,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Helpers
 
         #region [ Public Constructors ]
 
-        public DtoMappingHelper(DTOMappingRegistry dtoMappingRegistry)
+        public DtoMappingHelper(DtoMappingRegistry dtoMappingRegistry)
         {
             _dtoMappingRegistry = dtoMappingRegistry;
             _detailLevelsEnumType = _dtoMappingRegistry.GetDetailLevelType(typeof(TEntity));
@@ -28,10 +28,10 @@ namespace AppyNox.Services.Authentication.WebAPI.Helpers
         {
             if (string.IsNullOrEmpty(detailLevel))
             {
-                detailLevel = _dtoMappingRegistry.GetBasicDetailLevel();
+                detailLevel = _dtoMappingRegistry.BasicDetailLevel;
             }
 
-            return _dtoMappingRegistry.GetDTOType(_detailLevelsEnumType, typeof(TEntity), detailLevel);
+            return _dtoMappingRegistry.GetDtoType(_detailLevelsEnumType, typeof(TEntity), detailLevel);
         }
 
         #endregion

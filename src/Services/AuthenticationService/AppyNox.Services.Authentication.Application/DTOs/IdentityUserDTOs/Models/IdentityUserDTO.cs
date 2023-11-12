@@ -1,9 +1,9 @@
-﻿using AppyNox.Services.Authentication.Application.DTOs.IdentityUserDTOs.DetailLevel;
+﻿using AppyNox.Services.Authentication.Application.Dtos.IdentityUserDtos.DetailLevel;
 
-namespace AppyNox.Services.Authentication.Application.DTOs.IdentityUserDTOs.Models
+namespace AppyNox.Services.Authentication.Application.Dtos.IdentityUserDtos.Models
 {
     [IdentityUserDetailLevel(IdentityUserDetailLevel.Basic)]
-    public class IdentityUserDTO
+    public class IdentityUserDto
     {
         #region [ Properties ]
 

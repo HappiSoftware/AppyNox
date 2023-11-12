@@ -1,25 +1,25 @@
-﻿using AppyNox.Services.Coupon.Application.DTOs;
+﻿using AppyNox.Services.Coupon.Application.Dtos;
 using AppyNox.Services.Coupon.Application.Validators.SharedRules;
 using FluentValidation;
 
 namespace AppyNox.Services.Coupon.Application.Validators
 {
-    public class BaseDTOValidator<T> : AbstractValidator<T> where T : BaseDTO
+    public class BaseDtoValidator<T> : AbstractValidator<T> where T : BaseDto
     {
         #region [ Public Constructors ]
 
-        public BaseDTOValidator()
+        public BaseDtoValidator()
         {
             RuleFor(dto => dto.Description).ValidateDescription();
 
-            if (typeof(IUpdateDTO).IsAssignableFrom(typeof(T)))
+            if (typeof(IUpdateDto).IsAssignableFrom(typeof(T)))
             {
-                // (IUpdateDTO)updateDto might be null, first check that
-                RuleFor(updateDto => updateDto).NotNull().WithMessage("Update DTO cannot be null.");
+                // (IUpdateDto)updateDto might be null, first check that
+                RuleFor(updateDto => updateDto).NotNull().WithMessage("Update Dto cannot be null.");
 
                 // After check for id
-                RuleFor(updateDto => ((IUpdateDTO)updateDto).Id).ValidateId()
-                    .When(updateDto => updateDto is IUpdateDTO);
+                RuleFor(updateDto => ((IUpdateDto)updateDto).Id).ValidateId()
+                    .When(updateDto => updateDto is IUpdateDto);
             }
         }
 

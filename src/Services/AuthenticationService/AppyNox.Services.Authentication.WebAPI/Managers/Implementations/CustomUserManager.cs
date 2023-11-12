@@ -30,9 +30,9 @@ namespace AppyNox.Services.Authentication.WebAPI.Managers.Implementations
 
         #region [ Public Methods ]
 
-        public async Task<(string jwtToken, string refreshToken)> Authenticate(LoginDTO user)
+        public async Task<(string jwtToken, string refreshToken)> Authenticate(LoginDto user)
         {
-            IdentityUser loggedUser = await _userManager.FindByNameAsync(user.UserName) ?? throw new ApiProblemDetailsException("Wrong credentials", 400);
+            var loggedUser = await _userManager.FindByNameAsync(user.UserName);
             if (loggedUser == null || string.IsNullOrEmpty(loggedUser.UserName))
             {
                 throw new ApiProblemDetailsException("Wrong credentials", 400);

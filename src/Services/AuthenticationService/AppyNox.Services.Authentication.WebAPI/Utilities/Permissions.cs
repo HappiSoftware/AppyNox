@@ -1,4 +1,6 @@
-﻿namespace AppyNox.Services.Authentication.WebAPI.Utilities
+﻿using System.Collections.Immutable;
+
+namespace AppyNox.Services.Authentication.WebAPI.Utilities
 {
     public static class Permissions
     {
@@ -20,11 +22,8 @@
 
             public const string WithdrawPermission = "Roles.WithdrawPermission";
 
-            public static readonly List<string> _metrics =
-               new List<string>(new[]
-               {
-                    View,Create,Edit,Delete,AssignPermission,WithdrawPermission
-               });
+            public static readonly ImmutableArray<string> Metrics =
+               [View, Create, Edit, Delete, AssignPermission, WithdrawPermission];
 
             #endregion
         }
@@ -41,11 +40,8 @@
 
             public const string Delete = "Users.Delete";
 
-            public static readonly List<string> _metrics =
-               new List<string>(new[]
-               {
-                    View,Create,Edit,Delete
-               });
+            public static readonly ImmutableArray<string> Metrics =
+               [View, Create, Edit, Delete];
 
             #endregion
         }
