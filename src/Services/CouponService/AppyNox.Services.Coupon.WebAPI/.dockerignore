@@ -1,0 +1,11 @@
+﻿.git
+bin
+obj
+node_modules
+*.suo
+*.user
+*.vscode
+*.vs
+*.sln
+*.csproj.user
+*.editorconfig

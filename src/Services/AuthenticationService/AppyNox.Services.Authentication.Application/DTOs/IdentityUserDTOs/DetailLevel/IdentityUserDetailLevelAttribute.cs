@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace AppyNox.Services.Authentication.Application.DTOs.IdentityUserDTOs.DetailLevel
+namespace AppyNox.Services.Authentication.Application.Dtos.IdentityUserDtos.DetailLevel
 {
     public enum IdentityUserDetailLevel
     {
@@ -14,6 +14,7 @@ namespace AppyNox.Services.Authentication.Application.DTOs.IdentityUserDTOs.Deta
         WithAllProperties
     }
 
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
     public class IdentityUserDetailLevelAttribute : Attribute
     {
         #region [ Public Constructors ]

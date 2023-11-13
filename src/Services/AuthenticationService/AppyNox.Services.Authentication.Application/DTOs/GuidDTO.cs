@@ -1,6 +1,6 @@
-﻿namespace AppyNox.Services.Authentication.Application.DTOs
+﻿namespace AppyNox.Services.Authentication.Application.Dtos
 {
-    public class GuidDTO : IHasGuid
+    public class GuidDto : IHasGuid
     {
         #region [ Properties ]
 

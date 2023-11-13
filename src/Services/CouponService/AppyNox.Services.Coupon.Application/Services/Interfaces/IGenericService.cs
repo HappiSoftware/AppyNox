@@ -2,21 +2,20 @@
 
 namespace AppyNox.Services.Coupon.Application.Services.Interfaces
 {
-    public interface IGenericService<TEntity, TDto, TCreateDTO, TUpdateDTO>
-    where TEntity : class
+    public interface IGenericService<TDto, TCreateDto, TUpdateDto>
     where TDto : class
-    where TCreateDTO : class
-    where TUpdateDTO : class
+    where TCreateDto : class
+    where TUpdateDto : class
     {
         #region [ Public Methods ]
 
-        Task<IEnumerable<dynamic>> GetAllAsync(QueryParameters queryParameters, string? detailLevel);
+        Task<IEnumerable<dynamic>> GetAllAsync(QueryParameters queryParameters, string detailLevel = "Basic");
 
-        Task<dynamic?> GetByIdAsync(Guid id, string? detailLevel = null);
+        Task<dynamic?> GetByIdAsync(Guid id, string detailLevel = "Basic");
 
-        Task<(Guid guid, TDto basicDto)> AddAsync(TCreateDTO dto);
+        Task<(Guid guid, TDto basicDto)> AddAsync(TCreateDto dto);
 
-        Task UpdateAsync(TUpdateDTO dto);
+        Task UpdateAsync(TUpdateDto dto);
 
         Task DeleteAsync(TDto dto);
 

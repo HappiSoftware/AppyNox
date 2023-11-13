@@ -1,4 +1,4 @@
-﻿using AppyNox.Services.Coupon.Application.DTOUtilities;
+﻿using AppyNox.Services.Coupon.Application.DtoUtilities;
 using AppyNox.Services.Coupon.Application.Services.Interfaces;
 using AppyNox.Services.Coupon.Domain.Common;
 using AppyNox.Services.Coupon.Domain.Interfaces;
@@ -7,11 +7,11 @@ using AutoMapper;
 
 namespace AppyNox.Services.Coupon.Application.Services.Implementations
 {
-    public class GenericService<TEntity, TDto, TCreateDTO, TUpdateDTO> : IGenericService<TEntity, TDto, TCreateDTO, TUpdateDTO>
+    public class GenericService<TEntity, TDto, TCreateDto, TUpdateDto> : IGenericService<TDto, TCreateDto, TUpdateDto>
     where TEntity : class, IEntityWithGuid
     where TDto : class
-    where TCreateDTO : class
-    where TUpdateDTO : class
+    where TCreateDto : class
+    where TUpdateDto : class
     {
         #region [ Fields ]
 
@@ -19,7 +19,7 @@ namespace AppyNox.Services.Coupon.Application.Services.Implementations
 
         private readonly IMapper _mapper;
 
-        private readonly DTOMappingRegistry _dtoMappingRegistry;
+        private readonly DtoMappingRegistry _dtoMappingRegistry;
 
         private readonly Type _detailLevelsEnum;
 
@@ -29,7 +29,7 @@ namespace AppyNox.Services.Coupon.Application.Services.Implementations
 
         #region [ Public Constructors ]
 
-        public GenericService(IGenericRepository<TEntity> repository, IMapper mapper, DTOMappingRegistry dtoMappingRegistry, IUnitOfWork unitOfWork)
+        public GenericService(IGenericRepository<TEntity> repository, IMapper mapper, DtoMappingRegistry dtoMappingRegistry, IUnitOfWork unitOfWork)
         {
             _repository = repository;
             _mapper = mapper;
@@ -42,14 +42,9 @@ namespace AppyNox.Services.Coupon.Application.Services.Implementations
 
         #region [ Public Methods ]
 
-        public async Task<IEnumerable<dynamic>> GetAllAsync(QueryParameters queryParameters, string? detailLevel)
+        public async Task<IEnumerable<dynamic>> GetAllAsync(QueryParameters queryParameters, string detailLevel = "Basic")
         {
-            if (string.IsNullOrEmpty(detailLevel))
-            {
-                detailLevel = GetBasicDetailLevel();
-            }
-
-            var dtoType = _dtoMappingRegistry.GetDTOType(_detailLevelsEnum, typeof(TEntity), detailLevel);
+            var dtoType = _dtoMappingRegistry.GetDtoType(_detailLevelsEnum, typeof(TEntity), detailLevel);
 
             var entities = await _repository.GetAllAsync(queryParameters, dtoType);
             var result = _mapper.Map(entities, entities.GetType(), typeof(IEnumerable<>).MakeGenericType(dtoType));
@@ -60,15 +55,11 @@ namespace AppyNox.Services.Coupon.Application.Services.Implementations
             return new List<dynamic>();
         }
 
-        public async Task<dynamic?> GetByIdAsync(Guid id, string? detailLevel)
+        public async Task<dynamic?> GetByIdAsync(Guid id, string detailLevel = "Basic")
         {
             try
             {
-                if (string.IsNullOrEmpty(detailLevel))
-                {
-                    detailLevel = GetBasicDetailLevel();
-                }
-                var dtoType = _dtoMappingRegistry.GetDTOType(_detailLevelsEnum, typeof(TEntity), detailLevel);
+                var dtoType = _dtoMappingRegistry.GetDtoType(_detailLevelsEnum, typeof(TEntity), detailLevel);
                 var entity = await _repository.GetByIdAsync(id, dtoType);
                 return _mapper.Map(entity, entity.GetType(), dtoType);
             }
@@ -77,14 +68,16 @@ namespace AppyNox.Services.Coupon.Application.Services.Implementations
                 // Handle the specific case if needed when the entity is not found
                 return null;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
+                await Console.Out.WriteLineAsync("Error on GenericService:GetByIdAsync");
+
                 // (mustang) Log the error, return an appropriate response, or rethrow if needed
                 throw;
             }
         }
 
-        public async Task<(Guid guid, TDto basicDto)> AddAsync(TCreateDTO dto)
+        public async Task<(Guid guid, TDto basicDto)> AddAsync(TCreateDto dto)
         {
             var entity = _mapper.Map<TEntity>(dto);
             await _repository.AddAsync(entity);
@@ -93,7 +86,7 @@ namespace AppyNox.Services.Coupon.Application.Services.Implementations
             return (entity.Id, createdObject);
         }
 
-        public async Task UpdateAsync(TUpdateDTO dto)
+        public async Task UpdateAsync(TUpdateDto dto)
         {
             var entity = _mapper.Map<TEntity>(dto);
             _repository.UpdateAsync(entity);
@@ -105,15 +98,6 @@ namespace AppyNox.Services.Coupon.Application.Services.Implementations
             var entity = _mapper.Map<TEntity>(dto);
             _repository.DeleteAsync(entity);
             await _unitOfWork.SaveChangesAsync();
-        }
-
-        #endregion
-
-        #region [ Private Methods ]
-
-        private string GetBasicDetailLevel()
-        {
-            return "Basic";
         }
 
         #endregion

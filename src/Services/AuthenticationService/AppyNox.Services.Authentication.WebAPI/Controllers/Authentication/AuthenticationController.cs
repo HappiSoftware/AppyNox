@@ -1,5 +1,5 @@
 ﻿using AppyNox.Services.Authentication.Application.Account;
-using AppyNox.Services.Authentication.Application.DTOs.RefreshTokenDTOs;
+using AppyNox.Services.Authentication.Application.Dtos.RefreshTokenDtos;
 using AppyNox.Services.Authentication.WebAPI.Helpers;
 using AppyNox.Services.Authentication.WebAPI.Managers.Interfaces;
 using AutoWrapper.Wrappers;
@@ -17,14 +17,14 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers.Authentication
 
         private readonly ICustomTokenManager _customTokenManager;
 
-        private readonly IValidator<LoginDTO> _loginDtoValidator;
+        private readonly IValidator<LoginDto> _loginDtoValidator;
 
         #endregion
 
         #region [ Public Constructors ]
 
         public AuthenticationController(ICustomUserManager customUserManager,
-            ICustomTokenManager customTokenManager, IValidator<LoginDTO> loginDtoValidator)
+            ICustomTokenManager customTokenManager, IValidator<LoginDto> loginDtoValidator)
         {
             _customUserManager = customUserManager;
             _customTokenManager = customTokenManager;
@@ -37,7 +37,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers.Authentication
 
         [HttpPost]
         [Route("/connect/token")]
-        public async Task<ApiResponse> Authenticate([FromBody] LoginDTO userCredential)
+        public async Task<ApiResponse> Authenticate([FromBody] LoginDto userCredential)
         {
             var validationResult = await _loginDtoValidator.ValidateAsync(userCredential);
             ValidationHandler.HandleValidationResult(ModelState, validationResult);
@@ -71,7 +71,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers.Authentication
         }
 
         [HttpPost("refresh")]
-        public async Task<ApiResponse> Refresh([FromBody] RefreshTokenDTO model)
+        public async Task<ApiResponse> Refresh([FromBody] RefreshTokenDto model)
         {
             var userId = _customTokenManager.GetUserInfoByToken(model.Token);
             var storedRefreshToken = await _customUserManager.RetrieveStoredRefreshToken(userId);

@@ -1,8 +1,8 @@
-﻿using AppyNox.Services.Coupon.Application.DTOs.Coupon.Models;
+﻿using AppyNox.Services.Coupon.Application.Dtos.Coupon.Models;
 using AppyNox.Services.Coupon.Domain.Entities;
 using AutoMapper;
 
-namespace AppyNox.Services.Coupon.Application.DTOs.Coupon.Mappings
+namespace AppyNox.Services.Coupon.Application.Dtos.Coupon.Mappings
 {
     public class CouponMapping : Profile
     {
@@ -10,13 +10,13 @@ namespace AppyNox.Services.Coupon.Application.DTOs.Coupon.Mappings
 
         public CouponMapping()
         {
-            CreateMap<CouponCreateDTO, CouponEntity>();
+            CreateMap<CouponCreateDto, CouponEntity>();
 
-            CreateMap<CouponUpdateDTO, CouponEntity>();
+            CreateMap<CouponUpdateDto, CouponEntity>();
 
-            CreateMap<CouponEntity, CouponDTO>();
+            CreateMap<CouponEntity, CouponDto>();
 
-            CreateMap<CouponEntity, CouponWithIdDTO>().ReverseMap();
+            CreateMap<CouponEntity, CouponWithIdDto>().ReverseMap();
         }
 
         #endregion

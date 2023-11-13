@@ -8,20 +8,19 @@ volumes:
   app_data:
 
 services:
-# Authentication Service
   authentication.db:
-   image: postgres:latest
-   environment:
-     POSTGRES_DB: AppyNox_Authentication
-     POSTGRES_USER: postgres
-     POSTGRES_PASSWORD: auth_password
-   restart: always
-   ports:
-     - "5433:5432"
-   volumes:
-     - app_data:/var/lib/authenticationdb/data
-   networks:
-     - dev
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: AppyNox_Authentication
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: auth_password
+    restart: always
+    ports:
+      - "5433:5432"
+    volumes:
+      - app_data:/var/lib/authenticationdb/data
+    networks:
+      - dev
 
   appynox.services.authentication.webapi:
     image: ${DOCKER_REGISTRY-}appynoxservicesauthenticationwebapi
@@ -33,9 +32,6 @@ services:
     environment:
      - ASPNETCORE_ENVIRONMENT=Production
      - ASPNETCORE_URLS=https://+:7001
-     - ConnectionStrings__DefaultConnection=User ID=postgres;Password=auth_password;Server=authentication.db;Port=5432;Database=AppyNox_Authentication;IntegratedSecurity=true;Pooling=true
-     - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/authentication-service.pfx 
-     - ASPNETCORE_Kestrel__Certificates__Default__Password=happi2023
     volumes:
      - ./src/Services/AuthenticationService/AppyNox.Services.Authentication.WebAPI/ssl:/https
     ports:
@@ -43,20 +39,19 @@ services:
     networks:
      - dev
 
-# Coupon Service
   coupon.db:
-   image: postgres:latest
-   environment:
-     POSTGRES_DB: AppyNox_Coupon
-     POSTGRES_USER: postgres
-     POSTGRES_PASSWORD: coupon_password
-   restart: always
-   ports:
-     - "5434:5432"
-   volumes:
-     - app_data:/var/lib/coupondb/data
-   networks:
-     - dev
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: AppyNox_Coupon
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: coupon_password
+    restart: always
+    ports:
+      - "5434:5432"
+    volumes:
+      - app_data:/var/lib/coupondb/data
+    networks:
+      - dev
 
   appynox.services.coupon.webapi:
     image: ${DOCKER_REGISTRY-}appynoxservicescouponwebapi
@@ -68,15 +63,9 @@ services:
     environment:
      - ASPNETCORE_ENVIRONMENT=Production
      - ASPNETCORE_URLS=https://+:7002
-     - ConnectionStrings__DefaultConnection=User ID=postgres;Password=coupon_password;Server=coupon.db;Port=5432;Database=AppyNox_Coupon;IntegratedSecurity=true;Pooling=true
-     - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/coupon-service.pfx 
-     - ASPNETCORE_Kestrel__Certificates__Default__Password=happi2023
     volumes:
      - ./src/Services/CouponService/AppyNox.Services.Coupon.WebAPI/ssl:/https
     ports:
      - "7002:7002"
     networks:
      - dev
-
-
-

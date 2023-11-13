@@ -1,6 +1,6 @@
-﻿namespace AppyNox.Services.Coupon.Application.DTOs
+﻿namespace AppyNox.Services.Coupon.Application.Dtos
 {
-    public interface IUpdateDTO
+    public interface IUpdateDto
     {
         #region [ Properties ]
 

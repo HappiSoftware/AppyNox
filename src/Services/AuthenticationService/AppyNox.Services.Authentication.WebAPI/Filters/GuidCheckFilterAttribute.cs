@@ -1,95 +1,113 @@
-﻿using AppyNox.Services.Authentication.Application.DTOs;
-using Microsoft.AspNetCore.Mvc;
+﻿using AppyNox.Services.Authentication.Application.Dtos;
 using Microsoft.AspNetCore.Mvc.Filters;
-using System.Text;
+using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
+using System.Text;
 
-public class GuidCheckFilterAttribute : ActionFilterAttribute
+namespace AppyNox.Services.Authentication.WebAPI.Filters
 {
-    #region [ Public Constructors ]
-
-    public GuidCheckFilterAttribute()
+    public class GuidCheckFilterAttribute : ActionFilterAttribute
     {
-        RouteParameters = new List<string> { "id" };
-    }
+        #region [ Public Constructors ]
 
-    public GuidCheckFilterAttribute(string[] routeParameters)
-    {
-        RouteParameters = new List<string>(routeParameters);
-    }
-
-    #endregion
-
-    #region [ Properties ]
-
-    public List<string> RouteParameters { get; set; }
-
-    #endregion
-
-    #region [ Public Methods ]
-
-    public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
-    {
-        // Get the route data to access the URL parameters
-        var routeData = context.HttpContext.GetRouteData();
-
-        // Check and handle the GUID in the URL path
-        foreach (var parameter in RouteParameters)
+        public GuidCheckFilterAttribute()
         {
-            if (routeData.Values.TryGetValue(parameter, out var guidValue) && guidValue is string guidString)
-            {
-                if (!Guid.TryParse(guidString, out _))
-                {
-                    context.Result = new BadRequestObjectResult("Invalid GUID in URL path.");
-                    return;
-                }
-            }
+            RouteParameters = new List<string> { "id" };
         }
 
-        // Ensure the request body can be read multiple times
-        context.HttpContext.Request.EnableBuffering();
-
-        // Check and handle the GUID in the request body
-        if (context.HttpContext.Request.ContentLength > 0 && context.HttpContext.Request.Body.CanRead)
+        public GuidCheckFilterAttribute(string routeParameters)
         {
-            // Read the request body stream and deserialize it using JsonSerializer
-            using (StreamReader reader = new StreamReader(context.HttpContext.Request.Body, Encoding.UTF8))
+            RouteParameters = routeParameters.Split(',').ToList();
+        }
+
+        #endregion
+
+        #region [ Properties ]
+
+        public List<string> RouteParameters { get; set; }
+
+        #endregion
+
+        #region [ Fields ]
+
+        private static readonly JsonSerializerOptions _jsonSerializerOptions = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        };
+
+        #endregion
+
+        #region [ Public Methods ]
+
+        public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
+        {
+            if (TryHandleGuidInUrlPath(context, context.HttpContext.GetRouteData()))
             {
-                context.HttpContext.Request.Body.Seek(0, SeekOrigin.Begin);
-                string requestBody = await reader.ReadToEndAsync();
+                await next();
+                return;
+            }
 
-                if (!string.IsNullOrEmpty(requestBody))
+            if (await TryHandleGuidInRequestBodyAsync(context, context.HttpContext.Request))
+            {
+                await next();
+                return;
+            }
+
+            await next();
+        }
+
+        private static async Task<bool> TryHandleGuidInRequestBodyAsync(ActionExecutingContext context, HttpRequest request)
+        {
+            if (request.ContentLength > 0 && request.Body.CanRead)
+            {
+                // Ensure the request body can be read multiple times
+                request.EnableBuffering();
+
+                using (StreamReader reader = new StreamReader(request.Body, Encoding.UTF8))
                 {
-                    try
+                    request.Body.Seek(0, SeekOrigin.Begin);
+                    string requestBody = await reader.ReadToEndAsync();
+
+                    if (!string.IsNullOrEmpty(requestBody))
                     {
-                        var options = new JsonSerializerOptions
+                        try
                         {
-                            PropertyNameCaseInsensitive = true
-                        };
+                            var yourObject = JsonSerializer.Deserialize<GuidDto>(requestBody, _jsonSerializerOptions);
 
-                        var yourObject = JsonSerializer.Deserialize<GuidDTO>(requestBody, options);
-
-                        // Check and handle the GUID in the request body (similar to previous code)
-                        if (yourObject != null)
-                        {
-                            if (!Guid.TryParse(yourObject.Id, out _))
+                            // Check and handle the GUID in the request body (similar to previous code)
+                            if (yourObject != null && !Guid.TryParse(yourObject.Id, out _))
                             {
                                 context.Result = new BadRequestObjectResult("Invalid GUID in request body.");
-                                return;
+                                return true;
                             }
                         }
-                    }
-                    catch (JsonException)
-                    {
-                        context.Result = new BadRequestObjectResult("Invalid JSON format in the request body.");
-                        return;
+                        catch (JsonException)
+                        {
+                            context.Result = new BadRequestObjectResult("Invalid JSON format in the request body.");
+                            return true;
+                        }
                     }
                 }
             }
+
+            return false;
         }
 
-        await next();
-    }
+        private bool TryHandleGuidInUrlPath(ActionExecutingContext context, RouteData routeData)
+        {
+            foreach (var parameter in RouteParameters)
+            {
+                if (routeData.Values.TryGetValue(parameter, out var guidValue) &&
+                    guidValue is string guidString &&
+                    !Guid.TryParse(guidString, out _))
+                {
+                    context.Result = new BadRequestObjectResult("Invalid GUID in URL path.");
+                    return true;
+                }
+            }
+            return false;
+        }
 
-    #endregion
+        #endregion
+    }
 }

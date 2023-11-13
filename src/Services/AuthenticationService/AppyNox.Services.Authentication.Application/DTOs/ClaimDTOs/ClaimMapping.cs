@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using System.Security.Claims;
 
-namespace AppyNox.Services.Authentication.Application.DTOs.ClaimDTOs
+namespace AppyNox.Services.Authentication.Application.Dtos.ClaimDtos
 {
     public class ClaimMapping : Profile
     {
@@ -9,7 +9,7 @@ namespace AppyNox.Services.Authentication.Application.DTOs.ClaimDTOs
 
         public ClaimMapping()
         {
-            CreateMap<ClaimDTO, Claim>().ReverseMap();
+            CreateMap<ClaimDto, Claim>().ReverseMap();
         }
 
         #endregion

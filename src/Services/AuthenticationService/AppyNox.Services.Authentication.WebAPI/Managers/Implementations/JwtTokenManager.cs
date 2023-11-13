@@ -19,7 +19,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Managers.Implementations
 
         private readonly JwtConfiguration _jwtConfiguration;
 
-        private JwtSecurityTokenHandler _tokenHandler;
+        private readonly JwtSecurityTokenHandler _tokenHandler;
 
         #endregion
 

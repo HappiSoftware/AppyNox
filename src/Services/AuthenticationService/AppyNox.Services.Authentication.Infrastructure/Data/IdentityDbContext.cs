@@ -42,9 +42,9 @@ namespace AppyNox.Services.Authentication.Infrastructure.Data
             }
         }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        protected override void OnModelCreating(ModelBuilder builder)
         {
-            base.OnModelCreating(modelBuilder);
+            base.OnModelCreating(builder);
 
             var hasher = new PasswordHasher<IdentityUser>();
 
@@ -53,14 +53,14 @@ namespace AppyNox.Services.Authentication.Infrastructure.Data
 
             // Create Roles
             var adminRole = new IdentityRole { Id = adminRoleId, Name = "Admin", NormalizedName = "ADMIN" };
-            modelBuilder.Entity<IdentityRole>().HasData(adminRole);
+            builder.Entity<IdentityRole>().HasData(adminRole);
 
             // Create Users
             var adminUser = new IdentityUser { Id = adminUserId, UserName = "admin", NormalizedUserName = "ADMIN", Email = "admin@email.com", NormalizedEmail = "ADMIN@EMAIL.COM", EmailConfirmed = true, PasswordHash = hasher.HashPassword(new IdentityUser(), "Admin@123") };
-            modelBuilder.Entity<IdentityUser>().HasData(adminUser);
+            builder.Entity<IdentityUser>().HasData(adminUser);
 
             // Add Role Claims
-            modelBuilder.Entity<IdentityRoleClaim<string>>().HasData(
+            builder.Entity<IdentityRoleClaim<string>>().HasData(
                 new IdentityRoleClaim<string> { Id = 1, RoleId = adminRoleId, ClaimType = "Permission", ClaimValue = "Users.View" },
                 new IdentityRoleClaim<string> { Id = 2, RoleId = adminRoleId, ClaimType = "Permission", ClaimValue = "Users.Create" },
                 new IdentityRoleClaim<string> { Id = 3, RoleId = adminRoleId, ClaimType = "Permission", ClaimValue = "Users.Edit" },
@@ -75,7 +75,7 @@ namespace AppyNox.Services.Authentication.Infrastructure.Data
             );
 
             // Add User Roles
-            modelBuilder.Entity<IdentityUserRole<string>>().HasData(
+            builder.Entity<IdentityUserRole<string>>().HasData(
                 new IdentityUserRole<string> { RoleId = adminRoleId, UserId = adminUserId }
             );
         }

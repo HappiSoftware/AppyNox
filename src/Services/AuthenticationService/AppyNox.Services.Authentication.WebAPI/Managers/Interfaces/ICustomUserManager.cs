@@ -6,7 +6,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Managers.Interfaces
     {
         #region [ Public Methods ]
 
-        Task<(string jwtToken, string refreshToken)> Authenticate(LoginDTO user);
+        Task<(string jwtToken, string refreshToken)> Authenticate(LoginDto user);
 
         Task<string> RetrieveStoredRefreshToken(string userId);
 

@@ -1,5 +1,5 @@
-﻿using AppyNox.Services.Authentication.Application.DTOs.ClaimDTOs;
-using AppyNox.Services.Authentication.Application.DTOs.IdentityRoleDTOs.Models;
+﻿using AppyNox.Services.Authentication.Application.Dtos.ClaimDtos;
+using AppyNox.Services.Authentication.Application.Dtos.IdentityRoleDtos.Models;
 using AppyNox.Services.Authentication.WebAPI.Filters;
 using AppyNox.Services.Authentication.WebAPI.Helpers;
 using Asp.Versioning;
@@ -78,9 +78,9 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
         [HttpPut("{id}")]
         [Authorize(Roles.Edit)]
         [GuidCheckFilter]
-        public async Task<IActionResult> Put(string id, [FromBody] IdentityRoleUpdateDTO identityRoleUpdateDTO)
+        public async Task<IActionResult> Put(string id, [FromBody] IdentityRoleUpdateDto identityRoleUpdateDto)
         {
-            if (id != identityRoleUpdateDTO.Id)
+            if (id != identityRoleUpdateDto.Id)
             {
                 throw new ApiProblemDetailsException("Ids don't match", 422);
             }
@@ -92,7 +92,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
             }
 
             var concurrencyStamp = existingRole.ConcurrencyStamp;
-            existingRole.Name = identityRoleUpdateDTO.Name;
+            existingRole.Name = identityRoleUpdateDto.Name;
 
             var result = await _roleValidator.ValidateAsync(_roleManager, existingRole);
             if (!result.Succeeded)
@@ -135,9 +135,9 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
 
         [HttpPost]
         [Authorize(Roles.Create)]
-        public async Task<ApiResponse> Post(IdentityRoleCreateDTO identityRoleDTO)
+        public async Task<ApiResponse> Post(IdentityRoleCreateDto identityRoleDto)
         {
-            var roleEntity = _mapper.Map<IdentityRole>(identityRoleDTO);
+            var roleEntity = _mapper.Map<IdentityRole>(identityRoleDto);
             var result = await _roleValidator.ValidateAsync(_roleManager, roleEntity);
             if (!result.Succeeded)
             {
@@ -153,7 +153,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
             object response = new
             {
                 id = roleEntity.Id,
-                value = identityRoleDTO
+                value = identityRoleDto
             };
 
             return new ApiResponse("New record has been created in the database.", response, 201);
@@ -182,7 +182,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
         [HttpGet]
         [Authorize(Roles.View)]
         [Route("/api/roles/{rid}/claims")]
-        [GuidCheckFilter(new string[] { "rid" })]
+        [GuidCheckFilter("rid")]
         public async Task<ApiResponse> GetClaims(string rid)
         {
             List<string> parameterList = new List<string> { "Value1", "Value2" };
@@ -191,9 +191,9 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
             var role = await _roleManager.FindByIdAsync(rid);
             if (role == null)
                 throw new ApiProblemDetailsException($"Record with id: {rid} does not exist.", 404);
-            IList<ClaimDTO> claims = _mapper.Map<List<ClaimDTO>>(await _roleManager.GetClaimsAsync(role));
+            IList<ClaimDto> claims = _mapper.Map<List<ClaimDto>>(await _roleManager.GetClaimsAsync(role));
 
-            var roleWithClaimsDto = _mapper.Map<IdentityRoleWithClaimsDTO>(role);
+            var roleWithClaimsDto = _mapper.Map<IdentityRoleWithClaimsDto>(role);
             roleWithClaimsDto.Claims = claims;
 
             return new ApiResponse(roleWithClaimsDto, 200);
@@ -202,15 +202,15 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
         [HttpPost]
         [Authorize(Roles.AssignPermission)]
         [Route("/api/Roles/{rid}/Claims")]
-        [GuidCheckFilter(new string[] { "rid" })]
-        public async Task<ApiResponse> AssignClaim(string rid, [FromBody] ClaimDTO claim)
+        [GuidCheckFilter("rid")]
+        public async Task<ApiResponse> AssignClaim(string rid, [FromBody] ClaimDto claim)
         {
             var role = await _roleManager.FindByIdAsync(rid);
             if (role == null)
                 throw new ApiProblemDetailsException($"Record with id: {rid} does not exist.", 404);
 
             //Assign claim to role
-            IList<ClaimDTO> claims = _mapper.Map<List<ClaimDTO>>(await _roleManager.GetClaimsAsync(role));
+            IList<ClaimDto> claims = _mapper.Map<List<ClaimDto>>(await _roleManager.GetClaimsAsync(role));
 
             //Manual check if role has this claim
             if (claims.Any(x => x.Value == claim.Value && x.Type == claim.Type))
@@ -228,9 +228,9 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
             }
 
             //Refill claims list to send it as response
-            claims = _mapper.Map<List<ClaimDTO>>(await _roleManager.GetClaimsAsync(role));
+            claims = _mapper.Map<List<ClaimDto>>(await _roleManager.GetClaimsAsync(role));
 
-            var roleWithClaimsDto = _mapper.Map<IdentityRoleWithClaimsDTO>(role);
+            var roleWithClaimsDto = _mapper.Map<IdentityRoleWithClaimsDto>(role);
             roleWithClaimsDto.Claims = claims;
 
             return new ApiResponse(roleWithClaimsDto, 200);
@@ -239,15 +239,12 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
         [HttpDelete]
         [Authorize(Roles.WithdrawPermission)]
         [Route("/api/Roles/{rid}/Claims/{claimValue}")]
-        [GuidCheckFilter(new string[] { "rid" })]
+        [GuidCheckFilter("rid")]
         public async Task<IActionResult> WithdrawClaim(string rid, string claimValue)
         {
             var role = await _roleManager.FindByIdAsync(rid);
             if (role == null)
                 throw new ApiProblemDetailsException($"Record with id: {rid} does not exist.", 404);
-
-            //Assign claim from role
-            IList<Claim> claims = await _roleManager.GetClaimsAsync(role);
 
             IdentityResult response = await _roleManager.RemoveClaimAsync(role, new Claim("API.Permission", claimValue));
 

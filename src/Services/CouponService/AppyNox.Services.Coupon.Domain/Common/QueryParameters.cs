@@ -23,7 +23,7 @@ namespace AppyNox.Services.Coupon.Domain.Common
 
         public string SortOrder { get; set; } = "asc";
 
-        public string? DetailLevel { get; set; }
+        public string DetailLevel { get; set; } = "Basic";
 
         #endregion
     }

@@ -4,7 +4,7 @@
     {
         #region [ Properties ]
 
-        string? DetailLevel { get; set; }
+        string DetailLevel { get; set; }
 
         int PageNumber { get; set; }
 

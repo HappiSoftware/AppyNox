@@ -1,6 +1,6 @@
 ﻿namespace AppyNox.Services.Authentication.Application.Account
 {
-    public class LoginDTO
+    public class LoginDto
     {
         #region [ Properties ]
 

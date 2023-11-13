@@ -1,9 +1,9 @@
-﻿using AppyNox.Services.Coupon.Application.DTOs.Coupon.DetailLevel;
+﻿using AppyNox.Services.Coupon.Application.Dtos.Coupon.DetailLevel;
 
-namespace AppyNox.Services.Coupon.Application.DTOs.Coupon.Models
+namespace AppyNox.Services.Coupon.Application.Dtos.Coupon.Models
 {
     [CouponDetailLevel(CouponDetailLevel.WithId)]
-    public class CouponWithIdDTO : CouponDTO, IUpdateDTO
+    public class CouponWithIdDto : CouponDto, IUpdateDto
     {
         #region [ Properties ]
 

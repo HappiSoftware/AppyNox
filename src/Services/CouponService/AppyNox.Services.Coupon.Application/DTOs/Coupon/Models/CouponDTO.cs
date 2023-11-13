@@ -1,9 +1,9 @@
-﻿using AppyNox.Services.Coupon.Application.DTOs.Coupon.DetailLevel;
+﻿using AppyNox.Services.Coupon.Application.Dtos.Coupon.DetailLevel;
 
-namespace AppyNox.Services.Coupon.Application.DTOs.Coupon.Models
+namespace AppyNox.Services.Coupon.Application.Dtos.Coupon.Models
 {
     [CouponDetailLevel(CouponDetailLevel.Basic)]
-    public class CouponDTO : BaseDTO
+    public class CouponDto : BaseDto
     {
         #region [ Properties ]
 

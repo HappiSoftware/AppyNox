@@ -1,6 +1,6 @@
-﻿namespace AppyNox.Services.Coupon.Application.DTOs.Coupon.Models
+﻿namespace AppyNox.Services.Coupon.Application.Dtos.Coupon.Models
 {
-    public class CouponCreateDTO : BaseDTO
+    public class CouponCreateDto : BaseDto
     {
         #region [ Properties ]
 

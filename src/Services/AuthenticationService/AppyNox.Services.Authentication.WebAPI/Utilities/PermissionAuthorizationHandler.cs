@@ -7,23 +7,10 @@ namespace AppyNox.Services.Authentication.WebAPI.Utilities
 {
     internal class PermissionAuthorizationHandler : AuthorizationHandler<PermissionRequirement>
     {
-        #region [ Fields ]
-
-        private readonly IdentityDbContext _db;
-
-        private readonly UserManager<IdentityUser> _userManager;
-
-        private readonly RoleManager<IdentityRole> _roleManager;
-
-        #endregion
-
         #region [ Public Constructors ]
 
-        public PermissionAuthorizationHandler(IdentityDbContext db, UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager)
+        public PermissionAuthorizationHandler()
         {
-            _db = db;
-            _userManager = userManager;
-            _roleManager = roleManager;
         }
 
         #endregion
