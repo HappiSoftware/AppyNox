@@ -7,7 +7,7 @@ using AutoMapper;
 
 namespace AppyNox.Services.Coupon.Application.Services.Implementations
 {
-    public class GenericService<TEntity, TDto, TCreateDto, TUpdateDto> : IGenericService<TDto, TCreateDto, TUpdateDto>
+    public class GenericService<TEntity, TDto, TCreateDto, TUpdateDto> : IGenericService<TEntity, TDto, TCreateDto, TUpdateDto>
     where TEntity : class, IEntityWithGuid
     where TDto : class
     where TCreateDto : class
