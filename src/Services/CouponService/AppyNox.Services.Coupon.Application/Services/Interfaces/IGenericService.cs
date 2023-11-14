@@ -2,7 +2,7 @@
 
 namespace AppyNox.Services.Coupon.Application.Services.Interfaces
 {
-    public interface IGenericService<TDto, TCreateDto, TUpdateDto>
+    public interface IGenericService<TEntity, TDto, TCreateDto, TUpdateDto>
     where TDto : class
     where TCreateDto : class
     where TUpdateDto : class
