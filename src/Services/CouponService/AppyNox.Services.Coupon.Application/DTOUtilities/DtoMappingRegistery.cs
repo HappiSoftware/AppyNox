@@ -1,7 +1,10 @@
-﻿using AppyNox.Services.Coupon.Application.Dtos.Coupon.DetailLevel;
-using AppyNox.Services.Coupon.Application.Dtos.Coupon.Models;
+﻿using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.DetailLevel;
+using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
 using AppyNox.Services.Coupon.Application.ExceptionExtensions;
+using AppyNox.Services.Coupon.Domain.Common;
 using AppyNox.Services.Coupon.Domain.Entities;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+using System.Data;
 using System.Reflection;
 
 namespace AppyNox.Services.Coupon.Application.DtoUtilities
@@ -10,9 +13,8 @@ namespace AppyNox.Services.Coupon.Application.DtoUtilities
     {
         #region [ Fields ]
 
-        private readonly Dictionary<(Type entity, Enum detailLevel), Type> _mappings;
-
-        private readonly Dictionary<Type, Type> _entityEnumMappings;
+        private readonly Dictionary<(Type entityType, Enum detailLevel), Type> _entityDetailLevelToDtoTypeMappings;
+        private readonly Dictionary<Type, Dictionary<DtoMappingTypes, Type>> _entityToDtoDetailLevelMappings;
 
         #endregion
 
@@ -20,8 +22,8 @@ namespace AppyNox.Services.Coupon.Application.DtoUtilities
 
         public DtoMappingRegistry()
         {
-            _mappings = new Dictionary<(Type, Enum), Type>();
-            _entityEnumMappings = new Dictionary<Type, Type>();
+            _entityDetailLevelToDtoTypeMappings = new Dictionary<(Type, Enum), Type>();
+            _entityToDtoDetailLevelMappings = new Dictionary<Type, Dictionary<DtoMappingTypes, Type>>();
             RegisterDtos();
         }
 
@@ -31,10 +33,9 @@ namespace AppyNox.Services.Coupon.Application.DtoUtilities
 
         public void RegisterDtos()
         {
-            // Scan for Dtos in the Application assembly
-            var dtoTypes = Assembly.GetAssembly(typeof(CouponDto))?
+            var dtoTypes = Assembly.GetAssembly(typeof(CouponSimpleDto))?
                 .GetTypes()
-                .Where(t => t.Namespace != null && t.Namespace.Contains("Application.Dtos") && t.Namespace.EndsWith("Models"))
+                .Where(t => t.Namespace != null && t.Namespace.Contains("Application.Dtos") && t.Namespace.Contains("Models"))
                 .ToList();
 
             if (dtoTypes == null)
@@ -47,7 +48,7 @@ namespace AppyNox.Services.Coupon.Application.DtoUtilities
                 {
                     if (attribute is CouponDetailLevelAttribute couponAttribute)
                     {
-                        RegisterMapping(typeof(CouponEntity), dtoType, couponAttribute.DetailLevel);
+                        RegisterMapping(typeof(CouponEntity), dtoType, couponAttribute);
                     }
                 }
             }
@@ -55,20 +56,23 @@ namespace AppyNox.Services.Coupon.Application.DtoUtilities
 
         public Type GetDtoType(Type detailLevelEnumType, Type entityType, string detailLevelDescription)
         {
-            Enum level = EnumExtensions.GetEnumValueFromDescription(detailLevelEnumType, detailLevelDescription);
-            if (_mappings.TryGetValue((entityType, level), out var dtoType))
+            Enum detailLevel = EnumExtensions.GetEnumValueFromDescription(detailLevelEnumType, detailLevelDescription);
+
+            if (_entityDetailLevelToDtoTypeMappings.TryGetValue((entityType, detailLevel), out var dtoType))
             {
                 return dtoType;
             }
-            throw new DetailLevelNotFoundException($"No Dto type mapping found for entity type {entityType} and detail level {level}.");
+
+            throw new DetailLevelNotFoundException($"No Dto type mapping found for entity type {entityType} and detail level {detailLevel}.");
         }
 
-        public Type GetDetailLevelType(Type entityType)
+        public Dictionary<DtoMappingTypes, Type> GetDetailLevelTypes(Type entityType)
         {
-            if (_entityEnumMappings.TryGetValue(entityType, out Type? detailLevelType))
+            if (_entityToDtoDetailLevelMappings.TryGetValue(entityType, out var detailLevelMappings))
             {
-                return detailLevelType;
+                return detailLevelMappings;
             }
+
             throw new InvalidOperationException($"No detail level type found for entity type {entityType.FullName}.");
         }
 
@@ -76,15 +80,44 @@ namespace AppyNox.Services.Coupon.Application.DtoUtilities
 
         #region [ Private Methods ]
 
-        private void RegisterMapping(Type entityType, Type dtoType, Enum level)
+        private void RegisterMapping(Type entityType, Type dtoType, CouponDetailLevelAttribute attribute)
         {
-            _mappings[(entityType, level)] = dtoType;
-            if (!_entityEnumMappings.ContainsKey(entityType))
+            string dtoName = dtoType.Name;
+            DtoMappingTypes desiredMapping = DtoMappingTypes.DataAccess;
+
+            if (dtoName.Contains("Create"))
             {
-                _entityEnumMappings.Add(entityType, level.GetType());
+                desiredMapping = DtoMappingTypes.Create;
             }
+            else if (dtoName.Contains("Update"))
+            {
+                desiredMapping = DtoMappingTypes.Update;
+            }
+
+            Enum detailLevel = GetDetailLevel(attribute, desiredMapping);
+
+            if (!_entityToDtoDetailLevelMappings.TryGetValue(entityType, out var mappings))
+            {
+                mappings = new Dictionary<DtoMappingTypes, Type>();
+                _entityToDtoDetailLevelMappings.Add(entityType, mappings);
+            }
+
+            mappings[desiredMapping] = detailLevel.GetType();
+            _entityDetailLevelToDtoTypeMappings[(entityType, detailLevel)] = dtoType;
+        }
+
+        private static Enum GetDetailLevel(CouponDetailLevelAttribute attribute, DtoMappingTypes mappingType)
+        {
+            return mappingType switch
+            {
+                DtoMappingTypes.DataAccess => attribute.DataAccessDetailLevel,
+                DtoMappingTypes.Create => attribute.CreateDetailLevel,
+                DtoMappingTypes.Update => attribute.UpdateDetailLevel,
+                _ => attribute.DataAccessDetailLevel, // Default to DataAccess if none of the specific cases match
+            };
         }
 
         #endregion
     }
+
 }

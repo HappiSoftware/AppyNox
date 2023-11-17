@@ -6,9 +6,9 @@ namespace AppyNox.Services.Coupon.Domain.Interfaces
     {
         #region [ Public Methods ]
 
-        Task<dynamic> GetByIdAsync(Guid id, Type dtoType);
+        Task<TEntity> GetByIdAsync(Guid id);
 
-        Task<IEnumerable<dynamic>> GetAllAsync(QueryParameters queryParameters, Type dtoType);
+        Task<IEnumerable<object>> GetAllAsync(QueryParameters queryParameters, Type dtoType);
 
         Task<TEntity> AddAsync(TEntity entity);
 

@@ -1,9 +1,9 @@
-﻿using AppyNox.Services.Coupon.Application.Dtos.Coupon.Models;
+﻿using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
 using FluentValidation;
 
 namespace AppyNox.Services.Coupon.Application.Validators.Coupon
 {
-    public class CouponValidator : BaseDtoValidator<CouponCreateDto>
+    public class CouponValidator : BaseDtoValidator<CouponBasicCreateDto>
     {
         #region [ Public Constructors ]
 

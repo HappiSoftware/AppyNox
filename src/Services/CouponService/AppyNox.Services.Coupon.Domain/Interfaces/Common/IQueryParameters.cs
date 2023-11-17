@@ -10,14 +10,6 @@
 
         int PageSize { get; set; }
 
-        string? SearchColumns { get; set; }
-
-        string? SearchTerm { get; set; }
-
-        string? SortBy { get; set; }
-
-        string SortOrder { get; set; }
-
         #endregion
     }
 }

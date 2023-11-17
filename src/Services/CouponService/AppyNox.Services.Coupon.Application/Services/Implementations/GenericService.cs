@@ -21,7 +21,7 @@ namespace AppyNox.Services.Coupon.Application.Services.Implementations
 
         private readonly DtoMappingRegistry _dtoMappingRegistry;
 
-        private readonly Type _detailLevelsEnum;
+        private readonly Dictionary<DtoMappingTypes, Type> _detailLevelEnum;
 
         private readonly IUnitOfWork _unitOfWork;
 
@@ -34,7 +34,7 @@ namespace AppyNox.Services.Coupon.Application.Services.Implementations
             _repository = repository;
             _mapper = mapper;
             _dtoMappingRegistry = dtoMappingRegistry;
-            _detailLevelsEnum = _dtoMappingRegistry.GetDetailLevelType(typeof(TEntity));
+            _detailLevelEnum = _dtoMappingRegistry.GetDetailLevelTypes(typeof(TEntity));
             _unitOfWork = unitOfWork;
         }
 
@@ -42,9 +42,10 @@ namespace AppyNox.Services.Coupon.Application.Services.Implementations
 
         #region [ Public Methods ]
 
-        public async Task<IEnumerable<dynamic>> GetAllAsync(QueryParameters queryParameters, string detailLevel = "Basic")
+        public async Task<IEnumerable<dynamic>> GetAllAsync(QueryParameters queryParameters, string detailLevel = "Simple")
         {
-            var dtoType = _dtoMappingRegistry.GetDtoType(_detailLevelsEnum, typeof(TEntity), detailLevel);
+            var detailLevelMap = _detailLevelEnum.GetValueOrDefault(DtoMappingTypes.DataAccess) ?? throw new InvalidOperationException("DataAccess has no levels!");
+            var dtoType = _dtoMappingRegistry.GetDtoType(detailLevelMap, typeof(TEntity), queryParameters.DetailLevel);
 
             var entities = await _repository.GetAllAsync(queryParameters, dtoType);
             var result = _mapper.Map(entities, entities.GetType(), typeof(IEnumerable<>).MakeGenericType(dtoType));
@@ -55,12 +56,14 @@ namespace AppyNox.Services.Coupon.Application.Services.Implementations
             return new List<dynamic>();
         }
 
-        public async Task<dynamic?> GetByIdAsync(Guid id, string detailLevel = "Basic")
+        public async Task<dynamic?> GetByIdAsync(Guid id, QueryParameters queryParameters)
         {
             try
             {
-                var dtoType = _dtoMappingRegistry.GetDtoType(_detailLevelsEnum, typeof(TEntity), detailLevel);
-                var entity = await _repository.GetByIdAsync(id, dtoType);
+                var detailLevelMap = _detailLevelEnum.GetValueOrDefault(DtoMappingTypes.DataAccess) ?? throw new InvalidOperationException("DataAccess has no levels!");
+                var dtoType = _dtoMappingRegistry.GetDtoType(detailLevelMap, typeof(TEntity), queryParameters.DetailLevel);
+
+                var entity = await _repository.GetByIdAsync(id);
                 return _mapper.Map(entity, entity.GetType(), dtoType);
             }
             catch (EntityNotFoundException<TEntity>)

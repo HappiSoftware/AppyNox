@@ -35,20 +35,20 @@ namespace AppyNox.Services.Coupon.WebAPI.Filters
             var validColumns = _dtoType.GetProperties().Select(p => p.Name).ToList();
 
             // Validate search columns
-            var columnsToSearch = queryParameters.SearchColumns?.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList();
+            //var columnsToSearch = queryParameters.SearchColumns?.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList();
 
-            if (columnsToSearch == null)
-            {
-                return;
-            }
+            //if (columnsToSearch == null)
+            //{
+            //    return;
+            //}
 
-            foreach (var column in columnsToSearch)
-            {
-                if (!validColumns.Contains(column))
-                {
-                    context.ModelState.AddModelError("SearchColumns", $"Invalid search column: {column}");
-                }
-            }
+            //foreach (var column in columnsToSearch)
+            //{
+            //    if (!validColumns.Contains(column))
+            //    {
+            //        context.ModelState.AddModelError("SearchColumns", $"Invalid search column: {column}");
+            //    }
+            //}
         }
 
         #endregion

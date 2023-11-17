@@ -20,4 +20,8 @@
     <ProjectReference Include="..\AppyNox.Services.Coupon.Infrastructure\AppyNox.Services.Coupon.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Dtos\CouponDetailDtos\Models\Extended\" />
+  </ItemGroup>
+
 </Project>

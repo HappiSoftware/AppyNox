@@ -6,6 +6,9 @@ using LinqKit;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Linq.Dynamic.Core;
+using AppyNox.Services.Coupon.Domain.Entities;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace AppyNox.Services.Coupon.Infrastructure.Repositories
 {
@@ -31,44 +34,19 @@ namespace AppyNox.Services.Coupon.Infrastructure.Repositories
 
         #region [ Public Methods ]
 
-        public async Task<dynamic> GetByIdAsync(Guid id, Type dtoType)
+        public async Task<TEntity> GetByIdAsync(Guid id)
         {
-            // Create a list of property names from the DTO
-            var dtoPropertyNames = dtoType.GetProperties().Select(p => p.Name).ToList();
-
-            // Query the database, select only the properties defined in the DTO
-            var entity = await _dbSet
-                .Where(e => e.Id == id)
-                .Select(GenericRepository<TEntity>.CreateProjection(dtoPropertyNames))
-                .FirstOrDefaultAsync();
-
-            if (entity == null)
-            {
-                throw new EntityNotFoundException<TEntity>(id);
-            }
-
-            return entity;
+            return await _dbSet.Where(item => item.Id == id).FirstOrDefaultAsync() ?? throw new EntityNotFoundException<TEntity>(id);
         }
 
         public async Task<IEnumerable<object>> GetAllAsync(QueryParameters queryParameters, Type dtoType)
         {
-            var query = _dbSet.AsQueryable();
-
-            query = GenericRepository<TEntity>.ApplySearch(query, queryParameters);
-
-            query = GenericRepository<TEntity>.ApplySort(query, queryParameters);
-
-            // Create a list of property names from the DTO
-            var dtoPropertyNames = dtoType.GetProperties().Select(p => p.Name).ToList();
-
-            // Use the Select method with the custom projection
-            var resultList = await query
-                .Select(GenericRepository<TEntity>.CreateProjection(dtoPropertyNames))
+            return await _dbSet
+                .AsQueryable()
+                .Select(CreateProjection(dtoType))
                 .Skip((queryParameters.PageNumber - 1) * queryParameters.PageSize)
                 .Take(queryParameters.PageSize)
                 .ToListAsync();
-
-            return resultList;
         }
 
         public async Task<TEntity> AddAsync(TEntity entity)
@@ -91,82 +69,11 @@ namespace AppyNox.Services.Coupon.Infrastructure.Repositories
 
         #region [ Private Methods ]
 
-        private static IQueryable<TEntity> ApplySearch(IQueryable<TEntity> query, QueryParameters parameters)
+        private static Expression<Func<TEntity, dynamic>> CreateProjection(Type dtoType)
         {
-            if (!string.IsNullOrEmpty(parameters.SearchTerm) && !string.IsNullOrEmpty(parameters.SearchColumns))
-            {
-                var columnsToSearch = parameters.SearchColumns.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList();
+            // Create a list of property names from the DTO
+            var propertyNames = dtoType.GetProperties().Select(p => p.Name).ToList();
 
-                // Initialize a predicate with no condition (always false)
-                Expression<Func<TEntity, bool>> predicate = e => false;
-
-                foreach (var column in columnsToSearch)
-                {
-                    var parameterExp = Expression.Parameter(typeof(TEntity), "type");
-                    var propertyExp = Expression.Property(parameterExp, column);
-
-                    if (propertyExp.Type == typeof(string))
-                    {
-                        // Search logic for string properties
-                        AddStringSearchPredicate(ref predicate, parameterExp, propertyExp, parameters.SearchTerm);
-                    }
-                    else if (propertyExp.Type == typeof(Guid) && Guid.TryParse(parameters.SearchTerm, out var searchGuid))
-                    {
-                        // Search logic for Guid properties
-                        AddGuidSearchPredicate(ref predicate, parameterExp, propertyExp, searchGuid);
-                    }
-                    else if (propertyExp.Type == typeof(int) && int.TryParse(parameters.SearchTerm, out var searchInt))
-                    {
-                        // Search logic for int properties
-                        AddIntSearchPredicate(ref predicate, parameterExp, propertyExp, searchInt);
-                    }
-                    else if (propertyExp.Type == typeof(DateTime) && DateTime.TryParse(parameters.SearchTerm, out var searchDateTime))
-                    {
-                        // Search logic for DateTime properties
-                        AddDateTimeSearchPredicate(ref predicate, parameterExp, propertyExp, searchDateTime);
-                    }
-                }
-
-                query = query.Where(predicate);
-            }
-
-            return query;
-        }
-
-        private static IQueryable<TEntity> ApplySort(IQueryable<TEntity> query, QueryParameters parameters)
-        {
-            // Apply sorting
-            if (!string.IsNullOrEmpty(parameters.SortBy))
-            {
-                // Get the property with the specified name using reflection from TEntity
-                var property = typeof(TEntity).GetProperty(parameters.SortBy, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
-
-                if (property != null)
-                {
-                    // Build the sorting expression dynamically
-                    var parameter = Expression.Parameter(typeof(TEntity), "x");
-                    var propertyAccess = Expression.Property(parameter, property);
-                    var orderByExp = Expression.Lambda(propertyAccess, parameter);
-
-                    // Determine the sort direction
-                    var methodName = string.Equals(parameters.SortOrder, "asc", StringComparison.OrdinalIgnoreCase) ? "OrderBy" : "OrderByDescending";
-
-                    // Use reflection to get the appropriate method
-                    var queryableType = typeof(Queryable);
-                    var method = queryableType.GetMethods()
-                        .Where(m => m.Name == methodName)
-                        .Single(m => m.GetParameters().Length == 2)
-                        .MakeGenericMethod(typeof(TEntity), property.PropertyType);
-
-                    // Apply the sorting
-                    query = (IQueryable<TEntity>)method.Invoke(null, new object[] { query, orderByExp })!; // mustang possible null return here
-                }
-            }
-            return query;
-        }
-
-        private static Expression<Func<TEntity, dynamic>> CreateProjection(List<string> propertyNames)
-        {
             var entityParameter = Expression.Parameter(typeof(TEntity), "entity");
             var memberBindings = new List<MemberBinding>();
 
@@ -187,45 +94,6 @@ namespace AppyNox.Services.Coupon.Infrastructure.Repositories
             var selector = Expression.Lambda<Func<TEntity, dynamic>>(memberInit, entityParameter);
 
             return selector;
-        }
-
-        #endregion
-
-        #region [ Private ApplySearch Methods ]
-
-        private static void AddStringSearchPredicate(ref Expression<Func<TEntity, bool>> predicate, ParameterExpression parameterExp, MemberExpression propertyExp, string searchTerm)
-        {
-            MethodInfo? method = typeof(string).GetMethod("Contains", new[] { typeof(string) });
-            if (method is null)
-            {
-                throw new InvalidOperationException("Unable to find the 'Contains' method on the string type.");
-            }
-            var someValue = Expression.Constant(searchTerm, typeof(string));
-            var containsMethodExp = Expression.Call(propertyExp, method, someValue);
-
-            var lambda = Expression.Lambda<Func<TEntity, bool>>(containsMethodExp, parameterExp);
-            predicate = predicate.Or(lambda);
-        }
-
-        private static void AddGuidSearchPredicate(ref Expression<Func<TEntity, bool>> predicate, ParameterExpression parameterExp, MemberExpression propertyExp, Guid searchGuid)
-        {
-            var guidEqualityExp = Expression.Equal(propertyExp, Expression.Constant(searchGuid));
-            var lambda = Expression.Lambda<Func<TEntity, bool>>(guidEqualityExp, parameterExp);
-            predicate = predicate.Or(lambda);
-        }
-
-        private static void AddIntSearchPredicate(ref Expression<Func<TEntity, bool>> predicate, ParameterExpression parameterExp, MemberExpression propertyExp, int searchInt)
-        {
-            var intEqualityExp = Expression.Equal(propertyExp, Expression.Constant(searchInt));
-            var lambda = Expression.Lambda<Func<TEntity, bool>>(intEqualityExp, parameterExp);
-            predicate = predicate.Or(lambda);
-        }
-
-        private static void AddDateTimeSearchPredicate(ref Expression<Func<TEntity, bool>> predicate, ParameterExpression parameterExp, MemberExpression propertyExp, DateTime searchDateTime)
-        {
-            var dateTimeEqualityExp = Expression.Equal(propertyExp, Expression.Constant(searchDateTime));
-            var lambda = Expression.Lambda<Func<TEntity, bool>>(dateTimeEqualityExp, parameterExp);
-            predicate = predicate.Or(lambda);
         }
 
         #endregion
