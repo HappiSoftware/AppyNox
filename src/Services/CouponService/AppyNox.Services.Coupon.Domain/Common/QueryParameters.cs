@@ -13,17 +13,7 @@ namespace AppyNox.Services.Coupon.Domain.Common
         [Range(1, 100, ErrorMessage = "Page size must be between 1 and 100.")]
         public int PageSize { get; set; } = 10;
 
-        // Search
-        public string? SearchTerm { get; set; }
-
-        public string? SearchColumns { get; set; } // comma separated
-
-        // Sorting
-        public string? SortBy { get; set; }
-
-        public string SortOrder { get; set; } = "asc";
-
-        public string DetailLevel { get; set; } = "Basic";
+        public string DetailLevel { get; set; } = "Simple";
 
         #endregion
     }

@@ -10,7 +10,7 @@ namespace AppyNox.Services.Coupon.Application.Validators
 
         public BaseDtoValidator()
         {
-            RuleFor(dto => dto.Description).ValidateDescription();
+            RuleFor(dto => dto.Code).ValidateCode();
 
             if (typeof(IUpdateDto).IsAssignableFrom(typeof(T)))
             {

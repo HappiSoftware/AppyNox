@@ -6,11 +6,11 @@ namespace AppyNox.Services.Coupon.Application.Validators.SharedRules
     {
         #region [ Public Methods ]
 
-        public static IRuleBuilderOptions<T, string?> ValidateDescription<T>(this IRuleBuilder<T, string?> ruleBuilder)
+        public static IRuleBuilderOptions<T, string?> ValidateCode<T>(this IRuleBuilder<T, string?> ruleBuilder)
         {
             return ruleBuilder
-                .NotNull().NotEmpty().WithMessage("Description cannot be null")
-                .MaximumLength(60).WithMessage("Description cannot be longer than 60 characters");
+                .NotNull().NotEmpty().WithMessage("Code cannot be null")
+                .Length(5).WithMessage("Code should be 5 characters");
         }
 
         public static IRuleBuilderOptions<T, Guid> ValidateId<T>(this IRuleBuilder<T, Guid> ruleBuilder)

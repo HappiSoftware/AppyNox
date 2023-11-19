@@ -2,6 +2,7 @@
 using AppyNox.Services.Coupon.Infrastructure.Data.Configurations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using System.Reflection.Emit;
 
 namespace AppyNox.Services.Coupon.Infrastructure.Data
 {
@@ -22,6 +23,8 @@ namespace AppyNox.Services.Coupon.Infrastructure.Data
         #region [ Properties ]
 
         public DbSet<CouponEntity> Coupons { get; set; }
+
+        public DbSet<CouponDetailEntity> CouponDetails { get; set; }
 
         #endregion
 
@@ -52,6 +55,7 @@ namespace AppyNox.Services.Coupon.Infrastructure.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            ConfigureCouponDetail(modelBuilder);
             ConfigureCoupon(modelBuilder);
         }
 
@@ -59,35 +63,71 @@ namespace AppyNox.Services.Coupon.Infrastructure.Data
 
         #region [ Private Methods ]
 
-        private static void ConfigureCoupon(ModelBuilder modelBuilder)
+        private static void ConfigureCoupon(ModelBuilder builder)
         {
-            modelBuilder.ApplyConfiguration(new CouponConfiguration());
+            builder.ApplyConfiguration(new CouponConfiguration());
 
-            modelBuilder.Entity<CouponEntity>(entity =>
-            {
-                entity.Property(e => e.Id)
-                    .ValueGeneratedOnAdd();
-            });
+            builder.Entity<CouponEntity>()
+                .HasKey(c => c.Id);
 
-            modelBuilder.Entity<CouponEntity>().HasData(
+            builder.Entity<CouponEntity>()
+                .Property(c => c.Id)
+                .ValueGeneratedOnAdd();
+
+            builder.Entity<CouponEntity>()
+                .HasOne(c => c.CouponDetailEntity)
+                .WithMany(cd => cd.Coupons)
+                .HasForeignKey(c => c.CouponDetailEntityId)
+                .IsRequired();
+
+            CouponDetailEntity couponDetailEntity =
+                new()
+                {
+                    Id = Guid.Parse("c2feaca4-d82a-4d2e-ba5a-667b685212b4"),
+                    Code = "EXF50",
+                    Detail = "TestDetail"
+                };
+
+            builder.Entity<CouponDetailEntity>().HasData(couponDetailEntity);
+
+            builder.Entity<CouponEntity>().HasData(
                 new CouponEntity
                 {
                     Id = Guid.NewGuid(),
                     Code = "EXF50",
                     Description = "Description",
                     DiscountAmount = 10.65,
-                    MinAmount = 100
+                    MinAmount = 100,
+                    CouponDetailEntityId = Guid.Parse("c2feaca4-d82a-4d2e-ba5a-667b685212b4")
                 });
 
-            modelBuilder.Entity<CouponEntity>().HasData(
+            builder.Entity<CouponEntity>().HasData(
                 new CouponEntity
                 {
                     Id = Guid.NewGuid(),
                     Code = "EXF60",
                     Description = "Description2",
                     DiscountAmount = 20.55,
-                    MinAmount = 200
+                    MinAmount = 200,
+                    CouponDetailEntityId = Guid.Parse("c2feaca4-d82a-4d2e-ba5a-667b685212b4")
                 });
+        }
+
+        private static void ConfigureCouponDetail(ModelBuilder builder)
+        {
+            builder.Entity<CouponDetailEntity>()
+            .HasKey(cd => cd.Id);
+
+            builder.Entity<CouponDetailEntity>()
+                .Property(cd => cd.Id)
+                .ValueGeneratedOnAdd();
+
+            builder.Entity<CouponDetailEntity>()
+                .HasMany(cd => cd.Coupons)
+                .WithOne(c => c.CouponDetailEntity)
+                .HasForeignKey(c => c.CouponDetailEntityId)
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.Restrict);
         }
 
         #endregion

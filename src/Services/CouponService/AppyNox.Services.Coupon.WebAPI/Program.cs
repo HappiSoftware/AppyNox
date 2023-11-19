@@ -10,7 +10,14 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
 {
     string fileName = string.Empty;
 
-    fileName = "../https/coupon-service.pfx";
+    if (builder.Environment.IsDevelopment())
+    {
+        fileName = Directory.GetCurrentDirectory() + "/ssl/coupon-service.pfx";
+    }
+    else if (builder.Environment.IsProduction())
+    {
+        fileName = "/https/coupon-service.pfx";
+    }
 
     serverOptions.ConfigureEndpointDefaults(listenOptions =>
     {

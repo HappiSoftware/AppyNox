@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace AppyNox.Services.Coupon.Domain.Entities
 {
-    public class CouponEntity : IEntityWithGuid
+    public class CouponDetailEntity : IEntityWithGuid
     {
         #region [ Properties ]
 
@@ -15,21 +15,13 @@ namespace AppyNox.Services.Coupon.Domain.Entities
 
         public string Code { get; set; } = string.Empty;
 
-        public string? Description { get; set; }
-
-        public double DiscountAmount { get; set; }
-
-        public int MinAmount { get; set; }
-
-        public int DetailValue { get; set; }
+        public string? Detail { get; set; }
 
         #endregion
 
         #region [ Relations ]
 
-        public Guid CouponDetailEntityId { get; set; }
-
-        public virtual CouponDetailEntity CouponDetailEntity { get; set; } = null!;
+        public virtual ICollection<CouponEntity>? Coupons { get; set; }
 
         #endregion
     }
