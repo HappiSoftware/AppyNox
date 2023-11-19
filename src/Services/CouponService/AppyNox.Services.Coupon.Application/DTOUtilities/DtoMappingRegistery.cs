@@ -14,7 +14,8 @@ namespace AppyNox.Services.Coupon.Application.DtoUtilities
         #region [ Fields ]
 
         private readonly Dictionary<(Type entityType, Enum detailLevel), Type> _entityDetailLevelToDtoTypeMappings;
-        private readonly Dictionary<Type, Dictionary<DtoMappingTypes, Type>> _entityToDtoDetailLevelMappings;
+
+        private readonly Dictionary<Type, Dictionary<DtoLevelMappingTypes, Type>> _entityToDtoDetailLevelMappings;
 
         #endregion
 
@@ -23,7 +24,7 @@ namespace AppyNox.Services.Coupon.Application.DtoUtilities
         public DtoMappingRegistry()
         {
             _entityDetailLevelToDtoTypeMappings = new Dictionary<(Type, Enum), Type>();
-            _entityToDtoDetailLevelMappings = new Dictionary<Type, Dictionary<DtoMappingTypes, Type>>();
+            _entityToDtoDetailLevelMappings = new Dictionary<Type, Dictionary<DtoLevelMappingTypes, Type>>();
             RegisterDtos();
         }
 
@@ -56,7 +57,7 @@ namespace AppyNox.Services.Coupon.Application.DtoUtilities
 
         public Type GetDtoType(Type detailLevelEnumType, Type entityType, string detailLevelDescription)
         {
-            Enum detailLevel = EnumExtensions.GetEnumValueFromDescription(detailLevelEnumType, detailLevelDescription);
+            Enum detailLevel = AppyNoxEnumExtensions.GetEnumValueFromDisplayName(detailLevelEnumType, detailLevelDescription);
 
             if (_entityDetailLevelToDtoTypeMappings.TryGetValue((entityType, detailLevel), out var dtoType))
             {
@@ -66,7 +67,7 @@ namespace AppyNox.Services.Coupon.Application.DtoUtilities
             throw new DetailLevelNotFoundException($"No Dto type mapping found for entity type {entityType} and detail level {detailLevel}.");
         }
 
-        public Dictionary<DtoMappingTypes, Type> GetDetailLevelTypes(Type entityType)
+        public Dictionary<DtoLevelMappingTypes, Type> GetDetailLevelTypes(Type entityType)
         {
             if (_entityToDtoDetailLevelMappings.TryGetValue(entityType, out var detailLevelMappings))
             {
@@ -80,25 +81,36 @@ namespace AppyNox.Services.Coupon.Application.DtoUtilities
 
         #region [ Private Methods ]
 
+        private static Enum GetDetailLevel(CouponDetailLevelAttribute attribute, DtoLevelMappingTypes mappingType)
+        {
+            return mappingType switch
+            {
+                DtoLevelMappingTypes.DataAccess => attribute.DataAccessDetailLevel,
+                DtoLevelMappingTypes.Create => attribute.CreateDetailLevel,
+                DtoLevelMappingTypes.Update => attribute.UpdateDetailLevel,
+                _ => attribute.DataAccessDetailLevel, // Default to DataAccess if none of the specific cases match
+            };
+        }
+
         private void RegisterMapping(Type entityType, Type dtoType, CouponDetailLevelAttribute attribute)
         {
             string dtoName = dtoType.Name;
-            DtoMappingTypes desiredMapping = DtoMappingTypes.DataAccess;
+            DtoLevelMappingTypes desiredMapping = DtoLevelMappingTypes.DataAccess;
 
             if (dtoName.Contains("Create"))
             {
-                desiredMapping = DtoMappingTypes.Create;
+                desiredMapping = DtoLevelMappingTypes.Create;
             }
             else if (dtoName.Contains("Update"))
             {
-                desiredMapping = DtoMappingTypes.Update;
+                desiredMapping = DtoLevelMappingTypes.Update;
             }
 
             Enum detailLevel = GetDetailLevel(attribute, desiredMapping);
 
             if (!_entityToDtoDetailLevelMappings.TryGetValue(entityType, out var mappings))
             {
-                mappings = new Dictionary<DtoMappingTypes, Type>();
+                mappings = new Dictionary<DtoLevelMappingTypes, Type>();
                 _entityToDtoDetailLevelMappings.Add(entityType, mappings);
             }
 
@@ -106,18 +118,6 @@ namespace AppyNox.Services.Coupon.Application.DtoUtilities
             _entityDetailLevelToDtoTypeMappings[(entityType, detailLevel)] = dtoType;
         }
 
-        private static Enum GetDetailLevel(CouponDetailLevelAttribute attribute, DtoMappingTypes mappingType)
-        {
-            return mappingType switch
-            {
-                DtoMappingTypes.DataAccess => attribute.DataAccessDetailLevel,
-                DtoMappingTypes.Create => attribute.CreateDetailLevel,
-                DtoMappingTypes.Update => attribute.UpdateDetailLevel,
-                _ => attribute.DataAccessDetailLevel, // Default to DataAccess if none of the specific cases match
-            };
-        }
-
         #endregion
     }
-
 }

@@ -34,16 +34,16 @@ namespace AppyNox.Services.Coupon.Infrastructure.Repositories
 
         #region [ Public Methods ]
 
-        public async Task<TEntity> GetByIdAsync(Guid id)
+        public async Task<TEntity> GetByIdAsync(Guid id, Expression<Func<TEntity, dynamic>> selectedColumns)
         {
-            return await _dbSet.Where(item => item.Id == id).FirstOrDefaultAsync() ?? throw new EntityNotFoundException<TEntity>(id);
+            return await _dbSet.Where(item => item.Id == id).Select(selectedColumns).FirstOrDefaultAsync() ?? throw new EntityNotFoundException<TEntity>(id);
         }
 
-        public async Task<IEnumerable<object>> GetAllAsync(QueryParameters queryParameters, Type dtoType)
+        public async Task<IEnumerable<object>> GetAllAsync(QueryParameters queryParameters, Expression<Func<TEntity, dynamic>> selectedColumns)
         {
             return await _dbSet
                 .AsQueryable()
-                .Select(CreateProjection(dtoType))
+                .Select(selectedColumns)
                 .Skip((queryParameters.PageNumber - 1) * queryParameters.PageSize)
                 .Take(queryParameters.PageSize)
                 .ToListAsync();
@@ -67,13 +67,10 @@ namespace AppyNox.Services.Coupon.Infrastructure.Repositories
 
         #endregion
 
-        #region [ Private Methods ]
+        #region [ Public Helper Methods ]
 
-        private static Expression<Func<TEntity, dynamic>> CreateProjection(Type dtoType)
+        public Expression<Func<TEntity, dynamic>> CreateProjection(List<string> propertyNames)
         {
-            // Create a list of property names from the DTO
-            var propertyNames = dtoType.GetProperties().Select(p => p.Name).ToList();
-
             var entityParameter = Expression.Parameter(typeof(TEntity), "entity");
             var memberBindings = new List<MemberBinding>();
 

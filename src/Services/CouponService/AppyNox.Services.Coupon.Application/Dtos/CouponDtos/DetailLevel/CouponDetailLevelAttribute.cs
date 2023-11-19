@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace AppyNox.Services.Coupon.Application.Dtos.CouponDtos.DetailLevel
 {
@@ -6,29 +7,29 @@ namespace AppyNox.Services.Coupon.Application.Dtos.CouponDtos.DetailLevel
 
     public enum CouponDataAccessDetailLevel
     {
-        [Description("Simple")]
+        [Display(Name = "Simple")]
         Simple,
 
-        [Description("WithAllRelations")]
+        [Display(Name = "WithAllRelations")]
         WithAllRelations
     }
 
     public enum CouponCreateDetailLevel
     {
-        [Description("SimpleCreate")]
-        SimpleCreate,
+        [Display(Name = "Simple")]
+        Simple,
 
-        [Description("ExtendedCreate")]
-        ExtendedCreate
+        [Display(Name = "Extended")]
+        Extended
     }
 
     public enum CouponUpdateDetailLevel
     {
-        [Description("SimpleUpdate")]
-        SimpleUpdate,
+        [Display(Name = "Simple")]
+        Simple,
 
-        [Description("ExtendedUpdate")]
-        ExtendedUpdate
+        [Display(Name = "Extended")]
+        Extended
     }
 
     #endregion
@@ -36,7 +37,7 @@ namespace AppyNox.Services.Coupon.Application.Dtos.CouponDtos.DetailLevel
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
     public class CouponDetailLevelAttribute : Attribute
     {
-        #region Public Constructors
+        #region [ Public Constructors ]
 
         public CouponDetailLevelAttribute(CouponDataAccessDetailLevel dataAccessDetailLevel)
         {

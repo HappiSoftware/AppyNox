@@ -9,7 +9,7 @@ namespace AppyNox.Services.Coupon.Application.Services.Interfaces
     {
         #region [ Public Methods ]
 
-        Task<IEnumerable<dynamic>> GetAllAsync(QueryParameters queryParameters, string detailLevel = "Simple");
+        Task<IEnumerable<dynamic>> GetAllAsync(QueryParameters queryParameters);
 
         Task<dynamic?> GetByIdAsync(Guid id, QueryParameters queryParameters);
 

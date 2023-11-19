@@ -10,6 +10,8 @@
 
         public string? Description { get; set; }
 
+        public Guid CouponDetailEntityId { get; set; }
+
         #endregion
     }
 }
