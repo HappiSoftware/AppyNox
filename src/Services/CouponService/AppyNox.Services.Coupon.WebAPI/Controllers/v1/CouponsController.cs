@@ -1,21 +1,25 @@
 ﻿using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
+using AppyNox.Services.Coupon.Application.DtoUtilities;
 using AppyNox.Services.Coupon.Application.ExceptionExtensions;
 using AppyNox.Services.Coupon.Application.Services.Implementations;
 using AppyNox.Services.Coupon.Application.Services.Interfaces;
 using AppyNox.Services.Coupon.Domain.Common;
 using AppyNox.Services.Coupon.Domain.Entities;
+using AppyNox.Services.Coupon.WebAPI.Filters;
 using AppyNox.Services.Coupon.WebAPI.Helpers;
 using Asp.Versioning;
 using AutoWrapper.Wrappers;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.OpenApi.Extensions;
+using System.ComponentModel;
 
 namespace AppyNox.Services.Coupon.WebAPI.Controllers.v1
 {
     [ApiController]
     [ApiVersion("1.0")]
     [Route("api/[controller]")]
-    public class CouponsController : ControllerBase
+    public class CouponsController : Controller
     {
         #region [ Fields ]
 
@@ -44,7 +48,7 @@ namespace AppyNox.Services.Coupon.WebAPI.Controllers.v1
         {
             try
             {
-                var coupons = await _couponService.GetAllAsync(queryParameters, queryParameters.DetailLevel);
+                var coupons = await _couponService.GetAllAsync(queryParameters);
                 return new ApiResponse(coupons, 200);
             }
             catch (DetailLevelNotFoundException exception)
@@ -73,29 +77,29 @@ namespace AppyNox.Services.Coupon.WebAPI.Controllers.v1
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(Guid id, CouponSimpleUpdateDto couponDto)
         {
-            //var validationResult = _couponValidator.Validate(couponDto);
-            //ValidationHandler.HandleValidationResult(ModelState, validationResult);
+            var validationResult = _couponValidator.Validate(couponDto);
+            ValidationHandler.HandleValidationResult(ModelState, validationResult);
 
-            //var existingCoupon = await _couponService.GetByIdAsync(id);
-            //if (existingCoupon == null)
-            //{
-            //    return NotFound(new ApiResponse(404, $"Coupon with id {id} not found"));
-            //}
+            var existingCoupon = await _couponService.GetByIdAsync(id, QueryParameters.CreateForIdOnly());
+            if (existingCoupon == null)
+            {
+                return NotFound(new ApiResponse(404, $"Coupon with id {id} not found"));
+            }
 
-            //await _couponService.UpdateAsync(couponDto);
+            await _couponService.UpdateAsync(couponDto);
             return NoContent();
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            //var coupon = await _couponService.GetByIdAsync(id, "WithId");
-            //if (coupon == null)
-            //{
-            //    return NotFound(new ApiResponse(404, $"Coupon with id {id} not found"));
-            //}
+            var coupon = await _couponService.GetByIdAsync(id, QueryParameters.CreateForIdOnly());
+            if (coupon == null)
+            {
+                return NotFound(new ApiResponse(404, $"Coupon with id {id} not found"));
+            }
 
-            //await _couponService.DeleteAsync(coupon);
+            await _couponService.DeleteAsync(coupon);
             return NoContent();
         }
 

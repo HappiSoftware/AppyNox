@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AppyNox.Services.Coupon.Domain.Common
 {
-    public enum DtoMappingTypes
+    public enum DtoLevelMappingTypes
     {
         DataAccess,
 

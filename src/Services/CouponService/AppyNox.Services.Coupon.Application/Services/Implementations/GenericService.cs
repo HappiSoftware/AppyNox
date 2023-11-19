@@ -2,8 +2,11 @@
 using AppyNox.Services.Coupon.Application.Services.Interfaces;
 using AppyNox.Services.Coupon.Domain.Common;
 using AppyNox.Services.Coupon.Domain.Interfaces;
+using AppyNox.Services.Coupon.Domain.Interfaces.Common;
 using AppyNox.Services.Coupon.Infrastructure.ExceptionExtensions;
 using AutoMapper;
+using System.Dynamic;
+using System.Linq.Expressions;
 
 namespace AppyNox.Services.Coupon.Application.Services.Implementations
 {
@@ -21,7 +24,7 @@ namespace AppyNox.Services.Coupon.Application.Services.Implementations
 
         private readonly DtoMappingRegistry _dtoMappingRegistry;
 
-        private readonly Dictionary<DtoMappingTypes, Type> _detailLevelEnum;
+        private readonly Dictionary<DtoLevelMappingTypes, Type> _detailLevelEnum;
 
         private readonly IUnitOfWork _unitOfWork;
 
@@ -42,29 +45,56 @@ namespace AppyNox.Services.Coupon.Application.Services.Implementations
 
         #region [ Public Methods ]
 
-        public async Task<IEnumerable<dynamic>> GetAllAsync(QueryParameters queryParameters, string detailLevel = "Simple")
+        public async Task<IEnumerable<dynamic>> GetAllAsync(QueryParameters queryParameters)
         {
-            var detailLevelMap = _detailLevelEnum.GetValueOrDefault(DtoMappingTypes.DataAccess) ?? throw new InvalidOperationException("DataAccess has no levels!");
-            var dtoType = _dtoMappingRegistry.GetDtoType(detailLevelMap, typeof(TEntity), queryParameters.DetailLevel);
+            var (expression, dtoType) = CreateProjection(queryParameters);
+            var entities = await _repository.GetAllAsync(queryParameters, expression);
+            List<object> resultList = [];
 
-            var entities = await _repository.GetAllAsync(queryParameters, dtoType);
-            var result = _mapper.Map(entities, entities.GetType(), typeof(IEnumerable<>).MakeGenericType(dtoType));
-            if (result is IEnumerable<dynamic> validResult)
+            if (dtoType != null)
             {
-                return validResult;
+                foreach (var entity in entities)
+                {
+                    if (dtoType == typeof(ExpandoObject) && queryParameters.CommonDtoLevel == CommonDtoLevelEnums.IdOnly)
+                    {
+                        // Create dynamic object with only Id property
+                        var dynamicObject = new ExpandoObject() as IDictionary<string, Object>;
+                        dynamicObject["Id"] = entity.GetType().GetProperty("Id")!.GetValue(entity)!;
+                        resultList.Add(dynamicObject);
+                    }
+                    else
+                    {
+                        var mappedEntity = _mapper.Map(entity, entity.GetType(), dtoType);
+                        resultList.Add(mappedEntity);
+                    }
+                }
             }
-            return new List<dynamic>();
+            else
+            {
+                resultList.AddRange(entities);
+            }
+
+            return resultList.Count != 0 ? resultList : new List<dynamic>();
         }
 
         public async Task<dynamic?> GetByIdAsync(Guid id, QueryParameters queryParameters)
         {
             try
             {
-                var detailLevelMap = _detailLevelEnum.GetValueOrDefault(DtoMappingTypes.DataAccess) ?? throw new InvalidOperationException("DataAccess has no levels!");
-                var dtoType = _dtoMappingRegistry.GetDtoType(detailLevelMap, typeof(TEntity), queryParameters.DetailLevel);
+                var (expression, dtoType) = CreateProjection(queryParameters);
+                var entity = await _repository.GetByIdAsync(id, expression);
+                object result;
 
-                var entity = await _repository.GetByIdAsync(id);
-                return _mapper.Map(entity, entity.GetType(), dtoType);
+                if (dtoType == typeof(ExpandoObject) && queryParameters.CommonDtoLevel == CommonDtoLevelEnums.IdOnly)
+                {
+                    // Create dynamic object with only Id property
+                    result = new { Id = entity.GetType().GetProperty("Id")!.GetValue(entity) };
+                }
+                else
+                {
+                    result = _mapper.Map(entity, entity.GetType(), dtoType);
+                }
+                return result;
             }
             catch (EntityNotFoundException<TEntity>)
             {
@@ -101,6 +131,37 @@ namespace AppyNox.Services.Coupon.Application.Services.Implementations
             var entity = _mapper.Map<TEntity>(dto);
             _repository.DeleteAsync(entity);
             await _unitOfWork.SaveChangesAsync();
+        }
+
+        #endregion
+
+        #region [ Private Methods ]
+
+        private (Expression<Func<TEntity, dynamic>> expression, Type? dtoType) CreateProjection(QueryParameters queryParameters)
+        {
+            Type? dtoType = null;
+            List<string> properties = [];
+            var detailLevelMap = _detailLevelEnum.GetValueOrDefault(queryParameters.AccessType) ?? throw new InvalidOperationException($"{queryParameters.AccessType} has no levels!");
+
+            switch (queryParameters.CommonDtoLevel)
+            {
+                case CommonDtoLevelEnums.None:
+                    dtoType = _dtoMappingRegistry.GetDtoType(detailLevelMap, typeof(TEntity), queryParameters.DetailLevel);
+                    properties = dtoType.GetProperties().Select(p => p.Name).ToList();
+                    break;
+
+                case CommonDtoLevelEnums.Simple:
+                    dtoType = _dtoMappingRegistry.GetDtoType(detailLevelMap, typeof(TEntity), AppyNoxEnumExtensions.GetDisplayName(CommonDtoLevelEnums.Simple));
+                    properties = dtoType.GetProperties().Select(p => p.Name).ToList();
+                    break;
+
+                case CommonDtoLevelEnums.IdOnly:
+                    properties.Add("Id");
+                    dtoType = typeof(ExpandoObject);
+                    break;
+            }
+
+            return (_repository.CreateProjection(properties), dtoType);
         }
 
         #endregion

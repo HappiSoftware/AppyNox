@@ -1,4 +1,5 @@
 ﻿using AppyNox.Services.Coupon.Domain.Common;
+using System.Linq.Expressions;
 
 namespace AppyNox.Services.Coupon.Domain.Interfaces
 {
@@ -6,15 +7,17 @@ namespace AppyNox.Services.Coupon.Domain.Interfaces
     {
         #region [ Public Methods ]
 
-        Task<TEntity> GetByIdAsync(Guid id);
-
-        Task<IEnumerable<object>> GetAllAsync(QueryParameters queryParameters, Type dtoType);
-
         Task<TEntity> AddAsync(TEntity entity);
 
-        void UpdateAsync(TEntity entity);
+        Expression<Func<TEntity, dynamic>> CreateProjection(List<string> propertyNames);
 
         void DeleteAsync(TEntity entity);
+
+        Task<IEnumerable<object>> GetAllAsync(QueryParameters queryParameters, Expression<Func<TEntity, dynamic>> selectedColumns);
+
+        Task<TEntity> GetByIdAsync(Guid id, Expression<Func<TEntity, dynamic>> selectedColumns);
+
+        void UpdateAsync(TEntity entity);
 
         #endregion
     }

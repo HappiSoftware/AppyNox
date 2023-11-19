@@ -11,9 +11,9 @@ namespace AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Mappings
 
         public CouponMapping()
         {
-            CreateMap<CouponBasicCreateDto, CouponEntity>();
+            CreateMap<CouponBasicCreateDto, CouponEntity>().ReverseMap();
 
-            CreateMap<CouponSimpleUpdateDto, CouponEntity>();
+            CreateMap<CouponSimpleUpdateDto, CouponEntity>().ReverseMap();
 
             CreateMap<CouponEntity, CouponSimpleDto>();
 
