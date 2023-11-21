@@ -1,14 +1,34 @@
-﻿using System.ComponentModel;
+﻿using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.DetailLevel;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace AppyNox.Services.Coupon.Application.Dtos.CouponDetailDtos.DetailLevel
 {
-    public enum CouponDetailDetailLevel
+    public enum CouponDetailDataAccessDetailLevel
     {
-        [Description("Simple")]
+        [Display(Name = "Simple")]
         Simple,
 
-        [Description("WithAllRelations")]
+        [Display(Name = "WithAllRelations")]
         WithAllRelations
+    }
+
+    public enum CouponDetailCreateDetailLevel
+    {
+        [Display(Name = "Simple")]
+        Simple,
+
+        [Display(Name = "Extended")]
+        Extended
+    }
+
+    public enum CouponDetailUpdateDetailLevel
+    {
+        [Display(Name = "Simple")]
+        Simple,
+
+        [Display(Name = "Extended")]
+        Extended
     }
 
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
@@ -16,16 +36,30 @@ namespace AppyNox.Services.Coupon.Application.Dtos.CouponDetailDtos.DetailLevel
     {
         #region [ Public Constructors ]
 
-        public CouponDetailDetailLevelAttribute(CouponDetailDetailLevel level)
+        public CouponDetailDetailLevelAttribute(CouponDetailDataAccessDetailLevel dataAccessDetailLevel)
         {
-            DetailLevel = level;
+            DataAccessDetailLevel = dataAccessDetailLevel;
+        }
+
+        public CouponDetailDetailLevelAttribute(CouponDetailCreateDetailLevel createDetailLevel)
+        {
+            CreateDetailLevel = createDetailLevel;
+        }
+
+        public CouponDetailDetailLevelAttribute(CouponDetailUpdateDetailLevel updateDetailLevel)
+        {
+            UpdateDetailLevel = updateDetailLevel;
         }
 
         #endregion
 
         #region [ Properties ]
 
-        public CouponDetailDetailLevel DetailLevel { get; }
+        public CouponDetailDataAccessDetailLevel DataAccessDetailLevel { get; }
+
+        public CouponDetailCreateDetailLevel CreateDetailLevel { get; }
+
+        public CouponDetailUpdateDetailLevel UpdateDetailLevel { get; }
 
         #endregion
     }

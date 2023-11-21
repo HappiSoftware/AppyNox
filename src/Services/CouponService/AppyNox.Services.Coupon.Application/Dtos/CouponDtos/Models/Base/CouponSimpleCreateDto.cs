@@ -1,4 +1,6 @@
-﻿namespace AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base
+﻿using AppyNox.Services.Base.Application.Dtos;
+
+namespace AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base
 {
     public class CouponBasicCreateDto : BaseDto
     {

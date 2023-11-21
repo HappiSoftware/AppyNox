@@ -1,4 +1,6 @@
-﻿using AppyNox.Services.Coupon.Domain.Interfaces;
+﻿using AppyNox.Services.Base.Domain.Interfaces;
+using AppyNox.Services.Base.Infrastructure.Interfaces;
+using AppyNox.Services.Base.Infrastructure.Repositories;
 using AppyNox.Services.Coupon.Infrastructure.Data;
 using AppyNox.Services.Coupon.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -16,8 +18,8 @@ namespace AppyNox.Services.Coupon.Infrastructure
             services.AddDbContext<CouponDbContext>(options =>
                 options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped(typeof(IGenericRepositoryBase<>), typeof(GenericRepository<>));
+            services.AddScoped<IUnitOfWorkBase, UnitOfWork>();
         }
 
         public static void ApplyMigrations(IServiceProvider serviceProvider)

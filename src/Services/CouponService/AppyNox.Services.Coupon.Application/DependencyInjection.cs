@@ -1,6 +1,8 @@
-﻿using AppyNox.Services.Coupon.Application.DtoUtilities;
+﻿using AppyNox.Services.Base.Application.DtoUtilities;
+using AppyNox.Services.Base.Application.Services.Implementations;
+using AppyNox.Services.Base.Application.Services.Interfaces;
+using AppyNox.Services.Coupon.Application.Dtos.DtoUtilities;
 using AppyNox.Services.Coupon.Application.Services.Implementations;
-using AppyNox.Services.Coupon.Application.Services.Interfaces;
 using FluentValidation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,7 +19,7 @@ namespace AppyNox.Services.Coupon.Application
             services.AddAutoMapper(Assembly.Load("AppyNox.Services.Coupon.Application"));
             services.AddValidatorsFromAssembly(Assembly.Load("AppyNox.Services.Coupon.Application"));
 
-            services.AddScoped(typeof(IGenericService<,,,>), typeof(GenericService<,,,>));
+            services.AddScoped(typeof(IGenericServiceBase<,,,>), typeof(GenericService<,,,>));
             services.AddSingleton<DtoMappingRegistry>();
         }
 
