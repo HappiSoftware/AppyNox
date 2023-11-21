@@ -8,5 +8,6 @@ namespace AppyNox.Services.Coupon.Application.Dtos.CouponDetailDtos.Models.Basic
 {
     internal class CouponDetailSimpleCreateDto
     {
+        // mustang TODO Implement
     }
 }

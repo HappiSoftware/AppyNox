@@ -1,4 +1,5 @@
-﻿using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
+﻿using AppyNox.Services.Base.Application.Validators;
+using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
 using FluentValidation;
 
 namespace AppyNox.Services.Coupon.Application.Validators.Coupon

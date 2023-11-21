@@ -25,6 +25,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppyNox.Services.Authentica
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{1A4309A8-D26E-4684-9717-B2AF2D6A1BEF}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".BaseService", ".BaseService", "{87C72E4A-C538-412C-8256-FCC0808B6B66}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppyNox.Services.Base.Infrastructure", "src\Services\.BaseService\AppyNox.Services.Base.Infrastructure\AppyNox.Services.Base.Infrastructure.csproj", "{8335B11D-B4C2-47CF-AA5D-D9E5534F0AF3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppyNox.Services.Base.Domain", "src\Services\.BaseService\AppyNox.Services.Base.Domain\AppyNox.Services.Base.Domain.csproj", "{A673A4E1-B418-43D9-ADAE-B510D41C576E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppyNox.Services.Base.Application", "src\Services\.BaseService\AppyNox.Services.Base.Application\AppyNox.Services.Base.Application.csproj", "{2EC376A3-DD57-487F-AFBC-6754A1DE7421}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +71,18 @@ Global
 		{1A4309A8-D26E-4684-9717-B2AF2D6A1BEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1A4309A8-D26E-4684-9717-B2AF2D6A1BEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1A4309A8-D26E-4684-9717-B2AF2D6A1BEF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8335B11D-B4C2-47CF-AA5D-D9E5534F0AF3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8335B11D-B4C2-47CF-AA5D-D9E5534F0AF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8335B11D-B4C2-47CF-AA5D-D9E5534F0AF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8335B11D-B4C2-47CF-AA5D-D9E5534F0AF3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A673A4E1-B418-43D9-ADAE-B510D41C576E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A673A4E1-B418-43D9-ADAE-B510D41C576E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A673A4E1-B418-43D9-ADAE-B510D41C576E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A673A4E1-B418-43D9-ADAE-B510D41C576E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2EC376A3-DD57-487F-AFBC-6754A1DE7421}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2EC376A3-DD57-487F-AFBC-6754A1DE7421}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2EC376A3-DD57-487F-AFBC-6754A1DE7421}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2EC376A3-DD57-487F-AFBC-6754A1DE7421}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -77,6 +97,10 @@ Global
 		{81CC2F92-1356-4A35-8FB0-FE409C11CDF4} = {AD2F15A2-813D-422E-A37D-BED8810752C6}
 		{B2D6D09D-10E2-4015-A765-038A32259DE5} = {AD2F15A2-813D-422E-A37D-BED8810752C6}
 		{B2D3EB24-3B60-4F8F-80C7-9D07E8E22F36} = {AD2F15A2-813D-422E-A37D-BED8810752C6}
+		{87C72E4A-C538-412C-8256-FCC0808B6B66} = {13BAFC88-5121-40D1-A62E-015667098D4A}
+		{8335B11D-B4C2-47CF-AA5D-D9E5534F0AF3} = {87C72E4A-C538-412C-8256-FCC0808B6B66}
+		{A673A4E1-B418-43D9-ADAE-B510D41C576E} = {87C72E4A-C538-412C-8256-FCC0808B6B66}
+		{2EC376A3-DD57-487F-AFBC-6754A1DE7421} = {87C72E4A-C538-412C-8256-FCC0808B6B66}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EA4F2302-DC43-4149-814A-609940BEC847}

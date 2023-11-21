@@ -1,4 +1,4 @@
-﻿using AppyNox.Services.Coupon.Domain.Interfaces;
+﻿using AppyNox.Services.Base.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;

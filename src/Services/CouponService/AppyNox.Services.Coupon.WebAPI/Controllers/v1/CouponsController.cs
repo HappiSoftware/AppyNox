@@ -1,8 +1,7 @@
-﻿using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
-using AppyNox.Services.Coupon.Application.DtoUtilities;
-using AppyNox.Services.Coupon.Application.ExceptionExtensions;
+﻿using AppyNox.Services.Base.Application.DtoUtilities.ExceptionExtensions;
+using AppyNox.Services.Base.Application.Services.Interfaces;
+using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
 using AppyNox.Services.Coupon.Application.Services.Implementations;
-using AppyNox.Services.Coupon.Application.Services.Interfaces;
 using AppyNox.Services.Coupon.Domain.Common;
 using AppyNox.Services.Coupon.Domain.Entities;
 using AppyNox.Services.Coupon.WebAPI.Filters;
@@ -23,7 +22,7 @@ namespace AppyNox.Services.Coupon.WebAPI.Controllers.v1
     {
         #region [ Fields ]
 
-        private readonly IGenericService<CouponEntity, CouponSimpleDto, CouponBasicCreateDto, CouponSimpleUpdateDto> _couponService;
+        private readonly IGenericServiceBase<CouponEntity, CouponSimpleDto, CouponBasicCreateDto, CouponSimpleUpdateDto> _couponService;
 
         private readonly IValidator<CouponBasicCreateDto> _couponValidator;
 
@@ -32,7 +31,7 @@ namespace AppyNox.Services.Coupon.WebAPI.Controllers.v1
         #region [ Public Constructors ]
 
         public CouponsController(
-            IGenericService<CouponEntity, CouponSimpleDto, CouponBasicCreateDto, CouponSimpleUpdateDto> couponService,
+            IGenericServiceBase<CouponEntity, CouponSimpleDto, CouponBasicCreateDto, CouponSimpleUpdateDto> couponService,
             IValidator<CouponBasicCreateDto> couponValidator)
         {
             _couponService = couponService;
