@@ -27,11 +27,23 @@ Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-co
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".BaseService", ".BaseService", "{87C72E4A-C538-412C-8256-FCC0808B6B66}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppyNox.Services.Base.Infrastructure", "src\Services\.BaseService\AppyNox.Services.Base.Infrastructure\AppyNox.Services.Base.Infrastructure.csproj", "{8335B11D-B4C2-47CF-AA5D-D9E5534F0AF3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppyNox.Services.Base.Infrastructure", "src\Services\.BaseService\AppyNox.Services.Base.Infrastructure\AppyNox.Services.Base.Infrastructure.csproj", "{8335B11D-B4C2-47CF-AA5D-D9E5534F0AF3}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppyNox.Services.Base.Domain", "src\Services\.BaseService\AppyNox.Services.Base.Domain\AppyNox.Services.Base.Domain.csproj", "{A673A4E1-B418-43D9-ADAE-B510D41C576E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppyNox.Services.Base.Application", "src\Services\.BaseService\AppyNox.Services.Base.Application\AppyNox.Services.Base.Application.csproj", "{2EC376A3-DD57-487F-AFBC-6754A1DE7421}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppyNox.Services.Base.Application", "src\Services\.BaseService\AppyNox.Services.Base.Application\AppyNox.Services.Base.Application.csproj", "{2EC376A3-DD57-487F-AFBC-6754A1DE7421}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Gateways", "Gateways", "{C1B4F7CE-9281-43C2-A02F-4B7B3946E9DA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BuildingBlocks", "BuildingBlocks", "{CE4E6F5C-8B09-41BE-A985-252420CD1D9D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "EventBus", "EventBus", "{2B423076-D18F-4726-B4CC-9B79BF296FE8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppyNox.EventBus.Base", "src\BuildingBlocks\EventBus\AppyNox.EventBus.Base\AppyNox.EventBus.Base.csproj", "{2FAC9EA8-4CD4-4D11-8C61-320DC46E9C14}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppyNox.EventBus.Factory", "src\BuildingBlocks\EventBus\AppyNox.EventBus.Factory\AppyNox.EventBus.Factory.csproj", "{8C9D29EC-A7F1-4490-A7EB-F984189A05A0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppyNox.EventBus.RabbitMQ", "src\BuildingBlocks\EventBus\AppyNox.EventBus.RabbitMQ\AppyNox.EventBus.RabbitMQ.csproj", "{2F6F96BC-50A2-47EE-991F-D8675D509BEE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -83,6 +95,18 @@ Global
 		{2EC376A3-DD57-487F-AFBC-6754A1DE7421}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2EC376A3-DD57-487F-AFBC-6754A1DE7421}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2EC376A3-DD57-487F-AFBC-6754A1DE7421}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2FAC9EA8-4CD4-4D11-8C61-320DC46E9C14}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2FAC9EA8-4CD4-4D11-8C61-320DC46E9C14}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2FAC9EA8-4CD4-4D11-8C61-320DC46E9C14}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2FAC9EA8-4CD4-4D11-8C61-320DC46E9C14}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C9D29EC-A7F1-4490-A7EB-F984189A05A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C9D29EC-A7F1-4490-A7EB-F984189A05A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C9D29EC-A7F1-4490-A7EB-F984189A05A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C9D29EC-A7F1-4490-A7EB-F984189A05A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F6F96BC-50A2-47EE-991F-D8675D509BEE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F6F96BC-50A2-47EE-991F-D8675D509BEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F6F96BC-50A2-47EE-991F-D8675D509BEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F6F96BC-50A2-47EE-991F-D8675D509BEE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -101,6 +125,10 @@ Global
 		{8335B11D-B4C2-47CF-AA5D-D9E5534F0AF3} = {87C72E4A-C538-412C-8256-FCC0808B6B66}
 		{A673A4E1-B418-43D9-ADAE-B510D41C576E} = {87C72E4A-C538-412C-8256-FCC0808B6B66}
 		{2EC376A3-DD57-487F-AFBC-6754A1DE7421} = {87C72E4A-C538-412C-8256-FCC0808B6B66}
+		{2B423076-D18F-4726-B4CC-9B79BF296FE8} = {CE4E6F5C-8B09-41BE-A985-252420CD1D9D}
+		{2FAC9EA8-4CD4-4D11-8C61-320DC46E9C14} = {2B423076-D18F-4726-B4CC-9B79BF296FE8}
+		{8C9D29EC-A7F1-4490-A7EB-F984189A05A0} = {2B423076-D18F-4726-B4CC-9B79BF296FE8}
+		{2F6F96BC-50A2-47EE-991F-D8675D509BEE} = {2B423076-D18F-4726-B4CC-9B79BF296FE8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EA4F2302-DC43-4149-814A-609940BEC847}

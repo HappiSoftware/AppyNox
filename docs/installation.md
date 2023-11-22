@@ -11,7 +11,41 @@ Before you proceed with the installation, make sure you have the following prere
 - [Visual Studio 2022](https://visualstudio.microsoft.com/)
 - [.NET 8](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/sdk-8.0.100-windows-x64-installer)
 
-1) **SSL Certificates** <br> 
+1) **Connect Github via SSH** <br> 
+Connect your local computer to github via ssh:
+```
+Check Existing SSH keys (OR) Create a new key
+
+    ->Create a new key
+        Open Git Bash
+        ssh-keygen -t ed25519 -C "your_email@example.com"
+        Enter a file in which to save the key (/c/Users/YOU/.ssh/id_ALGORITHM):[Press enter]
+        Enter passphrase (empty for no passphrase): [Type a passphrase]
+        Enter same passphrase again: [Type passphrase again]
+
+    ->Check existing keys
+        Open Git Bash
+        ls -al ~/.ssh
+        Check the directory listing to see if you already have a public SSH key. By default, the filenames of supported public keys for GitHub are one of the following.
+            id_rsa.pub
+            id_ecdsa.pub
+            id_ed25519.pub
+
+    ->Adding a new SSH key to your account
+        Open Git Bash
+        clip < ~/.ssh/id_ed25519.pub (If this not works, use this: cat ~/.ssh/id_ed25519.pub | clip)
+        Go to github on your browser
+        Click Profil photo > Settings
+        In the "Access" section of the sidebar, click  SSH and GPG keys.
+        Click New SSH key or Add SSH key.
+        In the "Title" field, add a descriptive label for the new key. For example, if you're using a personal laptop, you might call this key "Personal laptop".
+        type of key: First, select authentication and then do it for signing again
+        In the "Key" field, paste your public key.
+        Click Add SSH key.
+```
+<br>
+
+2) **SSL Certificates** <br> 
 After cloning the repository, add development SSL certificates to the services for running them in a Docker container. Run the following commands to generate and trust the SSL certificates:
 ```
 dotnet dev-certs https -ep .\src\Services\CouponService\AppyNox.Services.Coupon.WebAPI\ssl\coupon-service.pfx -p happi2023
@@ -20,7 +54,7 @@ dotnet dev-certs https --trust
 ```
 <br>
 
-2) **docker-compose.override.yml** <br>
+3) **docker-compose.override.yml** <br>
 Create a docker-compose.override.yml file (gitignored) to contain connection strings. Fill it with the appropriate content for each service.
 **Example Content:**
 ```
@@ -71,7 +105,7 @@ If your docker-compose.override.yml didn't go under docker-compose.yml and locat
 
 <br>
 
-3) **AppSettings Files** <br>
+4) **AppSettings Files** <br>
 Create appsettings.Production.json files for both services. Customize the content with your database and JWT settings.
 
 CouponService appsettings.Production.json :
@@ -111,7 +145,7 @@ AuthenticationService appsettings.Production.json:
 ```
 <br>
 
-4) With everything set up, select Docker as the startup project and run the solution. This will launch the AppyNox services in Docker containers.
+5) With everything set up, select Docker as the startup project and run the solution. This will launch the AppyNox services in Docker containers.
 <br>
 <br>
 
