@@ -1,56 +1,82 @@
-using AppyNox.Services.Coupon.WebAPI.Filters;
+using AppyNox.Services.Coupon.WebAPI.Middlewares;
 using AutoWrapper;
+using NLog;
+using NLog.Web;
 
-var builder = WebApplication.CreateBuilder(args);
-var configuration = builder.Configuration;
+var logger = NLog.LogManager.Setup().LoadConfigurationFromFile("nlog.config").GetCurrentClassLogger();
+logger.Info("--- init main ---");
 
-#region [ SSL Configuration ]
-
-builder.WebHost.ConfigureKestrel(serverOptions =>
+try
 {
-    string fileName = string.Empty;
+    var builder = WebApplication.CreateBuilder(args);
+    var configuration = builder.Configuration;
 
-    if (builder.Environment.IsDevelopment())
-    {
-        fileName = Directory.GetCurrentDirectory() + "/ssl/coupon-service.pfx";
-    }
-    else if (builder.Environment.IsProduction())
-    {
-        fileName = "/https/coupon-service.pfx";
-    }
+    #region [ SSL Configuration ]
 
-    serverOptions.ConfigureEndpointDefaults(listenOptions =>
+    builder.WebHost.ConfigureKestrel(serverOptions =>
     {
-        listenOptions.UseHttps(fileName ?? throw new InvalidOperationException("SSL certificate file path could not be determined."), "happi2023");
+        string fileName = string.Empty;
+
+        if (builder.Environment.IsDevelopment())
+        {
+            fileName = Directory.GetCurrentDirectory() + "/ssl/coupon-service.pfx";
+        }
+        else if (builder.Environment.IsProduction())
+        {
+            fileName = "/https/coupon-service.pfx";
+        }
+
+        serverOptions.ConfigureEndpointDefaults(listenOptions =>
+        {
+            listenOptions.UseHttps(fileName ?? throw new InvalidOperationException("SSL certificate file path could not be determined."), "happi2023");
+        });
     });
-});
 
-#endregion
+    #endregion
 
-// Add services to the container.
-builder.Services.AddControllers();
+    // Add services to the container.
+    builder.Services.AddControllers();
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+    // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwaggerGen();
 
-AppyNox.Services.Coupon.Infrastructure.DependencyInjection.ConfigureServices(builder.Services, configuration);
-AppyNox.Services.Coupon.Application.DependencyInjection.ConfigureServices(builder.Services, configuration);
+    #region [ Logger Setup ]
 
-var app = builder.Build();
+    builder.Logging.ClearProviders();
+    builder.Host.UseNLog();
 
-// Configure the HTTP request pipeline.
-app.UseSwagger();
-app.UseSwaggerUI();
+    #endregion
 
-app.UseHttpsRedirection();
+    AppyNox.Services.Coupon.Infrastructure.DependencyInjection.ConfigureServices(builder.Services, configuration);
+    AppyNox.Services.Coupon.Application.DependencyInjection.ConfigureServices(builder.Services, configuration);
 
-app.UseAuthorization();
+    var app = builder.Build();
 
-app.MapControllers();
+    // Configure the HTTP request pipeline.
+    app.UseSwagger();
+    app.UseSwaggerUI();
 
-app.UseApiResponseAndExceptionWrapper(new AutoWrapperOptions { IsApiOnly = true, ShowApiVersion = true, ApiVersion = "1.0", UseApiProblemDetailsException = true });
+    app.UseHttpsRedirection();
 
-AppyNox.Services.Coupon.Infrastructure.DependencyInjection.ApplyMigrations(app.Services);
+    app.UseAuthorization();
 
-app.Run();
+    app.MapControllers();
+
+    app.UseMiddleware<LoggingMiddleware>();
+
+    app.UseApiResponseAndExceptionWrapper(new AutoWrapperOptions { IsApiOnly = true, ShowApiVersion = true, ApiVersion = "1.0", UseApiProblemDetailsException = true });
+
+    AppyNox.Services.Coupon.Infrastructure.DependencyInjection.ApplyMigrations(app.Services);
+
+    app.Run();
+}
+catch (Exception e)
+{
+    logger.Error(e, "Stopped program because of exception");
+    throw;
+}
+finally
+{
+    NLog.LogManager.Shutdown();
+}
