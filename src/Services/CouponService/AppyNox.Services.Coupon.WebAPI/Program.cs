@@ -83,8 +83,6 @@ try
 
     app.MapControllers();
 
-    app.UseMiddleware<LoggingMiddleware>();
-
     app.UseApiResponseAndExceptionWrapper(new AutoWrapperOptions { IsApiOnly = true, ShowApiVersion = true, ApiVersion = "1.0" });
     app.UseMiddleware<ExceptionHandlingMiddleware>();
     app.UseMiddleware<CorrelationIdMiddleware>();

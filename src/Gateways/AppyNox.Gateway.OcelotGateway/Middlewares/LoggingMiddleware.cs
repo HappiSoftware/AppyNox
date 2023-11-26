@@ -2,7 +2,7 @@
 using AppyNox.Services.Base.Domain.Common;
 using Newtonsoft.Json;
 
-namespace AppyNox.Services.Coupon.WebAPI.Middlewares
+namespace AppyNox.Gateway.OcelotGateway.Middlewares
 {
     public class LoggingMiddleware
     {

@@ -1,17 +1,44 @@
+using AppyNox.Gateway.OcelotGateway.Middlewares;
+using NLog;
+using NLog.Web;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
 using Ocelot.Provider.Consul;
 
-var builder = WebApplication.CreateBuilder(args);
+var logger = NLog.LogManager.Setup().LoadConfigurationFromFile("Configurations/nlog.config").GetCurrentClassLogger();
+logger.Info("--- init main ---");
 
-builder.Configuration.SetBasePath(builder.Environment.ContentRootPath)
-    .AddJsonFile($"Configurations/ocelot.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: true)
-    .AddEnvironmentVariables();
+try
+{
+    var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddOcelot(builder.Configuration).AddConsul();
+    builder.Configuration.SetBasePath(builder.Environment.ContentRootPath)
+        .AddJsonFile($"Configurations/ocelot.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: true)
+        .AddEnvironmentVariables();
 
-var app = builder.Build();
+    #region [ Logger Setup ]
 
-await app.UseOcelot();
+    builder.Logging.ClearProviders();
+    builder.Host.UseNLog();
 
-app.Run();
+    #endregion
+
+    builder.Services.AddOcelot(builder.Configuration).AddConsul();
+
+    var app = builder.Build();
+
+    app.UseMiddleware<LoggingMiddleware>();
+
+    await app.UseOcelot();
+
+    app.Run();
+}
+catch (Exception e)
+{
+    logger.Error(e, "Stopped program because of exception");
+    throw;
+}
+finally
+{
+    NLog.LogManager.Shutdown();
+}
