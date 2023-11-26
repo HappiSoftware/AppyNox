@@ -1,6 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Runtime.InteropServices.Marshalling;
-using AppyNox.Services.Base.Domain.Interfaces.Common;
+﻿using AppyNox.Services.Base.Domain.Interfaces.Common;
+using System.ComponentModel.DataAnnotations;
 
 namespace AppyNox.Services.Base.Domain.Common
 {

@@ -4,19 +4,14 @@ using AppyNox.Services.Coupon.Application.Dtos.CouponDetailDtos.DetailLevel;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.DetailLevel;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
 using AppyNox.Services.Coupon.Domain.Entities;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AppyNox.Services.Coupon.Application.Dtos.DtoUtilities
 {
     public class DtoMappingRegistry : DtoMappingRegistryBase
     {
-        #region Public Methods
+        #region [ Public Methods ]
 
         public DtoMappingRegistry() : base()
         {

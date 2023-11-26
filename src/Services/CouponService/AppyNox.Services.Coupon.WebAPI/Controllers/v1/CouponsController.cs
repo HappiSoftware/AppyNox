@@ -7,12 +7,11 @@ using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
 using AppyNox.Services.Coupon.Application.Services.Implementations;
 using AppyNox.Services.Coupon.Domain.Common;
 using AppyNox.Services.Coupon.Domain.Entities;
+using AppyNox.Services.Coupon.WebAPI.Helpers;
 using Asp.Versioning;
 using AutoWrapper.Wrappers;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.OpenApi.Extensions;
-using System.ComponentModel;
 
 namespace AppyNox.Services.Coupon.WebAPI.Controllers.v1
 {

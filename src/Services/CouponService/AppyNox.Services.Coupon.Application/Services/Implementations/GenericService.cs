@@ -12,7 +12,7 @@ namespace AppyNox.Services.Coupon.Application.Services.Implementations
     where TCreateDto : class
     where TUpdateDto : class
     {
-        #region Public Constructors
+        #region [ Public Constructors ]
 
         public GenericService(IGenericRepositoryBase<TEntity> repository, IMapper mapper, DtoMappingRegistry dtoMappingRegistry, IUnitOfWorkBase unitOfWork)
             : base(repository, mapper, dtoMappingRegistry, unitOfWork)

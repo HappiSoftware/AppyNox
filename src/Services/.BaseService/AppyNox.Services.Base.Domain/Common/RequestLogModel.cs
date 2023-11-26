@@ -2,7 +2,7 @@
 
 public class RequestLogModel
 {
-    #region Public Constructors
+    #region [ Public Constructors ]
 
     public RequestLogModel(string method, string path, string? queryString, string? body)
     {
@@ -14,7 +14,7 @@ public class RequestLogModel
 
     #endregion
 
-    #region Properties
+    #region [ Properties ]
 
     public string Method { get; set; }
 
