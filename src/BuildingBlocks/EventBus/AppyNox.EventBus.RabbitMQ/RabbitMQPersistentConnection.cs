@@ -13,7 +13,7 @@ namespace AppyNox.EventBus.RabbitMQ
 {
     public class RabbitMQPersistentConnection : IDisposable
     {
-        #region Fields
+        #region [ Fields ]
 
         private readonly IConnectionFactory _connectionFactory;
 
@@ -27,7 +27,7 @@ namespace AppyNox.EventBus.RabbitMQ
 
         #endregion
 
-        #region Public Constructors
+        #region [ Public Constructors ]
 
         public RabbitMQPersistentConnection(IConnectionFactory connectionFactory, int retryCount)
         {
@@ -37,13 +37,13 @@ namespace AppyNox.EventBus.RabbitMQ
 
         #endregion
 
-        #region Properties
+        #region [ Properties ]
 
         public bool IsConnected => connection != null && connection.IsOpen;
 
         #endregion
 
-        #region Public Methods
+        #region [ Public Methods ]
 
         public IModel CreateModel()
         {

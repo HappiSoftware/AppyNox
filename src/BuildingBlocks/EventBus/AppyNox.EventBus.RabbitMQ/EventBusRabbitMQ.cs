@@ -5,18 +5,14 @@ using Polly;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using RabbitMQ.Client.Exceptions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace AppyNox.EventBus.RabbitMQ
 {
     public class EventBusRabbitMQ : BaseEventBus
     {
-        #region Fields
+        #region [ Fields ]
 
         private readonly IConnectionFactory _connectionFactory;
 
@@ -26,7 +22,7 @@ namespace AppyNox.EventBus.RabbitMQ
 
         #endregion
 
-        #region Public Constructors
+        #region [ Public Constructors ]
 
         public EventBusRabbitMQ(EventBusConfig config, IServiceProvider serviceProvider) : base(config, serviceProvider)
         {
@@ -72,7 +68,7 @@ namespace AppyNox.EventBus.RabbitMQ
 
         #endregion
 
-        #region Public Methods
+        #region [ Public Methods ]
 
         public override void Publish(IntegrationEvent @event)
         {

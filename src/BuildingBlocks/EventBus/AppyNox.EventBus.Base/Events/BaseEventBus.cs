@@ -12,7 +12,7 @@ namespace AppyNox.EventBus.Base.Events
 {
     public abstract class BaseEventBus : IEventBus
     {
-        #region Fields
+        #region [ Fields ]
 
         public readonly IServiceProvider serviceProvider;
 
@@ -22,7 +22,7 @@ namespace AppyNox.EventBus.Base.Events
 
         #endregion
 
-        #region Public Constructors
+        #region [ Public Constructors ]
 
         public BaseEventBus(EventBusConfig config, IServiceProvider serviceProvider)
         {
@@ -33,7 +33,7 @@ namespace AppyNox.EventBus.Base.Events
 
         #endregion
 
-        #region Public Methods
+        #region [ Public Methods ]
 
         public virtual string ProcessEventName(string eventName)
         {

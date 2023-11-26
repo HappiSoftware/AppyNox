@@ -8,6 +8,21 @@ volumes:
   app_data:
 
 services:
+  appynox.gateway.ocelotgateway:
+    image: ${DOCKER_REGISTRY-}appynoxgatewayocelotgateway
+    build:
+      context: .
+      dockerfile: src/Gateways/AppyNox.Gateway.OcelotGateway/Dockerfile
+    environment:
+     - ASPNETCORE_ENVIRONMENT=Production
+     - ASPNETCORE_URLS=https://+:7000
+    volumes:
+     - ./src/Gateways/AppyNox.Gateway.OcelotGateway/ssl:/https
+    ports:
+     - "7000:7000"
+    networks:
+      - dev
+
   authentication.db:
     image: postgres:latest
     environment:
@@ -69,3 +84,4 @@ services:
      - "7002:7002"
     networks:
      - dev
+
