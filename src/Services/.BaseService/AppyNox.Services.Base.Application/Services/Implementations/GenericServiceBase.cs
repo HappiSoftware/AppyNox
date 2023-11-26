@@ -1,6 +1,7 @@
 ﻿using AppyNox.Services.Base.Application.DtoUtilities;
+using AppyNox.Services.Base.Application.ExceptionExtensions;
+using AppyNox.Services.Base.Application.Helpers;
 using AppyNox.Services.Base.Application.Services.Interfaces;
-
 using AppyNox.Services.Base.Domain.Common;
 using AppyNox.Services.Base.Domain.Interfaces;
 using AppyNox.Services.Base.Infrastructure.ExceptionExtensions;
@@ -142,7 +143,7 @@ namespace AppyNox.Services.Base.Application.Services.Implementations
         {
             Type? dtoType = null;
             List<string> properties = [];
-            var detailLevelMap = _detailLevelEnum.GetValueOrDefault(queryParameters.AccessType) ?? throw new InvalidOperationException($"{queryParameters.AccessType} has no levels!");
+            var detailLevelMap = _detailLevelEnum.GetValueOrDefault(queryParameters.AccessType) ?? throw new AccessTypeNotFoundException(typeof(TEntity), queryParameters.AccessType.ToString());
 
             switch (queryParameters.CommonDtoLevel)
             {
@@ -152,7 +153,7 @@ namespace AppyNox.Services.Base.Application.Services.Implementations
                     break;
 
                 case CommonDtoLevelEnums.Simple:
-                    dtoType = _dtoMappingRegistry.GetDtoType(detailLevelMap, typeof(TEntity), AppyNoxEnumExtensions.GetDisplayName(CommonDtoLevelEnums.Simple));
+                    dtoType = _dtoMappingRegistry.GetDtoType(detailLevelMap, typeof(TEntity), NoxEnumExtensions.GetDisplayName(CommonDtoLevelEnums.Simple));
                     properties = dtoType.GetProperties().Select(p => p.Name).ToList();
                     break;
 

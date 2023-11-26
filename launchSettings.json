@@ -5,7 +5,8 @@
       "commandVersion": "1.0",
       "serviceActions": {
         "appynox.services.authentication.webapi": "StartDebugging",
-        "appynox.services.coupon.webapi": "StartDebugging"
+        "appynox.services.coupon.webapi": "StartDebugging",
+        "appynox.gateway.ocelotgateway": "StartDebugging"
       }
     }
   }

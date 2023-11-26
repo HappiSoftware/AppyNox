@@ -371,3 +371,6 @@ appsettings.Production.json
 
 # Docker
 docker-compose.override.yml
+
+# DeveloperWorkspace use this directory for your personel projects such as testing new features etc.
+/src/DeveloperWorkspace

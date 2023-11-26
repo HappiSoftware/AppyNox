@@ -1,6 +1,7 @@
-﻿using AppyNox.Services.Base.Application.DtoUtilities;
-using AppyNox.Services.Base.Application.DtoUtilities.ExceptionExtensions;
+﻿using AppyNox.Services.Base.Application.ExceptionExtensions;
+using AppyNox.Services.Base.Application.Helpers;
 using AppyNox.Services.Base.Domain.Common;
+using AppyNox.Services.Base.Domain.ExceptionExtensions.Enums;
 using System.Data;
 using System.Reflection;
 
@@ -21,7 +22,7 @@ namespace AppyNox.Services.Base.Application.DtoUtilities
         public DtoMappingRegistryBase()
         {
             _entityDetailLevelToDtoTypeMappings = new Dictionary<(Type, Enum), Type>();
-            _entityToDtoDetailLevelMappings = new Dictionary<Type, Dictionary<DtoLevelMappingTypes, Type>>();
+            _entityToDtoDetailLevelMappings = [];
             RegisterDtos();
         }
 
@@ -33,14 +34,13 @@ namespace AppyNox.Services.Base.Application.DtoUtilities
 
         public Type GetDtoType(Type detailLevelEnumType, Type entityType, string detailLevelDescription)
         {
-            Enum detailLevel = AppyNoxEnumExtensions.GetEnumValueFromDisplayName(detailLevelEnumType, detailLevelDescription);
+            Enum detailLevel = NoxEnumExtensions.GetEnumValueFromDisplayName(detailLevelEnumType, detailLevelDescription);
 
             if (_entityDetailLevelToDtoTypeMappings.TryGetValue((entityType, detailLevel), out var dtoType))
             {
                 return dtoType;
             }
-
-            throw new DetailLevelNotFoundException($"No Dto type mapping found for entity type {entityType} and detail level {detailLevel}.");
+            throw new DtoDetailLevelNotFoundException(entityType, detailLevel);
         }
 
         public Dictionary<DtoLevelMappingTypes, Type> GetDetailLevelTypes(Type entityType)
@@ -50,7 +50,7 @@ namespace AppyNox.Services.Base.Application.DtoUtilities
                 return detailLevelMappings;
             }
 
-            throw new InvalidOperationException($"No detail level type found for entity type {entityType.FullName}.");
+            throw new AccessTypeNotFoundException(entityType);
         }
 
         #endregion
@@ -75,7 +75,7 @@ namespace AppyNox.Services.Base.Application.DtoUtilities
 
             if (!_entityToDtoDetailLevelMappings.TryGetValue(entityType, out var mappings))
             {
-                mappings = new Dictionary<DtoLevelMappingTypes, Type>();
+                mappings = [];
                 _entityToDtoDetailLevelMappings.Add(entityType, mappings);
             }
 

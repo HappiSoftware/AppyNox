@@ -11,7 +11,7 @@ namespace AppyNox.EventBus.Factory
 {
     public static class EventBusFactory
     {
-        #region Public Methods
+        #region [ Public Methods ]
 
         public static IEventBus Create(EventBusConfig config, IServiceProvider serviceProvider)
         {
