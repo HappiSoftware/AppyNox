@@ -30,44 +30,44 @@ namespace AppyNox.Services.Base.Domain.ExceptionExtensions.Base
 
         #region [ Public Constructors ]
 
-        public NoxException()
+        protected NoxException()
             : base()
         {
             _statusCode = 500;
         }
 
-        public NoxException(string message)
+        protected NoxException(string message)
             : base(message)
         {
             _statusCode = 500;
         }
 
-        public NoxException(int statusCode)
+        protected NoxException(int statusCode)
             : base()
         {
             _statusCode = statusCode;
         }
 
-        public NoxException(string message, int statusCode)
+        protected NoxException(string message, int statusCode)
             : base(message)
         {
             _statusCode = statusCode;
         }
 
-        public NoxException(Enum title, string message, int statusCode)
+        protected NoxException(Enum title, string message, int statusCode)
             : base(message)
         {
             _title = title.GetDisplayName();
             _statusCode = statusCode;
         }
 
-        public NoxException(string message, Exception innerException)
+        protected NoxException(string message, Exception innerException)
             : base(message, innerException)
         {
             _statusCode = 500;
         }
 
-        public NoxException(string message, int statusCode, Exception innerException)
+        protected NoxException(string message, int statusCode, Exception innerException)
             : base(message, innerException)
         {
             _statusCode = statusCode;

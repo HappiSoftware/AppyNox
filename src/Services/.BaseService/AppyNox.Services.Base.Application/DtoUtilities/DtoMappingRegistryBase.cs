@@ -17,20 +17,19 @@ namespace AppyNox.Services.Base.Application.DtoUtilities
 
         #endregion
 
-        #region [ Public Constructors ]
+        #region [ Protected Constructors ]
 
-        public DtoMappingRegistryBase()
+        protected DtoMappingRegistryBase()
         {
             _entityDetailLevelToDtoTypeMappings = new Dictionary<(Type, Enum), Type>();
             _entityToDtoDetailLevelMappings = [];
-            RegisterDtos();
         }
 
         #endregion
 
-        #region [ Public Methods ]
 
-        public abstract void RegisterDtos();
+
+        #region [ Public Methods ]
 
         public Type GetDtoType(Type detailLevelEnumType, Type entityType, string detailLevelDescription)
         {
@@ -55,7 +54,9 @@ namespace AppyNox.Services.Base.Application.DtoUtilities
 
         #endregion
 
-        #region [ Private Methods ]
+        #region [ Protected Methods ]
+
+        protected abstract void RegisterDtos();
 
         protected void RegisterMapping(Type entityType, Type dtoType, Attribute attribute)
         {
