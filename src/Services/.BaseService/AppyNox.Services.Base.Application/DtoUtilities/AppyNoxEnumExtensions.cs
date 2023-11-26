@@ -59,7 +59,7 @@ namespace AppyNox.Services.Base.Application.DtoUtilities
 
         #endregion
 
-        #region Private Methods
+        #region [ Private Methods ]
 
         private static T GetAttributeOfType<T>(this Enum enumValue) where T : Attribute
         {

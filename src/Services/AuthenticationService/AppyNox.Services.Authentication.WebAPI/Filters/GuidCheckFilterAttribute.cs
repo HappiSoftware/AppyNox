@@ -1,8 +1,9 @@
 ﻿using AppyNox.Services.Authentication.Application.Dtos;
-using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
+using Microsoft.AspNetCore.Mvc.Filters;
 using System.Text;
+
+using System.Text.Json;
 
 namespace AppyNox.Services.Authentication.WebAPI.Filters
 {

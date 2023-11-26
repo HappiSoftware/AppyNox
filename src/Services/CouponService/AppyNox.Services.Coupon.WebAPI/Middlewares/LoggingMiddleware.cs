@@ -6,7 +6,7 @@ namespace AppyNox.Services.Coupon.WebAPI.Middlewares
 {
     public class LoggingMiddleware
     {
-        #region Fields
+        #region [ Fields ]
 
         private readonly RequestDelegate _next;
 
@@ -14,7 +14,7 @@ namespace AppyNox.Services.Coupon.WebAPI.Middlewares
 
         #endregion
 
-        #region Public Constructors
+        #region [ Public Constructors ]
 
         public LoggingMiddleware(RequestDelegate next, ILogger<LoggingMiddleware> logger)
         {
@@ -24,7 +24,7 @@ namespace AppyNox.Services.Coupon.WebAPI.Middlewares
 
         #endregion
 
-        #region Public Methods
+        #region [ Public Methods ]
 
         public async Task Invoke(HttpContext context)
         {
@@ -48,7 +48,7 @@ namespace AppyNox.Services.Coupon.WebAPI.Middlewares
 
         #endregion
 
-        #region Private Methods
+        #region [ Private Methods ]
 
         private async Task LogResponse(HttpContext context, MemoryStream responseBody, Stream originalResponseBody)
         {

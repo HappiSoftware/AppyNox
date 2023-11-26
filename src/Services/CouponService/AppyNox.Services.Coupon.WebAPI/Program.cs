@@ -1,5 +1,8 @@
+using AppyNox.Services.Base.Domain.Common;
+using AppyNox.Services.Coupon.WebAPI.Helpers;
 using AppyNox.Services.Coupon.WebAPI.Middlewares;
 using AutoWrapper;
+using Consul;
 using NLog;
 using NLog.Web;
 
@@ -48,6 +51,20 @@ try
 
     #endregion
 
+    #region [ Consul Discovery Service ]
+
+    builder.Services.AddSingleton<IConsulClient, ConsulClient>(p => new ConsulClient(consulConfig =>
+    {
+        var address = configuration["ConsulConfig:Address"];
+        consulConfig.Address = new Uri(address);
+    }));
+    builder.Services.AddSingleton<IHostedService, ConsulHostedService>();
+    builder.Services.Configure<ConsulConfig>(configuration.GetSection("consul"));
+
+    #endregion
+
+    builder.Services.AddHealthChecks();
+
     AppyNox.Services.Coupon.Infrastructure.DependencyInjection.ConfigureServices(builder.Services, configuration);
     AppyNox.Services.Coupon.Application.DependencyInjection.ConfigureServices(builder.Services, configuration);
 
@@ -68,6 +85,8 @@ try
     app.UseApiResponseAndExceptionWrapper(new AutoWrapperOptions { IsApiOnly = true, ShowApiVersion = true, ApiVersion = "1.0", UseApiProblemDetailsException = true });
 
     AppyNox.Services.Coupon.Infrastructure.DependencyInjection.ApplyMigrations(app.Services);
+
+    app.UseHealthChecks("/health-check");
 
     app.Run();
 }

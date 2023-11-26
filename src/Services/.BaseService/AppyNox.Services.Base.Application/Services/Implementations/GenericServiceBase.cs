@@ -1,4 +1,6 @@
 ﻿using AppyNox.Services.Base.Application.DtoUtilities;
+using AppyNox.Services.Base.Application.Services.Interfaces;
+
 using AppyNox.Services.Base.Domain.Common;
 using AppyNox.Services.Base.Domain.Interfaces;
 using AppyNox.Services.Base.Infrastructure.ExceptionExtensions;
@@ -6,7 +8,6 @@ using AppyNox.Services.Base.Infrastructure.Interfaces;
 using AutoMapper;
 using System.Dynamic;
 using System.Linq.Expressions;
-using AppyNox.Services.Base.Application.Services.Interfaces;
 
 namespace AppyNox.Services.Base.Application.Services.Implementations
 {

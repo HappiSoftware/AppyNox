@@ -4,7 +4,7 @@ namespace AppyNox.Services.Base.Domain.Interfaces.Common
 {
     public interface IQueryParameters
     {
-        #region Properties
+        #region [ Properties ]
 
         string Access { get; set; }
 
