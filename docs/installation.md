@@ -47,7 +47,7 @@ Check Existing SSH keys (OR) Create a new key
 
 2) **SSL Certificates** <br> 
 After cloning the repository, add development SSL certificates to the services for running them in a Docker container. Run the following commands to generate and trust the SSL certificates:
-```
+```bash
 dotnet dev-certs https -ep .\src\Services\CouponService\AppyNox.Services.Coupon.WebAPI\ssl\coupon-service.pfx -p happi2023
 dotnet dev-certs https -ep .\src\Services\AuthenticationService\AppyNox.Services.Authentication.WebAPI\ssl\authentication-service.pfx -p happi2023
 dotnet dev-certs https --trust
@@ -57,7 +57,7 @@ dotnet dev-certs https --trust
 3) **docker-compose.override.yml** <br>
 Create a docker-compose.override.yml file (gitignored) to contain connection strings. Fill it with the appropriate content for each service.
 **Example Content:**
-```
+```yml
 version: '3.4'
 services:
   appynox.services.authentication.webapi:
@@ -109,7 +109,7 @@ If your docker-compose.override.yml didn't go under docker-compose.yml and locat
 Create appsettings.Production.json files for both services. Customize the content with your database and JWT settings.
 
 CouponService appsettings.Production.json :
-```
+```json
 {
   "Logging": {
     "LogLevel": {
@@ -125,7 +125,7 @@ CouponService appsettings.Production.json :
 <br>
 
 AuthenticationService appsettings.Production.json:
-```
+```json
 {
   "Logging": {
     "LogLevel": {

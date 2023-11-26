@@ -12,6 +12,8 @@ namespace AppyNox.Services.Base.Domain.Common
 
         Create,
 
-        Update
+        Update,
+
+        Empty
     }
 }

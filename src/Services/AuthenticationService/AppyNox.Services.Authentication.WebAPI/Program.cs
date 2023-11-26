@@ -19,6 +19,7 @@ var configuration = builder.Configuration;
 
 #region [ SSL Configuration ]
 
+Console.Write(typeof(string).Assembly.ImageRuntimeVersion);
 builder.WebHost.ConfigureKestrel(serverOptions =>
 {
     string fileName = string.Empty;

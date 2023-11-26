@@ -2,7 +2,7 @@
 
 public static class StringExtensions
 {
-    #region Public Methods
+    #region [ Public Methods ]
 
     public static string MinifyLogData(this string data)
     {

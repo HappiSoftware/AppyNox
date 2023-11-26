@@ -1,11 +1,12 @@
-﻿using AppyNox.Services.Base.Application.DtoUtilities.ExceptionExtensions;
+﻿using AppyNox.Services.Base.API.ExceptionExtensions;
+using AppyNox.Services.Base.API.Helpers;
+using AppyNox.Services.Base.Application.ExceptionExtensions;
 using AppyNox.Services.Base.Application.Services.Interfaces;
+using AppyNox.Services.Base.Domain.ExceptionExtensions;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
 using AppyNox.Services.Coupon.Application.Services.Implementations;
 using AppyNox.Services.Coupon.Domain.Common;
 using AppyNox.Services.Coupon.Domain.Entities;
-using AppyNox.Services.Coupon.WebAPI.Filters;
-using AppyNox.Services.Coupon.WebAPI.Helpers;
 using Asp.Versioning;
 using AutoWrapper.Wrappers;
 using FluentValidation;
@@ -45,15 +46,8 @@ namespace AppyNox.Services.Coupon.WebAPI.Controllers.v1
         [HttpGet]
         public async Task<ApiResponse> GetAll([FromQuery] QueryParameters queryParameters)
         {
-            try
-            {
-                var coupons = await _couponService.GetAllAsync(queryParameters);
-                return new ApiResponse(coupons, 200);
-            }
-            catch (DetailLevelNotFoundException exception)
-            {
-                throw new ApiProblemDetailsException(exception.Message, statusCode: 400);
-            }
+            var coupons = await _couponService.GetAllAsync(queryParameters);
+            return new ApiResponse(coupons, 200);
         }
 
         [HttpGet("{id}")]
@@ -67,7 +61,7 @@ namespace AppyNox.Services.Coupon.WebAPI.Controllers.v1
         public async Task<IActionResult> Create(CouponBasicCreateDto couponDto)
         {
             var validationResult = _couponValidator.Validate(couponDto);
-            ValidationHandler.HandleValidationResult(ModelState, validationResult);
+            ValidationHandlerBase.HandleValidationResult(ModelState, validationResult);
 
             var (guid, basicDto) = await _couponService.AddAsync(couponDto);
             return CreatedAtAction(nameof(GetById), new { id = guid }, basicDto);
@@ -77,7 +71,7 @@ namespace AppyNox.Services.Coupon.WebAPI.Controllers.v1
         public async Task<IActionResult> Update(Guid id, CouponSimpleUpdateDto couponDto)
         {
             var validationResult = _couponValidator.Validate(couponDto);
-            ValidationHandler.HandleValidationResult(ModelState, validationResult);
+            ValidationHandlerBase.HandleValidationResult(ModelState, validationResult);
 
             var existingCoupon = await _couponService.GetByIdAsync(id, QueryParameters.CreateForIdOnly());
             if (existingCoupon == null)
