@@ -4,11 +4,7 @@ namespace AppyNox.EventBus.Base.Events
 {
     public class IntegrationEvent
     {
-        [JsonProperty]
-        public Guid Id { get; private set; }
-
-        [JsonProperty]
-        public DateTime CreatedDate { get; private set; }
+        #region [ Public Constructors ]
 
         public IntegrationEvent()
         {
@@ -22,5 +18,17 @@ namespace AppyNox.EventBus.Base.Events
             Id = id;
             CreatedDate = createdDate;
         }
+
+        #endregion
+
+        #region [ Properties ]
+
+        [JsonProperty]
+        public Guid Id { get; private set; }
+
+        [JsonProperty]
+        public DateTime CreatedDate { get; private set; }
+
+        #endregion
     }
 }

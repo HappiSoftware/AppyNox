@@ -4,19 +4,19 @@ namespace AppyNox.EventBus.Base.Abstraction
 {
     public interface IEventBusSubscriptionManager
     {
-        #region Events
+        #region [ Events ]
 
         event EventHandler<string> OnEventRemoved;
 
         #endregion Events
 
-        #region Properties
+        #region [ Properties ]
 
         bool IsEmpty { get; }
 
         #endregion Properties
 
-        #region Public Methods
+        #region [ Public Methods ]
 
         void AddSubscription<T, TH>() where T : IntegrationEvent where TH : IIntegrationEventHandler<T>;
 

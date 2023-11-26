@@ -50,6 +50,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DeveloperWorkspace", "DeveloperWorkspace", "{817A0878-EF55-48D9-9647-6DDF2366B7F7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BehlulTests", "src\DeveloperWorkspace\BehlulTests\BehlulTests.csproj", "{B21FB9B9-B6A4-4CAB-9056-99580F201A7A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppyNox.Gateway.OcelotGateway", "src\Gateways\AppyNox.Gateway.OcelotGateway\AppyNox.Gateway.OcelotGateway.csproj", "{0AEE4226-5753-4E72-A4D2-FACB5C8D863A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -121,6 +122,10 @@ Global
 		{B21FB9B9-B6A4-4CAB-9056-99580F201A7A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B21FB9B9-B6A4-4CAB-9056-99580F201A7A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B21FB9B9-B6A4-4CAB-9056-99580F201A7A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0AEE4226-5753-4E72-A4D2-FACB5C8D863A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0AEE4226-5753-4E72-A4D2-FACB5C8D863A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0AEE4226-5753-4E72-A4D2-FACB5C8D863A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0AEE4226-5753-4E72-A4D2-FACB5C8D863A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -145,6 +150,7 @@ Global
 		{2F6F96BC-50A2-47EE-991F-D8675D509BEE} = {2B423076-D18F-4726-B4CC-9B79BF296FE8}
 		{0549A281-4633-4993-B4C8-3DAA03B145C7} = {87C72E4A-C538-412C-8256-FCC0808B6B66}
 		{B21FB9B9-B6A4-4CAB-9056-99580F201A7A} = {817A0878-EF55-48D9-9647-6DDF2366B7F7}
+		{0AEE4226-5753-4E72-A4D2-FACB5C8D863A} = {C1B4F7CE-9281-43C2-A02F-4B7B3946E9DA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EA4F2302-DC43-4149-814A-609940BEC847}

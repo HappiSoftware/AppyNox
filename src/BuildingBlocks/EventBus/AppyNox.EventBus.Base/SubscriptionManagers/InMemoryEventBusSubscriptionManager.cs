@@ -5,7 +5,7 @@ namespace AppyNox.EventBus.Base.SubscriptionManagers
 {
     public class InMemoryEventBusSubscriptionManager : IEventBusSubscriptionManager
     {
-        #region Fields
+        #region [ Fields ]
 
         private readonly Dictionary<string, List<SubscriptionInfo>> _handlers;
 
@@ -13,13 +13,13 @@ namespace AppyNox.EventBus.Base.SubscriptionManagers
 
         #endregion Fields
 
-        #region Events
+        #region [ Events ]
 
         public event EventHandler<string>? OnEventRemoved;
 
         #endregion Events
 
-        #region Public Constructors
+        #region [ Public Constructors ]
 
         public InMemoryEventBusSubscriptionManager(Func<string, string> eventNameGetter)
         {
@@ -30,7 +30,7 @@ namespace AppyNox.EventBus.Base.SubscriptionManagers
 
         #endregion Public Constructors
 
-        #region Properties
+        #region [ Properties ]
 
         public Func<string, string> eventNameGetter;
 
@@ -38,7 +38,7 @@ namespace AppyNox.EventBus.Base.SubscriptionManagers
 
         #endregion Properties
 
-        #region Public Methods
+        #region [ Public Methods ]
 
         public void Clear()
         {
@@ -102,7 +102,7 @@ namespace AppyNox.EventBus.Base.SubscriptionManagers
 
         #endregion Public Methods
 
-        #region Private Methods
+        #region [ Private Methods ]
 
         private SubscriptionInfo? FindSubscriptionToRemove<T, TH>() where T : IntegrationEvent where TH : IIntegrationEventHandler<T>
         {
