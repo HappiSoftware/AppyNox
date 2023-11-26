@@ -145,7 +145,36 @@ AuthenticationService appsettings.Production.json:
 ```
 <br>
 
-5) With everything set up, select Docker as the startup project and run the solution. This will launch the AppyNox services in Docker containers.
+5) **Services you need to run on Docker container:**
+```
+    RabbitMQ
+        - docker pull rabbitmq
+        - docker run -d --name rabbitmq.service -p 5672:5672 -p 15672:15672 rabbitmq:management
+        - Open your browser and go to http://localhost:15672. The username will be guest and the password will be guest (default values).
+
+    Consul
+        - docker pull hashicorp/consul:latest
+        - docker run -d --name=consul.service -p 8500:8500 hashicorp/consul agent -dev -client=0.0.0.0 -bind=0.0.0.0
+        - Go to http://localhost:8500
+        - Finally, you need to add the following block to the appsettings file of the microservice that will register to the consul service:
+            "ConsulConfig": {
+              "Address": "http://localhost:8500"
+            },
+            "Consul": {
+              "ServiceId": "{}",
+              "ServiceName": "{}",
+              "Scheme": "{http or https}",
+              "ServiceHost": "{}",
+              "ServicePort": {PORT},
+              "Tags": [ "Tag1", "Tag2" ],
+              "HealthCheckUrl": "{health-check-url}",
+              "HealthCheckIntervalSeconds": 30,
+              "HealthCheckTimeoutSeconds": 5
+            }
+```
+<br>
+
+6) With everything set up, select Docker as the startup project and run the solution. This will launch the AppyNox services in Docker containers.
 <br>
 <br>
 
