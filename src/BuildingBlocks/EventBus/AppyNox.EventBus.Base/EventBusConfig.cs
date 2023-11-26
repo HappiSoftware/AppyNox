@@ -15,7 +15,7 @@ namespace AppyNox.EventBus.Base
 
     public class EventBusConfig
     {
-        #region Properties
+        #region [ Properties ]
 
         public int ConnectionRetryCount { get; set; } = 5;
 
