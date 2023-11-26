@@ -1,3 +1,5 @@
+using AppyNox.Services.Base.API.ExceptionExtensions;
+using AppyNox.Services.Base.API.Middlewares;
 using AppyNox.Services.Coupon.WebAPI.Middlewares;
 using AutoWrapper;
 using NLog;
@@ -55,6 +57,7 @@ try
 
     // Configure the HTTP request pipeline.
     app.UseSwagger();
+
     app.UseSwaggerUI();
 
     app.UseHttpsRedirection();
@@ -65,7 +68,10 @@ try
 
     app.UseMiddleware<LoggingMiddleware>();
 
-    app.UseApiResponseAndExceptionWrapper(new AutoWrapperOptions { IsApiOnly = true, ShowApiVersion = true, ApiVersion = "1.0", UseApiProblemDetailsException = true });
+    app.UseApiResponseAndExceptionWrapper(new AutoWrapperOptions { IsApiOnly = true, ShowApiVersion = true, ApiVersion = "1.0" });
+    app.UseMiddleware<ExceptionHandlingMiddleware>();
+    app.UseMiddleware<CorrelationIdMiddleware>();
+    app.UseMiddleware<QueryParameterValidateMiddleware>();
 
     AppyNox.Services.Coupon.Infrastructure.DependencyInjection.ApplyMigrations(app.Services);
 

@@ -2,9 +2,9 @@
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace AppyNox.Services.Coupon.WebAPI.Helpers
+namespace AppyNox.Services.Base.API.Helpers
 {
-    public static class ValidationHandler
+    public static class ValidationHandlerBase
     {
         #region [ Public Methods ]
 

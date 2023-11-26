@@ -8,7 +8,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "dotnetRunMessages": true,
-      "applicationUrl": "https://localhost:7001"
+      "applicationUrl": "https://localhost:7002"
     },
     "CouponAPI-Staging": {
       "commandName": "Project",
@@ -18,7 +18,7 @@
         "ASPNETCORE_ENVIRONMENT": "Staging"
       },
       "dotnetRunMessages": true,
-      "applicationUrl": "https://localhost:7001"
+      "applicationUrl": "https://localhost:7002"
     },
     "CouponAPI-Production": {
       "commandName": "Project",
@@ -28,7 +28,7 @@
         "ASPNETCORE_ENVIRONMENT": "Production"
       },
       "dotnetRunMessages": true,
-      "applicationUrl": "https://localhost:7001"
+      "applicationUrl": "https://localhost:7002"
     },
     "Docker": {
       "commandName": "Docker",
