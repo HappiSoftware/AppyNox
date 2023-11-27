@@ -15,6 +15,7 @@ namespace AppyNox.Services.Coupon.Application.Dtos.DtoUtilities
 
         public DtoMappingRegistry() : base()
         {
+            RegisterDtos();
         }
 
         public static Enum GetDetailLevel(Attribute attribute, DtoLevelMappingTypes mappingType)
@@ -43,7 +44,11 @@ namespace AppyNox.Services.Coupon.Application.Dtos.DtoUtilities
             throw new ArgumentException("Unsupported attribute type for detail level mapping.");
         }
 
-        public override void RegisterDtos()
+        #endregion
+
+        #region [ Protected Methods ]
+
+        protected override void RegisterDtos()
         {
             var dtoTypes = Assembly.GetAssembly(typeof(CouponSimpleDto))?
                 .GetTypes()

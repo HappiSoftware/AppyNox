@@ -29,7 +29,7 @@ namespace AppyNox.Services.Base.API.Middlewares
         {
             var accessValue = context.Request.Query["Access"].ToString();
 
-            if (!string.IsNullOrEmpty(accessValue) && Enum.TryParse<DtoLevelMappingTypes>(accessValue, true, out var result))
+            if (!string.IsNullOrEmpty(accessValue) && !Enum.TryParse<DtoLevelMappingTypes>(accessValue, true, out var result))
             {
                 throw new NoxApiException($"'{accessValue}' is not a valid Access modifier.", (int)NoxClientErrorResponseCodes.BadRequest);
             }

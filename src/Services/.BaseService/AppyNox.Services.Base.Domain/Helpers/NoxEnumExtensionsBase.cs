@@ -24,7 +24,7 @@ namespace AppyNox.Services.Base.Domain.Helpers
         private static T GetAttributeOfType<T>(this Enum enumValue) where T : Attribute
         {
             var type = enumValue.GetType();
-            var memInfo = type.GetMember(enumValue.ToString()).First();
+            var memInfo = type.GetMember(enumValue.ToString())[0];
             var attributes = memInfo.GetCustomAttributes<T>(false);
             return attributes.FirstOrDefault() ?? throw new EnumDisplayNameNotFoundException(enumValue);
         }
