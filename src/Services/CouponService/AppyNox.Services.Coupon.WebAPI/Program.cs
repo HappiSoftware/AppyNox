@@ -1,8 +1,6 @@
-using AppyNox.Services.Base.API.ExceptionExtensions;
 using AppyNox.Services.Base.API.Middlewares;
 using AppyNox.Services.Base.Domain.Common;
 using AppyNox.Services.Coupon.WebAPI.Helpers;
-using AppyNox.Services.Coupon.WebAPI.Middlewares;
 using AutoWrapper;
 using Consul;
 using NLog;

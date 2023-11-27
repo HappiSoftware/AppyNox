@@ -27,9 +27,9 @@ try
 
     var app = builder.Build();
 
-    app.UseMiddleware<LoggingMiddleware>();
-
     await app.UseOcelot();
+
+    app.UseMiddleware<LoggingMiddleware>();
 
     app.Run();
 }
