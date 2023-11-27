@@ -20,9 +20,9 @@ namespace AppyNox.Services.Base.Infrastructure.Repositories
 
         #endregion
 
-        #region [ Public Constructors ]
+        #region [ Protected Constructors ]
 
-        public GenericRepositoryBase(DbContext context)
+        protected GenericRepositoryBase(DbContext context)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _dbSet = _context.Set<TEntity>();
