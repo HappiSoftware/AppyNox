@@ -57,7 +57,8 @@ namespace AppyNox.Gateway.OcelotGateway.Middlewares
             responseBody.Position = 0;
             await responseBody.CopyToAsync(originalResponseBody);
             context.Response.Body = originalResponseBody;
-            _logger.LogInformation(JsonConvert.SerializeObject(content).MinifyLogData());
+            var minifiedLogMessage = JsonConvert.SerializeObject(content).MinifyLogData();
+            _logger.LogInformation("{LogData}", minifiedLogMessage);
         }
 
         private async Task LogRequest(HttpContext context)
@@ -69,11 +70,12 @@ namespace AppyNox.Gateway.OcelotGateway.Middlewares
             var requestData = new RequestLogModel(context.Request.Method.ToUpper(), context.Request.Path,
                                             string.Join(',', context.Request.Query.Select(q => $"{q.Key}:{q.Value}").ToList()), content);
 
-            _logger.LogInformation(JsonConvert.SerializeObject(requestData).MinifyLogData());
+            var minifiedLogMessage = JsonConvert.SerializeObject(requestData).MinifyLogData();
+            _logger.LogInformation("{LogData}", minifiedLogMessage);
             context.Request.Body.Position = 0;
         }
 
-        private bool IsExcludedRoute(string route)
+        private static bool IsExcludedRoute(string route)
         {
             if (route.Contains("swagger"))
             {

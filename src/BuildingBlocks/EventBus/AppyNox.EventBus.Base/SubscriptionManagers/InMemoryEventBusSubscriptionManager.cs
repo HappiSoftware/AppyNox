@@ -11,6 +11,8 @@ namespace AppyNox.EventBus.Base.SubscriptionManagers
 
         private readonly List<Type> _eventTypes;
 
+        private readonly Func<string, string> _eventNameGetter;
+
         #endregion Fields
 
         #region [ Events ]
@@ -25,16 +27,14 @@ namespace AppyNox.EventBus.Base.SubscriptionManagers
         {
             _handlers = new Dictionary<string, List<SubscriptionInfo>>();
             _eventTypes = new List<Type>();
-            this.eventNameGetter = eventNameGetter;
+            _eventNameGetter = eventNameGetter;
         }
 
         #endregion Public Constructors
 
         #region [ Properties ]
 
-        public Func<string, string> eventNameGetter;
-
-        public bool IsEmpty => !_handlers.Keys.Any();
+        public bool IsEmpty => _handlers.Keys.Count == 0;
 
         #endregion Properties
 
@@ -60,7 +60,7 @@ namespace AppyNox.EventBus.Base.SubscriptionManagers
         public string GetEventKey<T>()
         {
             string eventName = typeof(T).Name;
-            return eventNameGetter(eventName);
+            return _eventNameGetter(eventName);
         }
 
         public Type? GetEventTypeByName(string eventName)
@@ -126,7 +126,7 @@ namespace AppyNox.EventBus.Base.SubscriptionManagers
             {
                 _handlers[eventName].Remove(subsToRemove);
 
-                if (!_handlers[eventName].Any())
+                if (_handlers[eventName].Count == 0)
                 {
                     _handlers.Remove(eventName);
                     var eventType = _eventTypes.SingleOrDefault(e => e.Name == eventName);
@@ -153,7 +153,7 @@ namespace AppyNox.EventBus.Base.SubscriptionManagers
                 _handlers.Add(eventName, new List<SubscriptionInfo>());
             }
 
-            if (_handlers[eventName].Any(s => s.HandlerType == handlerType))
+            if (_handlers[eventName].Exists(s => s.HandlerType == handlerType))
             {
                 throw new ArgumentException($"Handler type {handlerType.Name} already registered for {eventName}", nameof(handlerType));
             }

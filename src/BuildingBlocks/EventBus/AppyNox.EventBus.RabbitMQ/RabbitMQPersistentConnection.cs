@@ -2,16 +2,11 @@
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using RabbitMQ.Client.Exceptions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AppyNox.EventBus.RabbitMQ
 {
-    public class RabbitMQPersistentConnection : IDisposable
+    public sealed class RabbitMQPersistentConnection : IDisposable
     {
         #region [ Fields ]
 
@@ -19,9 +14,9 @@ namespace AppyNox.EventBus.RabbitMQ
 
         private readonly int _retryCount;
 
-        private IConnection connection;
+        private IConnection? connection;
 
-        private object lock_object = new object();
+        private readonly object lock_object = new object();
 
         private bool _disposed;
 
@@ -47,13 +42,13 @@ namespace AppyNox.EventBus.RabbitMQ
 
         public IModel CreateModel()
         {
-            return connection.CreateModel();
+            return connection!.CreateModel();
         }
 
         public void Dispose()
         {
             _disposed = true;
-            connection.Dispose();
+            connection!.Dispose();
         }
 
         public bool TryConnect()
@@ -73,7 +68,7 @@ namespace AppyNox.EventBus.RabbitMQ
 
                 if (IsConnected)
                 {
-                    connection.ConnectionShutdown += Connection_ConnectionShutdown;
+                    connection!.ConnectionShutdown += Connection_ConnectionShutdown;
                     connection.CallbackException += Connection_CallbackException;
                     connection.ConnectionBlocked += Connection_ConnectionBlocked;
 

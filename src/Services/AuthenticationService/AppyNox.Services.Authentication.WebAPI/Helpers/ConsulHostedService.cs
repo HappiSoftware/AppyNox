@@ -1,4 +1,5 @@
 ﻿using AppyNox.Services.Base.Domain.Common;
+using AutoWrapper.Wrappers;
 using Consul;
 
 namespace AppyNox.Services.Authentication.WebAPI.Helpers;
@@ -31,6 +32,12 @@ public class ConsulHostedService : IHostedService
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         var serviceConfig = _configuration.GetSection("consul").Get<ConsulConfig>();
+
+        if (serviceConfig == null)
+        {
+            throw new ApiException("Consul configuration is not defined. Service will not be discovered.", 500);
+        }
+
         var registration = new AgentServiceRegistration
         {
             ID = serviceConfig.ServiceId,
@@ -49,7 +56,8 @@ public class ConsulHostedService : IHostedService
 
         //registration.Checks = new[] { check };
 
-        _logger.LogInformation($"Registering service with Consul: {registration.Name}");
+        var logMsg = $"Registering service with Consul: {registration.Name}";
+        _logger.LogInformation(logMsg);
 
         await _consulClient.Agent.ServiceDeregister(registration.ID, cancellationToken);
         await _consulClient.Agent.ServiceRegister(registration, cancellationToken);
@@ -58,9 +66,17 @@ public class ConsulHostedService : IHostedService
     public async Task StopAsync(CancellationToken cancellationToken)
     {
         var serviceConfig = _configuration.GetSection("consul").Get<ConsulConfig>();
+
+        if (serviceConfig == null)
+        {
+            _logger.LogWarning("Consul configuration is not found. Service will not be deregistered from Consul.");
+            return;
+        }
+
         var registration = new AgentServiceRegistration { ID = serviceConfig.ServiceId };
 
-        _logger.LogInformation($"Deregistering service from Consul: {registration.ID}");
+        var logMsg = $"Deregistering service from Consul: {registration.ID}";
+        _logger.LogInformation(logMsg);
 
         await _consulClient.Agent.ServiceDeregister(registration.ID, cancellationToken);
     }

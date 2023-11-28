@@ -2,11 +2,6 @@
 using AppyNox.EventBus.Base.SubscriptionManagers;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AppyNox.EventBus.Base.Events
 {
@@ -24,7 +19,7 @@ namespace AppyNox.EventBus.Base.Events
 
         #region [ Public Constructors ]
 
-        public BaseEventBus(EventBusConfig config, IServiceProvider serviceProvider)
+        protected BaseEventBus(EventBusConfig config, IServiceProvider serviceProvider)
         {
             eventBusConfig = config;
             this.serviceProvider = serviceProvider;
@@ -56,9 +51,12 @@ namespace AppyNox.EventBus.Base.Events
 
         public virtual void Dispose()
         {
-            eventBusConfig = null;
+            Dispose(true);
         }
-
+        protected virtual void Dispose(bool disposing)
+        {
+            eventBusConfig = null!;
+        }
         public async Task<bool> ProcessEvent(string eventName, string message)
         {
             eventName = ProcessEventName(eventName);
@@ -87,7 +85,7 @@ namespace AppyNox.EventBus.Base.Events
                         var integrationEvent = JsonConvert.DeserializeObject(message, eventType);
 
                         var concreteType = typeof(IIntegrationEventHandler<>).MakeGenericType(eventType);
-                        await (Task)concreteType.GetMethod("Handle").Invoke(handler, new object[] { integrationEvent });
+                        await (Task)concreteType.GetMethod("Handle")!.Invoke(handler!, [integrationEvent])!;
                     }
                 }
                 processed = true;

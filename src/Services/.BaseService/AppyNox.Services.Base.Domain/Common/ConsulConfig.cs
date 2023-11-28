@@ -4,19 +4,19 @@ public class ConsulConfig
 {
     #region [ Properties ]
 
-    public string ServiceId { get; set; }
+    public string ServiceId { get; set; } = string.Empty;
 
-    public string ServiceName { get; set; }
+    public string ServiceName { get; set; } = string.Empty;
 
-    public string Scheme { get; set; }
+    public string Scheme { get; set; } = string.Empty;
 
-    public string ServiceHost { get; set; }
+    public string ServiceHost { get; set; } = string.Empty;
 
     public int ServicePort { get; set; }
 
-    public string[] Tags { get; set; }
+    public string[]? Tags { get; set; }
 
-    public string HealthCheckUrl { get; set; }
+    public string? HealthCheckUrl { get; set; }
 
     public int HealthCheckIntervalSeconds { get; set; }
 

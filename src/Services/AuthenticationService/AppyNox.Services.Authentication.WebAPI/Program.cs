@@ -76,7 +76,7 @@ try
 
     builder.Services.AddSingleton<IConsulClient, ConsulClient>(p => new ConsulClient(consulConfig =>
     {
-        var address = configuration["ConsulConfig:Address"];
+        var address = configuration["ConsulConfig:Address"] ?? "http://localhost:8500";
         consulConfig.Address = new Uri(address);
     }));
     builder.Services.AddSingleton<IHostedService, ConsulHostedService>();

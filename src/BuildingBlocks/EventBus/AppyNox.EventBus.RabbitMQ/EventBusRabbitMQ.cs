@@ -18,7 +18,7 @@ namespace AppyNox.EventBus.RabbitMQ
 
         private readonly IModel _consumerChannel;
 
-        private RabbitMQPersistentConnection persistentConnection;
+        private readonly RabbitMQPersistentConnection persistentConnection;
 
         #endregion
 
@@ -33,7 +33,7 @@ namespace AppyNox.EventBus.RabbitMQ
                     ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                 });
 
-                _connectionFactory = JsonConvert.DeserializeObject<ConnectionFactory>(connJson);
+                _connectionFactory = JsonConvert.DeserializeObject<ConnectionFactory>(connJson)!;
             }
             else
             {
@@ -173,14 +173,7 @@ namespace AppyNox.EventBus.RabbitMQ
             eventName = ProcessEventName(eventName);
             var message = Encoding.UTF8.GetString(eventArgs.Body.Span);
 
-            try
-            {
-                await ProcessEvent(eventName, message);
-            }
-            catch (Exception e)
-            {
-                // Logging
-            }
+            await ProcessEvent(eventName, message);
 
             _consumerChannel.BasicAck(eventArgs.DeliveryTag, multiple: false);
         }
