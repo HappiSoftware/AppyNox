@@ -1,4 +1,4 @@
-using AppyNox.Services.Base.API.Middlewares;
+using AppyNox.Services.Base.API.Middleware;
 using AppyNox.Services.Base.Domain.Common;
 using AppyNox.Services.Coupon.WebAPI.Helpers;
 using AutoWrapper;
