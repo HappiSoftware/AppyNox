@@ -55,15 +55,8 @@ namespace AppyNox.Services.Coupon.WebAPI.Controllers.v1
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] dynamic couponDto, string detailLevel = "Simple")
         {
-            try
-            {
-                var result = await _couponService.AddAsync(couponDto, detailLevel);
-                return CreatedAtAction(nameof(GetById), new { id = result.Item1 }, result.Item2);
-            }
-            catch (FluentValidationException exception)
-            {
-                throw ValidationHandlerBase.HandleValidationResult(ModelState, exception.ValidationResult);
-            }
+            var result = await _couponService.AddAsync(couponDto, detailLevel);
+            return CreatedAtAction(nameof(GetById), new { id = result.Item1 }, result.Item2);
         }
 
         [HttpPut("{id}")]
