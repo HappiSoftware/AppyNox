@@ -94,39 +94,24 @@ namespace AppyNox.Services.Base.Application.Services.Implementations
             return resultList.Count != 0 ? resultList : new List<dynamic>();
         }
 
-        public async Task<dynamic?> GetByIdAsync(Guid id, QueryParametersBase queryParameters)
+        public async Task<dynamic> GetByIdAsync(Guid id, QueryParametersBase queryParameters)
         {
-            try
-            {
-                var (expression, dtoType) = CreateProjection(queryParameters);
-                var entity = await _repository.GetByIdAsync(id, expression);
-                dynamic result;
+            var (expression, dtoType) = CreateProjection(queryParameters);
+            var entity = await _repository.GetByIdAsync(id, expression);
+            dynamic result;
 
-                if (dtoType == typeof(ExpandoObject) && queryParameters.CommonDtoLevel == CommonDtoLevelEnums.IdOnly)
-                {
-                    // Create dynamic object with only Id property
-                    result = new ExpandoObject();
-                    result.Id = entity.GetType().GetProperty("Id")?.GetValue(entity);
-                    return result;
-                }
-                else
-                {
-                    result = _mapper.Map(entity, entity.GetType(), dtoType);
-                }
+            if (dtoType == typeof(ExpandoObject) && queryParameters.CommonDtoLevel == CommonDtoLevelEnums.IdOnly)
+            {
+                // Create dynamic object with only Id property
+                result = new ExpandoObject();
+                result.Id = entity.GetType().GetProperty("Id")?.GetValue(entity);
                 return result;
             }
-            catch (EntityNotFoundException<TEntity>)
+            else
             {
-                // Handle the specific case if needed when the entity is not found
-                return null;
+                result = _mapper.Map(entity, entity.GetType(), dtoType);
             }
-            catch (Exception)
-            {
-                await Console.Out.WriteLineAsync("Error on GenericService:GetByIdAsync");
-
-                // (mustang) Log the error, return an appropriate response, or rethrow if needed
-                throw;
-            }
+            return result;
         }
 
         public async Task<(Guid guid, TDto basicDto)> AddAsync(dynamic dto, string detailLevel)
@@ -147,7 +132,7 @@ namespace AppyNox.Services.Base.Application.Services.Implementations
             var validationResult = validator.Validate(context);
             if (!validationResult.IsValid)
             {
-                throw new FluentValidationException(validationResult);
+                throw new FluentValidationException(dtoType, validationResult);
             }
 
             #endregion

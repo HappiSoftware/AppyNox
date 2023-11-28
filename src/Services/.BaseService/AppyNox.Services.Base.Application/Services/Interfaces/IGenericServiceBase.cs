@@ -9,7 +9,7 @@ namespace AppyNox.Services.Base.Application.Services.Interfaces
 
         Task<IEnumerable<dynamic>> GetAllAsync(QueryParametersBase queryParameters);
 
-        Task<dynamic?> GetByIdAsync(Guid id, QueryParametersBase queryParameters);
+        Task<dynamic> GetByIdAsync(Guid id, QueryParametersBase queryParameters);
 
         Task<(Guid guid, TDto basicDto)> AddAsync(dynamic dto, string detailLevel);
 
