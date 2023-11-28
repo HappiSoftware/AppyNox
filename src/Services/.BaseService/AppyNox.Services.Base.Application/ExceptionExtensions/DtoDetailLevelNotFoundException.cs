@@ -7,7 +7,7 @@ namespace AppyNox.Services.Base.Application.ExceptionExtensions
     /// <summary>
     /// DetailLevelNotFoundException, thrown in Application Base.
     /// This exception means DetailLevel value of the request
-    /// is not meet any avaliable Dto Level in the system.
+    /// is not meet any available Dto Level in the system.
     /// </summary>
     internal class DtoDetailLevelNotFoundException : NoxApplicationException
     {

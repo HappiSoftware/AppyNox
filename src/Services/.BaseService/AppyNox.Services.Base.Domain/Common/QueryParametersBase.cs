@@ -24,7 +24,7 @@ namespace AppyNox.Services.Base.Domain.Common
         public DtoLevelMappingTypes AccessType
         {
             get => _accessType;
-            internal set => _accessType = value;
+            set => _accessType = value;
         }
 
         /// <summary>

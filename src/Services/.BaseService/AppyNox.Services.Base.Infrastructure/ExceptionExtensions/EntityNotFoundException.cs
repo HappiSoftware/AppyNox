@@ -1,20 +1,14 @@
-﻿namespace AppyNox.Services.Base.Infrastructure.ExceptionExtensions
+﻿using AppyNox.Services.Base.Domain.Common.HttpStatusCodes;
+using AppyNox.Services.Base.Infrastructure.ExceptionExtensions.Base;
+
+namespace AppyNox.Services.Base.Infrastructure.ExceptionExtensions
 {
-    public class EntityNotFoundException<TEntity> : Exception
+    internal class EntityNotFoundException<TEntity>(Guid entityId)
+        : NoxInfrastructureException($"Entity of type {typeof(TEntity).Name} with ID {entityId} was not found.", (int)NoxClientErrorResponseCodes.NotFound)
     {
-        #region [ Public Constructors ]
-
-        public EntityNotFoundException(Guid entityId)
-            : base($"Entity of type {typeof(TEntity).Name} with ID {entityId} was not found.")
-        {
-            EntityId = entityId;
-        }
-
-        #endregion
-
         #region [ Properties ]
 
-        public Guid EntityId { get; }
+        internal Guid EntityId { get; } = entityId;
 
         #endregion
     }
