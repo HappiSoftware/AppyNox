@@ -2,10 +2,8 @@
 
 namespace AppyNox.Services.Base.Application.Services.Interfaces
 {
-    public interface IGenericServiceBase<TEntity, TDto, TCreateDto, TUpdateDto>
+    public interface IGenericServiceBase<TEntity, TDto>
     where TDto : class
-    where TCreateDto : class
-    where TUpdateDto : class
     {
         #region [ Public Methods ]
 
@@ -13,11 +11,11 @@ namespace AppyNox.Services.Base.Application.Services.Interfaces
 
         Task<dynamic?> GetByIdAsync(Guid id, QueryParametersBase queryParameters);
 
-        Task<(Guid guid, TDto basicDto)> AddAsync(TCreateDto dto);
+        Task<(Guid guid, TDto basicDto)> AddAsync(dynamic dto, string detailLevel);
 
-        Task UpdateAsync(TUpdateDto dto);
+        Task UpdateAsync(TDto dto);
 
-        Task DeleteAsync(TDto dto);
+        Task DeleteAsync(Guid dto);
 
         #endregion
     }

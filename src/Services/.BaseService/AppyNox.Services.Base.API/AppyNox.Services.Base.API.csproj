@@ -13,6 +13,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\AppyNox.Services.Base.Application\AppyNox.Services.Base.Application.csproj" />
 		<ProjectReference Include="..\AppyNox.Services.Base.Domain\AppyNox.Services.Base.Domain.csproj" />
 	</ItemGroup>
 

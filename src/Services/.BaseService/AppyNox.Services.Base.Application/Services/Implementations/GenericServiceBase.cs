@@ -1,4 +1,5 @@
-﻿using AppyNox.Services.Base.Application.DtoUtilities;
+﻿using AppyNox.Services.Base.Application.Dtos;
+using AppyNox.Services.Base.Application.DtoUtilities;
 using AppyNox.Services.Base.Application.ExceptionExtensions;
 using AppyNox.Services.Base.Application.Helpers;
 using AppyNox.Services.Base.Application.Services.Interfaces;
@@ -7,16 +8,20 @@ using AppyNox.Services.Base.Domain.Interfaces;
 using AppyNox.Services.Base.Infrastructure.ExceptionExtensions;
 using AppyNox.Services.Base.Infrastructure.Interfaces;
 using AutoMapper;
+using FluentValidation;
+using FluentValidation.Internal;
+using FluentValidation.Results;
+using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Dynamic;
 using System.Linq.Expressions;
+using System.Text.Json;
 
 namespace AppyNox.Services.Base.Application.Services.Implementations
 {
-    public class GenericServiceBase<TEntity, TDto, TCreateDto, TUpdateDto> : IGenericServiceBase<TEntity, TDto, TCreateDto, TUpdateDto>
+    public class GenericServiceBase<TEntity, TDto> : IGenericServiceBase<TEntity, TDto>
     where TEntity : class, IEntityWithGuid
     where TDto : class
-    where TCreateDto : class
-    where TUpdateDto : class
     {
         #region [ Fields ]
 
@@ -30,17 +35,27 @@ namespace AppyNox.Services.Base.Application.Services.Implementations
 
         private readonly IUnitOfWorkBase _unitOfWork;
 
+        private readonly JsonSerializerOptions _jsonSerializerOptions;
+
+        private readonly IServiceProvider _serviceProvider;
+
         #endregion
 
         #region [ Public Constructors ]
 
-        public GenericServiceBase(IGenericRepositoryBase<TEntity> repository, IMapper mapper, DtoMappingRegistryBase dtoMappingRegistry, IUnitOfWorkBase unitOfWork)
+        public GenericServiceBase(IGenericRepositoryBase<TEntity> repository, IMapper mapper, DtoMappingRegistryBase dtoMappingRegistry,
+            IUnitOfWorkBase unitOfWork, IServiceProvider serviceProvider)
         {
             _repository = repository;
             _mapper = mapper;
             _dtoMappingRegistry = dtoMappingRegistry;
             _detailLevelEnum = _dtoMappingRegistry.GetDetailLevelTypes(typeof(TEntity));
             _unitOfWork = unitOfWork;
+            _serviceProvider = serviceProvider;
+            _jsonSerializerOptions = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
         }
 
         #endregion
@@ -85,12 +100,14 @@ namespace AppyNox.Services.Base.Application.Services.Implementations
             {
                 var (expression, dtoType) = CreateProjection(queryParameters);
                 var entity = await _repository.GetByIdAsync(id, expression);
-                object result;
+                dynamic result;
 
                 if (dtoType == typeof(ExpandoObject) && queryParameters.CommonDtoLevel == CommonDtoLevelEnums.IdOnly)
                 {
                     // Create dynamic object with only Id property
-                    result = new { Id = entity.GetType().GetProperty("Id")!.GetValue(entity) };
+                    result = new ExpandoObject();
+                    result.Id = entity.GetType().GetProperty("Id")?.GetValue(entity);
+                    return result;
                 }
                 else
                 {
@@ -112,38 +129,60 @@ namespace AppyNox.Services.Base.Application.Services.Implementations
             }
         }
 
-        public async Task<(Guid guid, TDto basicDto)> AddAsync(TCreateDto dto)
+        public async Task<(Guid guid, TDto basicDto)> AddAsync(dynamic dto, string detailLevel)
         {
-            var entity = _mapper.Map<TEntity>(dto);
-            await _repository.AddAsync(entity);
+            #region [ Dynamic Dto Convertion]
+
+            var detailLevelMap = GetDetailLevelMap(DtoLevelMappingTypes.Create);
+            var dtoType = _dtoMappingRegistry.GetDtoType(detailLevelMap, typeof(TEntity), detailLevel);
+            var dtoObject = JsonSerializer.Deserialize(dto, dtoType, options: _jsonSerializerOptions);
+
+            #endregion
+
+            #region [ FluentValidation]
+
+            Type genericType = typeof(IValidator<>).MakeGenericType(dtoType);
+            IValidator validator = _serviceProvider.GetService(genericType) as IValidator ?? throw new ValidatorNotFoundException(dtoType);
+            var context = new ValidationContext<object>(dtoObject, new PropertyChain(), new DefaultValidatorSelector());
+            var validationResult = validator.Validate(context);
+            if (!validationResult.IsValid)
+            {
+                throw new FluentValidationException(validationResult);
+            }
+
+            #endregion
+
+            var mappedEntity = _mapper.Map(dtoObject, dtoType, typeof(TEntity));
+            await _repository.AddAsync(mappedEntity);
             await _unitOfWork.SaveChangesAsync();
-            var createdObject = _mapper.Map<TDto>(entity);
-            return (entity.Id, createdObject);
+            var createdObject = _mapper.Map<TDto>(mappedEntity);
+            return (guid: mappedEntity.Id, basicDto: createdObject);
         }
 
-        public async Task UpdateAsync(TUpdateDto dto)
+        public async Task UpdateAsync(TDto dto)
         {
             var entity = _mapper.Map<TEntity>(dto);
             _repository.UpdateAsync(entity);
             await _unitOfWork.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(TDto dto)
+        public async Task DeleteAsync(Guid id)
         {
-            var entity = _mapper.Map<TEntity>(dto);
-            _repository.DeleteAsync(entity);
+            var newEntity = Activator.CreateInstance<TEntity>();
+            newEntity.Id = id;
+            _repository.DeleteAsync(newEntity);
             await _unitOfWork.SaveChangesAsync();
         }
 
         #endregion
 
-        #region [ Private Methods ]
+        #region [ Protected Methods ]
 
-        private (Expression<Func<TEntity, dynamic>> expression, Type? dtoType) CreateProjection(QueryParametersBase queryParameters)
+        protected (Expression<Func<TEntity, dynamic>> expression, Type? dtoType) CreateProjection(QueryParametersBase queryParameters)
         {
             Type? dtoType = null;
             List<string> properties = [];
-            var detailLevelMap = _detailLevelEnum.GetValueOrDefault(queryParameters.AccessType) ?? throw new AccessTypeNotFoundException(typeof(TEntity), queryParameters.AccessType.ToString());
+            var detailLevelMap = GetDetailLevelMap(queryParameters.AccessType);
 
             switch (queryParameters.CommonDtoLevel)
             {
@@ -164,6 +203,11 @@ namespace AppyNox.Services.Base.Application.Services.Implementations
             }
 
             return (_repository.CreateProjection(properties), dtoType);
+        }
+
+        protected Type GetDetailLevelMap(DtoLevelMappingTypes dtoLevelMappingType)
+        {
+            return _detailLevelEnum.GetValueOrDefault(dtoLevelMappingType) ?? throw new AccessTypeNotFoundException(typeof(TEntity), dtoLevelMappingType.ToString());
         }
 
         #endregion
