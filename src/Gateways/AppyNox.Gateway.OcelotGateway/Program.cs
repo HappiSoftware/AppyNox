@@ -5,63 +5,52 @@ using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
 using Ocelot.Provider.Consul;
 
-var logger = NLog.LogManager.Setup().LoadConfigurationFromFile("Configurations/nlog.config").GetCurrentClassLogger();
-logger.Info("--- init main ---");
+var builder = WebApplication.CreateBuilder(args);
 
-try
+#region [ SSL Configuration ]
+
+builder.WebHost.ConfigureKestrel(serverOptions =>
 {
-    var builder = WebApplication.CreateBuilder(args);
+    string fileName = string.Empty;
 
-    #region [ SSL Configuration ]
-
-    builder.WebHost.ConfigureKestrel(serverOptions =>
+    if (builder.Environment.IsDevelopment())
     {
-        string fileName = string.Empty;
+        fileName = Directory.GetCurrentDirectory() + "/ssl/gateway.pfx";
+    }
+    else if (builder.Environment.IsProduction())
+    {
+        fileName = "/https/gateway.pfx";
+    }
 
-        if (builder.Environment.IsDevelopment())
-        {
-            fileName = Directory.GetCurrentDirectory() + "/ssl/gateway.pfx";
-        }
-        else if (builder.Environment.IsProduction())
-        {
-            fileName = "/https/gateway.pfx";
-        }
-
-        serverOptions.ConfigureEndpointDefaults(listenOptions =>
-        {
-            listenOptions.UseHttps(fileName ?? throw new InvalidOperationException("SSL certificate file path could not be determined."), "happi2023");
-        });
+    serverOptions.ConfigureEndpointDefaults(listenOptions =>
+    {
+        listenOptions.UseHttps(fileName ?? throw new InvalidOperationException("SSL certificate file path could not be determined."), "happi2023");
     });
+});
 
-    #endregion
+#endregion
 
-    builder.Configuration.SetBasePath(builder.Environment.ContentRootPath)
-        .AddJsonFile($"Configurations/ocelot.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: true)
-        .AddEnvironmentVariables();
+builder.Configuration.SetBasePath(builder.Environment.ContentRootPath)
+    .AddJsonFile($"Configurations/ocelot.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: true)
+    .AddEnvironmentVariables();
 
-    #region [ Logger Setup ]
+#region [ Logger Setup ]
 
+if (!builder.Environment.IsDevelopment())
+{
+    NLog.LogManager.Setup().LoadConfigurationFromFile($"Configurations/nlog.config");
     builder.Logging.ClearProviders();
     builder.Host.UseNLog();
+}
 
-    #endregion
+#endregion
 
-    builder.Services.AddOcelot(builder.Configuration).AddConsul();
+builder.Services.AddOcelot(builder.Configuration).AddConsul();
 
-    var app = builder.Build();
+var app = builder.Build();
 
-    app.UseMiddleware<LoggingMiddleware>();
+app.UseMiddleware<LoggingMiddleware>();
     
-    await app.UseOcelot();
+await app.UseOcelot();
 
-    app.Run();
-}
-catch (Exception e)
-{
-    logger.Error(e, "Stopped program because of exception");
-    throw;
-}
-finally
-{
-    NLog.LogManager.Shutdown();
-}
+app.Run();
