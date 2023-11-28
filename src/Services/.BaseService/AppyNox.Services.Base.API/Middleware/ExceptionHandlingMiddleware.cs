@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Routing;
 
-namespace AppyNox.Services.Base.API.Middlewares
+namespace AppyNox.Services.Base.API.Middleware
 {
     public class ExceptionHandlingMiddleware(RequestDelegate next)
     {
@@ -28,17 +28,18 @@ namespace AppyNox.Services.Base.API.Middlewares
             {
                 await _next(context);
             }
+            catch (FluentValidationException ex)
+            {
+                string correlationId = (context.Items["CorrelationId"] ?? string.Empty).ToString() ?? string.Empty;
+                var actionContext = new ActionContext(context, context.GetRouteData(), new ControllerActionDescriptor());
+                var modelState = new ModelStateDictionary();
+                ValidationHandlerBase.HandleValidationResult(modelState, ex.ValidationResult, actionContext);
+                throw new ApiException(new NoxApiValidationExceptionWrapObject(ex, correlationId, modelState.AllErrors()), statusCode: ex.StatusCode);
+            }
             catch (NoxException ex)
             {
                 string correlationId = (context.Items["CorrelationId"] ?? string.Empty).ToString() ?? string.Empty;
-                throw new ApiException(new NoxApiExceptionWrapObject(ex, correlationId));
-            }
-            catch (FluentValidationException exception)
-            {
-                var actionContext = new ActionContext(context, context.GetRouteData(), new ControllerActionDescriptor());
-                var modelState = new ModelStateDictionary();
-                ValidationHandlerBase.HandleValidationResult(modelState, exception.ValidationResult, actionContext);
-                throw new ApiException(modelState.AllErrors());
+                throw new ApiException(new NoxApiExceptionWrapObject(ex, correlationId), statusCode: ex.StatusCode);
             }
         }
 

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AppyNox.Services.Base.API.Middlewares
+namespace AppyNox.Services.Base.API.Middleware
 {
     public class CorrelationIdMiddleware(RequestDelegate next)
     {

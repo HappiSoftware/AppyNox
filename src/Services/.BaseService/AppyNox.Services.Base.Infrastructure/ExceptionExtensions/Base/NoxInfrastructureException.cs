@@ -6,10 +6,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AppyNox.Services.Base.Application.ExceptionExtensions.Base
+namespace AppyNox.Services.Base.Infrastructure.ExceptionExtensions.Base
 {
-    public class NoxApplicationException(string message, int statusCode)
-        : NoxException(ExceptionThrownLayer.ApplicationBase, message, statusCode)
+    public class NoxInfrastructureException(string message, int statusCode) 
+        : NoxException(ExceptionThrownLayer.InfrastructureBase, message, statusCode)
     {
+
     }
 }

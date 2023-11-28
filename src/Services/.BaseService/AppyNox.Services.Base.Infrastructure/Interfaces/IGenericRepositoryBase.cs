@@ -6,11 +6,9 @@ namespace AppyNox.Services.Base.Infrastructure.Interfaces
 {
     public interface IGenericRepositoryBase<TEntity> where TEntity : class, IEntityWithGuid
     {
-        #region [ Public Methods ]
+        #region [ CRUD Methods ]
 
         Task<TEntity> AddAsync(TEntity entity);
-
-        Expression<Func<TEntity, dynamic>> CreateProjection(List<string> propertyNames);
 
         void DeleteAsync(TEntity entity);
 
@@ -19,6 +17,12 @@ namespace AppyNox.Services.Base.Infrastructure.Interfaces
         Task<TEntity> GetByIdAsync(Guid id, Expression<Func<TEntity, dynamic>> selectedColumns);
 
         void UpdateAsync(TEntity entity);
+
+        #endregion
+
+        #region [ Public Methods ]
+
+        Expression<Func<TEntity, dynamic>> CreateProjection(List<string> propertyNames);
 
         #endregion
     }
