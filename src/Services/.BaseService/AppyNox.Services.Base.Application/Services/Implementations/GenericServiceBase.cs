@@ -19,9 +19,8 @@ using System.Text.Json;
 
 namespace AppyNox.Services.Base.Application.Services.Implementations
 {
-    public class GenericServiceBase<TEntity, TDto> : IGenericServiceBase<TEntity, TDto>
+    public class GenericServiceBase<TEntity> : IGenericServiceBase<TEntity>
     where TEntity : class, IEntityWithGuid
-    where TDto : class
     {
         #region [ Fields ]
 
@@ -114,9 +113,9 @@ namespace AppyNox.Services.Base.Application.Services.Implementations
             return result;
         }
 
-        public async Task<(Guid guid, TDto basicDto)> AddAsync(dynamic dto, string detailLevel)
+        public async Task<(Guid guid, dynamic basicDto)> AddAsync(dynamic dto, string detailLevel)
         {
-            #region [ Dynamic Dto Convertion]
+            #region [ Dynamic Dto Convertion ]
 
             var detailLevelMap = GetDetailLevelMap(DtoLevelMappingTypes.Create);
             var dtoType = _dtoMappingRegistry.GetDtoType(detailLevelMap, typeof(TEntity), detailLevel);
@@ -124,30 +123,39 @@ namespace AppyNox.Services.Base.Application.Services.Implementations
 
             #endregion
 
-            #region [ FluentValidation]
+            #region [ FluentValidation ]
 
-            Type genericType = typeof(IValidator<>).MakeGenericType(dtoType);
-            IValidator validator = _serviceProvider.GetService(genericType) as IValidator ?? throw new ValidatorNotFoundException(dtoType);
-            var context = new ValidationContext<object>(dtoObject, new PropertyChain(), new DefaultValidatorSelector());
-            var validationResult = validator.Validate(context);
-            if (!validationResult.IsValid)
-            {
-                throw new FluentValidationException(dtoType, validationResult);
-            }
+            FluentValidate(dtoType, dtoObject);
 
             #endregion
 
             var mappedEntity = _mapper.Map(dtoObject, dtoType, typeof(TEntity));
             await _repository.AddAsync(mappedEntity);
             await _unitOfWork.SaveChangesAsync();
-            var createdObject = _mapper.Map<TDto>(mappedEntity);
+
+            detailLevelMap = GetDetailLevelMap(DtoLevelMappingTypes.DataAccess);
+            var returnDtoType = _dtoMappingRegistry.GetDtoType(detailLevelMap, typeof(TEntity), NoxEnumExtensions.GetDisplayName(CommonDtoLevelEnums.Simple));
+            var createdObject = _mapper.Map(mappedEntity, returnDtoType, returnDtoType);
             return (guid: mappedEntity.Id, basicDto: createdObject);
         }
 
-        public async Task UpdateAsync(TDto dto)
+        public async Task UpdateAsync(dynamic dto)
         {
-            var entity = _mapper.Map<TEntity>(dto);
-            _repository.UpdateAsync(entity);
+            #region [ Dynamic Dto Convertion ]
+
+            var detailLevelMap = GetDetailLevelMap(DtoLevelMappingTypes.Update);
+            var dtoType = _dtoMappingRegistry.GetDtoType(detailLevelMap, typeof(TEntity), NoxEnumExtensions.GetDisplayName(CommonDtoLevelEnums.Simple));
+
+            #endregion
+
+            #region [ FluentValidation ]
+
+            FluentValidate(dtoType, dto);
+
+            #endregion
+
+            var mappedEntity = _mapper.Map(dto, dtoType, typeof(TEntity));
+            _repository.UpdateAsync(mappedEntity);
             await _unitOfWork.SaveChangesAsync();
         }
 
@@ -193,6 +201,18 @@ namespace AppyNox.Services.Base.Application.Services.Implementations
         protected Type GetDetailLevelMap(DtoLevelMappingTypes dtoLevelMappingType)
         {
             return _detailLevelEnum.GetValueOrDefault(dtoLevelMappingType) ?? throw new AccessTypeNotFoundException(typeof(TEntity), dtoLevelMappingType.ToString());
+        }
+
+        protected void FluentValidate(Type dtoType, dynamic dtoObject)
+        {
+            Type genericType = typeof(IValidator<>).MakeGenericType(dtoType);
+            IValidator validator = _serviceProvider.GetService(genericType) as IValidator ?? throw new ValidatorNotFoundException(dtoType);
+            var context = new ValidationContext<object>(dtoObject, new PropertyChain(), new DefaultValidatorSelector());
+            var validationResult = validator.Validate(context);
+            if (!validationResult.IsValid)
+            {
+                throw new FluentValidationException(dtoType, validationResult);
+            }
         }
 
         #endregion
