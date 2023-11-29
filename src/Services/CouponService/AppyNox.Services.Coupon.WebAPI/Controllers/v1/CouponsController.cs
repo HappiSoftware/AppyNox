@@ -2,10 +2,10 @@
 using AppyNox.Services.Base.API.ViewModels;
 using AppyNox.Services.Base.Application.ExceptionExtensions;
 using AppyNox.Services.Base.Application.Services.Interfaces;
+using AppyNox.Services.Base.Domain.Common;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
 using AppyNox.Services.Coupon.Application.Services.Implementations;
 using AppyNox.Services.Coupon.Application.Services.Interfaces;
-using AppyNox.Services.Coupon.Domain.Common;
 using AppyNox.Services.Coupon.Domain.Entities;
 using Asp.Versioning;
 using AutoWrapper.Extensions;
@@ -23,13 +23,13 @@ namespace AppyNox.Services.Coupon.WebAPI.Controllers.v1
     {
         #region [ Fields ]
 
-        private readonly IGenericService<CouponEntity, CouponSimpleDto> _couponService;
+        private readonly IGenericService<CouponEntity> _couponService;
 
         #endregion
 
         #region [ Public Constructors ]
 
-        public CouponsController(IGenericService<CouponEntity, CouponSimpleDto> couponService)
+        public CouponsController(IGenericService<CouponEntity> couponService)
         {
             _couponService = couponService;
         }
@@ -42,14 +42,14 @@ namespace AppyNox.Services.Coupon.WebAPI.Controllers.v1
         public async Task<ApiResponse> GetAll([FromQuery] QueryParametersViewModel queryParameters)
         {
             var coupons = await _couponService.GetAllAsync(queryParameters);
-            return new ApiResponse(coupons, 200);
+            return new ApiResponse(coupons);
         }
 
         [HttpGet("{id}")]
         public async Task<ApiResponse> GetById(Guid id, [FromQuery] QueryParametersViewModel queryParameters)
         {
             var coupon = await _couponService.GetByIdAsync(id, queryParameters);
-            return coupon == null ? throw new ApiProblemDetailsException($"Record with id: {id} does not exist.", 404) : new ApiResponse(coupon);
+            return new ApiResponse(coupon);
         }
 
         [HttpPost]
@@ -60,16 +60,14 @@ namespace AppyNox.Services.Coupon.WebAPI.Controllers.v1
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(Guid id, CouponSimpleDto couponDto)
+        public async Task<IActionResult> Update(Guid id, [FromBody] CouponSimpleUpdateDto couponDto)
         {
-            //var validationResult = _couponValidator.Validate(couponDto);
-            //ValidationHandlerBase.HandleValidationResult(ModelState, validationResult);
-
-            var existingCoupon = await _couponService.GetByIdAsync(id, QueryParameters.CreateForIdOnly());
-            if (existingCoupon == null)
+            if (id != couponDto.Id)
             {
-                return NotFound(new ApiResponse(404, $"Coupon with id {id} not found"));
+                return BadRequest();
             }
+
+            await _couponService.GetByIdAsync(id, QueryParameters.CreateForIdOnly());
 
             await _couponService.UpdateAsync(couponDto);
             return NoContent();

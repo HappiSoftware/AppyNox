@@ -1,11 +1,10 @@
-﻿using AppyNox.Services.Base.Domain.Common;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AppyNox.Services.Coupon.Domain.Common
+namespace AppyNox.Services.Base.Domain.Common
 {
     public class QueryParameters : QueryParametersBase
     {
@@ -21,7 +20,7 @@ namespace AppyNox.Services.Coupon.Domain.Common
 
         public new static QueryParametersBase CreateForIdOnly()
         {
-            return new QueryParameters(CommonDtoLevelEnums.IdOnly) as QueryParametersBase;
+            return new QueryParameters(CommonDtoLevelEnums.IdOnly);
         }
 
         #endregion

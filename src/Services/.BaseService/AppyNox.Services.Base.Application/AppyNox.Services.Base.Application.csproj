@@ -17,4 +17,8 @@
 		<ProjectReference Include="..\AppyNox.Services.Base.Infrastructure\AppyNox.Services.Base.Infrastructure.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Common\" />
+	</ItemGroup>
+
 </Project>

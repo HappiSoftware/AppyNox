@@ -55,7 +55,7 @@ namespace AppyNox.Services.Base.Infrastructure.Repositories
 
         public void UpdateAsync(TEntity entity)
         {
-            _context.Set<TEntity>().Update(entity);
+            _context.Set<TEntity>().Entry(entity).State = EntityState.Modified;
         }
 
         public void DeleteAsync(TEntity entity)
