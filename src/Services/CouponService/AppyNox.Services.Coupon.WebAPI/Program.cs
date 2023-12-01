@@ -1,5 +1,5 @@
 using AppyNox.Services.Base.API.ExceptionExtensions;
-using AppyNox.Services.Base.API.Middlewares;
+using AppyNox.Services.Base.API.Middleware;
 using AppyNox.Services.Base.Domain.Common;
 using AppyNox.Services.Coupon.WebAPI.Helpers;
 using AppyNox.Services.Coupon.WebAPI.Middlewares;
@@ -48,20 +48,20 @@ try
 
     #region [ Logger Setup ]
 
-    builder.Logging.ClearProviders();
-    builder.Host.UseNLog();
+    //builder.Logging.ClearProviders();
+    //builder.Host.UseNLog();
 
     #endregion
 
     #region [ Consul Discovery Service ]
 
-    builder.Services.AddSingleton<IConsulClient, ConsulClient>(p => new ConsulClient(consulConfig =>
-    {
-        var address = configuration["ConsulConfig:Address"];
-        consulConfig.Address = new Uri(address);
-    }));
-    builder.Services.AddSingleton<IHostedService, ConsulHostedService>();
-    builder.Services.Configure<ConsulConfig>(configuration.GetSection("consul"));
+    //builder.Services.AddSingleton<IConsulClient, ConsulClient>(p => new ConsulClient(consulConfig =>
+    //{
+    //    var address = configuration["ConsulConfig:Address"];
+    //    consulConfig.Address = new Uri(address);
+    //}));
+    //builder.Services.AddSingleton<IHostedService, ConsulHostedService>();
+    //builder.Services.Configure<ConsulConfig>(configuration.GetSection("consul"));
 
     #endregion
 
@@ -73,6 +73,8 @@ try
     var app = builder.Build();
 
     // Configure the HTTP request pipeline.
+    app.UseMiddleware<ExceptionHandlingMiddleware>();
+
     app.UseSwagger();
 
     app.UseSwaggerUI();
