@@ -40,6 +40,7 @@ namespace AppyNox.Services.Base.Infrastructure.Repositories
         {
             return await _dbSet
                 .AsQueryable()
+                .Select(selectedColumns)
                 .Skip((queryParameters.PageNumber - 1) * queryParameters.PageSize)
                 .Take(queryParameters.PageSize)
                 .ToListAsync();
