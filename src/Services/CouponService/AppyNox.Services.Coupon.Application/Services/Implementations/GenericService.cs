@@ -16,9 +16,8 @@ using AppyNox.Services.Coupon.Application.Services.Interfaces;
 
 namespace AppyNox.Services.Coupon.Application.Services.Implementations
 {
-    public class GenericService<TEntity, TDto> : GenericServiceBase<TEntity, TDto>, IGenericService<TEntity, TDto>
+    public class GenericService<TEntity> : GenericServiceBase<TEntity>, IGenericService<TEntity>
     where TEntity : class, IEntityWithGuid
-    where TDto : class
     {
         #region [ Public Constructors ]
 

@@ -9,9 +9,8 @@ using System.Threading.Tasks;
 
 namespace AppyNox.Services.Coupon.Application.Services.Interfaces
 {
-    public interface IGenericService<TEntity, TDto> : IGenericServiceBase<TEntity, TDto>
+    public interface IGenericService<TEntity> : IGenericServiceBase<TEntity>
     where TEntity : class, IEntityWithGuid
-    where TDto : class
     {
     }
 }

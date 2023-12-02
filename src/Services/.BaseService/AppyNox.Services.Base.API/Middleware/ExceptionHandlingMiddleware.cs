@@ -41,6 +41,10 @@ namespace AppyNox.Services.Base.API.Middleware
                 string correlationId = (context.Items["CorrelationId"] ?? string.Empty).ToString() ?? string.Empty;
                 throw new ApiException(new NoxApiExceptionWrapObject(ex, correlationId), statusCode: ex.StatusCode);
             }
+            catch (Exception ex)
+            {
+                throw new ApiException(ex, statusCode: 500);
+            }
         }
 
         #endregion

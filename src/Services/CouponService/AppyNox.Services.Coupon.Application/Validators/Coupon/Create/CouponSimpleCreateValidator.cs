@@ -2,13 +2,13 @@
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
 using FluentValidation;
 
-namespace AppyNox.Services.Coupon.Application.Validators.Coupon
+namespace AppyNox.Services.Coupon.Application.Validators.Coupon.Create
 {
-    public class CouponValidator : BaseDtoValidator<CouponSimpleCreateDto>
+    public class CouponSimpleCreateValidator : BaseDtoValidator<CouponSimpleCreateDto>
     {
         #region [ Public Constructors ]
 
-        public CouponValidator()
+        public CouponSimpleCreateValidator()
         {
             RuleFor(coupon => coupon.Code)
                 .NotNull().NotEmpty().WithMessage("Code cannot be null")
