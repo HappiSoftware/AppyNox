@@ -15,7 +15,7 @@ namespace AppyNox.Services.Base.Infrastructure.UnitTest.RepositoryTests.CommonTe
         #region [ Public Constructors ]
 
         [Fact]
-        public void BaseQueryParameterInitialization()
+        public void BaseQueryParameterInitializationShouldBeCorrect()
         {
             QueryParameters queryParameters = new();
 
@@ -36,7 +36,7 @@ namespace AppyNox.Services.Base.Infrastructure.UnitTest.RepositoryTests.CommonTe
         /// DetailLevel = "Simple"
         /// </summary>
         [Fact]
-        public void DataAccess_InitializationForSimple()
+        public void DataAccess_InitializationForSimpleShouldBeCorrect()
         {
             QueryParameters queryParameters = new()
             {
@@ -58,7 +58,7 @@ namespace AppyNox.Services.Base.Infrastructure.UnitTest.RepositoryTests.CommonTe
         /// for case insensitive testing
         /// </summary>
         [Fact]
-        public void DataAccess_InitializationForSimple2()
+        public void DataAccess_InitializationForSimpleDetailLevelCaseInsensitiveShouldBeCorrect()
         {
             QueryParameters queryParameters = new()
             {
@@ -79,7 +79,7 @@ namespace AppyNox.Services.Base.Infrastructure.UnitTest.RepositoryTests.CommonTe
         /// DetailLevel = "simple"
         /// </summary>
         [Fact]
-        public void DataAccess_InitializationForSimple3()
+        public void DataAccess_InitializationForSimpleDetailLevelCaseInsensitiveShouldBeCorrectWithAccess()
         {
             QueryParameters queryParameters = new()
             {
@@ -100,7 +100,7 @@ namespace AppyNox.Services.Base.Infrastructure.UnitTest.RepositoryTests.CommonTe
         /// DetailLevel = "IdOnly"
         /// </summary>
         [Fact]
-        public void DataAccess_InitializationForIdOnly()
+        public void DataAccess_InitializationForIdOnlyShouldBeCorrect()
         {
             QueryParameters queryParameters = new()
             {
@@ -122,7 +122,7 @@ namespace AppyNox.Services.Base.Infrastructure.UnitTest.RepositoryTests.CommonTe
         /// for case insensitive testing
         /// </summary>
         [Fact]
-        public void DataAccess_InitializationForIdOnly2()
+        public void DataAccess_InitializationForIdOnlyDetailLevelCaseInsensitiveShouldBeCorrect()
         {
             QueryParameters queryParameters = new()
             {
@@ -144,7 +144,7 @@ namespace AppyNox.Services.Base.Infrastructure.UnitTest.RepositoryTests.CommonTe
         /// for case insensitive testing
         /// </summary>
         [Fact]
-        public void DataAccess_InitializationForIdOnly3()
+        public void DataAccess_InitializationForIdOnlyDetailLevelAndAccessCaseInsensitiveShouldBeCorrect()
         {
             QueryParameters queryParameters = new()
             {
@@ -165,7 +165,7 @@ namespace AppyNox.Services.Base.Infrastructure.UnitTest.RepositoryTests.CommonTe
         /// DetailLevel = "UncommonDetail"
         /// </summary>
         [Fact]
-        public void DataAccess_InitializationForNone()
+        public void DataAccess_InitializationForNoneShouldBeCorrect()
         {
             QueryParameters queryParameters = new()
             {
@@ -190,7 +190,7 @@ namespace AppyNox.Services.Base.Infrastructure.UnitTest.RepositoryTests.CommonTe
         /// DetailLevel = ""
         /// </summary>
         [Fact]
-        public void Update_InitializationForSimple()
+        public void Update_InitializationForSimpleShouldBeCorrect()
         {
             QueryParameters queryParameters = new()
             {
@@ -211,7 +211,7 @@ namespace AppyNox.Services.Base.Infrastructure.UnitTest.RepositoryTests.CommonTe
         /// DetailLevel = "Simple"
         /// </summary>
         [Fact]
-        public void Update_InitializationForSimple2()
+        public void Update_InitializationForSimpleWithAccessAndDetailLevelShouldBeCorrect()
         {
             QueryParameters queryParameters = new()
             {
@@ -233,7 +233,7 @@ namespace AppyNox.Services.Base.Infrastructure.UnitTest.RepositoryTests.CommonTe
         /// for case insensitive testing
         /// </summary>
         [Fact]
-        public void Update_InitializationForSimple3()
+        public void Update_InitializationForSimpleDetailLevelAndAccessCaseInsensitiveShouldBeCorrect()
         {
             QueryParameters queryParameters = new()
             {
@@ -254,7 +254,7 @@ namespace AppyNox.Services.Base.Infrastructure.UnitTest.RepositoryTests.CommonTe
         /// DetailLevel = "Extended"
         /// </summary>
         [Fact]
-        public void Update_InitializationForExtended()
+        public void Update_InitializationForExtendedShouldBeCorrect()
         {
             QueryParameters queryParameters = new()
             {
@@ -279,7 +279,7 @@ namespace AppyNox.Services.Base.Infrastructure.UnitTest.RepositoryTests.CommonTe
         /// DetailLevel = ""
         /// </summary>
         [Fact]
-        public void Create_InitializationForSimple()
+        public void Create_InitializationForSimpleShouldBeCorrect()
         {
             QueryParameters queryParameters = new()
             {
@@ -300,7 +300,7 @@ namespace AppyNox.Services.Base.Infrastructure.UnitTest.RepositoryTests.CommonTe
         /// DetailLevel = "Simple"
         /// </summary>
         [Fact]
-        public void Create_InitializationForSimple2()
+        public void Create_InitializationForSimpleWithAccessAndDetailLevelShouldBeCorrect()
         {
             QueryParameters queryParameters = new()
             {
@@ -322,7 +322,7 @@ namespace AppyNox.Services.Base.Infrastructure.UnitTest.RepositoryTests.CommonTe
         /// for case insensitive testing
         /// </summary>
         [Fact]
-        public void Create_InitializationForSimple3()
+        public void Create_InitializationForSimpleDetailLevelAndAccessCaseInsensitiveShouldBeCorrect()
         {
             QueryParameters queryParameters = new()
             {
@@ -343,7 +343,7 @@ namespace AppyNox.Services.Base.Infrastructure.UnitTest.RepositoryTests.CommonTe
         /// DetailLevel = "Extended"
         /// </summary>
         [Fact]
-        public void Create_InitializationForExtended()
+        public void Create_InitializationForExtendedAccessCaseInsensitiveShouldBeCorrect()
         {
             QueryParameters queryParameters = new()
             {
@@ -364,7 +364,7 @@ namespace AppyNox.Services.Base.Infrastructure.UnitTest.RepositoryTests.CommonTe
         #region [ Static Method Tests ]
 
         [Fact]
-        public void CreateForIdOnly_Test()
+        public void CreateForIdOnly_SholdReturnIdOnlyQueryParameter()
         {
             QueryParameters queryParameters = (QueryParameters)QueryParameters.CreateForIdOnly();
 

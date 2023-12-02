@@ -48,20 +48,20 @@ try
 
     #region [ Logger Setup ]
 
-    //builder.Logging.ClearProviders();
-    //builder.Host.UseNLog();
+    builder.Logging.ClearProviders();
+    builder.Host.UseNLog();
 
     #endregion
 
     #region [ Consul Discovery Service ]
 
-    //builder.Services.AddSingleton<IConsulClient, ConsulClient>(p => new ConsulClient(consulConfig =>
-    //{
-    //    var address = configuration["ConsulConfig:Address"];
-    //    consulConfig.Address = new Uri(address);
-    //}));
-    //builder.Services.AddSingleton<IHostedService, ConsulHostedService>();
-    //builder.Services.Configure<ConsulConfig>(configuration.GetSection("consul"));
+    builder.Services.AddSingleton<IConsulClient, ConsulClient>(p => new ConsulClient(consulConfig =>
+    {
+        var address = configuration["ConsulConfig:Address"];
+        consulConfig.Address = new Uri(address);
+    }));
+    builder.Services.AddSingleton<IHostedService, ConsulHostedService>();
+    builder.Services.Configure<ConsulConfig>(configuration.GetSection("consul"));
 
     #endregion
 
