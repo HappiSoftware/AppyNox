@@ -2,7 +2,7 @@
 
 namespace AppyNox.EventBus.Base.Abstraction
 {
-    public interface IIntegrationEventHandler<TIntegrationEvent> : IntegrationEventHandler where TIntegrationEvent : IntegrationEvent
+    public interface IIntegrationEventHandler<in TIntegrationEvent> : IntegrationEventHandler where TIntegrationEvent : IntegrationEvent
     {
         #region [ Public Methods ]
 

@@ -1,4 +1,6 @@
 ﻿using AppyNox.Services.Base.Domain.Common;
+using AppyNox.Services.Base.Domain.Common.HttpStatusCodes;
+using AppyNox.Services.Coupon.WebAPI.ExceptionExtensions.Base;
 using Consul;
 
 namespace AppyNox.Services.Coupon.WebAPI.Helpers;
@@ -31,6 +33,12 @@ public class ConsulHostedService : IHostedService
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         var serviceConfig = _configuration.GetSection("consul").Get<ConsulConfig>();
+
+        if (serviceConfig == null)
+        {
+            throw new CouponBaseException("Consul configuration is not defined. Service will not be discovered.", (int)NoxServerErrorResponseCodes.ServiceUnavailable);
+        }
+
         var registration = new AgentServiceRegistration
         {
             ID = serviceConfig.ServiceId,
@@ -47,9 +55,10 @@ public class ConsulHostedService : IHostedService
         //    Timeout = TimeSpan.FromSeconds(serviceConfig.HealthCheckTimeoutSeconds)
         //};
 
-        //registration.Checks = [check];
+        //registration.Checks = new[] { check };
 
-        _logger.LogInformation($"Registering service with Consul: {registration.Name}");
+        var logMsg = $"Registering service with Consul: {registration.Name}";
+        _logger.LogInformation("{Message}", logMsg);
 
         await _consulClient.Agent.ServiceDeregister(registration.ID, cancellationToken);
         await _consulClient.Agent.ServiceRegister(registration, cancellationToken);
@@ -58,9 +67,17 @@ public class ConsulHostedService : IHostedService
     public async Task StopAsync(CancellationToken cancellationToken)
     {
         var serviceConfig = _configuration.GetSection("consul").Get<ConsulConfig>();
+
+        if (serviceConfig == null)
+        {
+            _logger.LogWarning("{Message}", "Consul configuration is not found. Service will not be deregistered from Consul.");
+            return;
+        }
+
         var registration = new AgentServiceRegistration { ID = serviceConfig.ServiceId };
 
-        _logger.LogInformation($"Deregistering service from Consul: {registration.ID}");
+        var logMsg = $"Deregistering service from Consul: {registration.ID}";
+        _logger.LogInformation("{Message}", logMsg);
 
         await _consulClient.Agent.ServiceDeregister(registration.ID, cancellationToken);
     }

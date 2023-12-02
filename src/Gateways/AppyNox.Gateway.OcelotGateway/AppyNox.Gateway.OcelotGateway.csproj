@@ -15,6 +15,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.5" />
+    <PackageReference Include="NLog.Web.AspNetCore" Version="5.3.5" />
     <PackageReference Include="Ocelot" Version="22.0.0" />
     <PackageReference Include="Ocelot.Provider.Consul" Version="22.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
@@ -22,6 +23,11 @@
 
   <ItemGroup>
     <Folder Include="ssl\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Services\.BaseService\AppyNox.Services.Base.Application\AppyNox.Services.Base.Application.csproj" />
+    <ProjectReference Include="..\..\Services\.BaseService\AppyNox.Services.Base.Domain\AppyNox.Services.Base.Domain.csproj" />
   </ItemGroup>
 
 </Project>

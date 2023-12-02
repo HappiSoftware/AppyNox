@@ -1,42 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace AppyNox.EventBus.Base;
 
-namespace AppyNox.EventBus.Base
+public enum EventBusType
 {
-    public enum EventBusType
-    {
-        RabbitMQ = 0,
+    RabbitMQ = 0,
 
-        AzureServiceBus = 1
-    }
+    AzureServiceBus = 1
+}
 
-    public class EventBusConfig
-    {
-        #region [ Properties ]
+public class EventBusConfig
+{
+    #region [ Properties ]
 
-        public int ConnectionRetryCount { get; set; } = 5;
+    public int ConnectionRetryCount { get; set; } = 5;
 
-        public string DefaultTopicName { get; set; } = "AppyNoxEventBus";
+    public string DefaultTopicName { get; set; } = "AppyNoxEventBus";
 
-        public string EventBusConnectionString { get; set; } = string.Empty;
+    public string EventBusConnectionString { get; set; } = string.Empty;
 
-        public string SubscriberClientAppName { get; set; } = string.Empty;
+    public string SubscriberClientAppName { get; set; } = string.Empty;
 
-        public string EventNamePrefix { get; set; } = string.Empty;
+    public string EventNamePrefix { get; set; } = string.Empty;
 
-        public string EventNameSuffix { get; set; } = "IntegrationEvent";
+    public string EventNameSuffix { get; set; } = "IntegrationEvent";
 
-        public EventBusType EventBusType { get; set; } = EventBusType.RabbitMQ;
+    public EventBusType EventBusType { get; set; } = EventBusType.RabbitMQ;
 
-        public object? Connection { get; set; }
+    public object? Connection { get; set; }
 
-        public bool DeleteEventPrefix => !string.IsNullOrEmpty(EventNamePrefix);
+    public bool DeleteEventPrefix => !string.IsNullOrEmpty(EventNamePrefix);
 
-        public bool DeleteEventSuffix => !string.IsNullOrEmpty(EventNameSuffix);
+    public bool DeleteEventSuffix => !string.IsNullOrEmpty(EventNameSuffix);
 
-        #endregion Properties
-    }
+    #endregion Properties
 }
