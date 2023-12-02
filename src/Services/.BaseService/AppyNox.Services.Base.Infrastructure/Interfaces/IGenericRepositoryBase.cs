@@ -1,5 +1,5 @@
-﻿using AppyNox.Services.Base.Domain.Common;
-using AppyNox.Services.Base.Domain.Interfaces;
+﻿using AppyNox.Services.Base.Domain.Interfaces;
+using AppyNox.Services.Base.Infrastructure.Repositories.Common;
 using System.Linq.Expressions;
 
 namespace AppyNox.Services.Base.Infrastructure.Interfaces

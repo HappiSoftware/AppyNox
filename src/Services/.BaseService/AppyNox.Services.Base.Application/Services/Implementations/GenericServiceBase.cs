@@ -7,6 +7,7 @@ using AppyNox.Services.Base.Domain.Common;
 using AppyNox.Services.Base.Domain.Interfaces;
 using AppyNox.Services.Base.Infrastructure.ExceptionExtensions;
 using AppyNox.Services.Base.Infrastructure.Interfaces;
+using AppyNox.Services.Base.Infrastructure.Repositories.Common;
 using AutoMapper;
 using FluentValidation;
 using FluentValidation.Internal;

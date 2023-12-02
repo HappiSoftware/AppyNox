@@ -1,10 +1,11 @@
-﻿using System;
+﻿using AppyNox.Services.Base.Domain.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AppyNox.Services.Base.Domain.Common
+namespace AppyNox.Services.Base.Infrastructure.Repositories.Common
 {
     public class QueryParameters : QueryParametersBase
     {
@@ -14,7 +15,7 @@ namespace AppyNox.Services.Base.Domain.Common
         {
         }
 
-        public QueryParameters(CommonDtoLevelEnums commonDtoLevel) : base(commonDtoLevel)
+        protected QueryParameters(CommonDtoLevelEnums commonDtoLevel) : base(commonDtoLevel)
         {
         }
 

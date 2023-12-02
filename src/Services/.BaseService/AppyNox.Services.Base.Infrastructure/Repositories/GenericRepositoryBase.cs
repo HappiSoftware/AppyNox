@@ -1,9 +1,8 @@
-﻿using AppyNox.Services.Base.Domain.Common;
-
-using AppyNox.Services.Base.Domain.Interfaces;
+﻿using AppyNox.Services.Base.Domain.Interfaces;
 using AppyNox.Services.Base.Infrastructure.ExceptionExtensions;
 
 using AppyNox.Services.Base.Infrastructure.Interfaces;
+using AppyNox.Services.Base.Infrastructure.Repositories.Common;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
@@ -41,7 +40,6 @@ namespace AppyNox.Services.Base.Infrastructure.Repositories
         {
             return await _dbSet
                 .AsQueryable()
-                .Select(selectedColumns)
                 .Skip((queryParameters.PageNumber - 1) * queryParameters.PageSize)
                 .Take(queryParameters.PageSize)
                 .ToListAsync();

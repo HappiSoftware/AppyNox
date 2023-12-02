@@ -1,7 +1,7 @@
-﻿using AppyNox.Services.Base.Domain.Interfaces.Common;
+﻿using AppyNox.Services.Base.Domain.Common;
 using System.ComponentModel.DataAnnotations;
 
-namespace AppyNox.Services.Base.Domain.Common
+namespace AppyNox.Services.Base.Infrastructure.Repositories.Common
 {
     public abstract class QueryParametersBase : IQueryParameters
     {
@@ -50,9 +50,20 @@ namespace AppyNox.Services.Base.Domain.Common
                     ? "Simple"
                     : value;
 
-                _commonDtoLevel = (_detailLevel.Equals("Simple", StringComparison.OrdinalIgnoreCase))
-                    ? CommonDtoLevelEnums.Simple
-                    : CommonDtoLevelEnums.None;
+                if (_detailLevel.Equals("Simple", StringComparison.OrdinalIgnoreCase))
+                {
+                    _detailLevel = "Simple";
+                    _commonDtoLevel = CommonDtoLevelEnums.Simple;
+                }
+                else if (_detailLevel.Equals("IdOnly", StringComparison.OrdinalIgnoreCase))
+                {
+                    _detailLevel = "IdOnly";
+                    _commonDtoLevel = CommonDtoLevelEnums.IdOnly;
+                }
+                else
+                {
+                    _commonDtoLevel = CommonDtoLevelEnums.None;
+                }
             }
         }
 
