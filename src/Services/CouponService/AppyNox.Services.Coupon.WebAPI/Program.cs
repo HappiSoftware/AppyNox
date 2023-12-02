@@ -1,3 +1,4 @@
+using AppyNox.Services.Base.API.ExceptionExtensions;
 using AppyNox.Services.Base.API.Middleware;
 using AppyNox.Services.Base.Domain.Common;
 using AppyNox.Services.Coupon.WebAPI.Helpers;
@@ -68,6 +69,11 @@ AppyNox.Services.Coupon.Infrastructure.DependencyInjection.ConfigureServices(bui
 AppyNox.Services.Coupon.Application.DependencyInjection.ConfigureServices(builder.Services, configuration);
 
 var app = builder.Build();
+// Configure the HTTP request pipeline.
+app.UseMiddleware<ExceptionHandlingMiddleware>();
+
+app.UseSwagger();
+
 
 // Configure the HTTP request pipeline.
 app.UseSwagger();

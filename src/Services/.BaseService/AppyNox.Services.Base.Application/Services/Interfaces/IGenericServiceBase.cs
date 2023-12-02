@@ -1,5 +1,5 @@
-﻿using AppyNox.Services.Base.Domain.Common;
-using AppyNox.Services.Base.Domain.Interfaces;
+﻿using AppyNox.Services.Base.Domain.Interfaces;
+using AppyNox.Services.Base.Infrastructure.Repositories.Common;
 
 namespace AppyNox.Services.Base.Application.Services.Interfaces
 {

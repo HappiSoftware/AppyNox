@@ -1,6 +1,6 @@
 ﻿using AppyNox.Services.Base.Domain.Common;
 
-namespace AppyNox.Services.Base.Domain.Interfaces.Common
+namespace AppyNox.Services.Base.Infrastructure.Repositories.Common
 {
     public interface IQueryParameters
     {
