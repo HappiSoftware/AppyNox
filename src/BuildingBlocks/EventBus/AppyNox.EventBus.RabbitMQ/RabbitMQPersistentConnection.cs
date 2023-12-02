@@ -1,4 +1,6 @@
-﻿using Polly;
+﻿using AppyNox.EventBus.Base.ExceptionExtensions.Base;
+using AppyNox.Services.Base.Domain.Common.HttpStatusCodes;
+using Polly;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using RabbitMQ.Client.Exceptions;
@@ -16,7 +18,7 @@ namespace AppyNox.EventBus.RabbitMQ
 
         private IConnection? connection;
 
-        private readonly object lock_object = new object();
+        private readonly object lock_object = new();
 
         private bool _disposed;
 
@@ -42,13 +44,21 @@ namespace AppyNox.EventBus.RabbitMQ
 
         public IModel CreateModel()
         {
-            return connection!.CreateModel();
+            if(connection == null)
+            {
+                throw new EventBusBaseException("RabbitMQ connection is null while trying CreateModel", (int)NoxServerErrorResponseCodes.InternalServerError);
+            }
+            return connection.CreateModel();
         }
 
         public void Dispose()
         {
             _disposed = true;
-            connection!.Dispose();
+            if(connection != null )
+            {
+                connection.Dispose();
+            }
+            GC.SuppressFinalize(this);
         }
 
         public bool TryConnect()
@@ -66,9 +76,9 @@ namespace AppyNox.EventBus.RabbitMQ
                     connection = _connectionFactory.CreateConnection();
                 });
 
-                if (IsConnected)
+                if (IsConnected && connection != null)
                 {
-                    connection!.ConnectionShutdown += Connection_ConnectionShutdown;
+                    connection.ConnectionShutdown += Connection_ConnectionShutdown;
                     connection.CallbackException += Connection_CallbackException;
                     connection.ConnectionBlocked += Connection_ConnectionBlocked;
 

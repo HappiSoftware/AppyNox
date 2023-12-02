@@ -28,7 +28,7 @@ namespace AppyNox.EventBus.RabbitMQ
         {
             if (config.Connection != null)
             {
-                var connJson = JsonConvert.SerializeObject(eventBusConfig.Connection, new JsonSerializerSettings()
+                var connJson = JsonConvert.SerializeObject(EventBusConfig.Connection, new JsonSerializerSettings()
                 {
                     ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                 });
@@ -57,7 +57,7 @@ namespace AppyNox.EventBus.RabbitMQ
             }
 
             _consumerChannel.QueueUnbind(queue: eventName,
-                        exchange: eventBusConfig.DefaultTopicName,
+                        exchange: EventBusConfig.DefaultTopicName,
                         routingKey: eventName);
 
             if (subsManager.IsEmpty)
@@ -79,14 +79,14 @@ namespace AppyNox.EventBus.RabbitMQ
 
             var policy = Policy.Handle<BrokerUnreachableException>()
             .Or<SocketException>()
-            .WaitAndRetry(eventBusConfig.ConnectionRetryCount, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)), (ex, time) =>
+            .WaitAndRetry(EventBusConfig.ConnectionRetryCount, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)), (ex, time) =>
             {
                 // log
             });
 
             var eventName = @event.GetType().Name;
             eventName = ProcessEventName(eventName);
-            _consumerChannel.ExchangeDeclare(exchange: eventBusConfig.DefaultTopicName, type: "direct"); // Ensure exchange exists while publishing
+            _consumerChannel.ExchangeDeclare(exchange: EventBusConfig.DefaultTopicName, type: "direct"); // Ensure exchange exists while publishing
             var message = JsonConvert.SerializeObject(@event);
             var body = Encoding.UTF8.GetBytes(message);
             policy.Execute(() =>
@@ -100,7 +100,7 @@ namespace AppyNox.EventBus.RabbitMQ
                                 autoDelete: false,
                                 arguments: null);
 
-                _consumerChannel.BasicPublish(exchange: eventBusConfig.DefaultTopicName,
+                _consumerChannel.BasicPublish(exchange: EventBusConfig.DefaultTopicName,
                                 routingKey: eventName,
                                 mandatory: true,
                                 basicProperties: properties, body: body);
@@ -126,7 +126,7 @@ namespace AppyNox.EventBus.RabbitMQ
                                 arguments: null);
 
                 _consumerChannel.QueueBind(queue: GetSubName(eventName),
-                                exchange: eventBusConfig.DefaultTopicName,
+                                exchange: EventBusConfig.DefaultTopicName,
                                 routingKey: eventName);
             }
 
@@ -148,7 +148,7 @@ namespace AppyNox.EventBus.RabbitMQ
 
             var channel = persistentConnection.CreateModel();
 
-            channel.ExchangeDeclare(exchange: eventBusConfig.DefaultTopicName, type: "direct");
+            channel.ExchangeDeclare(exchange: EventBusConfig.DefaultTopicName, type: "direct");
 
             return channel;
         }

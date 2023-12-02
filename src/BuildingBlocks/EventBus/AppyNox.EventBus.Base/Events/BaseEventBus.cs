@@ -13,7 +13,7 @@ namespace AppyNox.EventBus.Base.Events
 
         public readonly IEventBusSubscriptionManager subsManager;
 
-        public EventBusConfig eventBusConfig { get; set; }
+        public EventBusConfig EventBusConfig { get; set; }
 
         #endregion
 
@@ -21,7 +21,7 @@ namespace AppyNox.EventBus.Base.Events
 
         protected BaseEventBus(EventBusConfig config, IServiceProvider serviceProvider)
         {
-            eventBusConfig = config;
+            EventBusConfig = config;
             this.serviceProvider = serviceProvider;
             subsManager = new InMemoryEventBusSubscriptionManager(ProcessEventName);
         }
@@ -32,13 +32,13 @@ namespace AppyNox.EventBus.Base.Events
 
         public virtual string ProcessEventName(string eventName)
         {
-            if (eventBusConfig.DeleteEventPrefix)
+            if (EventBusConfig.DeleteEventPrefix)
             {
-                eventName = eventName.TrimStart(eventBusConfig.EventNamePrefix.ToArray());
+                eventName = eventName.TrimStart(EventBusConfig.EventNamePrefix.ToArray());
             }
-            if (eventBusConfig.DeleteEventSuffix)
+            if (EventBusConfig.DeleteEventSuffix)
             {
-                eventName = eventName.TrimEnd(eventBusConfig.EventNameSuffix.ToArray());
+                eventName = eventName.TrimEnd(EventBusConfig.EventNameSuffix.ToArray());
             }
 
             return eventName;
@@ -46,7 +46,7 @@ namespace AppyNox.EventBus.Base.Events
 
         public virtual string GetSubName(string eventName)
         {
-            return $"{eventBusConfig.SubscriberClientAppName}.{ProcessEventName(eventName)}";
+            return $"{EventBusConfig.SubscriberClientAppName}.{ProcessEventName(eventName)}";
         }
 
         public virtual void Dispose()
@@ -55,7 +55,7 @@ namespace AppyNox.EventBus.Base.Events
         }
         protected virtual void Dispose(bool disposing)
         {
-            eventBusConfig = null!;
+            EventBusConfig = null!;
         }
         public async Task<bool> ProcessEvent(string eventName, string message)
         {
@@ -77,10 +77,10 @@ namespace AppyNox.EventBus.Base.Events
                             continue;
                         }
 
-                        var eventType = subsManager.GetEventTypeByName($"{eventBusConfig.EventNamePrefix}{eventName}{eventBusConfig.EventNameSuffix}");
+                        var eventType = subsManager.GetEventTypeByName($"{EventBusConfig.EventNamePrefix}{eventName}{EventBusConfig.EventNameSuffix}");
                         if (eventType == null)
                         {
-                            throw new ArgumentNullException($"Event type '{eventBusConfig.EventNamePrefix}{eventName}{eventBusConfig.EventNameSuffix}' not found!");
+                            throw new ArgumentNullException($"Event type '{EventBusConfig.EventNamePrefix}{eventName}{EventBusConfig.EventNameSuffix}' not found!");
                         }
                         var integrationEvent = JsonConvert.DeserializeObject(message, eventType);
 

@@ -1,1 +1,35 @@
-{}
+{
+  "GlobalConfiguration": {
+    "BaseUrl": "https://localhost:7000",
+    "ServiceDiscoveryProvider": {
+      "Host": "localhost",
+      "Port": 8500,
+      "Type": "Consul"
+    },
+    "RateLimitOptions": {
+      "QuotaExceededMessage": "You have sent too many requests in a row.",
+      "ClientIdHeader": "ClientId"
+    }
+  },
+  "Routes": [
+    {
+      "UseServiceDiscovery": true, // To use Consul discovery service
+      "ServiceName": "ServiceName",
+
+      "DownstreamPathTemplate": "/", // Sub route which will be accessed from Ocelot
+      "DownstreamScheme": "https",
+
+      "UpstreamPathTemplate": "/", // Coming Request to Ocelot
+      "UpstreamHttpMethod": [ "Get", "Post", "Delete", "Put" ],
+      "UpstreamScheme": "https",
+
+      "RateLimitOptions": {
+        "ClientWhitelist": [], // Ip address list which will not be affected
+        "EnableRateLimiting": true, // Activate Rate Limiting
+        "Period": "3s", // Depends on service needs
+        "PeriodTimespan": 3, // Depends on service needs
+        "Limit": 3 // Depends on service needs
+      }
+    }
+  ]
+}

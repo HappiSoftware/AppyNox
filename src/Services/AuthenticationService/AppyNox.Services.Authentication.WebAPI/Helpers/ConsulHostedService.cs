@@ -1,5 +1,6 @@
-﻿using AppyNox.Services.Base.Domain.Common;
-using AutoWrapper.Wrappers;
+﻿using AppyNox.Services.Authentication.WebAPI.ExceptionExtensions.Base;
+using AppyNox.Services.Base.Domain.Common;
+using AppyNox.Services.Base.Domain.Common.HttpStatusCodes;
 using Consul;
 
 namespace AppyNox.Services.Authentication.WebAPI.Helpers;
@@ -35,7 +36,7 @@ public class ConsulHostedService : IHostedService
 
         if (serviceConfig == null)
         {
-            throw new ApiException("Consul configuration is not defined. Service will not be discovered.", 500);
+            throw new AuthenticationBaseException("Consul configuration is not defined. Service will not be discovered.", (int)NoxServerErrorResponseCodes.ServiceUnavailable);
         }
 
         var registration = new AgentServiceRegistration
