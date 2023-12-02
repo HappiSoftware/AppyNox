@@ -65,13 +65,10 @@ namespace AppyNox.Services.Coupon.Infrastructure.UnitTest.RepositoryTests
         [Fact, Order(3)]
         public async Task GetAllAsync_ShouldPaginationReturnCorrectEntity()
         {
-            var context2 = new CouponDbContext(new DbContextOptionsBuilder<CouponDbContext>()
-                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
-                .Options);
-            var coupons = RaiseSeedMultipleCoupons(context2, 2, 1);
+            var coupons = RaiseSeedMultipleCoupons(_context, 2, 1);
             Assert.NotNull(coupons);
 
-            var repository = new GenericRepository<CouponEntity>(context2);
+            var repository = new GenericRepository<CouponEntity>(_context);
             QueryParameters queryParameters = new()
             {
                 Access = string.Empty,
@@ -82,10 +79,11 @@ namespace AppyNox.Services.Coupon.Infrastructure.UnitTest.RepositoryTests
             var propertyNames = typeof(CouponEntity).GetProperties().Select(p => p.Name).ToList();
             var projection = repository.CreateProjection(propertyNames);
             var result = await repository.GetAllAsync(queryParameters, projection);
-            var test = _context.Coupons.ToList();
+
             Assert.NotNull(result);
             Assert.Single(result);
-            Assert.Equal(coupons.Last(), result.First());
+            Assert.Equal(coupons.Last().Id, ((CouponEntity)result.First()).Id);
+            Assert.Equal(coupons.Last().Code, ((CouponEntity)result.First()).Code);
         }
 
         [Fact, Order(4)]
@@ -111,13 +109,10 @@ namespace AppyNox.Services.Coupon.Infrastructure.UnitTest.RepositoryTests
         [Fact, Order(5)]
         public async Task GetAllAsync_ShouldPaginationReturnFiftyAndCorrectEntities()
         {
-            var context2 = new CouponDbContext(new DbContextOptionsBuilder<CouponDbContext>()
-                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
-                .Options);
-            var coupons = RaiseSeedMultipleCoupons(context2, 50, 5);
+            var coupons = RaiseSeedMultipleCoupons(_context, 50, 5);
             Assert.NotNull(coupons);
 
-            var repository = new GenericRepository<CouponEntity>(context2);
+            var repository = new GenericRepository<CouponEntity>(_context);
             QueryParameters queryParameters = new()
             {
                 Access = string.Empty,
@@ -128,10 +123,18 @@ namespace AppyNox.Services.Coupon.Infrastructure.UnitTest.RepositoryTests
             var propertyNames = typeof(CouponEntity).GetProperties().Select(p => p.Name).ToList();
             var projection = repository.CreateProjection(propertyNames);
             var result = await repository.GetAllAsync(queryParameters, projection);
-            var test = context2.Coupons.ToList();
+
+            var expectedCoupons = coupons.Skip(20).Take(5).ToList();
+            var resultList = result.ToList();
+
             Assert.NotNull(result);
-            Assert.Equal(5, result.Count());
-            Assert.Equal(coupons.Skip(20).Take(5), result);
+            Assert.Equal(expectedCoupons.Count, result.Count());
+
+            for (int i = 0; i < expectedCoupons.Count; i++)
+            {
+                Assert.Equal(expectedCoupons[i].Id, ((CouponEntity)resultList[i]).Id);
+                Assert.Equal(expectedCoupons[i].Code, ((CouponEntity)resultList[i]).Code);
+            }
         }
 
         [Fact, Order(6)]
