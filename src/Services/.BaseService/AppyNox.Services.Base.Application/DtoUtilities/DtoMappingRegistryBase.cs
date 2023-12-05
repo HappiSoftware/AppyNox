@@ -27,8 +27,6 @@ namespace AppyNox.Services.Base.Application.DtoUtilities
 
         #endregion
 
-
-
         #region [ Public Methods ]
 
         public Type GetDtoType(Type detailLevelEnumType, Type entityType, string detailLevelDescription)
