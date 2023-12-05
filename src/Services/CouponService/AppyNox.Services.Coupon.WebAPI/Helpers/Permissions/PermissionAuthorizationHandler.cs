@@ -5,6 +5,8 @@ namespace AppyNox.Services.Coupon.WebAPI.Helpers.Permissions;
 
 internal class PermissionAuthorizationHandler : AuthorizationHandler<PermissionRequirement>
 {
+    #region [ Protected Methods ]
+
     protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, PermissionRequirement requirement)
     {
         if (context.User.HasClaim(c => c.Type == ClaimTypes.NameIdentifier))
@@ -25,4 +27,6 @@ internal class PermissionAuthorizationHandler : AuthorizationHandler<PermissionR
 
         return Task.CompletedTask;
     }
+
+    #endregion
 }
