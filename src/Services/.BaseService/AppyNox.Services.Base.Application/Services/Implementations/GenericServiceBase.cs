@@ -135,7 +135,7 @@ namespace AppyNox.Services.Base.Application.Services.Implementations
             await _unitOfWork.SaveChangesAsync();
 
             detailLevelMap = GetDetailLevelMap(DtoLevelMappingTypes.DataAccess);
-            var returnDtoType = _dtoMappingRegistry.GetDtoType(detailLevelMap, typeof(TEntity), NoxEnumExtensions.GetDisplayName(CommonDtoLevelEnums.Simple));
+            var returnDtoType = _dtoMappingRegistry.GetDtoType(detailLevelMap, typeof(TEntity), CommonDtoLevelEnums.Simple.GetDisplayName());
             var createdObject = _mapper.Map(mappedEntity, returnDtoType, returnDtoType);
             return (guid: mappedEntity.Id, basicDto: createdObject);
         }
@@ -145,7 +145,7 @@ namespace AppyNox.Services.Base.Application.Services.Implementations
             #region [ Dynamic Dto Convertion ]
 
             var detailLevelMap = GetDetailLevelMap(DtoLevelMappingTypes.Update);
-            var dtoType = _dtoMappingRegistry.GetDtoType(detailLevelMap, typeof(TEntity), NoxEnumExtensions.GetDisplayName(CommonDtoLevelEnums.Simple));
+            var dtoType = _dtoMappingRegistry.GetDtoType(detailLevelMap, typeof(TEntity), CommonDtoLevelEnums.Simple.GetDisplayName());
 
             #endregion
 
@@ -186,7 +186,7 @@ namespace AppyNox.Services.Base.Application.Services.Implementations
                     break;
 
                 case CommonDtoLevelEnums.Simple:
-                    dtoType = _dtoMappingRegistry.GetDtoType(detailLevelMap, typeof(TEntity), NoxEnumExtensions.GetDisplayName(CommonDtoLevelEnums.Simple));
+                    dtoType = _dtoMappingRegistry.GetDtoType(detailLevelMap, typeof(TEntity), CommonDtoLevelEnums.Simple.GetDisplayName());
                     properties = dtoType.GetProperties().Select(p => p.Name).ToList();
                     break;
 
