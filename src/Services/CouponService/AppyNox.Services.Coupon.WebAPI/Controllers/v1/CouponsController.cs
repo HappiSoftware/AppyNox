@@ -11,6 +11,7 @@ using Asp.Versioning;
 using AutoWrapper.Extensions;
 using AutoWrapper.Wrappers;
 using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 
@@ -39,6 +40,7 @@ namespace AppyNox.Services.Coupon.WebAPI.Controllers.v1
         #region [ Public Methods ]
 
         [HttpGet]
+        [Authorize]
         public async Task<ApiResponse> GetAll([FromQuery] QueryParametersViewModel queryParameters)
         {
             var coupons = await _couponService.GetAllAsync(queryParameters);
