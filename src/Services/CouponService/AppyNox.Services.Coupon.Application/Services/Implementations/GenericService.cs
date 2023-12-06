@@ -13,6 +13,7 @@ using FluentValidation.Results;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
 using FluentValidation.Internal;
 using AppyNox.Services.Coupon.Application.Services.Interfaces;
+using AppyNox.Services.Base.Application.DtoUtilities;
 
 namespace AppyNox.Services.Coupon.Application.Services.Implementations
 {
@@ -21,7 +22,7 @@ namespace AppyNox.Services.Coupon.Application.Services.Implementations
     {
         #region [ Public Constructors ]
 
-        public GenericService(IGenericRepositoryBase<TEntity> repository, IMapper mapper, DtoMappingRegistry dtoMappingRegistry, IUnitOfWorkBase unitOfWork,
+        public GenericService(IGenericRepositoryBase<TEntity> repository, IMapper mapper, IDtoMappingRegistryBase dtoMappingRegistry, IUnitOfWorkBase unitOfWork,
             IServiceProvider serviceProvider)
             : base(repository, mapper, dtoMappingRegistry, unitOfWork, serviceProvider)
         {

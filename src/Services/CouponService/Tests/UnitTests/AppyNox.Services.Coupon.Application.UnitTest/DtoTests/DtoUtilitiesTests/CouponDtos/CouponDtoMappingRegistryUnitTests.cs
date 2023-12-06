@@ -13,10 +13,10 @@ using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Extended;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.DetailLevel;
 
-namespace AppyNox.Services.Coupon.Application.UnitTest.DtoTests.DtoUtilitiesTests
+namespace AppyNox.Services.Coupon.Application.UnitTest.DtoTests.DtoUtilitiesTests.CouponDtos
 {
     [Collection("DtoMappingRegistry Collection")]
-    public class DtoMappingRegistryUnitTests(DtoMappingRegistryFixture fixture)
+    public class CouponDtoMappingRegistryUnitTests(DtoMappingRegistryFixture fixture)
     {
         #region [ Fields ]
 
@@ -65,12 +65,8 @@ namespace AppyNox.Services.Coupon.Application.UnitTest.DtoTests.DtoUtilitiesTest
         [Fact]
         public void CouponDataAccessSimpleShouldReturnCouponSimpleDto()
         {
-            // Arrange
-            var detailLevelMap = _registry.GetDetailLevelTypes(typeof(CouponEntity)).GetValueOrDefault(DtoLevelMappingTypes.DataAccess);
-            Assert.NotNull(detailLevelMap);
-
             // Act
-            var result = _registry.GetDtoType(detailLevelMap, typeof(CouponEntity), CouponDataAccessDetailLevel.Simple.GetDisplayName());
+            var result = _registry.GetDtoType(DtoLevelMappingTypes.DataAccess, typeof(CouponEntity), CouponDataAccessDetailLevel.Simple.GetDisplayName());
 
             // Assert
             Assert.NotNull(result);
@@ -80,12 +76,8 @@ namespace AppyNox.Services.Coupon.Application.UnitTest.DtoTests.DtoUtilitiesTest
         [Fact]
         public void CouponDataAccessExtendedShouldReturnCouponWithAllRelationsDto()
         {
-            // Arrange
-            var detailLevelMap = _registry.GetDetailLevelTypes(typeof(CouponEntity)).GetValueOrDefault(DtoLevelMappingTypes.DataAccess);
-            Assert.NotNull(detailLevelMap);
-
             // Act
-            var result = _registry.GetDtoType(detailLevelMap, typeof(CouponEntity), CouponDataAccessDetailLevel.WithAllRelations.GetDisplayName());
+            var result = _registry.GetDtoType(DtoLevelMappingTypes.DataAccess, typeof(CouponEntity), CouponDataAccessDetailLevel.WithAllRelations.GetDisplayName());
 
             // Assert
             Assert.NotNull(result);
@@ -99,12 +91,8 @@ namespace AppyNox.Services.Coupon.Application.UnitTest.DtoTests.DtoUtilitiesTest
         [Fact]
         public void CouponCreateSimpleShouldReturnCouponSimpleCreateDto()
         {
-            // Arrange
-            var detailLevelMap = _registry.GetDetailLevelTypes(typeof(CouponEntity)).GetValueOrDefault(DtoLevelMappingTypes.Create);
-            Assert.NotNull(detailLevelMap);
-
             // Act
-            var result = _registry.GetDtoType(detailLevelMap, typeof(CouponEntity), CouponCreateDetailLevel.Simple.GetDisplayName());
+            var result = _registry.GetDtoType(DtoLevelMappingTypes.Create, typeof(CouponEntity), CouponCreateDetailLevel.Simple.GetDisplayName());
 
             // Assert
             Assert.NotNull(result);
@@ -114,12 +102,8 @@ namespace AppyNox.Services.Coupon.Application.UnitTest.DtoTests.DtoUtilitiesTest
         [Fact]
         public void CouponCreateExtendedShouldReturnCouponExtendedCreateDto()
         {
-            // Arrange
-            var detailLevelMap = _registry.GetDetailLevelTypes(typeof(CouponEntity)).GetValueOrDefault(DtoLevelMappingTypes.Create);
-            Assert.NotNull(detailLevelMap);
-
             // Act
-            var result = _registry.GetDtoType(detailLevelMap, typeof(CouponEntity), CouponCreateDetailLevel.Extended.GetDisplayName());
+            var result = _registry.GetDtoType(DtoLevelMappingTypes.Create, typeof(CouponEntity), CouponCreateDetailLevel.Extended.GetDisplayName());
 
             // Assert
             Assert.NotNull(result);
@@ -133,12 +117,8 @@ namespace AppyNox.Services.Coupon.Application.UnitTest.DtoTests.DtoUtilitiesTest
         [Fact]
         public void CouponUpdateSimpleShouldReturnCouponSimpleUpdateDto()
         {
-            // Arrange
-            var detailLevelMap = _registry.GetDetailLevelTypes(typeof(CouponEntity)).GetValueOrDefault(DtoLevelMappingTypes.Update);
-            Assert.NotNull(detailLevelMap);
-
             // Act
-            var result = _registry.GetDtoType(detailLevelMap, typeof(CouponEntity), CouponUpdateDetailLevel.Simple.GetDisplayName());
+            var result = _registry.GetDtoType(DtoLevelMappingTypes.Update, typeof(CouponEntity), CouponUpdateDetailLevel.Simple.GetDisplayName());
 
             // Assert
             Assert.NotNull(result);

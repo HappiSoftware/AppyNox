@@ -29,9 +29,7 @@ namespace AppyNox.Services.Base.Application.Services.Implementations
 
         private readonly IMapper _mapper;
 
-        private readonly DtoMappingRegistryBase _dtoMappingRegistry;
-
-        private readonly Dictionary<DtoLevelMappingTypes, Type> _detailLevelEnum;
+        private readonly IDtoMappingRegistryBase _dtoMappingRegistry;
 
         private readonly IUnitOfWorkBase _unitOfWork;
 
@@ -43,13 +41,12 @@ namespace AppyNox.Services.Base.Application.Services.Implementations
 
         #region [ Public Constructors ]
 
-        public GenericServiceBase(IGenericRepositoryBase<TEntity> repository, IMapper mapper, DtoMappingRegistryBase dtoMappingRegistry,
+        public GenericServiceBase(IGenericRepositoryBase<TEntity> repository, IMapper mapper, IDtoMappingRegistryBase dtoMappingRegistry,
             IUnitOfWorkBase unitOfWork, IServiceProvider serviceProvider)
         {
             _repository = repository;
             _mapper = mapper;
             _dtoMappingRegistry = dtoMappingRegistry;
-            _detailLevelEnum = _dtoMappingRegistry.GetDetailLevelTypes(typeof(TEntity));
             _unitOfWork = unitOfWork;
             _serviceProvider = serviceProvider;
             _jsonSerializerOptions = new JsonSerializerOptions
@@ -91,7 +88,7 @@ namespace AppyNox.Services.Base.Application.Services.Implementations
                 resultList.AddRange(entities);
             }
 
-            return resultList.Count != 0 ? resultList : new List<dynamic>();
+            return resultList;
         }
 
         public async Task<dynamic> GetByIdAsync(Guid id, QueryParametersBase queryParameters)
@@ -118,8 +115,7 @@ namespace AppyNox.Services.Base.Application.Services.Implementations
         {
             #region [ Dynamic Dto Convertion ]
 
-            var detailLevelMap = GetDetailLevelMap(DtoLevelMappingTypes.Create);
-            var dtoType = _dtoMappingRegistry.GetDtoType(detailLevelMap, typeof(TEntity), detailLevel);
+            var dtoType = _dtoMappingRegistry.GetDtoType(DtoLevelMappingTypes.Create, typeof(TEntity), detailLevel);
             var dtoObject = JsonSerializer.Deserialize(dto, dtoType, options: _jsonSerializerOptions);
 
             #endregion
@@ -134,8 +130,7 @@ namespace AppyNox.Services.Base.Application.Services.Implementations
             await _repository.AddAsync(mappedEntity);
             await _unitOfWork.SaveChangesAsync();
 
-            detailLevelMap = GetDetailLevelMap(DtoLevelMappingTypes.DataAccess);
-            var returnDtoType = _dtoMappingRegistry.GetDtoType(detailLevelMap, typeof(TEntity), CommonDtoLevelEnums.Simple.GetDisplayName());
+            var returnDtoType = _dtoMappingRegistry.GetDtoType(DtoLevelMappingTypes.DataAccess, typeof(TEntity), CommonDtoLevelEnums.Simple.GetDisplayName());
             var createdObject = _mapper.Map(mappedEntity, returnDtoType, returnDtoType);
             return (guid: mappedEntity.Id, basicDto: createdObject);
         }
@@ -144,8 +139,7 @@ namespace AppyNox.Services.Base.Application.Services.Implementations
         {
             #region [ Dynamic Dto Convertion ]
 
-            var detailLevelMap = GetDetailLevelMap(DtoLevelMappingTypes.Update);
-            var dtoType = _dtoMappingRegistry.GetDtoType(detailLevelMap, typeof(TEntity), CommonDtoLevelEnums.Simple.GetDisplayName());
+            var dtoType = _dtoMappingRegistry.GetDtoType(DtoLevelMappingTypes.Update, typeof(TEntity), CommonDtoLevelEnums.Simple.GetDisplayName());
 
             #endregion
 
@@ -176,17 +170,16 @@ namespace AppyNox.Services.Base.Application.Services.Implementations
         {
             Type? dtoType = null;
             List<string> properties = [];
-            var detailLevelMap = GetDetailLevelMap(queryParameters.AccessType);
 
             switch (queryParameters.CommonDtoLevel)
             {
                 case CommonDtoLevelEnums.None:
-                    dtoType = _dtoMappingRegistry.GetDtoType(detailLevelMap, typeof(TEntity), queryParameters.DetailLevel);
+                    dtoType = _dtoMappingRegistry.GetDtoType(queryParameters.AccessType, typeof(TEntity), queryParameters.DetailLevel);
                     properties = dtoType.GetProperties().Select(p => p.Name).ToList();
                     break;
 
                 case CommonDtoLevelEnums.Simple:
-                    dtoType = _dtoMappingRegistry.GetDtoType(detailLevelMap, typeof(TEntity), CommonDtoLevelEnums.Simple.GetDisplayName());
+                    dtoType = _dtoMappingRegistry.GetDtoType(queryParameters.AccessType, typeof(TEntity), CommonDtoLevelEnums.Simple.GetDisplayName());
                     properties = dtoType.GetProperties().Select(p => p.Name).ToList();
                     break;
 
@@ -197,11 +190,6 @@ namespace AppyNox.Services.Base.Application.Services.Implementations
             }
 
             return (_repository.CreateProjection(properties), dtoType);
-        }
-
-        protected Type GetDetailLevelMap(DtoLevelMappingTypes dtoLevelMappingType)
-        {
-            return _detailLevelEnum.GetValueOrDefault(dtoLevelMappingType) ?? throw new AccessTypeNotFoundException(typeof(TEntity), dtoLevelMappingType.ToString());
         }
 
         protected void FluentValidate(Type dtoType, dynamic dtoObject)
