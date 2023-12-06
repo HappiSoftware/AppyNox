@@ -9,13 +9,15 @@ namespace AppyNox.EventBus.Base.Events
         public IntegrationEvent()
         {
             Id = Guid.NewGuid();
+            CorrelationId = "NOT-SET";
             CreatedDate = DateTime.UtcNow;
         }
 
         [JsonConstructor]
-        public IntegrationEvent(Guid id, DateTime createdDate)
+        public IntegrationEvent(Guid id, string correlationId, DateTime createdDate)
         {
             Id = id;
+            CorrelationId = correlationId;
             CreatedDate = createdDate;
         }
 
@@ -25,6 +27,9 @@ namespace AppyNox.EventBus.Base.Events
 
         [JsonProperty]
         public Guid Id { get; private set; }
+
+        [JsonProperty]
+        public string CorrelationId { get; set; }
 
         [JsonProperty]
         public DateTime CreatedDate { get; private set; }

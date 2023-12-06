@@ -1,4 +1,3 @@
-using AppyNox.Services.Base.API.ExceptionExtensions;
 using AppyNox.Services.Base.API.Middleware;
 using AppyNox.Services.Base.Domain.Common;
 using AppyNox.Services.Coupon.WebAPI.Helpers;
@@ -162,8 +161,6 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.UseApiResponseAndExceptionWrapper(new AutoWrapperOptions { IsApiOnly = true, ShowApiVersion = true, ApiVersion = "1.0" });
-app.UseMiddleware<ExceptionHandlingMiddleware>();
-app.UseMiddleware<CorrelationIdMiddleware>();
 app.UseMiddleware<QueryParameterValidateMiddleware>();
 
 AppyNox.Services.Coupon.Infrastructure.DependencyInjection.ApplyMigrations(app.Services);

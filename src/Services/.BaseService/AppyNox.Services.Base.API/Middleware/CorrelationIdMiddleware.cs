@@ -1,9 +1,4 @@
 ﻿using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AppyNox.Services.Base.API.Middleware
 {
@@ -20,10 +15,13 @@ namespace AppyNox.Services.Base.API.Middleware
         public async Task Invoke(HttpContext context)
         {
             // Generate or retrieve the correlation ID from the incoming request
-            var correlationId = context.Request.Headers["X-Correlation-ID"].FirstOrDefault() ?? Guid.NewGuid().ToString();
+            var correlationId = context.Request.Headers["X-Correlation-ID"].FirstOrDefault();
 
-            // Set the correlation ID in the request context
-            context.Items["CorrelationId"] = correlationId;
+            if(string.IsNullOrEmpty(correlationId))
+            {
+                // Set the correlation ID in the request headers
+                context.Request.Headers["X-Correlation-ID"] = Guid.NewGuid().ToString();
+            }
 
             // Continue processing the request
             await _next(context);

@@ -1,4 +1,5 @@
 using AppyNox.Gateway.OcelotGateway.Middlewares;
+using AppyNox.Services.Base.API.Middleware;
 using NLog;
 using NLog.Web;
 using Ocelot.DependencyInjection;
@@ -48,6 +49,8 @@ if (!builder.Environment.IsDevelopment())
 builder.Services.AddOcelot(builder.Configuration).AddConsul();
 
 var app = builder.Build();
+
+app.UseMiddleware<CorrelationIdMiddleware>();
 
 app.UseMiddleware<LoggingMiddleware>();
     
