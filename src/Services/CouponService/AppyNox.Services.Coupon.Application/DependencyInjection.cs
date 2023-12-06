@@ -21,7 +21,7 @@ namespace AppyNox.Services.Coupon.Application
             services.AddValidatorsFromAssembly(Assembly.Load("AppyNox.Services.Coupon.Application"));
 
             services.AddScoped(typeof(IGenericService<>), typeof(GenericService<>));
-            services.AddSingleton<DtoMappingRegistry>();
+            services.AddScoped(typeof(IDtoMappingRegistryBase), typeof(DtoMappingRegistry));
         }
 
         #endregion

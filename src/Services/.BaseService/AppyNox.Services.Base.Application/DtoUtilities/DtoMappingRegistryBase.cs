@@ -7,11 +7,11 @@ using System.Reflection;
 
 namespace AppyNox.Services.Base.Application.DtoUtilities
 {
-    public abstract class DtoMappingRegistryBase
+    public abstract class DtoMappingRegistryBase : IDtoMappingRegistryBase
     {
         #region [ Fields ]
 
-        private readonly Dictionary<(Type entityType, Enum detailLevel), Type> _entityDetailLevelToDtoTypeMappings;
+        private readonly Dictionary<(Type entityType, DtoLevelMappingTypes mappingType, Enum detailLevel), Type> _entityDetailLevelToDtoTypeMappings;
 
         private readonly Dictionary<Type, Dictionary<DtoLevelMappingTypes, Type>> _entityToDtoDetailLevelMappings;
 
@@ -21,7 +21,7 @@ namespace AppyNox.Services.Base.Application.DtoUtilities
 
         protected DtoMappingRegistryBase()
         {
-            _entityDetailLevelToDtoTypeMappings = new Dictionary<(Type, Enum), Type>();
+            _entityDetailLevelToDtoTypeMappings = [];
             _entityToDtoDetailLevelMappings = [];
         }
 
@@ -29,11 +29,11 @@ namespace AppyNox.Services.Base.Application.DtoUtilities
 
         #region [ Public Methods ]
 
-        public Type GetDtoType(Type detailLevelEnumType, Type entityType, string detailLevelDescription)
+        public Type GetDtoType(DtoLevelMappingTypes detailLevelEnum, Type entityType, string detailLevelDescription)
         {
-            Enum detailLevel = NoxEnumExtensions.GetEnumValueFromDisplayName(detailLevelEnumType, detailLevelDescription);
+            Enum detailLevel = NoxEnumExtensions.GetEnumValueFromDisplayName(GetDetailLevelType(detailLevelEnum, entityType), detailLevelDescription);
 
-            if (_entityDetailLevelToDtoTypeMappings.TryGetValue((entityType, detailLevel), out var dtoType))
+            if (_entityDetailLevelToDtoTypeMappings.TryGetValue((entityType, detailLevelEnum, detailLevel), out var dtoType))
             {
                 return dtoType;
             }
@@ -79,10 +79,20 @@ namespace AppyNox.Services.Base.Application.DtoUtilities
             }
 
             mappings[desiredMapping] = detailLevel.GetType();
-            _entityDetailLevelToDtoTypeMappings[(entityType, detailLevel)] = dtoType;
+            _entityDetailLevelToDtoTypeMappings[(entityType, desiredMapping, detailLevel)] = dtoType;
         }
 
         protected abstract Enum GetDetailLevelBase(Attribute attribute, DtoLevelMappingTypes mappingType);
+
+        #endregion
+
+        #region [ Private Methods ]
+
+        public Type GetDetailLevelType(DtoLevelMappingTypes type, Type entityType)
+        {
+            var map = _entityToDtoDetailLevelMappings.GetValueOrDefault(entityType) ?? throw new AccessTypeNotFoundException(entityType, type.ToString());
+            return map.GetValueOrDefault(type) ?? throw new AccessTypeNotFoundException(entityType, type.ToString());
+        }
 
         #endregion
     }
