@@ -146,8 +146,6 @@ var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 
-app.UseMiddleware<ExceptionHandlingMiddleware>();
-
 app.UseSwagger();
 
 app.UseSwaggerUI();
@@ -162,7 +160,7 @@ app.MapControllers();
 
 app.UseApiResponseAndExceptionWrapper(new AutoWrapperOptions { IsApiOnly = true, ShowApiVersion = true, ApiVersion = "1.0" });
 app.UseMiddleware<QueryParameterValidateMiddleware>();
-
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 AppyNox.Services.Coupon.Infrastructure.DependencyInjection.ApplyMigrations(app.Services);
 
 app.UseHealthChecks("/health-check");
