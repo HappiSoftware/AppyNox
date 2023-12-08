@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AppyNox.Services.Coupon.Application.UnitTest.DtoTests.Bases
+namespace AppyNox.Services.Coupon.Application.UnitTest.DtoTests.Fixtures
 {
     public class DtoMappingRegistryFixture : IDisposable
     {

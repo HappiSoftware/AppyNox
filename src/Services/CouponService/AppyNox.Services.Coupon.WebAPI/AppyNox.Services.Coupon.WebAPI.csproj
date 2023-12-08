@@ -35,4 +35,8 @@
 	<ItemGroup>
 		<Folder Include="ssl\" />
 	</ItemGroup>
+
+	<ItemGroup>
+		<InternalsVisibleTo Include="$(AssemblyName).IntegrationTests"/>
+	</ItemGroup>
 </Project>
