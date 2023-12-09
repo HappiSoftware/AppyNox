@@ -1,4 +1,4 @@
-﻿using AppyNox.Services.Coupon.Application.UnitTest.DtoTests.Bases;
+﻿using AppyNox.Services.Coupon.Application.UnitTest.DtoTests.Fixtures;
 using System;
 using System.Collections.Generic;
 using System.Linq;

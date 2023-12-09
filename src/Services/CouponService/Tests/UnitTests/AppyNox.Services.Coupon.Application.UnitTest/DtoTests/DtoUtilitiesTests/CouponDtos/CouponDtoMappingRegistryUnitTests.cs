@@ -1,7 +1,6 @@
 ﻿using AppyNox.Services.Base.Domain.Common;
 using AppyNox.Services.Base.Infrastructure.Repositories.Common;
 using AppyNox.Services.Coupon.Application.Dtos.DtoUtilities;
-using AppyNox.Services.Coupon.Application.UnitTest.DtoTests.Bases;
 using AppyNox.Services.Coupon.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -12,6 +11,7 @@ using AppyNox.Services.Base.Application.Helpers;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Extended;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.DetailLevel;
+using AppyNox.Services.Coupon.Application.UnitTest.DtoTests.Fixtures;
 
 namespace AppyNox.Services.Coupon.Application.UnitTest.DtoTests.DtoUtilitiesTests.CouponDtos
 {
