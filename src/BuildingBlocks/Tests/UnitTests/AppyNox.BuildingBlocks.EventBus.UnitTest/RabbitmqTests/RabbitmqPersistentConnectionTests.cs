@@ -12,7 +12,7 @@ namespace AppyNox.BuildingBlocks.EventBus.UnitTest.RabbitmqTests
         #region Public Methods
 
         [Fact]
-        public void CreateModelShouldReturnModel()
+        public void CreateModel_ShouldReturnModel()
         {
             var connectionFactoryMock = new Mock<IConnectionFactory>();
             var connectionMock = new Mock<IConnection>();
@@ -33,7 +33,7 @@ namespace AppyNox.BuildingBlocks.EventBus.UnitTest.RabbitmqTests
         }
 
         [Fact]
-        public void CreateModelWithoutConnectionShouldThrowEventBusBaseException()
+        public void CreateModel_WithoutConnection_ShouldThrowEventBusBaseException()
         {
             var connectionFactoryMock = new Mock<IConnectionFactory>();
 
@@ -46,7 +46,7 @@ namespace AppyNox.BuildingBlocks.EventBus.UnitTest.RabbitmqTests
         }
 
         [Fact]
-        public void TryConnectWithSuccessfulConnectionShouldReturnTrue()
+        public void TryConnect_WithSuccessfulConnection_ShouldReturnTrue()
         {
             var connectionFactoryMock = new Mock<IConnectionFactory>();
             var connectionMock = new Mock<IConnection>();
@@ -70,7 +70,7 @@ namespace AppyNox.BuildingBlocks.EventBus.UnitTest.RabbitmqTests
         }
 
         [Fact]
-        public void TryConnectWithoutConnectionShouldFail()
+        public void TryConnect_WithoutConnection_ShouldFail()
         {
             var connectionFactoryMock = new Mock<IConnectionFactory>();
             var connectionMock = new Mock<IConnection>();
@@ -88,7 +88,7 @@ namespace AppyNox.BuildingBlocks.EventBus.UnitTest.RabbitmqTests
         }
 
         [Fact]
-        public void DisposeWhenConnectionIsNullShouldNotThrow()
+        public void Dispose_WhenConnectionIsNull_ShouldNotThrow()
         {
             var connectionFactoryMock = new Mock<IConnectionFactory>();
 

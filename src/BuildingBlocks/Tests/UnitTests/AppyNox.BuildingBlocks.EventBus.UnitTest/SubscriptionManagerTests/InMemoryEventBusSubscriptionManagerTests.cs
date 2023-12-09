@@ -9,7 +9,7 @@ namespace AppyNox.BuildingBlocks.EventBus.UnitTest.SubscriptionManagerTests
         #region Public Methods
 
         [Fact]
-        public void GetEventKeyShouldReturnFormatted()
+        public void GetEventKey_ShouldReturnFormatted()
         {
             // Arrange
             var subscriptionManager = new InMemoryEventBusSubscriptionManager(e => e.TrimEnd("IntegrationEvent".ToArray()));
@@ -23,7 +23,7 @@ namespace AppyNox.BuildingBlocks.EventBus.UnitTest.SubscriptionManagerTests
         }
 
         [Fact]
-        public void AddSubscriptionShouldAddHandler()
+        public void AddSubscription_ShouldAddHandler()
         {
             // Arrange
             var subscriptionManager = new InMemoryEventBusSubscriptionManager(e => e);
@@ -37,7 +37,7 @@ namespace AppyNox.BuildingBlocks.EventBus.UnitTest.SubscriptionManagerTests
         }
 
         [Fact]
-        public void RemoveSubscriptionShouldRemoveHandler()
+        public void RemoveSubscription_ShouldRemoveHandler()
         {
             // Arrange
             var subscriptionManager = new InMemoryEventBusSubscriptionManager(e => e);
@@ -52,7 +52,7 @@ namespace AppyNox.BuildingBlocks.EventBus.UnitTest.SubscriptionManagerTests
         }
 
         [Fact]
-        public void GetHandlersForEventShouldReturnHandlers()
+        public void GetHandlersForEvent_ShouldReturnHandlers()
         {
             // Arrange
             var subscriptionManager = new InMemoryEventBusSubscriptionManager(e => e);
@@ -66,7 +66,7 @@ namespace AppyNox.BuildingBlocks.EventBus.UnitTest.SubscriptionManagerTests
         }
 
         [Fact]
-        public void HasSubscriptionsForEventWhenNoSubscriptionsShouldReturnFalse()
+        public void HasSubscriptionsForEvent_WhenNoSubscriptions_ShouldReturnFalse()
         {
             // Arrange
             var subscriptionManager = new InMemoryEventBusSubscriptionManager(e => e);
@@ -76,7 +76,7 @@ namespace AppyNox.BuildingBlocks.EventBus.UnitTest.SubscriptionManagerTests
         }
 
         [Fact]
-        public void ClearShouldRemoveAllHandlers()
+        public void Clear_ShouldRemoveAllHandlers()
         {
             // Arrange
             var subscriptionManager = new InMemoryEventBusSubscriptionManager(e => e);
