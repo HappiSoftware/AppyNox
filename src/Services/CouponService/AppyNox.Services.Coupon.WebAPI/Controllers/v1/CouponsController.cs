@@ -40,7 +40,6 @@ namespace AppyNox.Services.Coupon.WebAPI.Controllers.v1
         #region [ Public Methods ]
 
         [HttpGet]
-        [Authorize]
         public async Task<ApiResponse> GetAll([FromQuery] QueryParametersViewModel queryParameters)
         {
             var coupons = await _couponService.GetAllAsync(queryParameters);
