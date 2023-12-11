@@ -2,22 +2,21 @@
 using AppyNox.EventBus.RabbitMQ;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace AppyNox.BuildingBlocks.EventBus.UnitTest.RabbitmqTests
+namespace AppyNox.BuildingBlocks.EventBus.UnitTest.RabbitMQTests
 {
-    public class EventBusRabbitmqBaseTests
+    public class EventBusRabbitMQBaseTests
     {
         #region Fields
 
-        private ServiceProvider _sp;
+        private readonly ServiceProvider _sp;
 
         #endregion
 
         #region Public Constructors
 
-        public EventBusRabbitmqBaseTests()
+        public EventBusRabbitMQBaseTests()
         {
-            ServiceCollection _services = new ServiceCollection();
-            _sp = _services.BuildServiceProvider();
+            _sp = new ServiceCollection().BuildServiceProvider();
         }
 
         #endregion

@@ -12,7 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AppyNox.Services.Coupon.IntegrationTests.WebApiFactories
+namespace AppyNox.Services.Coupon.WebAPI.IntegrationTests.WebApiFactories
 {
     internal class WebApiFactory : WebApplicationFactory<Program>
     {
@@ -47,7 +47,7 @@ namespace AppyNox.Services.Coupon.IntegrationTests.WebApiFactories
                         if (!_seeded)
                         {
                             dbContext.Database.EnsureDeleted();
-                            AppyNox.Services.Coupon.Infrastructure.DependencyInjection.ApplyMigrations(serviceProvider);
+                            Infrastructure.DependencyInjection.ApplyMigrations(serviceProvider);
                             _seeded = true; // Set the flag
                         }
                     }
