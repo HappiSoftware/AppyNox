@@ -18,7 +18,7 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTests.WebApiFactories
     {
         #region Fields
 
-        private static readonly object _lock = new object();
+        private static readonly object _lock = new();
 
         private static bool _seeded = false;
 
