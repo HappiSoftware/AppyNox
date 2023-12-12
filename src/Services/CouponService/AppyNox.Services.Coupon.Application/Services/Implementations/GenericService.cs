@@ -17,10 +17,10 @@ using AppyNox.Services.Base.Application.DtoUtilities;
 
 namespace AppyNox.Services.Coupon.Application.Services.Implementations
 {
-    public class GenericService<TEntity> : GenericServiceBase<TEntity>, IGenericService<TEntity>
+    internal class GenericService<TEntity> : GenericServiceBase<TEntity>, IGenericService<TEntity>
     where TEntity : class, IEntityWithGuid
     {
-        #region [ Public Constructors ]
+        #region [ Internal Constructors ]
 
         public GenericService(IGenericRepositoryBase<TEntity> repository, IMapper mapper, IDtoMappingRegistryBase dtoMappingRegistry, IUnitOfWorkBase unitOfWork,
             IServiceProvider serviceProvider)

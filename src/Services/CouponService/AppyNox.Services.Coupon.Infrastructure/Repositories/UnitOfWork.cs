@@ -11,7 +11,7 @@ namespace AppyNox.Services.Coupon.Infrastructure.Repositories
 {
     internal class UnitOfWork : UnitOfWorkBase
     {
-        #region [ Public Constructors ]
+        #region [ Internal Constructors ]
 
         public UnitOfWork(CouponDbContext dbContext) : base(dbContext)
         {

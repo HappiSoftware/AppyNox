@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 
 namespace AppyNox.Services.Coupon.Infrastructure.Repositories
 {
-    public class GenericRepository<TEntity> : GenericRepositoryBase<TEntity> where TEntity : class, IEntityWithGuid
+    internal class GenericRepository<TEntity> : GenericRepositoryBase<TEntity> where TEntity : class, IEntityWithGuid
     {
-        #region [ Public Constructors ]
+        #region [ Internal Constructors ]
 
         public GenericRepository(CouponDbContext context) : base(context)
         {

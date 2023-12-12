@@ -26,4 +26,10 @@
 		<Folder Include="Dtos\CouponDetailDtos\Models\Extended\" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<InternalsVisibleTo Include="AppyNox.Services.Coupon.WebAPI"/>
+		<InternalsVisibleTo Include="$(AssemblyName).UnitTest"/>
+		<InternalsVisibleTo Include="AppyNox.Services.Coupon.IntegrationTests"/>
+	</ItemGroup>
+
 </Project>
