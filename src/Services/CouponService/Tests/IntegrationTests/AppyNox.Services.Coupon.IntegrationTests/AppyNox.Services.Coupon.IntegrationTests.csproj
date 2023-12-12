@@ -7,13 +7,9 @@
 
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
-	<PreserveCompilationContext>true</PreserveCompilationContext>
-
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoWrapper.Server" Version="2.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.0" />
     <PackageReference Include="xunit" Version="2.4.2" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
@@ -27,8 +23,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\.BaseService\AppyNox.Services.Base.Domain\AppyNox.Services.Base.Domain.csproj" />
     <ProjectReference Include="..\..\..\..\.BaseService\Tests\IntegrationTests\AppyNox.Services.Base.IntegrationTests\AppyNox.Services.Base.IntegrationTests.csproj" />
-    <ProjectReference Include="..\..\..\AppyNox.Services.Coupon.WebAPI\AppyNox.Services.Coupon.WebAPI.csproj" />
+    <ProjectReference Include="..\..\..\AppyNox.Services.Coupon.Application\AppyNox.Services.Coupon.Application.csproj" />
   </ItemGroup>
 
 </Project>
