@@ -9,14 +9,6 @@
   <ItemGroup>
     <PackageReference Include="AutoWrapper.Core" Version="4.5.1" />
     <PackageReference Include="xunit.assert" Version="2.6.2" />
-	<PackageReference Include="Moq" Version="4.20.70" />
-	<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\AppyNox.Services.Base.Application\AppyNox.Services.Base.Application.csproj" />
-    <ProjectReference Include="..\..\..\AppyNox.Services.Base.Domain\AppyNox.Services.Base.Domain.csproj" />
-    <ProjectReference Include="..\..\..\AppyNox.Services.Base.Infrastructure\AppyNox.Services.Base.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

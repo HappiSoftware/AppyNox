@@ -31,10 +31,4 @@
     <ProjectReference Include="..\AppyNox.Services.Coupon.Domain\AppyNox.Services.Coupon.Domain.csproj" />
   </ItemGroup>
 
-	<ItemGroup>
-		<InternalsVisibleTo Include="AppyNox.Services.Coupon.WebAPI"/>
-		<InternalsVisibleTo Include="$(AssemblyName).UnitTest"/>
-		<InternalsVisibleTo Include="AppyNox.Services.Coupon.IntegrationTests"/>
-	</ItemGroup>
-
 </Project>

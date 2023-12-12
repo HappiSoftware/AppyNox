@@ -65,11 +65,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppyNox.Services.Coupon.App
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IntegrationTetsts", "IntegrationTetsts", "{9C257B11-A2A1-4E1E-88DD-845E02E0B60F}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppyNox.Services.Coupon.WebAPI.IntegrationTests", "src\Services\CouponService\Tests\IntegrationTests\AppyNox.Services.Coupon.IntegrationTests\AppyNox.Services.Coupon.WebAPI.IntegrationTests.csproj", "{3D1A93C1-A572-4189-8F5A-8DABF5647E42}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IntegrationTests", "IntegrationTests", "{7D9414BD-3672-4CD5-BD70-79C31A3C50D2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppyNox.Services.Base.IntegrationTests", "src\Services\.BaseService\Tests\IntegrationTests\AppyNox.Services.Base.IntegrationTests\AppyNox.Services.Base.IntegrationTests.csproj", "{120B7821-549C-4C48-B381-B8BD0A705AAD}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppyNox.Services.Coupon.IntegrationTests", "src\Services\CouponService\Tests\IntegrationTests\AppyNox.Services.Coupon.IntegrationTests\AppyNox.Services.Coupon.IntegrationTests.csproj", "{FB9E461B-833F-4CEC-B206-5F9021D4C6A1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppyNox.Services.Base.IntegrationTests", "src\Services\.BaseService\Tests\IntegrationTests\AppyNox.Services.Base.IntegrationTests\AppyNox.Services.Base.IntegrationTests.csproj", "{120B7821-549C-4C48-B381-B8BD0A705AAD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -153,14 +153,14 @@ Global
 		{44427A10-C34F-441E-AE0D-EE1B09D991A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{44427A10-C34F-441E-AE0D-EE1B09D991A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{44427A10-C34F-441E-AE0D-EE1B09D991A6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3D1A93C1-A572-4189-8F5A-8DABF5647E42}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D1A93C1-A572-4189-8F5A-8DABF5647E42}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D1A93C1-A572-4189-8F5A-8DABF5647E42}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D1A93C1-A572-4189-8F5A-8DABF5647E42}.Release|Any CPU.Build.0 = Release|Any CPU
 		{120B7821-549C-4C48-B381-B8BD0A705AAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{120B7821-549C-4C48-B381-B8BD0A705AAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{120B7821-549C-4C48-B381-B8BD0A705AAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{120B7821-549C-4C48-B381-B8BD0A705AAD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FB9E461B-833F-4CEC-B206-5F9021D4C6A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FB9E461B-833F-4CEC-B206-5F9021D4C6A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FB9E461B-833F-4CEC-B206-5F9021D4C6A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FB9E461B-833F-4CEC-B206-5F9021D4C6A1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -193,9 +193,9 @@ Global
 		{10490B79-2C4D-4B86-83DF-A2574AD3DE04} = {14E3528C-2F6B-4296-BAD1-E91F32F679EC}
 		{44427A10-C34F-441E-AE0D-EE1B09D991A6} = {ACE959CF-8213-4670-A525-7FE188336843}
 		{9C257B11-A2A1-4E1E-88DD-845E02E0B60F} = {5BAC57A7-56E7-4E7C-9118-24F61870BA91}
+		{3D1A93C1-A572-4189-8F5A-8DABF5647E42} = {9C257B11-A2A1-4E1E-88DD-845E02E0B60F}
 		{7D9414BD-3672-4CD5-BD70-79C31A3C50D2} = {A21BCC3E-A75C-40B5-91B1-2253953B59AA}
 		{120B7821-549C-4C48-B381-B8BD0A705AAD} = {7D9414BD-3672-4CD5-BD70-79C31A3C50D2}
-		{FB9E461B-833F-4CEC-B206-5F9021D4C6A1} = {9C257B11-A2A1-4E1E-88DD-845E02E0B60F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EA4F2302-DC43-4149-814A-609940BEC847}
