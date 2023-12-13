@@ -374,3 +374,5 @@ docker-compose.override.yml
 
 # DeveloperWorkspace use this directory for your personel projects such as testing new features etc.
 /src/DeveloperWorkspace
+/src/Gateways/AppyNox.Gateway.OcelotGateway/Configurations/ocelot.Development.json
+/src/Gateways/AppyNox.Gateway.OcelotGateway/Configurations/ocelot.Production.json
