@@ -9,12 +9,28 @@
 
 	<ItemGroup>
 		<PackageReference Include="AutoMapper" Version="12.0.1" />
+		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
 		<PackageReference Include="FluentValidation" Version="11.8.1" />
-		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.0" />
+		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.8.1" />
+		<PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\..\.BaseService\AppyNox.Services.Base.Application\AppyNox.Services.Base.Application.csproj" />
 	  <ProjectReference Include="..\AppyNox.Services.Authentication.Infrastructure\AppyNox.Services.Authentication.Infrastructure.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Dtos\AccountDtos\DetailLevel\" />
+	  <Folder Include="Dtos\AccountDtos\Mappings\" />
+	  <Folder Include="Dtos\AccountDtos\Models\Extended\" />
+	  <Folder Include="Dtos\ClaimDtos\DetailLevel\" />
+	  <Folder Include="Dtos\ClaimDtos\Models\Extended\" />
+	  <Folder Include="Dtos\RefreshTokenDtos\DetailLevel\" />
+	  <Folder Include="Dtos\RefreshTokenDtos\Mappings\" />
+	  <Folder Include="Dtos\RefreshTokenDtos\Models\Extended\" />
+	  <Folder Include="Utilities\" />
 	</ItemGroup>
 
 </Project>

@@ -1,6 +1,7 @@
-﻿using AppyNox.Services.Authentication.Application.Dtos.IdentityRoleDtos.Models;
-using AppyNox.Services.Authentication.Application.Dtos.IdentityUserDtos.Models;
-using AppyNox.Services.Authentication.Application.Validators;
+﻿using AppyNox.Services.Authentication.Application.Dtos.IdentityRoleDtos.Models.Base;
+using AppyNox.Services.Authentication.Application.Dtos.IdentityUserDtos.Models.Base;
+using AppyNox.Services.Authentication.Application.Dtos.IdentityUserDtos.Models.Extended;
+using AppyNox.Services.Authentication.Application.Validators.IdentityUser;
 using AppyNox.Services.Authentication.WebAPI.ControllerDependencies;
 using AppyNox.Services.Authentication.WebAPI.Filters;
 using AppyNox.Services.Authentication.WebAPI.Utilities;

@@ -1,5 +1,6 @@
-﻿using AppyNox.Services.Authentication.Application.Dtos.ClaimDtos;
-using AppyNox.Services.Authentication.Application.Dtos.IdentityRoleDtos.Models;
+﻿using AppyNox.Services.Authentication.Application.Dtos.ClaimDtos.Models.Base;
+using AppyNox.Services.Authentication.Application.Dtos.IdentityRoleDtos.Models.Base;
+using AppyNox.Services.Authentication.Application.Dtos.IdentityRoleDtos.Models.Extended;
 using AppyNox.Services.Authentication.WebAPI.Filters;
 using AppyNox.Services.Authentication.WebAPI.Helpers;
 using Asp.Versioning;
@@ -28,19 +29,16 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
 
         private readonly IMapper _mapper;
 
-        private readonly DtoMappingHelper<IdentityRole> _dtoMappingHelper;
-
         #endregion
 
         #region [ Public Constructors ]
 
         public RolesController(IMapper mapper, RoleManager<IdentityRole> roleManager,
-            IRoleValidator<IdentityRole> roleValidator, DtoMappingHelper<IdentityRole> dtoMappingHelper)
+            IRoleValidator<IdentityRole> roleValidator)
         {
             _mapper = mapper;
             _roleManager = roleManager;
             _roleValidator = roleValidator;
-            _dtoMappingHelper = dtoMappingHelper;
         }
 
         #endregion

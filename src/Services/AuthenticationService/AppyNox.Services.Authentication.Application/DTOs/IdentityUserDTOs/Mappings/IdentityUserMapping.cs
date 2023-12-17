@@ -1,4 +1,5 @@
-﻿using AppyNox.Services.Authentication.Application.Dtos.IdentityUserDtos.Models;
+﻿using AppyNox.Services.Authentication.Application.Dtos.IdentityUserDtos.Models.Base;
+using AppyNox.Services.Authentication.Application.Dtos.IdentityUserDtos.Models.Extended;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 

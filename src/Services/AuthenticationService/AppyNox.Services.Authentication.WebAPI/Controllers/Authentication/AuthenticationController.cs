@@ -1,5 +1,5 @@
-﻿using AppyNox.Services.Authentication.Application.Account;
-using AppyNox.Services.Authentication.Application.Dtos.RefreshTokenDtos;
+﻿using AppyNox.Services.Authentication.Application.Dtos.AccountDtos.Models.Base;
+using AppyNox.Services.Authentication.Application.Dtos.RefreshTokenDtos.Models.Base;
 using AppyNox.Services.Authentication.WebAPI.Helpers;
 using AppyNox.Services.Authentication.WebAPI.Managers.Interfaces;
 using AutoWrapper.Wrappers;

@@ -1,4 +1,4 @@
-using AppyNox.Services.Authentication.Application.DtoUtilities;
+using AppyNox.Services.Authentication.Application.Dtos.DtoUtilities;
 using AppyNox.Services.Authentication.Infrastructure.Data;
 using AppyNox.Services.Authentication.WebAPI.Configuration;
 using AppyNox.Services.Authentication.WebAPI.Helpers;
@@ -98,14 +98,10 @@ builder.Services.Configure<IdentityOptions>(options =>
 });
 
 AppyNox.Services.Authentication.Infrastructure.DependencyInjection.ConfigureServices(builder.Services, configuration);
+AppyNox.Services.Authentication.Application.DependencyInjection.ConfigureServices(builder.Services, configuration);
 
 builder.Services.AddHealthChecks();
 
-builder.Services.AddValidatorsFromAssembly(Assembly.Load("AppyNox.Services.Authentication.Application"));
-builder.Services.AddAutoMapper(Assembly.Load("AppyNox.Services.Authentication.Application"));
-
-builder.Services.AddSingleton<DtoMappingRegistry>();
-builder.Services.AddScoped(typeof(DtoMappingHelper<>));
 builder.Services.AddScoped<PasswordValidator<IdentityUser>>();
 builder.Services.AddScoped<PasswordHasher<IdentityUser>>();
 
