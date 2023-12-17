@@ -3,8 +3,11 @@ using AppyNox.Services.Authentication.Application.Dtos.IdentityUserDtos.Models.B
 using AppyNox.Services.Authentication.Application.Dtos.IdentityUserDtos.Models.Extended;
 using AppyNox.Services.Authentication.Application.Validators.IdentityUser;
 using AppyNox.Services.Authentication.WebAPI.ControllerDependencies;
+using AppyNox.Services.Authentication.WebAPI.Controllers.Base;
 using AppyNox.Services.Authentication.WebAPI.Filters;
 using AppyNox.Services.Authentication.WebAPI.Utilities;
+using AppyNox.Services.Base.API.ViewModels;
+using AppyNox.Services.Base.Application.DtoUtilities;
 using Asp.Versioning;
 using AutoWrapper.Wrappers;
 using Microsoft.AspNetCore.Authorization;
@@ -18,7 +21,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
     [ApiVersion("1.0")]
     [ApiController]
     [JwtTokenValidate]
-    public class UsersController : ControllerBase
+    public class UsersController : BaseController
     {
         #region [ Fields ]
 
@@ -31,7 +34,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
         #region [ Public Constructors ]
 
         public UsersController(UsersControllerBaseDependencies usersControllerBaseDependencies,
-            IdentityUserCreateDtoValidator identityUserCreateDtoValidator)
+            IdentityUserCreateDtoValidator identityUserCreateDtoValidator, IDtoMappingRegistryBase dtoMappingRegistry) : base(dtoMappingRegistry, usersControllerBaseDependencies.Mapper)
         {
             _baseDependencies = usersControllerBaseDependencies;
             _identityUserCreateDtoValidator = identityUserCreateDtoValidator;
@@ -43,13 +46,13 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
 
         [HttpGet]
         [Authorize(Permissions.Users.View)]
-        public async Task<ApiResponse> GetAll([FromQuery] string? detailLevel)
+        public async Task<ApiResponse> GetAll([FromQuery] QueryParametersViewModel queryParameters)
         {
             var entities = await _baseDependencies.UserManager.Users.ToListAsync();
             object response = new
             {
                 count = _baseDependencies.UserManager.Users.Count().ToString(),
-                roles = _baseDependencies.Mapper.Map(entities, entities.GetType(), typeof(IEnumerable<>).MakeGenericType(_baseDependencies.DtoMappingHelper.GetLeveledDtoType(detailLevel)))
+                roles = GetMappedList(entities, queryParameters)
             };
 
             return new ApiResponse(response);
@@ -58,7 +61,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
         [HttpGet("{id}")]
         [Authorize(Permissions.Users.View)]
         [GuidCheckFilter]
-        public async Task<ApiResponse> GetById(string id, [FromQuery] string? detailLevel)
+        public async Task<ApiResponse> GetById(string id, [FromQuery] QueryParametersViewModel queryParameters)
         {
             var identityUser = await _baseDependencies.UserManager.FindByIdAsync(id);
 
@@ -67,7 +70,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
                 throw new ApiProblemDetailsException("Not Found", 404);
             }
 
-            return new ApiResponse(_baseDependencies.Mapper.Map(identityUser, identityUser.GetType(), _baseDependencies.DtoMappingHelper.GetLeveledDtoType(detailLevel)));
+            return new ApiResponse(_baseDependencies.Mapper.Map(identityUser, CreateProjection<IdentityUser>(queryParameters)));
         }
 
         [HttpPut("{id}")]

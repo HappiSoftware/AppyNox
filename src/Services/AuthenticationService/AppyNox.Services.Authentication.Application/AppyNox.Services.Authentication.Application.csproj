@@ -30,7 +30,6 @@
 	  <Folder Include="Dtos\RefreshTokenDtos\DetailLevel\" />
 	  <Folder Include="Dtos\RefreshTokenDtos\Mappings\" />
 	  <Folder Include="Dtos\RefreshTokenDtos\Models\Extended\" />
-	  <Folder Include="Utilities\" />
 	</ItemGroup>
 
 </Project>
