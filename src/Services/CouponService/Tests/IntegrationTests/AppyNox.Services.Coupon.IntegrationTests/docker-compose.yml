@@ -32,11 +32,16 @@ services:
 
   appynox.gateway.ocelotgateway:
     image: appynoxgatewayocelotgateway
+    depends_on:
+        consul.service:
+          condition: service_healthy
     environment:
      - ASPNETCORE_ENVIRONMENT=Production
-     - ASPNETCORE_URLS=https://+:7000
+     - ASPNETCORE_HTTPS_PORTS=7000
      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/gateway-service.pfx 
      - ASPNETCORE_Kestrel__Certificates__Default__Password=happi2023
+    volumes:
+     - ./ssl:/https
     ports:
      - "7000:7000"
     networks:
