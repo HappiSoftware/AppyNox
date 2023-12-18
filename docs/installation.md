@@ -139,13 +139,13 @@ CouponService appsettings.Production.json :
     "Address": "http://localhost:8500"
   },
   "Consul": {
-    "ServiceId": "{}",
-    "ServiceName": "{}",
-    "Scheme": "{http or https}",
-    "ServiceHost": "{}",
-    "ServicePort": "PORT",
-    "Tags": ["Tag1", "Tag2"],
-    "HealthCheckUrl": "{health-check-url}",
+    "ServiceId": "CouponService",
+    "ServiceName": "CouponService",
+    "Scheme": "https",
+    "ServiceHost": "localhost",
+    "ServicePort": 7002,
+    "Tags": [ "Coupon", "Coupons" ],
+    "HealthCheckUrl": "health-check",
     "HealthCheckIntervalSeconds": 30,
     "HealthCheckTimeoutSeconds": 5
   }
@@ -171,6 +171,20 @@ AuthenticationService appsettings.Production.json:
     "SecretKey": "{your secret key}",
     "Issuer": "AuthServerV1",
     "Audience": "AppyNoxBasic"
+  },
+  "ConsulConfig": {
+    "Address": "http://localhost:8500"
+  },
+  "Consul": {
+    "ServiceId": "IdentityService",
+    "ServiceName": "IdentityService",
+    "Scheme": "https",
+    "ServiceHost": "localhost",
+    "ServicePort": 7001,
+    "Tags": [ "Identity", "Authentication", "JWT" ],
+    "HealthCheckUrl": "health-check",
+    "HealthCheckIntervalSeconds": 30,
+    "HealthCheckTimeoutSeconds": 5
   }
 }
 ```

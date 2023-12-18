@@ -1,4 +1,3 @@
-using AppyNox.Services.Coupon.IntegrationTests.WebApiFactories;
 using AutoWrapper.Wrappers;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -12,8 +11,9 @@ using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Extended;
 using NLog.Targets;
 using System.Text;
 using static AppyNox.Services.Coupon.WebAPI.Helpers.Permissions.Permissions;
+using AppyNox.Services.Coupon.WebAPI.IntegrationTests.WebApiFactories;
 
-namespace AppyNox.Services.Coupon.IntegrationTests
+namespace AppyNox.Services.Coupon.WebAPI.IntegrationTests
 {
     public class CouponApiTests
     {

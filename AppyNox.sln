@@ -71,6 +71,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IntegrationTests", "Integra
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppyNox.Services.Base.IntegrationTests", "src\Services\.BaseService\Tests\IntegrationTests\AppyNox.Services.Base.IntegrationTests\AppyNox.Services.Base.IntegrationTests.csproj", "{120B7821-549C-4C48-B381-B8BD0A705AAD}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{F19E23FD-E8CC-4872-83E3-CD8C5E174F66}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{C485CEF8-E581-46AB-8DE7-5F9E7FCD9F0A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppyNox.BuildingBlocks.EventBus.UnitTest", "src\BuildingBlocks\Tests\UnitTests\AppyNox.BuildingBlocks.EventBus.UnitTest\AppyNox.BuildingBlocks.EventBus.UnitTest.csproj", "{8CC55341-593F-4E57-80C3-8C6C3CEF3DA4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -161,6 +167,10 @@ Global
 		{120B7821-549C-4C48-B381-B8BD0A705AAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{120B7821-549C-4C48-B381-B8BD0A705AAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{120B7821-549C-4C48-B381-B8BD0A705AAD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8CC55341-593F-4E57-80C3-8C6C3CEF3DA4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8CC55341-593F-4E57-80C3-8C6C3CEF3DA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8CC55341-593F-4E57-80C3-8C6C3CEF3DA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8CC55341-593F-4E57-80C3-8C6C3CEF3DA4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -196,6 +206,9 @@ Global
 		{3D1A93C1-A572-4189-8F5A-8DABF5647E42} = {9C257B11-A2A1-4E1E-88DD-845E02E0B60F}
 		{7D9414BD-3672-4CD5-BD70-79C31A3C50D2} = {A21BCC3E-A75C-40B5-91B1-2253953B59AA}
 		{120B7821-549C-4C48-B381-B8BD0A705AAD} = {7D9414BD-3672-4CD5-BD70-79C31A3C50D2}
+		{F19E23FD-E8CC-4872-83E3-CD8C5E174F66} = {CE4E6F5C-8B09-41BE-A985-252420CD1D9D}
+		{C485CEF8-E581-46AB-8DE7-5F9E7FCD9F0A} = {F19E23FD-E8CC-4872-83E3-CD8C5E174F66}
+		{8CC55341-593F-4E57-80C3-8C6C3CEF3DA4} = {C485CEF8-E581-46AB-8DE7-5F9E7FCD9F0A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EA4F2302-DC43-4149-814A-609940BEC847}

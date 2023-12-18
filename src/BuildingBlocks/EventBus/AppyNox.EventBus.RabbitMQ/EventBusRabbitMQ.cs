@@ -1,12 +1,13 @@
 ﻿using AppyNox.EventBus.Base;
 using AppyNox.EventBus.Base.Events;
-using Newtonsoft.Json;
 using Polly;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using RabbitMQ.Client.Exceptions;
 using System.Net.Sockets;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace AppyNox.EventBus.RabbitMQ
 {
@@ -28,12 +29,12 @@ namespace AppyNox.EventBus.RabbitMQ
         {
             if (config.Connection != null)
             {
-                var connJson = JsonConvert.SerializeObject(EventBusConfig.Connection, new JsonSerializerSettings()
+                var connJson = JsonSerializer.Serialize(EventBusConfig.Connection, new JsonSerializerOptions()
                 {
-                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                    ReferenceHandler = ReferenceHandler.IgnoreCycles
                 });
 
-                _connectionFactory = JsonConvert.DeserializeObject<ConnectionFactory>(connJson)!;
+                _connectionFactory = JsonSerializer.Deserialize<ConnectionFactory>(connJson)!;
             }
             else
             {
@@ -87,7 +88,7 @@ namespace AppyNox.EventBus.RabbitMQ
             var eventName = @event.GetType().Name;
             eventName = ProcessEventName(eventName);
             _consumerChannel.ExchangeDeclare(exchange: EventBusConfig.DefaultTopicName, type: "direct"); // Ensure exchange exists while publishing
-            var message = JsonConvert.SerializeObject(@event);
+            var message = JsonSerializer.Serialize(@event);
             var body = Encoding.UTF8.GetBytes(message);
             policy.Execute(() =>
             {

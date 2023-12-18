@@ -12,13 +12,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AppyNox.Services.Coupon.IntegrationTests.WebApiFactories
+namespace AppyNox.Services.Coupon.WebAPI.IntegrationTests.WebApiFactories
 {
     internal class WebApiFactory : WebApplicationFactory<Program>
     {
         #region Fields
 
-        private static readonly object _lock = new object();
+        private static readonly object _lock = new();
 
         private static bool _seeded = false;
 
@@ -47,7 +47,7 @@ namespace AppyNox.Services.Coupon.IntegrationTests.WebApiFactories
                         if (!_seeded)
                         {
                             dbContext.Database.EnsureDeleted();
-                            AppyNox.Services.Coupon.Infrastructure.DependencyInjection.ApplyMigrations(serviceProvider);
+                            Infrastructure.DependencyInjection.ApplyMigrations(serviceProvider);
                             _seeded = true; // Set the flag
                         }
                     }
