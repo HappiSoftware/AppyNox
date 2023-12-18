@@ -1,4 +1,4 @@
-﻿using AppyNox.Services.Authentication.Application.Account;
+﻿using AppyNox.Services.Authentication.Application.Dtos.AccountDtos.Models.Base;
 
 namespace AppyNox.Services.Authentication.WebAPI.Managers.Interfaces
 {

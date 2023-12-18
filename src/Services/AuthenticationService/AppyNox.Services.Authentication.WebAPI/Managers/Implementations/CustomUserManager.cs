@@ -1,4 +1,4 @@
-﻿using AppyNox.Services.Authentication.Application.Account;
+﻿using AppyNox.Services.Authentication.Application.Dtos.AccountDtos.Models.Base;
 using AppyNox.Services.Authentication.WebAPI.Managers.Interfaces;
 using AutoWrapper.Wrappers;
 using Microsoft.AspNetCore.Identity;

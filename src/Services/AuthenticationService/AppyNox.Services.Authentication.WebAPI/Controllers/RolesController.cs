@@ -1,7 +1,10 @@
-﻿using AppyNox.Services.Authentication.Application.Dtos.ClaimDtos;
-using AppyNox.Services.Authentication.Application.Dtos.IdentityRoleDtos.Models;
+﻿using AppyNox.Services.Authentication.Application.Dtos.ClaimDtos.Models.Base;
+using AppyNox.Services.Authentication.Application.Dtos.IdentityRoleDtos.Models.Base;
+using AppyNox.Services.Authentication.Application.Dtos.IdentityRoleDtos.Models.Extended;
+using AppyNox.Services.Authentication.WebAPI.Controllers.Base;
 using AppyNox.Services.Authentication.WebAPI.Filters;
-using AppyNox.Services.Authentication.WebAPI.Helpers;
+using AppyNox.Services.Base.API.ViewModels;
+using AppyNox.Services.Base.Application.DtoUtilities;
 using Asp.Versioning;
 using AutoMapper;
 using AutoWrapper.Wrappers;
@@ -18,7 +21,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
     [ApiVersion("1.0")]
     [ApiController]
     [JwtTokenValidate]
-    public class RolesController : ControllerBase
+    public class RolesController : BaseController
     {
         #region [ Fields ]
 
@@ -28,19 +31,16 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
 
         private readonly IMapper _mapper;
 
-        private readonly DtoMappingHelper<IdentityRole> _dtoMappingHelper;
-
         #endregion
 
         #region [ Public Constructors ]
 
         public RolesController(IMapper mapper, RoleManager<IdentityRole> roleManager,
-            IRoleValidator<IdentityRole> roleValidator, DtoMappingHelper<IdentityRole> dtoMappingHelper)
+            IRoleValidator<IdentityRole> roleValidator, IDtoMappingRegistryBase dtoMappingRegistry) : base(dtoMappingRegistry, mapper)
         {
             _mapper = mapper;
             _roleManager = roleManager;
             _roleValidator = roleValidator;
-            _dtoMappingHelper = dtoMappingHelper;
         }
 
         #endregion
@@ -49,13 +49,13 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
 
         [HttpGet]
         [Authorize(Roles.View)]
-        public async Task<ApiResponse> GetAll([FromQuery] string? detailLevel)
+        public async Task<ApiResponse> GetAll([FromQuery] QueryParametersViewModel queryParameters)
         {
             var entities = await _roleManager.Roles.ToListAsync();
             object response = new
             {
                 count = _roleManager.Roles.Count().ToString(),
-                roles = _mapper.Map(entities, entities.GetType(), typeof(IEnumerable<>).MakeGenericType(_dtoMappingHelper.GetLeveledDtoType(detailLevel)))
+                roles = GetMappedList(entities, queryParameters)
             };
 
             return new ApiResponse(response);
@@ -64,7 +64,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
         [HttpGet("{id}")]
         [Authorize(Roles.View)]
         [GuidCheckFilter]
-        public async Task<ApiResponse> GetById(string id, [FromQuery] string? detailLevel)
+        public async Task<ApiResponse> GetById(string id, [FromQuery] QueryParametersViewModel queryParameters)
         {
             var identityRole = await _roleManager.FindByIdAsync(id.ToString());
 
@@ -72,7 +72,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
             {
                 throw new ApiProblemDetailsException("Not Found", 404);
             }
-            return new ApiResponse(_mapper.Map(identityRole, identityRole.GetType(), _dtoMappingHelper.GetLeveledDtoType(detailLevel)));
+            return new ApiResponse(_mapper.Map(identityRole, identityRole.GetType(), CreateProjection<IdentityRole>(queryParameters)));
         }
 
         [HttpPut("{id}")]

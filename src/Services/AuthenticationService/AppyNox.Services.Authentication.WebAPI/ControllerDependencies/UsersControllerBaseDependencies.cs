@@ -16,8 +16,6 @@ namespace AppyNox.Services.Authentication.WebAPI.ControllerDependencies
 
         private readonly IMapper _mapper;
 
-        private readonly DtoMappingHelper<IdentityUser> _dtoMappingHelper;
-
         private readonly PasswordValidator<IdentityUser> _passwordValidator;
 
         private readonly PasswordHasher<IdentityUser> _passwordHasher;
@@ -27,13 +25,11 @@ namespace AppyNox.Services.Authentication.WebAPI.ControllerDependencies
         #region [ Public Constructors ]
 
         public UsersControllerBaseDependencies(IMapper mapper, UserManager<IdentityUser> userManager,
-            DtoMappingHelper<IdentityUser> dtoMappingHelper,
             IUserValidator<IdentityUser> userValidator, RoleManager<IdentityRole> roleManager, PasswordValidator<IdentityUser> passwordValidator,
             PasswordHasher<IdentityUser> passwordHasher)
         {
             _mapper = mapper;
             _userManager = userManager;
-            _dtoMappingHelper = dtoMappingHelper;
             _userValidator = userValidator;
             _roleManager = roleManager;
             _passwordValidator = passwordValidator;
@@ -51,8 +47,6 @@ namespace AppyNox.Services.Authentication.WebAPI.ControllerDependencies
         public IUserValidator<IdentityUser> UserValidator => _userValidator;
 
         public IMapper Mapper => _mapper;
-
-        public DtoMappingHelper<IdentityUser> DtoMappingHelper => _dtoMappingHelper;
 
         public PasswordValidator<IdentityUser> PasswordValidator => _passwordValidator;
 
