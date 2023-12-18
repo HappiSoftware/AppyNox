@@ -1,0 +1,79 @@
+version: '3.4'
+
+networks:
+  integration-test:
+    driver: bridge
+
+volumes:
+  app_data:
+
+services:
+  rabbitmq.service:
+    image: rabbitmq:latest
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  consul.service:
+    image: "hashicorp/consul:latest"
+    ports:
+      - "8500:8500"
+      - "8600:8600/udp"
+    healthcheck:
+      test: ["CMD", "consul", "members"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - integration-test
+
+  appynox.gateway.ocelotgateway:
+    image: appynoxgatewayocelotgateway
+    environment:
+     - ASPNETCORE_ENVIRONMENT=Production
+     - ASPNETCORE_URLS=https://+:7000
+    ports:
+     - "7000:7000"
+    networks:
+      - integration-test
+
+  coupon.db.test:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: AppyNox_Coupon_Test
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: coupon_password
+    restart: always
+    ports:
+      - "5434:5432"
+    networks:
+      - integration-test
+
+  appynox.services.coupon.webapi:
+    image: appynoxservicescouponwebapi
+    depends_on:
+        coupon.db.test:
+          condition: service_started
+        consul.service:
+          condition: service_healthy
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_HTTPS_PORTS=7002
+      - ConnectionStrings__DefaultConnection=User ID=postgres;Password=coupon_password;Server=coupon.db.test;Port=5432;Database=AppyNox_Coupon_Test
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/coupon-service.pfx 
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=happi2023
+    healthcheck:
+      test: ["CMD", "curl", "-f", "https://coupon.service:7002/health-check"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+     - ./ssl:/https
+    ports:
+     - "7002:7002"
+    networks:
+     - integration-test
+      

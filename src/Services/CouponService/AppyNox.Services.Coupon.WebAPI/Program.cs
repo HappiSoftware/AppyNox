@@ -166,3 +166,6 @@ AppyNox.Services.Coupon.Infrastructure.DependencyInjection.ApplyMigrations(app.S
 app.UseHealthChecks("/health-check");
 
 app.Run();
+
+public partial class Program
+{ }

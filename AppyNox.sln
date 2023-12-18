@@ -69,7 +69,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppyNox.Services.Coupon.Web
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IntegrationTests", "IntegrationTests", "{7D9414BD-3672-4CD5-BD70-79C31A3C50D2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppyNox.Services.Base.IntegrationTests", "src\Services\.BaseService\Tests\IntegrationTests\AppyNox.Services.Base.IntegrationTests\AppyNox.Services.Base.IntegrationTests.csproj", "{120B7821-549C-4C48-B381-B8BD0A705AAD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppyNox.Services.Base.IntegrationTests", "src\Services\.BaseService\Tests\IntegrationTests\AppyNox.Services.Base.IntegrationTests\AppyNox.Services.Base.IntegrationTests.csproj", "{120B7821-549C-4C48-B381-B8BD0A705AAD}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{F19E23FD-E8CC-4872-83E3-CD8C5E174F66}"
 EndProject
