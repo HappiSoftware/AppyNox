@@ -1,18 +1,10 @@
 using AutoWrapper.Wrappers;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.VisualStudio.TestPlatform.TestHost;
 using System.Net;
 using System.Text.Json;
 using AutoWrapper.Server;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
 using AppyNox.Services.Base.IntegrationTests.Helpers;
-using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Extended;
-using NLog.Targets;
 using System.Text;
-using static AppyNox.Services.Coupon.WebAPI.Helpers.Permissions.Permissions;
-using Microsoft.Extensions.DependencyInjection;
-using AppyNox.Services.Coupon.WebAPI.IntegrationTests;
 using AppyNox.Services.Coupon.WebAPI.IntegrationTests.Fixtures;
 
 namespace AppyNox.Services.Coupon.WebAPI.IntegrationTests
@@ -70,218 +62,195 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTests
             Assert.NotNull(coupons);
         }
 
-        //[Fact]
-        //public async Task GetById_ShouldReturnSuccessStatusCode()
-        //{
-        //    #region [ Get Coupon ]
+        [Fact]
+        public async Task GetById_ShouldReturnSuccessStatusCode()
+        {
+            #region [ Get Coupon ]
 
-        //    // Arrange
-        //    var client = CouponFactory.CreateDefaultClient();
-        //    var requestUri = "/api/coupons?Access=Update&PageSize=1&PageNumber=1";
+            // Arrange
+            var coupon = _couponApiTestFixture.DbContext.Coupons.FirstOrDefault();
 
-        //    // Act
-        //    var response = await client.GetAsync(requestUri);
-        //    var jsonResponse = await response.Content.ReadAsStringAsync();
-        //    var apiResponse = Unwrapper.Unwrap<ApiResponse>(jsonResponse);
-        //    apiResponse.ValidateOk(); // This line covers if apiResponse.Result is null so we can use null forgiving operator on the next line
-        //    var coupons = JsonSerializer.Deserialize<IList<CouponSimpleUpdateDto>>(apiResponse.Result.ToString()!, _jsonSerializerOptions);
+            // Assert
+            Assert.NotNull(coupon);
 
-        //    // Assert
-        //    response.EnsureSuccessStatusCode();
-        //    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        //    Assert.NotNull(coupons);
-        //    Assert.Equal(1, coupons.Count);
+            #endregion
 
-        //    #endregion
+            #region [ Get Coupon By Id ]
 
-        //    #region [ Get Coupon By Id ]
+            // Arrange
+            var client = new HttpClient
+            {
+                BaseAddress = new Uri("https://localhost:7002")
+            };
+            var id = coupon.Id;
+            var requestUri = $"/api/coupons/{id}";
 
-        //    // Arrange
-        //    var id = coupons[0].Id;
-        //    requestUri = $"/api/coupons/{id}";
+            // Act
+            var response = await client.GetAsync(requestUri);
+            var jsonResponse = await response.Content.ReadAsStringAsync();
+            var apiResponse = Unwrapper.Unwrap<ApiResponse>(jsonResponse);
+            apiResponse.ValidateOk(); // This line covers if apiResponse.Result is null so we can use null forgiving operator on the next line
+            var couponObj = JsonSerializer.Deserialize<CouponSimpleDto>(apiResponse.Result.ToString()!, _jsonSerializerOptions);
 
-        //    // Act
-        //    response = await client.GetAsync(requestUri);
-        //    jsonResponse = await response.Content.ReadAsStringAsync();
-        //    apiResponse = Unwrapper.Unwrap<ApiResponse>(jsonResponse);
-        //    apiResponse.ValidateOk(); // This line covers if apiResponse.Result is null so we can use null forgiving operator on the next line
-        //    var coupon = JsonSerializer.Deserialize<CouponSimpleDto>(apiResponse.Result.ToString()!, _jsonSerializerOptions);
+            // Assert
+            response.EnsureSuccessStatusCode();
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.NotNull(couponObj);
 
-        //    // Assert
-        //    response.EnsureSuccessStatusCode();
-        //    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        //    Assert.NotNull(coupon);
+            #endregion
+        }
 
-        //    #endregion
-        //}
+        [Fact]
+        public async Task Create_ShouldAddNewCoupon()
+        {
+            #region [ Create Coupon ]
 
-        //[Fact]
-        //public async Task Create_ShouldAddNewCoupon()
-        //{
-        //    #region [ Create Coupon ]
+            // Arrange
+            var client = new HttpClient
+            {
+                BaseAddress = new Uri("https://localhost:7002")
+            };
+            var requestUri = "/api/coupons";
+            var uniqueCode = "ffff2";
+            var requestBody = new
+            {
+                code = uniqueCode,
+                discountAmount = 2,
+                minAmount = 12,
+                description = "string",
+                couponDetailEntityId = "c2feaca4-d82a-4d2e-ba5a-667b685212b4"
+            };
+            var jsonRequest = JsonSerializer.Serialize(requestBody);
+            var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
 
-        //    // Arrange
-        //    var client = CouponFactory.CreateDefaultClient();
-        //    var requestUri = "/api/coupons";
-        //    var requestBody = new
-        //    {
-        //        code = "ffff2",
-        //        discountAmount = 2,
-        //        minAmount = 12,
-        //        description = "string",
-        //        couponDetailEntityId = "c2feaca4-d82a-4d2e-ba5a-667b685212b4"
-        //    };
-        //    var jsonRequest = JsonSerializer.Serialize(requestBody);
-        //    var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+            // Act
+            var response = await client.PostAsync(requestUri, content);
 
-        //    // Act
-        //    var response = await client.PostAsync(requestUri, content);
+            // Assert
+            response.EnsureSuccessStatusCode();
+            Assert.Equal(HttpStatusCode.Created, response.StatusCode);
 
-        //    // Assert
-        //    response.EnsureSuccessStatusCode();
-        //    Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+            #endregion
 
-        //    #endregion
+            #region [ Get Coupons ]
 
-        //    #region [ Get Coupons ]
+            // Act
+            var coupon = _couponApiTestFixture.DbContext.Coupons.SingleOrDefault(x => x.Code == uniqueCode);
 
-        //    // Act
-        //    response = await client.GetAsync(requestUri);
-        //    var jsonResponse = await response.Content.ReadAsStringAsync();
-        //    var apiResponse = Unwrapper.Unwrap<ApiResponse>(jsonResponse);
-        //    apiResponse.ValidateOk(); // This line covers if apiResponse.Result is null so we can use null forgiving operator on the next line
-        //    var coupons = JsonSerializer.Deserialize<IList<CouponSimpleUpdateDto>>(apiResponse.Result.ToString()!, _jsonSerializerOptions);
+            // Assert
+            Assert.NotNull(coupon);
 
-        //    // Assert
-        //    response.EnsureSuccessStatusCode();
-        //    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        //    Assert.NotNull(coupons);
+            #endregion
+        }
 
-        //    #endregion
-        //}
+        [Fact]
+        public async Task Update_ShouldUpdateEntity()
+        {
+            #region [ Get Coupon ]
 
-        //[Fact]
-        //public async Task Update_ShouldUpdateEntity()
-        //{
-        //    #region [ Get Coupon ]
+            // Arrange
+            var oldCoupon = _couponApiTestFixture.DbContext.Coupons.FirstOrDefault();
 
-        //    // Arrange
-        //    var client = CouponFactory.CreateDefaultClient();
-        //    var requestUri = "/api/coupons?Access=Update&PageSize=1&PageNumber=1";
+            // Assert
+            Assert.NotNull(oldCoupon);
 
-        //    // Act
-        //    var response = await client.GetAsync(requestUri);
-        //    var jsonResponse = await response.Content.ReadAsStringAsync();
-        //    var apiResponse = Unwrapper.Unwrap<ApiResponse>(jsonResponse);
-        //    apiResponse.ValidateOk(); // This line covers if apiResponse.Result is null so we can use null forgiving operator on the next line
-        //    var coupons = JsonSerializer.Deserialize<IList<CouponSimpleUpdateDto>>(apiResponse.Result.ToString()!, _jsonSerializerOptions);
+            #endregion
 
-        //    // Assert
-        //    response.EnsureSuccessStatusCode();
-        //    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        //    Assert.NotNull(coupons);
-        //    Assert.Equal(1, coupons.Count);
+            #region [ Update Coupon ]
 
-        //    #endregion
+            // Arrange
+            var client = new HttpClient
+            {
+                BaseAddress = new Uri("https://localhost:7002")
+            };
+            var id = oldCoupon.Id;
+            var requestUri = $"/api/coupons/{id}";
+            var requestBody = new
+            {
+                code = oldCoupon.Code,
+                discountAmount = oldCoupon.DiscountAmount + 1,
+                minAmount = oldCoupon.MinAmount + 1,
+                description = $"{oldCoupon.Id} Updated on test method!",
+                couponDetailEntityId = oldCoupon.CouponDetailEntityId,
+                id = oldCoupon.Id
+            };
+            var jsonRequest = JsonSerializer.Serialize(requestBody);
+            var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
 
-        //    #region [ Update Coupon ]
+            // Act
+            var response = await client.PutAsync(requestUri, content);
 
-        //    // Arrange
-        //    var oldCoupon = coupons[0];
-        //    var id = coupons[0].Id;
-        //    requestUri = $"/api/coupons/{id}";
-        //    var requestBody = new
-        //    {
-        //        code = oldCoupon.Code,
-        //        discountAmount = oldCoupon.DiscountAmount + 1,
-        //        minAmount = oldCoupon.MinAmount + 1,
-        //        description = $"{oldCoupon}++",
-        //        couponDetailEntityId = oldCoupon.CouponDetailEntityId,
-        //        id = oldCoupon.Id
-        //    };
-        //    var jsonRequest = JsonSerializer.Serialize(requestBody);
-        //    var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+            // Assert
+            response.EnsureSuccessStatusCode();
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
 
-        //    // Act
-        //    response = await client.PutAsync(requestUri, content);
+            #endregion
 
-        //    // Assert
-        //    response.EnsureSuccessStatusCode();
-        //    Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+            #region [ Get Coupon ]
 
-        //    #endregion
+            // Arrange
+            requestUri = $"/api/coupons/{id}";
 
-        //    #region [ Get Coupon ]
+            // Act
+            response = await client.GetAsync(requestUri);
+            var jsonResponse = await response.Content.ReadAsStringAsync();
+            var apiResponse = Unwrapper.Unwrap<ApiResponse>(jsonResponse);
+            apiResponse.ValidateOk(); // This line covers if apiResponse.Result is null so we can use null forgiving operator on the next line
+            var coupon = JsonSerializer.Deserialize<CouponSimpleDto>(apiResponse.Result.ToString()!, _jsonSerializerOptions);
 
-        //    // Arrange
-        //    requestUri = $"/api/coupons/{id}";
+            // Assert
+            response.EnsureSuccessStatusCode();
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.NotNull(coupon);
+            Assert.Equal(oldCoupon.Code, coupon.Code);
+            Assert.Equal(oldCoupon.DiscountAmount + 1, coupon.DiscountAmount);
+            Assert.Equal(oldCoupon.MinAmount + 1, coupon.MinAmount);
 
-        //    // Act
-        //    response = await client.GetAsync(requestUri);
-        //    jsonResponse = await response.Content.ReadAsStringAsync();
-        //    apiResponse = Unwrapper.Unwrap<ApiResponse>(jsonResponse);
-        //    apiResponse.ValidateOk(); // This line covers if apiResponse.Result is null so we can use null forgiving operator on the next line
-        //    var coupon = JsonSerializer.Deserialize<CouponSimpleDto>(apiResponse.Result.ToString()!, _jsonSerializerOptions);
+            #endregion
+        }
 
-        //    // Assert
-        //    response.EnsureSuccessStatusCode();
-        //    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        //    Assert.NotNull(coupon);
-        //    Assert.Equal(oldCoupon.Code, coupon.Code);
-        //    Assert.Equal(oldCoupon.DiscountAmount + 1, coupon.DiscountAmount);
-        //    Assert.Equal(oldCoupon.MinAmount + 1, coupon.MinAmount);
+        [Fact]
+        public async Task Delete_ShouldDeleteEntity()
+        {
+            #region [ Get Coupon ]
 
-        //    #endregion
-        //}
+            // Arrange
+            var coupon = _couponApiTestFixture.DbContext.Coupons.FirstOrDefault();
 
-        //[Fact]
-        //public async Task Delete_ShouldDeleteEntity()
-        //{
-        //    #region [ Get Coupon ]
+            // Assert
+            Assert.NotNull(coupon);
 
-        //    // Arrange
-        //    var client = CouponFactory.CreateDefaultClient();
-        //    var requestUri = "/api/coupons?Access=Update&PageSize=1&PageNumber=2";
+            #endregion
 
-        //    // Act
-        //    var response = await client.GetAsync(requestUri);
-        //    var jsonResponse = await response.Content.ReadAsStringAsync();
-        //    var apiResponse = Unwrapper.Unwrap<ApiResponse>(jsonResponse);
-        //    apiResponse.ValidateOk(); // This line covers if apiResponse.Result is null so we can use null forgiving operator on the next line
-        //    var coupons = JsonSerializer.Deserialize<IList<CouponSimpleUpdateDto>>(apiResponse.Result.ToString()!, _jsonSerializerOptions);
+            #region [ Delete Coupon ]
 
-        //    // Assert
-        //    response.EnsureSuccessStatusCode();
-        //    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        //    Assert.NotNull(coupons);
+            // Arrange
+            var client = new HttpClient
+            {
+                BaseAddress = new Uri("https://localhost:7002")
+            };
+            var id = coupon.Id;
+            var requestUri = $"/api/coupons/{id}";
 
-        //    #endregion
+            // Act
+            var response = await client.DeleteAsync(requestUri);
 
-        //    #region [ Delete Coupon ]
+            // Assert
+            response.EnsureSuccessStatusCode();
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
 
-        //    // Arrange
-        //    var id = coupons[0].Id;
-        //    requestUri = $"/api/coupons/{id}";
+            #endregion
 
-        //    // Act
-        //    response = await client.DeleteAsync(requestUri);
+            #region [ Get Coupon ]
 
-        //    // Assert
-        //    response.EnsureSuccessStatusCode();
-        //    Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+            // Act
+            var getCoupon = _couponApiTestFixture.DbContext.Coupons.SingleOrDefault(x => x.Id == id);
 
-        //    #endregion
+            // Assert
+            Assert.Null(getCoupon);
 
-        //    #region [ Get Coupon ]
-
-        //    // Act
-        //    response = await client.GetAsync(requestUri);
-
-        //    // Assert
-        //    Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
-
-        //    #endregion
-        //}
+            #endregion
+        }
 
         #endregion
     }
