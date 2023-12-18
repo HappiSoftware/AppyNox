@@ -35,6 +35,8 @@ services:
     environment:
      - ASPNETCORE_ENVIRONMENT=Production
      - ASPNETCORE_URLS=https://+:7000
+     - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/gateway-service.pfx 
+     - ASPNETCORE_Kestrel__Certificates__Default__Password=happi2023
     ports:
      - "7000:7000"
     networks:
