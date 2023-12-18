@@ -83,4 +83,36 @@ services:
      - "7002:7002"
     networks:
      - integration-test
+
+  authentication.db.test:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: AppyNox_Authentication_Test
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: auth_password
+    restart: always
+    ports:
+      - "5433:5432"
+    networks:
+      - integration-test
+
+  appynox.services.authentication.webapi:
+    image: appynoxservicesauthenticationwebapi
+    depends_on:
+        authentication.db.test:
+          condition: service_started
+        consul.service:
+          condition: service_healthy
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_HTTPS_PORTS=7001
+      - ConnectionStrings__DefaultConnection=User ID=postgres;Password=auth_password;Server=authentication.db.test;Port=5432;Database=AppyNox_Authentication_Test
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/authentication-service.pfx 
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=happi2023
+    volumes:
+     - ./ssl:/https
+    ports:
+     - "7001:7001"
+    networks:
+     - integration-test
       
