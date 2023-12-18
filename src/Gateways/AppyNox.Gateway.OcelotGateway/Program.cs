@@ -16,11 +16,11 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
 
     if (builder.Environment.IsDevelopment())
     {
-        fileName = Directory.GetCurrentDirectory() + "/ssl/gateway.pfx";
+        fileName = Directory.GetCurrentDirectory() + "/ssl/gateway-service.pfx";
     }
     else if (builder.Environment.IsProduction())
     {
-        fileName = "/https/gateway.pfx";
+        fileName = "/https/gateway-service.pfx";
     }
 
     serverOptions.ConfigureEndpointDefaults(listenOptions =>
@@ -53,7 +53,7 @@ var app = builder.Build();
 app.UseMiddleware<CorrelationIdMiddleware>();
 
 app.UseMiddleware<LoggingMiddleware>();
-    
+
 await app.UseOcelot();
 
 app.Run();

@@ -22,11 +22,5 @@ RUN dotnet publish "AppyNox.Services.Authentication.WebAPI.csproj" -c $BUILD_CON
 FROM base AS final
 WORKDIR /app
 
-# Create a non-root user
-RUN adduser --disabled-password --gecos '' appuser && chown -R appuser /app
-
-# Switch to the non-root user
-USER appuser
-
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "AppyNox.Services.Authentication.WebAPI.dll"]
