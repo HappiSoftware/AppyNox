@@ -29,7 +29,6 @@
 
   <ItemGroup>
     <Folder Include="Middleware\" />
-    <Folder Include="ssl\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -40,6 +39,9 @@
 
   <ItemGroup>
     <None Update="ssl\authentication-service.pfx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="ssl\crt\authentication-service.crt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

@@ -48,13 +48,8 @@ Check Existing SSH keys (OR) Create a new key
 <br>
 
 2. **SSL Certificates** <br>
-   After cloning the repository, add development SSL certificates to the services for running them in a Docker container. Run the following commands to generate and trust the SSL certificates:
-
-```bash
-dotnet dev-certs https -ep .\src\Services\CouponService\AppyNox.Services.Coupon.WebAPI\ssl\coupon-service.pfx -p happi2023
-dotnet dev-certs https -ep .\src\Services\AuthenticationService\AppyNox.Services.Authentication.WebAPI\ssl\authentication-service.pfx -p happi2023
-dotnet dev-certs https --trust
-```
+   Please follow to this page and create ssl files in order to run it correctly: [SSL Certificates](certificate.md)
+   <br>
 
 <br>
 

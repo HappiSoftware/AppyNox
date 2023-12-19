@@ -45,9 +45,6 @@
 	  <None Update="ssl\coupon\coupon-service.pfx">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
-	  <None Update="ssl\gateway\gateway-service.pfx">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
 	</ItemGroup>
 	
 

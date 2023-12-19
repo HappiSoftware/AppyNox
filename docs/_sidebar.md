@@ -3,6 +3,7 @@
   - [Installation](installation.md)
   - [Getting Started](started.md)
   - [SonarQube](sonar.md)
+  - [SSL Certificates](certificate.md)
   - [Appsettings Configurations](appsettings.md)
 - Development Documentations
   - [Exception Handling](exception.md)
