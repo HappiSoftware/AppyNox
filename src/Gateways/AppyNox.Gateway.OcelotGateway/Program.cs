@@ -18,7 +18,7 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
     {
         fileName = Directory.GetCurrentDirectory() + "/ssl/gateway-service.pfx";
     }
-    else if (builder.Environment.IsProduction())
+    else if (builder.Environment.IsProduction() || builder.Environment.IsStaging())
     {
         fileName = "/https/gateway-service.pfx";
     }

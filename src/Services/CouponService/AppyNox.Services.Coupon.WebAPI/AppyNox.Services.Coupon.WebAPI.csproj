@@ -36,4 +36,10 @@
 		<Folder Include="ssl\" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <None Update="ssl\coupon-service.pfx">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
+
 </Project>

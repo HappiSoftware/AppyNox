@@ -19,13 +19,13 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTests.Fixtures
 {
     public class CouponApiTestFixture : DockerComposeTestBase
     {
-        #region Fields
+        #region [ Fields ]
 
         private readonly ServiceCollection _services;
 
         #endregion
 
-        #region Properties
+        #region [ Properties ]
 
         public readonly string CouponURI = "https://localhost:7002";
 
@@ -33,10 +33,11 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTests.Fixtures
 
         #endregion
 
-        #region Public Constructors
+        #region [ Public Constructors ]
 
         public CouponApiTestFixture()
         {
+            EnsurePfxFilesExist();
             _services = new ServiceCollection();
             ConfigureServices(_services);
             var serviceProvider = _services.BuildServiceProvider();
@@ -49,7 +50,7 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTests.Fixtures
 
         #endregion
 
-        #region Protected Methods
+        #region [ Protected Methods ]
 
         protected override ICompositeService Build()
         {
@@ -67,9 +68,9 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTests.Fixtures
 
         #endregion
 
-        #region Private Methods
+        #region [ Private Methods ]
 
-        private async Task WaitForServiceHealth(string healthCheckUrl, int timeoutSeconds)
+        private static async Task WaitForServiceHealth(string healthCheckUrl, int timeoutSeconds)
         {
             var client = new HttpClient();
             var startTime = DateTime.UtcNow;
@@ -94,19 +95,35 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTests.Fixtures
             throw new Exception("Service did not become healthy in time");
         }
 
-        private void ConfigureServices(IServiceCollection services)
+        private static void ConfigureServices(IServiceCollection services)
         {
             // Build the connection string from api appsettings.json
             IConfiguration config = new ConfigurationBuilder()
                 .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), @"../../../../../../AppyNox.Services.Coupon.WebAPI"))
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .AddJsonFile($"appsettings.Production.json", optional: true)
+                .AddJsonFile($"appsettings.Staging.json", optional: true)
                 .AddEnvironmentVariables()
                 .Build();
             var connectionString = config.GetConnectionString("TestConnection") ?? throw new InvalidOperationException("Connection string for CouponDb is missing.");
 
             // Add the DbContext with the connection string obtained
             services.AddDbContext<CouponDbContext>(options => options.UseNpgsql(connectionString));
+        }
+
+        private static void EnsurePfxFilesExist()
+        {
+            string sslDirectory = Path.Combine(Directory.GetCurrentDirectory(), "ssl");
+            string[] requiredFiles = ["authentication-service.pfx", "coupon-service.pfx", "gateway-service.pfx"];
+
+            foreach (var file in requiredFiles)
+            {
+                string pfxPath = $"{file.Split('-')[0]}/{file}";
+                string fullPath = Path.Combine(sslDirectory, pfxPath);
+                if (!File.Exists(fullPath))
+                {
+                    throw new FileNotFoundException($"Required PFX file not found: {fullPath}");
+                }
+            }
         }
 
         #endregion

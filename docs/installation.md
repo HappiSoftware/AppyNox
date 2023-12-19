@@ -114,82 +114,8 @@ If your docker-compose.override.yml didn't go under docker-compose.yml and locat
 <br>
 
 4. **AppSettings Files** <br>
-   Create appsettings.Production.json files for both services. Customize the content with your database and JWT settings.
-
-CouponService appsettings.Production.json :
-
-```json
-{
-  "Logging": {
-    "LogLevel": {
-      "Default": "Error",
-      "Microsoft.AspNetCore": "Error"
-    }
-  },
-  "ConnectionStrings": {
-    "DefaultConnection": "User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_Coupon;Pooling=true",
-    "TestDbConnection": "User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_Coupon_Test;Pooling=true"
-  },
-  "JwtSettings": {
-    "SecretKey": "vA+A/of8yadsbwe/CmS6PD0Kp837BozrQFMDuQ2Kwwg=",
-    "Issuer": "AuthServerV1",
-    "Audience": "AppyNoxBasic"
-  },
-  "ConsulConfig": {
-    "Address": "http://localhost:8500"
-  },
-  "Consul": {
-    "ServiceId": "CouponService",
-    "ServiceName": "CouponService",
-    "Scheme": "https",
-    "ServiceHost": "localhost",
-    "ServicePort": 7002,
-    "Tags": [ "Coupon", "Coupons" ],
-    "HealthCheckUrl": "health-check",
-    "HealthCheckIntervalSeconds": 30,
-    "HealthCheckTimeoutSeconds": 5
-  }
-}
-```
-
-<br>
-
-AuthenticationService appsettings.Production.json:
-
-```json
-{
-  "Logging": {
-    "LogLevel": {
-      "Default": "Information",
-      "Microsoft.AspNetCore": "Warning"
-    }
-  },
-  "ConnectionStrings": {
-    "DefaultConnection": "User ID=postgres;Password=auth_password;Server=authentication.db;Port=5432;Database=AppyNox_Authentication;IntegratedSecurity=true;Pooling=true"
-  },
-  "JwtSettings": {
-    "SecretKey": "{your secret key}",
-    "Issuer": "AuthServerV1",
-    "Audience": "AppyNoxBasic"
-  },
-  "ConsulConfig": {
-    "Address": "http://localhost:8500"
-  },
-  "Consul": {
-    "ServiceId": "IdentityService",
-    "ServiceName": "IdentityService",
-    "Scheme": "https",
-    "ServiceHost": "localhost",
-    "ServicePort": 7001,
-    "Tags": [ "Identity", "Authentication", "JWT" ],
-    "HealthCheckUrl": "health-check",
-    "HealthCheckIntervalSeconds": 30,
-    "HealthCheckTimeoutSeconds": 5
-  }
-}
-```
-
-<br>
+   Please follow to this page and configure the project in order to run it correctly: [Appsettings Configuartions](appsettings.md)
+   <br>
 
 5. **Services you need to run on Docker container:**
 

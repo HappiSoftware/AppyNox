@@ -1,14 +1,14 @@
 {
   "GlobalConfiguration": {
-    "BaseUrl": "https://localhost:7000",
+    "BaseUrl": "",
     "ServiceDiscoveryProvider": {
-      "Host": "localhost",
-      "Port": 8500,
-      "Type": "Consul"
+      "Host": "",
+      "Port": 1,
+      "Type": ""
     },
     "RateLimitOptions": {
-      "QuotaExceededMessage": "You have sent too many requests in a row.",
-      "ClientIdHeader": "ClientId"
+      "QuotaExceededMessage": "",
+      "ClientIdHeader": ""
     }
   },
   "Routes": [

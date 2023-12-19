@@ -1,3 +1,4 @@
+using AppyNox.Services.Base.API.Helpers;
 using AppyNox.Services.Base.API.Middleware;
 using AppyNox.Services.Base.Domain.Common;
 using AppyNox.Services.Coupon.WebAPI.Helpers;
@@ -24,7 +25,7 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
     {
         fileName = Directory.GetCurrentDirectory() + "/ssl/coupon-service.pfx";
     }
-    else if (builder.Environment.IsProduction())
+    else if (builder.Environment.IsProduction() || builder.Environment.IsStaging())
     {
         fileName = "/https/coupon-service.pfx";
     }
@@ -68,7 +69,7 @@ builder.Services.Configure<ConsulConfig>(configuration.GetSection("consul"));
 
 builder.Services.AddHealthChecks();
 
-AppyNox.Services.Coupon.Infrastructure.DependencyInjection.ConfigureServices(builder.Services, configuration);
+AppyNox.Services.Coupon.Infrastructure.DependencyInjection.ConfigureServices(builder.Services, configuration, builder.Environment.GetEnvironment());
 AppyNox.Services.Coupon.Application.DependencyInjection.ConfigureServices(builder.Services, configuration);
 
 #region [ JWT Configuration ]

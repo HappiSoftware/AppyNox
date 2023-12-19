@@ -1,4 +1,5 @@
-﻿using AppyNox.Services.Base.Domain.Interfaces;
+﻿using AppyNox.Services.Base.Domain.Common;
+using AppyNox.Services.Base.Domain.Interfaces;
 using AppyNox.Services.Base.Infrastructure.Interfaces;
 using AppyNox.Services.Base.Infrastructure.Repositories;
 using AppyNox.Services.Coupon.Infrastructure.Data;
@@ -13,10 +14,18 @@ namespace AppyNox.Services.Coupon.Infrastructure
     {
         #region [ Public Methods ]
 
-        public static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
+        public static void ConfigureServices(IServiceCollection services, IConfiguration configuration, ApplicationEnvironment environment)
         {
+            string? connectionString = string.Empty;
+            connectionString = environment switch
+            {
+                ApplicationEnvironment.Development => configuration.GetConnectionString("DevelopmentConnection"),
+                ApplicationEnvironment.Staging => configuration.GetConnectionString("StagingConnection"),
+                ApplicationEnvironment.Production => configuration.GetConnectionString("ProductionConnection"),
+                _ => configuration.GetConnectionString("DefaultConnection"),
+            };
             services.AddDbContext<CouponDbContext>(options =>
-                options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
+                options.UseNpgsql(connectionString));
 
             services.AddScoped(typeof(IGenericRepositoryBase<>), typeof(GenericRepository<>));
             services.AddScoped<IUnitOfWorkBase, UnitOfWork>();

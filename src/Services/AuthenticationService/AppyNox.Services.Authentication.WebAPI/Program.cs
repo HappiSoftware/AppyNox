@@ -5,6 +5,7 @@ using AppyNox.Services.Authentication.WebAPI.Helpers;
 using AppyNox.Services.Authentication.WebAPI.Managers.Implementations;
 using AppyNox.Services.Authentication.WebAPI.Managers.Interfaces;
 using AppyNox.Services.Authentication.WebAPI.Utilities;
+using AppyNox.Services.Base.API.Helpers;
 using AppyNox.Services.Base.Domain.Common;
 using Asp.Versioning;
 using AutoWrapper;
@@ -31,7 +32,7 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
     {
         fileName = Directory.GetCurrentDirectory() + "/ssl/authentication-service.pfx";
     }
-    else if (builder.Environment.IsProduction())
+    else if (builder.Environment.IsProduction() || builder.Environment.IsStaging())
     {
         fileName = "/https/authentication-service.pfx";
     }
@@ -97,7 +98,7 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Password.RequireLowercase = true;
 });
 
-AppyNox.Services.Authentication.Infrastructure.DependencyInjection.ConfigureServices(builder.Services, configuration);
+AppyNox.Services.Authentication.Infrastructure.DependencyInjection.ConfigureServices(builder.Services, configuration, builder.Environment.GetEnvironment());
 AppyNox.Services.Authentication.Application.DependencyInjection.ConfigureServices(builder.Services, configuration);
 
 builder.Services.AddHealthChecks();
