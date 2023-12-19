@@ -15,7 +15,6 @@ WORKDIR "/src/src/Gateways/AppyNox.Gateway.OcelotGateway"
 RUN dotnet build "./AppyNox.Gateway.OcelotGateway.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
-ARG BUILD_CONFIGURATION=Production
 RUN dotnet publish "./AppyNox.Gateway.OcelotGateway.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final

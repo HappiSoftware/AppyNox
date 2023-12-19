@@ -17,7 +17,7 @@ services:
       - "5672:5672"
       - "15672:15672"
 
-  consul.service:
+  appynox.consul:
     image: "hashicorp/consul:latest"
     ports:
       - "8500:8500"
@@ -33,7 +33,7 @@ services:
   appynox.gateway.ocelotgateway:
     image: appynoxgatewayocelotgateway
     depends_on:
-        consul.service:
+        appynox.consul:
           condition: service_healthy
     environment:
      - ASPNETCORE_ENVIRONMENT=Staging
@@ -64,7 +64,7 @@ services:
     depends_on:
         coupon.db.test:
           condition: service_started
-        consul.service:
+        appynox.consul:
           condition: service_healthy
     environment:
       - ASPNETCORE_ENVIRONMENT=Staging
@@ -72,11 +72,6 @@ services:
       - ConnectionStrings__DefaultConnection=User ID=postgres;Password=coupon_password;Server=coupon.db.test;Port=5432;Database=AppyNox_Coupon_Test
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/coupon-service.pfx 
       - ASPNETCORE_Kestrel__Certificates__Default__Password=happi2023
-    healthcheck:
-      test: ["CMD", "curl", "-f", "https://coupon.service:7002/health-check"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
     volumes:
      - ./ssl/coupon:/https
     ports:
@@ -101,7 +96,7 @@ services:
     depends_on:
         authentication.db.test:
           condition: service_started
-        consul.service:
+        appynox.consul:
           condition: service_healthy
     environment:
       - ASPNETCORE_ENVIRONMENT=Staging

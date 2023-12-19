@@ -17,7 +17,7 @@ services:
       - "5672:5672"
       - "15672:15672"
 
-  consul.service:
+  appynox.consul:
     image: "hashicorp/consul:latest"
     ports:
       - "8500:8500"
