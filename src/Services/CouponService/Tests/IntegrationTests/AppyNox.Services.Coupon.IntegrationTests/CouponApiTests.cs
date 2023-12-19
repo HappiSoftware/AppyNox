@@ -17,6 +17,8 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTests
 
         private readonly CouponApiTestFixture _couponApiTestFixture;
 
+        private HttpClient _client;
+
         #endregion
 
         #region [ Public Constructors ]
@@ -28,6 +30,7 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTests
             {
                 PropertyNameCaseInsensitive = true
             };
+            _client = couponApiTestFixture.Client;
         }
 
         #endregion
@@ -37,16 +40,10 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTests
         [Fact]
         public async Task GetAll_ShouldReturnSuccessStatusCode()
         {
-            // Initialize the HTTP client to communicate with the service
-            var client = new HttpClient
-            {
-                BaseAddress = new Uri("https://localhost:7002") // Assuming the service is mapped to port 7002 on the host
-            };
-
             var requestUri = "/api/coupons"; // Adjust the URI as needed for your API
 
             // Act
-            var response = await client.GetAsync(requestUri);
+            var response = await _client.GetAsync(requestUri);
 
             var jsonResponse = await response.Content.ReadAsStringAsync();
             var apiResponse = Unwrapper.Unwrap<ApiResponse>(jsonResponse);
@@ -78,15 +75,11 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTests
             #region [ Get Coupon By Id ]
 
             // Arrange
-            var client = new HttpClient
-            {
-                BaseAddress = new Uri("https://localhost:7002")
-            };
             var id = coupon.Id;
             var requestUri = $"/api/coupons/{id}";
 
             // Act
-            var response = await client.GetAsync(requestUri);
+            var response = await _client.GetAsync(requestUri);
             var jsonResponse = await response.Content.ReadAsStringAsync();
             var apiResponse = Unwrapper.Unwrap<ApiResponse>(jsonResponse);
             apiResponse.ValidateOk(); // This line covers if apiResponse.Result is null so we can use null forgiving operator on the next line
@@ -106,10 +99,6 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTests
             #region [ Create Coupon ]
 
             // Arrange
-            var client = new HttpClient
-            {
-                BaseAddress = new Uri("https://localhost:7002")
-            };
             var requestUri = "/api/coupons";
             var uniqueCode = "ffff2";
             var requestBody = new
@@ -124,7 +113,7 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTests
             var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
 
             // Act
-            var response = await client.PostAsync(requestUri, content);
+            var response = await _client.PostAsync(requestUri, content);
 
             // Assert
             response.EnsureSuccessStatusCode();
@@ -159,10 +148,6 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTests
             #region [ Update Coupon ]
 
             // Arrange
-            var client = new HttpClient
-            {
-                BaseAddress = new Uri("https://localhost:7002")
-            };
             var id = oldCoupon.Id;
             var requestUri = $"/api/coupons/{id}";
             var requestBody = new
@@ -178,7 +163,7 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTests
             var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
 
             // Act
-            var response = await client.PutAsync(requestUri, content);
+            var response = await _client.PutAsync(requestUri, content);
 
             // Assert
             response.EnsureSuccessStatusCode();
@@ -192,7 +177,7 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTests
             requestUri = $"/api/coupons/{id}";
 
             // Act
-            response = await client.GetAsync(requestUri);
+            response = await _client.GetAsync(requestUri);
             var jsonResponse = await response.Content.ReadAsStringAsync();
             var apiResponse = Unwrapper.Unwrap<ApiResponse>(jsonResponse);
             apiResponse.ValidateOk(); // This line covers if apiResponse.Result is null so we can use null forgiving operator on the next line
@@ -225,15 +210,11 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTests
             #region [ Delete Coupon ]
 
             // Arrange
-            var client = new HttpClient
-            {
-                BaseAddress = new Uri("https://localhost:7002")
-            };
             var id = coupon.Id;
             var requestUri = $"/api/coupons/{id}";
 
             // Act
-            var response = await client.DeleteAsync(requestUri);
+            var response = await _client.DeleteAsync(requestUri);
 
             // Assert
             response.EnsureSuccessStatusCode();

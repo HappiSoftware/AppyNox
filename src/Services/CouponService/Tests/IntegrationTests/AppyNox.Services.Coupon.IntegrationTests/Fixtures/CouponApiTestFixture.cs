@@ -31,6 +31,8 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTests.Fixtures
 
         public CouponDbContext DbContext { get; private set; }
 
+        public HttpClient Client { get; private set; }
+
         #endregion
 
         #region [ Public Constructors ]
@@ -42,6 +44,8 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTests.Fixtures
             ConfigureServices(_services);
             var serviceProvider = _services.BuildServiceProvider();
             DbContext = serviceProvider.GetRequiredService<CouponDbContext>();
+
+            Client = new HttpClient { BaseAddress = new(CouponURI) };
 
             AppyNox.Services.Coupon.Infrastructure.DependencyInjection.ApplyMigrations(serviceProvider);
 
@@ -70,15 +74,14 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTests.Fixtures
 
         #region [ Private Methods ]
 
-        private static async Task WaitForServiceHealth(string healthCheckUrl, int timeoutSeconds)
+        private async Task WaitForServiceHealth(string healthCheckUrl, int timeoutSeconds)
         {
-            var client = new HttpClient();
             var startTime = DateTime.UtcNow;
             while (DateTime.UtcNow - startTime < TimeSpan.FromSeconds(timeoutSeconds))
             {
                 try
                 {
-                    var response = await client.GetAsync(healthCheckUrl);
+                    var response = await Client.GetAsync(healthCheckUrl);
                     if (response.IsSuccessStatusCode)
                     {
                         return; // Service is healthy, exit the loop
