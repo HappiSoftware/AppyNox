@@ -29,4 +29,10 @@
     <ProjectReference Include="..\..\Services\.BaseService\AppyNox.Services.Base.API\AppyNox.Services.Base.API.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="ssl\gateway-service.pfx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
