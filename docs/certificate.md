@@ -83,6 +83,6 @@ openssl pkcs12 -export -out gateway-service.pfx -inkey gateway-service.key -in g
    After that execute:
 
    ```bash
-   docker exec -u root -it {your-docker-container}
+   docker exec -u root -it {your-docker-container} bash
    update-ca-certificates
    ```
