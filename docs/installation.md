@@ -114,7 +114,7 @@ If your docker-compose.override.yml didn't go under docker-compose.yml and locat
 <br>
 
 4. **AppSettings Files** <br>
-   Please follow to this page and configure the project in order to run it correctly: [Appsettings Configuartions](appsettings.md)
+   Please follow to this page and configure the project in order to run it correctly: [Appsettings Configurations](appsettings.md)
    <br>
 
 5. **Services you need to run on Docker container:**

@@ -3,6 +3,6 @@
   - [Installation](installation.md)
   - [Getting Started](started.md)
   - [SonarQube](sonar.md)
-  - [Appsettings Configuartions](appsettings.md)
+  - [Appsettings Configurations](appsettings.md)
 - Development Documentations
   - [Exception Handling](exception.md)
