@@ -33,8 +33,9 @@ services:
     environment:
      - ASPNETCORE_ENVIRONMENT=Production
      - ASPNETCORE_URLS=https://+:7000
-    depends_on:
-      - appynox.consul
+    volumes:
+     - ./src/Gateways/AppyNox.Gateway.OcelotGateway/ssl:/https
+     - ./src/Gateways/AppyNox.Gateway.OcelotGateway/ssl/crt:/usr/local/share/ca-certificates/
     ports:
      - "7000:7000"
     networks:
@@ -60,11 +61,14 @@ services:
       context: .
       dockerfile: src/Services/AuthenticationService/AppyNox.Services.Authentication.WebAPI/Dockerfile
     depends_on:
-      - authentication.db
-      - appynox.consul
+       authentication.db:
+          condition: service_started
     environment:
      - ASPNETCORE_ENVIRONMENT=Production
      - ASPNETCORE_URLS=https://+:7001
+    volumes:
+     - ./src/Services/AuthenticationService/AppyNox.Services.Authentication.WebAPI/ssl:/https
+     - ./src/Services/AuthenticationService/AppyNox.Services.Authentication.WebAPI/ssl/crt:/usr/local/share/ca-certificates/
     ports:
      - "7001:7001"
     networks:
@@ -90,11 +94,14 @@ services:
       context: .
       dockerfile: src/Services/CouponService/AppyNox.Services.Coupon.WebAPI/Dockerfile
     depends_on:
-      - coupon.db
-      - appynox.consul
+       coupon.db:
+          condition: service_started
     environment:
      - ASPNETCORE_ENVIRONMENT=Production
      - ASPNETCORE_URLS=https://+:7002
+    volumes:
+     - ./src/Services/CouponService/AppyNox.Services.Coupon.WebAPI/ssl:/https
+     - ./src/Services/CouponService/AppyNox.Services.Coupon.WebAPI/ssl/crt:/usr/local/share/ca-certificates/
     ports:
      - "7002:7002"
     networks:
