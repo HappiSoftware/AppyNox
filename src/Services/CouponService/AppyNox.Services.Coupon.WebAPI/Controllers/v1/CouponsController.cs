@@ -7,6 +7,7 @@ using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
 using AppyNox.Services.Coupon.Application.Services.Implementations;
 using AppyNox.Services.Coupon.Application.Services.Interfaces;
 using AppyNox.Services.Coupon.Domain.Entities;
+using AppyNox.Services.Coupon.WebAPI.Helpers.Permissions;
 using Asp.Versioning;
 using AutoWrapper.Extensions;
 using AutoWrapper.Wrappers;
@@ -47,6 +48,7 @@ namespace AppyNox.Services.Coupon.WebAPI.Controllers.v1
         }
 
         [HttpGet("{id}")]
+        [Authorize(Permissions.Coupons.View)]
         public async Task<ApiResponse> GetById(Guid id, [FromQuery] QueryParametersViewModel queryParameters)
         {
             var coupon = await _couponService.GetByIdAsync(id, queryParameters);
@@ -54,6 +56,7 @@ namespace AppyNox.Services.Coupon.WebAPI.Controllers.v1
         }
 
         [HttpPost]
+        [Authorize(Permissions.Coupons.Create)]
         public async Task<IActionResult> Create([FromBody] dynamic couponDto, string detailLevel = "Simple")
         {
             var result = await _couponService.AddAsync(couponDto, detailLevel);
@@ -61,6 +64,7 @@ namespace AppyNox.Services.Coupon.WebAPI.Controllers.v1
         }
 
         [HttpPut("{id}")]
+        [Authorize(Permissions.Coupons.Edit)]
         public async Task<IActionResult> Update(Guid id, [FromBody] CouponSimpleUpdateDto couponDto)
         {
             if (id != couponDto.Id)
@@ -75,6 +79,7 @@ namespace AppyNox.Services.Coupon.WebAPI.Controllers.v1
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Permissions.Coupons.Delete)]
         public async Task<IActionResult> Delete(Guid id)
         {
             var coupon = await _couponService.GetByIdAsync(id, QueryParameters.CreateForIdOnly());

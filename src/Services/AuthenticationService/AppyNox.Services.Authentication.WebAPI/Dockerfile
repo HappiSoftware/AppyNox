@@ -5,6 +5,7 @@ USER app
 WORKDIR /app
 EXPOSE 7001
 
+USER app
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Production
 WORKDIR /src

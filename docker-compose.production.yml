@@ -1,13 +1,18 @@
 version: '3.8'
 
 networks:
-  nox_test_network:
+  nox_network:
     driver: overlay
 
 volumes:
   app_data:
 
 services:
+
+  appynox-rabbitmq-service:
+    networks:
+        - nox_network
+
   appynox-consul:
     deploy:
       replicas: 1
@@ -17,7 +22,7 @@ services:
       restart_policy:
         condition: on-failure
     networks:
-        - nox_test_network
+        - nox_network
 
   appynox-gateway-ocelotgateway:
     deploy:
@@ -28,18 +33,11 @@ services:
       restart_policy:
         condition: on-failure
     networks:
-        - nox_test_network
+        - nox_network
 
-  appynox-authentication-test-db:
-    image: postgres:latest
-    environment:
-      POSTGRES_DB: AppyNox_Authentication_Test
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: auth_password
-    volumes:
-      - app_data:/var/lib/authenticationtestdb/data
+  appynox-authentication-db:
     networks:
-      - nox_test_network
+        - nox_network
 
   appynox-services-authentication-webapi:
     deploy:
@@ -50,18 +48,11 @@ services:
       restart_policy:
         condition: on-failure
     networks:
-        - nox_test_network
+        - nox_network
 
-  appynox-coupon-test-db:
-    image: postgres:latest
-    environment:
-      POSTGRES_DB: AppyNox_Coupon_Test
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: coupon_password
-    volumes:
-      - app_data:/var/lib/coupontestdb/data
+  appynox-coupon-db:
     networks:
-      - nox_test_network
+        - nox_network
 
   appynox-services-coupon-webapi:
     deploy:
@@ -72,4 +63,4 @@ services:
       restart_policy:
         condition: on-failure
     networks:
-        - nox_test_network
+        - nox_network

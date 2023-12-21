@@ -1,0 +1,88 @@
+version: '3.8'
+
+networks:
+  nox_network:
+    driver: bridge
+
+volumes:
+  app_data:
+
+services:
+  appynox-rabbitmq-service:
+    networks:
+      - nox_network
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: always
+
+  appynox-consul:
+    networks:
+      - nox_network
+    healthcheck:
+      test: ["CMD", "consul", "info"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: always
+
+  appynox-gateway-ocelotgateway:
+    build:
+      context: .
+      dockerfile: src/Gateways/AppyNox.Gateway.OcelotGateway/Dockerfile
+    ports:
+     - "7000:443"
+    networks:
+      - nox_network
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail https://localhost:7000/health || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: always
+
+  appynox-authentication-db:
+    restart: always
+    networks:
+      - nox_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  appynox-services-authentication-webapi:
+    build:
+      context: .
+      dockerfile: src/Services/AuthenticationService/AppyNox.Services.Authentication.WebAPI/Dockerfile
+    networks:
+     - nox_network
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail http://localhost:7001/api/health || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  appynox-coupon-db:
+    restart: always
+    networks:
+      - nox_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  appynox-services-coupon-webapi:
+    build:
+      context: .
+      dockerfile: src/Services/CouponService/AppyNox.Services.Coupon.WebAPI/Dockerfile
+    networks:
+     - nox_network
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail http://localhost:7002/api/health || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 20

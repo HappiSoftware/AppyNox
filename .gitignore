@@ -237,6 +237,7 @@ ClientBin/
 *.dbproj.schemaview
 *.jfm
 *.pfx
+*.crt
 *.publishsettings
 orleans.codegen.cs
 
@@ -364,6 +365,7 @@ FodyWeavers.xsd
 
 # appsettings
 appsettings.Development.json
+appsettings.Staging.json
 appsettings.Production.json
 
 # Sonar
@@ -372,7 +374,6 @@ appsettings.Production.json
 # Docker
 docker-compose.override.yml
 
-# DeveloperWorkspace use this directory for your personel projects such as testing new features etc.
-/src/DeveloperWorkspace
-/src/Gateways/AppyNox.Gateway.OcelotGateway/Configurations/ocelot.Development.json
-/src/Gateways/AppyNox.Gateway.OcelotGateway/Configurations/ocelot.Production.json
+ocelot.Development.json
+ocelot.Staging.json
+ocelot.Production.json

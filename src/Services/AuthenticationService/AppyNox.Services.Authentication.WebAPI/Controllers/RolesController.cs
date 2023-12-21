@@ -1,10 +1,8 @@
 ﻿using AppyNox.Services.Authentication.Application.Dtos.ClaimDtos.Models.Base;
 using AppyNox.Services.Authentication.Application.Dtos.IdentityRoleDtos.Models.Base;
 using AppyNox.Services.Authentication.Application.Dtos.IdentityRoleDtos.Models.Extended;
-using AppyNox.Services.Authentication.WebAPI.Controllers.Base;
 using AppyNox.Services.Authentication.WebAPI.Filters;
 using AppyNox.Services.Base.API.ViewModels;
-using AppyNox.Services.Base.Application.DtoUtilities;
 using Asp.Versioning;
 using AutoMapper;
 using AutoWrapper.Wrappers;
@@ -21,7 +19,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
     [ApiVersion("1.0")]
     [ApiController]
     [JwtTokenValidate]
-    public class RolesController : BaseController
+    public class RolesController : ControllerBase
     {
         #region [ Fields ]
 
@@ -36,7 +34,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
         #region [ Public Constructors ]
 
         public RolesController(IMapper mapper, RoleManager<IdentityRole> roleManager,
-            IRoleValidator<IdentityRole> roleValidator, IDtoMappingRegistryBase dtoMappingRegistry) : base(dtoMappingRegistry, mapper)
+            IRoleValidator<IdentityRole> roleValidator)
         {
             _mapper = mapper;
             _roleManager = roleManager;
@@ -55,7 +53,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
             object response = new
             {
                 count = _roleManager.Roles.Count().ToString(),
-                roles = GetMappedList(entities, queryParameters)
+                roles = _mapper.Map(entities, entities.GetType(), typeof(List<IdentityRoleDto>))
             };
 
             return new ApiResponse(response);
@@ -72,7 +70,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
             {
                 throw new ApiProblemDetailsException("Not Found", 404);
             }
-            return new ApiResponse(_mapper.Map(identityRole, identityRole.GetType(), CreateProjection<IdentityRole>(queryParameters)));
+            return new ApiResponse(_mapper.Map(identityRole, identityRole.GetType(), typeof(IdentityRoleDto)));
         }
 
         [HttpPut("{id}")]

@@ -3,11 +3,9 @@ using AppyNox.Services.Authentication.Application.Dtos.IdentityUserDtos.Models.B
 using AppyNox.Services.Authentication.Application.Dtos.IdentityUserDtos.Models.Extended;
 using AppyNox.Services.Authentication.Application.Validators.IdentityUser;
 using AppyNox.Services.Authentication.WebAPI.ControllerDependencies;
-using AppyNox.Services.Authentication.WebAPI.Controllers.Base;
 using AppyNox.Services.Authentication.WebAPI.Filters;
 using AppyNox.Services.Authentication.WebAPI.Utilities;
 using AppyNox.Services.Base.API.ViewModels;
-using AppyNox.Services.Base.Application.DtoUtilities;
 using Asp.Versioning;
 using AutoWrapper.Wrappers;
 using Microsoft.AspNetCore.Authorization;
@@ -21,7 +19,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
     [ApiVersion("1.0")]
     [ApiController]
     [JwtTokenValidate]
-    public class UsersController : BaseController
+    public class UsersController : ControllerBase
     {
         #region [ Fields ]
 
@@ -34,7 +32,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
         #region [ Public Constructors ]
 
         public UsersController(UsersControllerBaseDependencies usersControllerBaseDependencies,
-            IdentityUserCreateDtoValidator identityUserCreateDtoValidator, IDtoMappingRegistryBase dtoMappingRegistry) : base(dtoMappingRegistry, usersControllerBaseDependencies.Mapper)
+            IdentityUserCreateDtoValidator identityUserCreateDtoValidator)
         {
             _baseDependencies = usersControllerBaseDependencies;
             _identityUserCreateDtoValidator = identityUserCreateDtoValidator;
@@ -52,7 +50,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
             object response = new
             {
                 count = _baseDependencies.UserManager.Users.Count().ToString(),
-                roles = GetMappedList(entities, queryParameters)
+                roles = _baseDependencies.Mapper.Map(entities, entities.GetType(), typeof(List<IdentityUserDto>))
             };
 
             return new ApiResponse(response);
@@ -70,7 +68,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
                 throw new ApiProblemDetailsException("Not Found", 404);
             }
 
-            return new ApiResponse(_baseDependencies.Mapper.Map(identityUser, CreateProjection<IdentityUser>(queryParameters)));
+            return new ApiResponse(_baseDependencies.Mapper.Map(identityUser, identityUser.GetType(), typeof(IdentityUserDto)));
         }
 
         [HttpPut("{id}")]

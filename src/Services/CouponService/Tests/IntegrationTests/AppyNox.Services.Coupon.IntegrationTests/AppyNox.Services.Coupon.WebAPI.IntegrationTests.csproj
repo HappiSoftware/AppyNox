@@ -33,19 +33,10 @@
   </ItemGroup>
 
 	<ItemGroup>
-		<None Include="docker-compose.override.yml">
-			<DependentUpon>docker-compose.yml</DependentUpon>
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
 		<None Include="docker-compose.yml">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>
-
-	<ItemGroup>
-	  <None Update="ssl\coupon-service.pfx">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	</ItemGroup>
+	
 
 </Project>

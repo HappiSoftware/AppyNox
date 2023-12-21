@@ -33,7 +33,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="ssl\" />
+	  <None Update="ssl\coupon-service.pfx">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="ssl\crt\coupon-service.crt">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
 	</ItemGroup>
 
 </Project>

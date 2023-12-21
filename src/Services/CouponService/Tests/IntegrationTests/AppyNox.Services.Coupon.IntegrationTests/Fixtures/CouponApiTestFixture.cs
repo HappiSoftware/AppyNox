@@ -19,21 +19,23 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTests.Fixtures
 {
     public class CouponApiTestFixture : DockerComposeTestBase
     {
-        #region Fields
+        #region [ Fields ]
 
         private readonly ServiceCollection _services;
 
         #endregion
 
-        #region Properties
+        #region [ Properties ]
 
         public readonly string CouponURI = "https://localhost:7002";
 
         public CouponDbContext DbContext { get; private set; }
 
+        public HttpClient Client { get; private set; }
+
         #endregion
 
-        #region Public Constructors
+        #region [ Public Constructors ]
 
         public CouponApiTestFixture()
         {
@@ -42,6 +44,8 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTests.Fixtures
             var serviceProvider = _services.BuildServiceProvider();
             DbContext = serviceProvider.GetRequiredService<CouponDbContext>();
 
+            Client = new HttpClient { BaseAddress = new(CouponURI) };
+
             AppyNox.Services.Coupon.Infrastructure.DependencyInjection.ApplyMigrations(serviceProvider);
 
             WaitForServiceHealth($"{CouponURI}/health-check", 60).GetAwaiter().GetResult();
@@ -49,7 +53,7 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTests.Fixtures
 
         #endregion
 
-        #region Protected Methods
+        #region [ Protected Methods ]
 
         protected override ICompositeService Build()
         {
@@ -67,17 +71,16 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTests.Fixtures
 
         #endregion
 
-        #region Private Methods
+        #region [ Private Methods ]
 
         private async Task WaitForServiceHealth(string healthCheckUrl, int timeoutSeconds)
         {
-            var client = new HttpClient();
             var startTime = DateTime.UtcNow;
             while (DateTime.UtcNow - startTime < TimeSpan.FromSeconds(timeoutSeconds))
             {
                 try
                 {
-                    var response = await client.GetAsync(healthCheckUrl);
+                    var response = await Client.GetAsync(healthCheckUrl);
                     if (response.IsSuccessStatusCode)
                     {
                         return; // Service is healthy, exit the loop
@@ -94,13 +97,13 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTests.Fixtures
             throw new Exception("Service did not become healthy in time");
         }
 
-        private void ConfigureServices(IServiceCollection services)
+        private static void ConfigureServices(IServiceCollection services)
         {
             // Build the connection string from api appsettings.json
             IConfiguration config = new ConfigurationBuilder()
                 .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), @"../../../../../../AppyNox.Services.Coupon.WebAPI"))
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .AddJsonFile($"appsettings.Production.json", optional: true)
+                .AddJsonFile($"appsettings.Staging.json", optional: true)
                 .AddEnvironmentVariables()
                 .Build();
             var connectionString = config.GetConnectionString("TestConnection") ?? throw new InvalidOperationException("Connection string for CouponDb is missing.");

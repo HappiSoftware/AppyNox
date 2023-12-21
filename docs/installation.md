@@ -48,150 +48,16 @@ Check Existing SSH keys (OR) Create a new key
 <br>
 
 2. **SSL Certificates** <br>
-   After cloning the repository, add development SSL certificates to the services for running them in a Docker container. Run the following commands to generate and trust the SSL certificates:
-
-```bash
-dotnet dev-certs https -ep .\src\Services\CouponService\AppyNox.Services.Coupon.WebAPI\ssl\coupon-service.pfx -p happi2023
-dotnet dev-certs https -ep .\src\Services\AuthenticationService\AppyNox.Services.Authentication.WebAPI\ssl\authentication-service.pfx -p happi2023
-dotnet dev-certs https --trust
-```
+   Please follow to this page and create ssl files in order to run it correctly: [SSL Certificates](certificate.md)
+   <br>
 
 <br>
 
-3. **docker-compose.override.yml** <br>
-   Create a docker-compose.override.yml file (gitignored) to contain connection strings. Fill it with the appropriate content for each service.
-   **Example Content:**
+3. **AppSettings Files** <br>
+   Please follow to this page and configure the project in order to run it correctly: [Appsettings Configurations](appsettings.md)
+   <br>
 
-```yml
-version: "3.4"
-services:
-  appynox.services.authentication.webapi:
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Production
-      - ASPNETCORE_HTTPS_PORTS=7001
-      - ConnectionStrings__DefaultConnection=User ID={your db user};Password={your db password};Server=authentication.db;Port=5432;Database=AppyNox_Authentication;IntegratedSecurity=true;Pooling=true
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/authentication-service.pfx
-      - ASPNETCORE_Kestrel__Certificates__Default__Password={your certificate password}
-    ports:
-      - "7001:7001"
-    volumes:
-      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
-      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
-
-  appynox.services.coupon.webapi:
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Production
-      - ASPNETCORE_HTTPS_PORTS=7002
-      - ConnectionStrings__DefaultConnection=User ID={your db user};Password={your db password};Server=coupon.db;Port=5432;Database=AppyNox_Coupon;IntegratedSecurity=true;Pooling=true
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/coupon-service.pfx
-      - ASPNETCORE_Kestrel__Certificates__Default__Password={your certificate password}
-    ports:
-      - "7002:7002"
-    volumes:
-      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
-      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
-```
-
-<br>
-<br>
-
-If your docker-compose.override.yml didn't go under docker-compose.yml and located in the same level you can check the following in docker-compose settings:
-
-```
-<ItemGroup>
-  <None Include="docker-compose.override.yml">
-    <DependentUpon>docker-compose.yml</DependentUpon>
-  </None>
-  <None Include="docker-compose.yml" />
-  <None Include=".dockerignore" />
-</ItemGroup>
-```
-
-<br>
-
-![docker-compose-override](_media/docker-compose.override.png)
-
-<br>
-
-4. **AppSettings Files** <br>
-   Create appsettings.Production.json files for both services. Customize the content with your database and JWT settings.
-
-CouponService appsettings.Production.json :
-
-```json
-{
-  "Logging": {
-    "LogLevel": {
-      "Default": "Error",
-      "Microsoft.AspNetCore": "Error"
-    }
-  },
-  "ConnectionStrings": {
-    "DefaultConnection": "User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_Coupon;Pooling=true",
-    "TestDbConnection": "User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_Coupon_Test;Pooling=true"
-  },
-  "JwtSettings": {
-    "SecretKey": "vA+A/of8yadsbwe/CmS6PD0Kp837BozrQFMDuQ2Kwwg=",
-    "Issuer": "AuthServerV1",
-    "Audience": "AppyNoxBasic"
-  },
-  "ConsulConfig": {
-    "Address": "http://localhost:8500"
-  },
-  "Consul": {
-    "ServiceId": "CouponService",
-    "ServiceName": "CouponService",
-    "Scheme": "https",
-    "ServiceHost": "localhost",
-    "ServicePort": 7002,
-    "Tags": [ "Coupon", "Coupons" ],
-    "HealthCheckUrl": "health-check",
-    "HealthCheckIntervalSeconds": 30,
-    "HealthCheckTimeoutSeconds": 5
-  }
-}
-```
-
-<br>
-
-AuthenticationService appsettings.Production.json:
-
-```json
-{
-  "Logging": {
-    "LogLevel": {
-      "Default": "Information",
-      "Microsoft.AspNetCore": "Warning"
-    }
-  },
-  "ConnectionStrings": {
-    "DefaultConnection": "User ID=postgres;Password=auth_password;Server=authentication.db;Port=5432;Database=AppyNox_Authentication;IntegratedSecurity=true;Pooling=true"
-  },
-  "JwtSettings": {
-    "SecretKey": "{your secret key}",
-    "Issuer": "AuthServerV1",
-    "Audience": "AppyNoxBasic"
-  },
-  "ConsulConfig": {
-    "Address": "http://localhost:8500"
-  },
-  "Consul": {
-    "ServiceId": "IdentityService",
-    "ServiceName": "IdentityService",
-    "Scheme": "https",
-    "ServiceHost": "localhost",
-    "ServicePort": 7001,
-    "Tags": [ "Identity", "Authentication", "JWT" ],
-    "HealthCheckUrl": "health-check",
-    "HealthCheckIntervalSeconds": 30,
-    "HealthCheckTimeoutSeconds": 5
-  }
-}
-```
-
-<br>
-
-5. **Services you need to run on Docker container:**
+4. **Services you need to run on Docker container:**
 
 ```
     RabbitMQ
@@ -222,8 +88,18 @@ AuthenticationService appsettings.Production.json:
 
 <br>
 
-6. With everything set up, select Docker as the startup project and run the solution. This will launch the AppyNox services in Docker containers.
-   <br>
-   <br>
+<br>
+
+5. **Prepare docker-compose**
+
+Create `docker-compose.override.yml` and copy the content of `docker-compose-development.yml`. Since `docker-compose.override.yml` is **gitignored** you can also change the configurations gitignored.
+
+<br>
+
+6. **Launch AppyNox**
+
+With everything set up, select Docker as the startup project and run the solution. This will launch the AppyNox services in Docker containers. If you want to use DockerSwarm please navigate to [DockerSwarm](dockerswarm.md).
+<br>
+<br>
 
 **These steps ensure a smooth setup for AppyNox services. Adjust the configurations based on your specific requirements.**

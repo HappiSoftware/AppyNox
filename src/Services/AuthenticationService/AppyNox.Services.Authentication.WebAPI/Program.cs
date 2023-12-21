@@ -1,10 +1,11 @@
-using AppyNox.Services.Authentication.Application.Dtos.DtoUtilities;
 using AppyNox.Services.Authentication.Infrastructure.Data;
 using AppyNox.Services.Authentication.WebAPI.Configuration;
+using AppyNox.Services.Authentication.WebAPI.ControllerDependencies;
 using AppyNox.Services.Authentication.WebAPI.Helpers;
 using AppyNox.Services.Authentication.WebAPI.Managers.Implementations;
 using AppyNox.Services.Authentication.WebAPI.Managers.Interfaces;
 using AppyNox.Services.Authentication.WebAPI.Utilities;
+using AppyNox.Services.Base.API.Helpers;
 using AppyNox.Services.Base.Domain.Common;
 using Asp.Versioning;
 using AutoWrapper;
@@ -20,29 +21,6 @@ using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
-
-#region [ SSL Configuration ]
-
-builder.WebHost.ConfigureKestrel(serverOptions =>
-{
-    string fileName = string.Empty;
-
-    if (builder.Environment.IsDevelopment())
-    {
-        fileName = Directory.GetCurrentDirectory() + "/ssl/authentication-service.pfx";
-    }
-    else if (builder.Environment.IsProduction())
-    {
-        fileName = "/https/authentication-service.pfx";
-    }
-
-    serverOptions.ConfigureEndpointDefaults(listenOptions =>
-    {
-        listenOptions.UseHttps(fileName ?? throw new InvalidOperationException("SSL certificate file path could not be determined."), "happi2023");
-    });
-});
-
-#endregion
 
 // Add services to the container.
 builder.Services.AddControllers();
@@ -97,13 +75,14 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Password.RequireLowercase = true;
 });
 
-AppyNox.Services.Authentication.Infrastructure.DependencyInjection.ConfigureServices(builder.Services, configuration);
+AppyNox.Services.Authentication.Infrastructure.DependencyInjection.ConfigureServices(builder.Services, configuration, builder.Environment.GetEnvironment());
 AppyNox.Services.Authentication.Application.DependencyInjection.ConfigureServices(builder.Services, configuration);
 
 builder.Services.AddHealthChecks();
 
 builder.Services.AddScoped<PasswordValidator<IdentityUser>>();
 builder.Services.AddScoped<PasswordHasher<IdentityUser>>();
+builder.Services.AddScoped<UsersControllerBaseDependencies>();
 
 #region [ Jwt Settings ]
 
@@ -172,6 +151,6 @@ app.UseApiResponseAndExceptionWrapper(new AutoWrapperOptions { UseApiProblemDeta
 
 AppyNox.Services.Authentication.Infrastructure.DependencyInjection.ApplyMigrations(app.Services);
 
-app.UseHealthChecks("/health-check");
+app.UseHealthChecks("/api/health");
 
 app.Run();

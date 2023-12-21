@@ -36,7 +36,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers.Authentication
         #region [ JWT Operations ]
 
         [HttpPost]
-        [Route("/connect/token")]
+        [Route("api/connect/token")]
         public async Task<ApiResponse> Authenticate([FromBody] LoginDto userCredential)
         {
             var validationResult = await _loginDtoValidator.ValidateAsync(userCredential);
@@ -57,20 +57,20 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers.Authentication
         }
 
         [HttpGet]
-        [Route("/verifytoken/{token}")]
+        [Route("api/verifytoken/{token}")]
         public ApiResponse Verify(string token)
         {
             return new ApiResponse(_customTokenManager.VerifyToken(token), 200);
         }
 
         [HttpGet]
-        [Route("/getuserinfo")]
+        [Route("api/getuserinfo")]
         public ApiResponse GetUserInfoByToken(string token)
         {
             return new ApiResponse(_customTokenManager.GetUserInfoByToken(token), 200);
         }
 
-        [HttpPost("refresh")]
+        [HttpPost("api/refresh")]
         public async Task<ApiResponse> Refresh([FromBody] RefreshTokenDto model)
         {
             var userId = _customTokenManager.GetUserInfoByToken(model.Token);

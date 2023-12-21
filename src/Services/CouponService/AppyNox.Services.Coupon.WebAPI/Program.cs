@@ -1,3 +1,4 @@
+using AppyNox.Services.Base.API.Helpers;
 using AppyNox.Services.Base.API.Middleware;
 using AppyNox.Services.Base.Domain.Common;
 using AppyNox.Services.Coupon.WebAPI.Helpers;
@@ -13,29 +14,6 @@ using NLog.Web;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
-
-#region [ SSL Configuration ]
-
-builder.WebHost.ConfigureKestrel(serverOptions =>
-{
-    string fileName = string.Empty;
-
-    if (builder.Environment.IsDevelopment())
-    {
-        fileName = Directory.GetCurrentDirectory() + "/ssl/coupon-service.pfx";
-    }
-    else if (builder.Environment.IsProduction())
-    {
-        fileName = "/https/coupon-service.pfx";
-    }
-
-    serverOptions.ConfigureEndpointDefaults(listenOptions =>
-    {
-        listenOptions.UseHttps(fileName ?? throw new InvalidOperationException("SSL certificate file path could not be determined."), "happi2023");
-    });
-});
-
-#endregion
 
 // Add services to the container.
 builder.Services.AddControllers();
@@ -68,7 +46,7 @@ builder.Services.Configure<ConsulConfig>(configuration.GetSection("consul"));
 
 builder.Services.AddHealthChecks();
 
-AppyNox.Services.Coupon.Infrastructure.DependencyInjection.ConfigureServices(builder.Services, configuration);
+AppyNox.Services.Coupon.Infrastructure.DependencyInjection.ConfigureServices(builder.Services, configuration, builder.Environment.GetEnvironment());
 AppyNox.Services.Coupon.Application.DependencyInjection.ConfigureServices(builder.Services, configuration);
 
 #region [ JWT Configuration ]
@@ -163,6 +141,6 @@ app.UseMiddleware<QueryParameterValidateMiddleware>();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 AppyNox.Services.Coupon.Infrastructure.DependencyInjection.ApplyMigrations(app.Services);
 
-app.UseHealthChecks("/health-check");
+app.UseHealthChecks("/api/health");
 
 app.Run();
