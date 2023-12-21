@@ -1,102 +1,70 @@
-version: '3.4'
-
-networks:
-  dev:
-    driver: bridge
+version: '3.8'
 
 volumes:
   app_data:
 
 services:
-  rabbitmq.service:
+  appynox-rabbitmq-service:
     image: rabbitmq:latest
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
-    ports:
-      - "5672:5672"
-      - "15672:15672"
+    restart: on-failure
 
-  appynox.consul:
+  appynox-consul:
     image: "hashicorp/consul:latest"
-    ports:
-      - "8500:8500"
-      - "8600:8600/udp"
-    networks:
-      - dev
 
-  appynox.gateway.ocelotgateway:
+  appynox-gateway-ocelotgateway:
     image: ${DOCKER_REGISTRY-}appynoxgatewayocelotgateway
-    build:
-      context: .
-      dockerfile: src/Gateways/AppyNox.Gateway.OcelotGateway/Dockerfile
     environment:
      - ASPNETCORE_ENVIRONMENT=Production
      - ASPNETCORE_URLS=https://+:7000
     depends_on:
-      - appynox.consul
+        - appynox-consul
+    volumes:
+     - ./src/Gateways/AppyNox.Gateway.OcelotGateway/ssl:/https
+     - ./src/Gateways/AppyNox.Gateway.OcelotGateway/ssl/crt:/usr/local/share/ca-certificates/
     ports:
-     - "7000:7000"
-    networks:
-      - dev
+     - "443:7000"
 
-  authentication.db:
+  appynox-authentication-db:
     image: postgres:latest
     environment:
       POSTGRES_DB: AppyNox_Authentication
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: auth_password
-    restart: always
-    ports:
-      - "5433:5432"
     volumes:
       - app_data:/var/lib/authenticationdb/data
-    networks:
-      - dev
 
-  appynox.services.authentication.webapi:
+  appynox-services-authentication-webapi:
     image: ${DOCKER_REGISTRY-}appynoxservicesauthenticationwebapi
-    build:
-      context: .
-      dockerfile: src/Services/AuthenticationService/AppyNox.Services.Authentication.WebAPI/Dockerfile
     depends_on:
-      - authentication.db
-      - appynox.consul
+        - appynox-consul
+        - appynox-authentication-db
     environment:
      - ASPNETCORE_ENVIRONMENT=Production
-     - ASPNETCORE_URLS=https://+:7001
-    ports:
-     - "7001:7001"
-    networks:
-     - dev
+     - ASPNETCORE_URLS=http://+:7001
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
 
-  coupon.db:
+  appynox-coupon-db:
     image: postgres:latest
     environment:
       POSTGRES_DB: AppyNox_Coupon
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: coupon_password
-    restart: always
-    ports:
-      - "5434:5432"
     volumes:
       - app_data:/var/lib/coupondb/data
-    networks:
-      - dev
 
-  appynox.services.coupon.webapi:
+  appynox-services-coupon-webapi:
     image: ${DOCKER_REGISTRY-}appynoxservicescouponwebapi
-    build:
-      context: .
-      dockerfile: src/Services/CouponService/AppyNox.Services.Coupon.WebAPI/Dockerfile
     depends_on:
-      - coupon.db
-      - appynox.consul
+        - appynox-consul
+        - appynox-coupon-db
     environment:
      - ASPNETCORE_ENVIRONMENT=Production
-     - ASPNETCORE_URLS=https://+:7002
-    ports:
-     - "7002:7002"
-    networks:
-     - dev
-
+     - ASPNETCORE_URLS=http://+:7002
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro

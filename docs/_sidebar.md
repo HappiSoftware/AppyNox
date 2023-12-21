@@ -3,7 +3,8 @@
   - [Installation](installation.md)
   - [Getting Started](started.md)
   - [SonarQube](sonar.md)
-  - [SSL Certificates](certificate.md)
+  - [SSL Certificate](certificate.md)
   - [Appsettings Configurations](appsettings.md)
+  - [Docker Swarm](dockerswarm.md)
 - Development Documentations
   - [Exception Handling](exception.md)

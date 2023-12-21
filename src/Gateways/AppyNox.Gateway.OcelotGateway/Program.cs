@@ -16,11 +16,11 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
 
     if (builder.Environment.IsDevelopment())
     {
-        fileName = Directory.GetCurrentDirectory() + "/ssl/gateway-service.pfx";
+        fileName = Directory.GetCurrentDirectory() + "/ssl/appynox.pfx";
     }
     else if (builder.Environment.IsProduction() || builder.Environment.IsStaging())
     {
-        fileName = "/https/gateway-service.pfx";
+        fileName = "/https/appynox.pfx";
     }
 
     serverOptions.ConfigureEndpointDefaults(listenOptions =>
@@ -34,6 +34,8 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
 builder.Configuration.SetBasePath(builder.Environment.ContentRootPath)
     .AddJsonFile($"Configurations/ocelot.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: true)
     .AddEnvironmentVariables();
+
+builder.Services.AddHealthChecks();
 
 #region [ Logger Setup ]
 
@@ -53,6 +55,8 @@ var app = builder.Build();
 app.UseMiddleware<CorrelationIdMiddleware>();
 
 app.UseMiddleware<LoggingMiddleware>();
+
+app.MapHealthChecks("/health");
 
 await app.UseOcelot();
 

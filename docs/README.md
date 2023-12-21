@@ -1,4 +1,4 @@
-# Introduction
+# AppyNox - Microservice Template
 
 [![ASP.NET Core](https://img.shields.io/badge/ASP.NET%20Core-latest-brightgreen.svg)](https://docs.microsoft.com/en-us/aspnet/core)
 [![Entity Framework Core](https://img.shields.io/badge/Entity%20Framework%20Core-Latest-brightgreen.svg)](https://docs.microsoft.com/en-us/ef/core/)
@@ -6,29 +6,22 @@
 [![AutoMapper](https://img.shields.io/badge/AutoMapper-Latest-brightgreen.svg)](https://automapper.org/)
 [![AutoWrapper](https://img.shields.io/badge/AutoWrapper-Latest-brightgreen.svg)](https://github.com/proudmonkey/AutoWrapper)
 [![Docker](https://img.shields.io/badge/Docker-Latest-brightgreen.svg)](https://www.docker.com/)
+[![Docker Compose](https://img.shields.io/badge/Docker_Compose-Latest-brightgreen.svg)](https://docs.docker.com/compose/)
+[![Docker Swarm](https://img.shields.io/badge/Docker_Swarm-Latest-brightgreen.svg)](https://docs.docker.com/engine/swarm/)
 
-**AppyNox** - Microservice Template
-
-AppyNox is a microservice template that emphasizes clean code, lightweight architecture, and follows best practices in software development. It is designed with a focus on Onion Architecture, Domain-Driven Design (DDD), and Test-Driven Design (TDD). The project adheres to the latest versions of libraries and frameworks, providing a solid foundation for building microservices.
+AppyNox is a cutting-edge microservice template emphasizing clean code, lightweight architecture, and adherence to best practices in software development. Designed with Onion Architecture, Domain-Driven Design (DDD), and Test-Driven Design (TDD) at its core, AppyNox integrates the latest versions of essential libraries and frameworks. The introduction of Docker Compose for building images and Docker Swarm for deployment enhances its robust infrastructure, making it ideal for building and managing microservices.
 
 **Features**
 
-- **Onion Architecture:** AppyNox follows the principles of Onion Architecture, promoting a modular and maintainable codebase.
-
-- **Domain-Driven Design (DDD):** DDD principles are incorporated to ensure that the design of the software reflects the domain it is built for.
-
-- **Test-Driven Design (TDD):** Writing tests before implementing the functionality ensures the reliability and correctness of the codebase.
-
-- **Latest Versions:** The project stays up-to-date with the latest versions of libraries and frameworks, leveraging the newest features and improvements.
-
-- **Clean Code:** Emphasis on writing clean, readable, and maintainable code. Complex code bases are avoided in favor of simplicity.
-
-- **Lightweight:** Prioritizing lightweight solutions to keep the codebase nimble and efficient.
-
-- **Infrastructure Focus:** AppyNox aims to be a good infrastructure for HappiSoftware microservices, providing a solid foundation for future projects.
-
-- **Not a Third-Party Framework:** AppyNox is not intended to be a third-party framework. Instead, it uses common frameworks and libraries to serve as a robust base for HappiSoftware microservices.
-
+- **Onion Architecture:** Modular and maintainable codebase following Onion Architecture principles.
+- **Domain-Driven Design (DDD):** Incorporates DDD for a design that reflects the domain's needs.
+- **Test-Driven Design (TDD):** Ensures code reliability and correctness by writing tests before implementation.
+- **Latest Versions:** Stays updated with the latest library and framework versions.
+- **Clean Code:** Focus on clean, readable, and maintainable code, avoiding unnecessary complexity.
+- **Lightweight Architecture:** Emphasizes lightweight solutions for efficiency.
+- **Docker Integration:** Utilizes Docker Compose for image building and Docker Swarm for deployment, offering a scalable and reliable containerized environment.
+- **Infrastructure Focus:** Provides a solid infrastructure foundation for HappiSoftware microservices.
+- **Not a Third-Party Framework:** Leverages common frameworks and libraries for a robust base, not intended as a third-party framework.
 
 **[CHANGELOG](https://github.com/HappiSoftware/AppyNox/blob/master/CHANGELOG.md)**
 

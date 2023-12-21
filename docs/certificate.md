@@ -1,4 +1,4 @@
-# SSL Certificates
+# SSL Certificate
 
 After cloning the repository, add development SSL certificates to the services for running them in a Docker container. Run the following commands to generate and trust the SSL certificates:
 
@@ -44,10 +44,8 @@ CN = localhost
 subjectAltName = @alt_names
 
 [alt_names]
-DNS.1 = appynox.gateway.ocelotgateway
-DNS.2 = appynox.consul
-DNS.3 = appynox.services.authentication.webapi
-DNS.4 = appynox.services.coupon.webapi
+DNS.1 = localhost
+DNS.2 = appynox-gateway-ocelotgateway
 ```
 
 </details>
@@ -59,30 +57,19 @@ DNS.4 = appynox.services.coupon.webapi
 Run the following codes in the terminal.
 
 ```bash
-openssl req -new -nodes -newkey rsa:2048 -keyout gateway-service.key -out gateway-service.csr -config cert.config
-openssl x509 -signkey gateway-service.key -in gateway-service.csr -req -days 365 -out gateway-service.crt -extfile cert.config -extensions v3_req
-openssl pkcs12 -export -out gateway-service.pfx -inkey gateway-service.key -in gateway-service.crt -password pass:happi2023
+openssl req -new -nodes -newkey rsa:2048 -keyout appynox.key -out appynox.csr -config cert.config
+openssl x509 -signkey appynox.key -in appynox.csr -req -days 365 -out appynox.crt -extfile cert.config -extensions v3_req
+openssl pkcs12 -export -out appynox.pfx -inkey appynox.key -in appynox.crt -password pass:happi2023
 ```
 
 <br>
 
 5. **Adding the files to APIs**
 
-   In each api project there will be `'ssl'` and `'ssl/crt'` folders. Move the `.pfx` file under `'ssl'` and `.crt` file under `'ssl/crt'` folder. Also **don't forget** to rename the files. Each pfx and crt file should be named `'example-service.pfx'` or `'example-service.crt'`. If you are not sure about the namings you can navigate to `docker.compose` and find the related service. You can copy the names of the files from there.
+   In Ocelot Gateway project there will be `'ssl'` folder. Move the `.pfx` file under `'ssl'` folder.
 
 <br>
 
-6. **Trusting the crt in Docker Important**
+6. **Trust The Certificate**
 
-   If you are getting 502 from api calls such as through gateway, it is most likely because your docker container is not trusting. To trust the crt find your container first with and copy the id of the container:
-
-   ```bash
-   docker ps
-   ```
-
-   After that execute:
-
-   ```bash
-   docker exec -u root -it {your-docker-container} bash
-   update-ca-certificates
-   ```
+   Just double click the appynox.pfx and `next next next`

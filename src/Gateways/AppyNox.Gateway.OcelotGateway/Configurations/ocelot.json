@@ -13,11 +13,25 @@
   },
   "Routes": [
     {
+      // Special route for /health to bypass Ocelot
+      "DownstreamPathTemplate": "/health",
+      "UpstreamPathTemplate": "/health",
+      "UpstreamHttpMethod": [ "Get" ],
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7000
+        }
+      ],
+      "Priority": 1 // High priority to ensure it takes precedence
+    },
+    {
       "UseServiceDiscovery": true, // To use Consul discovery service
       "ServiceName": "ServiceName",
 
       "DownstreamPathTemplate": "/", // Sub route which will be accessed from Ocelot
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
 
       "UpstreamPathTemplate": "/", // Coming Request to Ocelot
       "UpstreamHttpMethod": [ "Get", "Post", "Delete", "Put" ],

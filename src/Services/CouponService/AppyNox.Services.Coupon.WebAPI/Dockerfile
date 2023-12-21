@@ -5,12 +5,6 @@ USER app
 WORKDIR /app
 EXPOSE 7002
 
-# Copy and update SSL certificates
-USER root
-COPY src/Services/CouponService/AppyNox.Services.Coupon.WebAPI/ssl/*.pfx /https/
-COPY src/Services/CouponService/AppyNox.Services.Coupon.WebAPI/ssl/crt/*.crt /usr/local/share/ca-certificates/
-RUN update-ca-certificates
-
 USER app
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Production

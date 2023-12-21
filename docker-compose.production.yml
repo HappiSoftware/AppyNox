@@ -1,0 +1,66 @@
+version: '3.8'
+
+networks:
+  nox_network:
+    driver: overlay
+
+volumes:
+  app_data:
+
+services:
+
+  appynox-rabbitmq-service:
+    networks:
+        - nox_network
+
+  appynox-consul:
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+    networks:
+        - nox_network
+
+  appynox-gateway-ocelotgateway:
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+    networks:
+        - nox_network
+
+  appynox-authentication-db:
+    networks:
+        - nox_network
+
+  appynox-services-authentication-webapi:
+    deploy:
+      replicas: 2
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+    networks:
+        - nox_network
+
+  appynox-coupon-db:
+    networks:
+        - nox_network
+
+  appynox-services-coupon-webapi:
+    deploy:
+      replicas: 2
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+    networks:
+        - nox_network

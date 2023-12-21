@@ -58,7 +58,7 @@ Since appsetting files are gitignored, you must create the `appsettings.{Environ
     }
   },
   "ConnectionStrings": {
-    "StagingConnection": "User ID=postgres;Password=coupon_password;Server=coupon.db.test;Port=5432;Database=AppyNox_Coupon_Test",
+    "StagingConnection": "User ID=postgres;Password=coupon_password;Server=appynox-coupon-db-test;Port=5432;Database=AppyNox_Coupon_Test",
     "DefaultConnection": "User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_Coupon;Pooling=true",
     "TestConnection": "User ID=postgres;Password=coupon_password;Server=localhost;Port=5434;Database=AppyNox_Coupon_Test"
   },
@@ -68,13 +68,13 @@ Since appsetting files are gitignored, you must create the `appsettings.{Environ
     "Audience": "AppyNoxBasic"
   },
   "ConsulConfig": {
-    "Address": "http://appynox.consul:8500"
+    "Address": "http://appynox-consul:8500"
   },
   "Consul": {
     "ServiceId": "CouponService",
     "ServiceName": "CouponService",
     "Scheme": "https",
-    "ServiceHost": "appynox.services.coupon.webapi",
+    "ServiceHost": "appynox-services-coupon-webapi",
     "ServicePort": "7002",
     "Tags": ["Coupon", "Coupons"],
     "HealthCheckUrl": "health-check",
@@ -98,7 +98,7 @@ Since appsetting files are gitignored, you must create the `appsettings.{Environ
     }
   },
   "ConnectionStrings": {
-    "ProductionConnection": "User ID=postgres;Password=coupon_password;Server=coupon.db;Port=5432;Database=AppyNox_Coupon",
+    "ProductionConnection": "User ID=postgres;Password=coupon_password;Server=appynox-coupon-db;Port=5432;Database=AppyNox_Coupon",
     "DefaultConnection": "User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_Coupon;Pooling=true"
   },
   "JwtSettings": {
@@ -107,13 +107,13 @@ Since appsetting files are gitignored, you must create the `appsettings.{Environ
     "Audience": "AppyNoxBasic"
   },
   "ConsulConfig": {
-    "Address": "http://appynox.consul:8500"
+    "Address": "http://appynox-consul:8500"
   },
   "Consul": {
     "ServiceId": "CouponService",
     "ServiceName": "CouponService",
     "Scheme": "https",
-    "ServiceHost": "appynox.services.coupon.webapi",
+    "ServiceHost": "appynox-services-coupon-webapi",
     "ServicePort": "7002",
     "Tags": ["Coupon", "Coupons"],
     "HealthCheckUrl": "health-check",
@@ -146,7 +146,8 @@ Since appsetting files are gitignored, you must create the `appsettings.{Environ
   },
   "ConnectionStrings": {
     "DevelopmentConnection": "User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_Authentication",
-    "DefaultConnection": "User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_Authentication"
+    "DefaultConnection": "User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_Authentication",
+    "TestConnection": "" // for integration tests, use this to connect to dockerized database container from localhost
   },
   "JwtSettings": {
     "SecretKey": "vA+A/of8yadsbwe/CmS6PD0Kp837BozrQFMDuQ2Kwwg=",
@@ -184,7 +185,7 @@ Since appsetting files are gitignored, you must create the `appsettings.{Environ
     }
   },
   "ConnectionStrings": {
-    "StagingConnection": "User ID=postgres;Password=auth_password;Server=authentication.db.test;Port=5432;Database=AppyNox_Authentication_Test",
+    "StagingConnection": "User ID=postgres;Password=auth_password;Server=appynox-authentication-db-test;Port=5432;Database=AppyNox_Authentication_Test",
     "DefaultConnection": "User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_Authentication",
     "TestConnection": "" // for integration tests, use this to connect to dockerized database container from localhost
   },
@@ -194,13 +195,13 @@ Since appsetting files are gitignored, you must create the `appsettings.{Environ
     "Audience": "AppyNoxBasic"
   },
   "ConsulConfig": {
-    "Address": "http://appynox.consul:8500"
+    "Address": "http://appynox-consul:8500"
   },
   "Consul": {
     "ServiceId": "AuthenticationService",
     "ServiceName": "AuthenticationService",
     "Scheme": "https",
-    "ServiceHost": "appynox.services.authentication.webapi",
+    "ServiceHost": "appynox-services-authentication-webapi",
     "ServicePort": "7001",
     "Tags": ["Authentication", "SSO"],
     "HealthCheckUrl": "health-check",
@@ -224,8 +225,9 @@ Since appsetting files are gitignored, you must create the `appsettings.{Environ
     }
   },
   "ConnectionStrings": {
-    "ProductionConnection": "User ID=postgres;Password=auth_password;Server=authentication.db;Port=5432;Database=AppyNox_Authentication",
-    "DefaultConnection": "User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_Authentication"
+    "ProductionConnection": "User ID=postgres;Password=auth_password;Server=appynox-authentication-db;Port=5432;Database=AppyNox_Authentication",
+    "DefaultConnection": "User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_Authentication",
+    "TestConnection": "" // for integration tests, use this to connect to dockerized database container from localhost
   },
   "JwtSettings": {
     "SecretKey": "vA+A/of8yadsbwe/CmS6PD0Kp837BozrQFMDuQ2Kwwg=",
@@ -233,13 +235,13 @@ Since appsetting files are gitignored, you must create the `appsettings.{Environ
     "Audience": "AppyNoxBasic"
   },
   "ConsulConfig": {
-    "Address": "http://appynox.consul:8500"
+    "Address": "http://appynox-consul:8500"
   },
   "Consul": {
     "ServiceId": "AuthenticationService",
     "ServiceName": "AuthenticationService",
     "Scheme": "https",
-    "ServiceHost": "appynox.services.authentication.webapi",
+    "ServiceHost": "appynox-services-authentication-webapi",
     "ServicePort": "7001",
     "Tags": ["Authentication", "SSO"],
     "HealthCheckUrl": "health-check",
@@ -278,14 +280,28 @@ Since appsetting files are gitignored, you must create the `appsettings.{Environ
   },
   "Routes": [
     {
+      // Special route for /health to bypass Ocelot
+      "DownstreamPathTemplate": "/health",
+      "UpstreamPathTemplate": "/health",
+      "UpstreamHttpMethod": ["Get"],
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7000
+        }
+      ],
+      "Priority": 1 // High priority to ensure it takes precedence
+    },
+    {
       "UseServiceDiscovery": true,
       "ServiceName": "IdentityService",
 
       "DownstreamPathTemplate": "/{everything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
 
       "UpstreamPathTemplate": "/auth/{everything}",
-      "UpstreamHttpMethod": [ "Get", "Post", "Delete", "Put" ],
+      "UpstreamHttpMethod": ["Get", "Post", "Delete", "Put"],
       "UpstreamScheme": "https",
 
       "RateLimitOptions": {
@@ -301,10 +317,10 @@ Since appsetting files are gitignored, you must create the `appsettings.{Environ
       "ServiceName": "CouponService",
 
       "DownstreamPathTemplate": "/api/{everything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
 
       "UpstreamPathTemplate": "/coupon-service/{everything}",
-      "UpstreamHttpMethod": [ "Get", "Post", "Delete", "Put" ],
+      "UpstreamHttpMethod": ["Get", "Post", "Delete", "Put"],
       "UpstreamScheme": "https",
 
       "RateLimitOptions": {
@@ -327,9 +343,9 @@ Since appsetting files are gitignored, you must create the `appsettings.{Environ
 ```json
 {
   "GlobalConfiguration": {
-    "BaseUrl": "https://appynox.gateway.ocelotgateway:7000",
+    "BaseUrl": "https://appynox-gateway-ocelotgateway:7000",
     "ServiceDiscoveryProvider": {
-      "Host": "appynox.consul",
+      "Host": "appynox-consul",
       "Port": 8500,
       "Type": "Consul"
     },
@@ -340,14 +356,28 @@ Since appsetting files are gitignored, you must create the `appsettings.{Environ
   },
   "Routes": [
     {
+      // Special route for /health to bypass Ocelot
+      "DownstreamPathTemplate": "/health",
+      "UpstreamPathTemplate": "/health",
+      "UpstreamHttpMethod": ["Get"],
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7000
+        }
+      ],
+      "Priority": 1 // High priority to ensure it takes precedence
+    },
+    {
       "UseServiceDiscovery": true,
       "ServiceName": "IdentityService",
 
       "DownstreamPathTemplate": "/{everything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
 
       "UpstreamPathTemplate": "/auth/{everything}",
-      "UpstreamHttpMethod": [ "Get", "Post", "Delete", "Put" ],
+      "UpstreamHttpMethod": ["Get", "Post", "Delete", "Put"],
       "UpstreamScheme": "https",
 
       "RateLimitOptions": {
@@ -363,10 +393,10 @@ Since appsetting files are gitignored, you must create the `appsettings.{Environ
       "ServiceName": "CouponService",
 
       "DownstreamPathTemplate": "/api/{everything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
 
       "UpstreamPathTemplate": "/coupon-service/{everything}",
-      "UpstreamHttpMethod": [ "Get", "Post", "Delete", "Put" ],
+      "UpstreamHttpMethod": ["Get", "Post", "Delete", "Put"],
       "UpstreamScheme": "https",
 
       "RateLimitOptions": {
@@ -389,9 +419,9 @@ Since appsetting files are gitignored, you must create the `appsettings.{Environ
 ```json
 {
   "GlobalConfiguration": {
-    "BaseUrl": "https://appynox.gateway.ocelotgateway:7000",
+    "BaseUrl": "https://appynox-gateway-ocelotgateway:7000",
     "ServiceDiscoveryProvider": {
-      "Host": "appynox.consul",
+      "Host": "appynox-consul",
       "Port": 8500,
       "Type": "Consul"
     },
@@ -402,14 +432,28 @@ Since appsetting files are gitignored, you must create the `appsettings.{Environ
   },
   "Routes": [
     {
+      // Special route for /health to bypass Ocelot
+      "DownstreamPathTemplate": "/health",
+      "UpstreamPathTemplate": "/health",
+      "UpstreamHttpMethod": ["Get"],
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7000
+        }
+      ],
+      "Priority": 1 // High priority to ensure it takes precedence
+    },
+    {
       "UseServiceDiscovery": true,
       "ServiceName": "IdentityService",
 
-      "DownstreamPathTemplate": "/{everything}",
-      "DownstreamScheme": "https",
+      "DownstreamPathTemplate": "/api/{everything}",
+      "DownstreamScheme": "http",
 
       "UpstreamPathTemplate": "/auth/{everything}",
-      "UpstreamHttpMethod": [ "Get", "Post", "Delete", "Put" ],
+      "UpstreamHttpMethod": ["Get", "Post", "Delete", "Put"],
       "UpstreamScheme": "https",
 
       "RateLimitOptions": {
@@ -425,10 +469,10 @@ Since appsetting files are gitignored, you must create the `appsettings.{Environ
       "ServiceName": "CouponService",
 
       "DownstreamPathTemplate": "/api/{everything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
 
       "UpstreamPathTemplate": "/coupon-service/{everything}",
-      "UpstreamHttpMethod": [ "Get", "Post", "Delete", "Put" ],
+      "UpstreamHttpMethod": ["Get", "Post", "Delete", "Put"],
       "UpstreamScheme": "https",
 
       "RateLimitOptions": {

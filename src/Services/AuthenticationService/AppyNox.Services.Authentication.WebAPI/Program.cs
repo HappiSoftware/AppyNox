@@ -22,29 +22,6 @@ using System.Reflection;
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
-#region [ SSL Configuration ]
-
-builder.WebHost.ConfigureKestrel(serverOptions =>
-{
-    string fileName = string.Empty;
-
-    if (builder.Environment.IsDevelopment())
-    {
-        fileName = Directory.GetCurrentDirectory() + "/ssl/authentication-service.pfx";
-    }
-    else if (builder.Environment.IsProduction() || builder.Environment.IsStaging())
-    {
-        fileName = "/https/authentication-service.pfx";
-    }
-
-    serverOptions.ConfigureEndpointDefaults(listenOptions =>
-    {
-        listenOptions.UseHttps(fileName ?? throw new InvalidOperationException("SSL certificate file path could not be determined."), "happi2023");
-    });
-});
-
-#endregion
-
 // Add services to the container.
 builder.Services.AddControllers();
 
@@ -173,6 +150,6 @@ app.UseApiResponseAndExceptionWrapper(new AutoWrapperOptions { UseApiProblemDeta
 
 AppyNox.Services.Authentication.Infrastructure.DependencyInjection.ApplyMigrations(app.Services);
 
-app.UseHealthChecks("/health-check");
+app.UseHealthChecks("/api/health");
 
 app.Run();
