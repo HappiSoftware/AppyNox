@@ -18,14 +18,14 @@ services:
     image: ${DOCKER_REGISTRY-}appynoxgatewayocelotgateway
     environment:
      - ASPNETCORE_ENVIRONMENT=Production
-     - ASPNETCORE_URLS=https://+:7000
+     - ASPNETCORE_URLS=https://+:443
     depends_on:
         - appynox-consul
     volumes:
      - ./src/Gateways/AppyNox.Gateway.OcelotGateway/ssl:/https
      - ./src/Gateways/AppyNox.Gateway.OcelotGateway/ssl/crt:/usr/local/share/ca-certificates/
     ports:
-     - "443:7000"
+     - "7000:443"
 
   appynox-authentication-db:
     image: postgres:latest

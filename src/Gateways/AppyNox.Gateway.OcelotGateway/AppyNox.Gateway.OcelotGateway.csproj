@@ -25,8 +25,4 @@
     <ProjectReference Include="..\..\Services\.BaseService\AppyNox.Services.Base.API\AppyNox.Services.Base.API.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="ssl\crt\" />
-  </ItemGroup>
-
 </Project>

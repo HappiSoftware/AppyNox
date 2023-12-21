@@ -33,7 +33,7 @@ services:
       context: .
       dockerfile: src/Gateways/AppyNox.Gateway.OcelotGateway/Dockerfile
     ports:
-     - "443:7000"
+     - "7000:443"
     networks:
       - nox_network
     healthcheck:

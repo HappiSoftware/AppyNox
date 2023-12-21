@@ -39,7 +39,6 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTests.Fixtures
 
         public CouponApiTestFixture()
         {
-            EnsurePfxFilesExist();
             _services = new ServiceCollection();
             ConfigureServices(_services);
             var serviceProvider = _services.BuildServiceProvider();
@@ -111,22 +110,6 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTests.Fixtures
 
             // Add the DbContext with the connection string obtained
             services.AddDbContext<CouponDbContext>(options => options.UseNpgsql(connectionString));
-        }
-
-        private static void EnsurePfxFilesExist()
-        {
-            string sslDirectory = Path.Combine(Directory.GetCurrentDirectory(), "ssl");
-            string[] requiredFiles = ["authentication-service.pfx", "coupon-service.pfx", "gateway-service.pfx"];
-
-            foreach (var file in requiredFiles)
-            {
-                string pfxPath = $"{file.Split('-')[0]}/{file}";
-                string fullPath = Path.Combine(sslDirectory, pfxPath);
-                if (!File.Exists(fullPath))
-                {
-                    throw new FileNotFoundException($"Required PFX file not found: {fullPath}");
-                }
-            }
         }
 
         #endregion
