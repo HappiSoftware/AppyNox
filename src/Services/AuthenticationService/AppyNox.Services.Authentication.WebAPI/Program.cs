@@ -1,6 +1,6 @@
-using AppyNox.Services.Authentication.Application.Dtos.DtoUtilities;
 using AppyNox.Services.Authentication.Infrastructure.Data;
 using AppyNox.Services.Authentication.WebAPI.Configuration;
+using AppyNox.Services.Authentication.WebAPI.ControllerDependencies;
 using AppyNox.Services.Authentication.WebAPI.Helpers;
 using AppyNox.Services.Authentication.WebAPI.Managers.Implementations;
 using AppyNox.Services.Authentication.WebAPI.Managers.Interfaces;
@@ -82,6 +82,7 @@ builder.Services.AddHealthChecks();
 
 builder.Services.AddScoped<PasswordValidator<IdentityUser>>();
 builder.Services.AddScoped<PasswordHasher<IdentityUser>>();
+builder.Services.AddScoped<UsersControllerBaseDependencies>();
 
 #region [ Jwt Settings ]
 
