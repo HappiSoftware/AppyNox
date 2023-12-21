@@ -2,9 +2,9 @@ name: .NET Microservices CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [ AppyNox-70 ]
   pull_request:
-    branches: [ master ]
+    branches: [ AppyNox-70 ]
 
 jobs:
   build-and-test:
