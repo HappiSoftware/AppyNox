@@ -38,9 +38,14 @@ jobs:
       run: dotnet restore ./AppyNox.sln
 
     - name: Run Unit Tests
-      run: dotnet test ./src/Services/CouponService/Tests/UnitTests/AppyNox.Services.Coupon.Infrastructure.UnitTest/ --no-restore
+      run: |
+        dotnet test ./src/Services/CouponService/Tests/UnitTests/AppyNox.Services.Coupon.Infrastructure.UnitTest/ --no-restore
+        dotnet test ./src/Services/CouponService/Tests/UnitTests/AppyNox.Services.Coupon.Application.UnitTest/ --no-restore
+        dotnet test ./src/Services/.BaseService/Tests/UnitTests/AppyNox.Services.Base.Infrastructure.UnitTest/ --no-restore
 
-    #- name: Run Integration Tests
-     # run: dotnet test <path-to-your-integration-test-project> --no-restore
+    - name: Build Images
+      run: docker-compose -f docker-compose.yml -f docker-compose.development.yml build
+      
+    - name: Run Integration Tests
+      run: dotnet test ./src/Services/CouponService/Tests/IntegrationTetsts/AppyNox.Services.Coupon.WebAPI.IntegrationTests --no-restore
 
-    # Optional: Add steps for pushing to Docker registry or deploying to Docker Swarm
