@@ -102,13 +102,14 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTests.Fixtures
             services.AddDbContext<CouponDbContext>(options => options.UseNpgsql(connectionString));
         }
 
-        private async Task WaitForServicesHealth(string healthUri, int maxAttempts = 20)
+        private async Task WaitForServicesHealth(string healthUri, int maxAttempts = 10)
         {
             int attempts = 0;
             while (attempts < maxAttempts)
             {
                 try
                 {
+                    await Console.Out.WriteLineAsync($"Checking service health at '{healthUri}'");
                     var response = await Client.GetAsync(healthUri);
                     var responseContent = await response.Content.ReadAsStringAsync();
                     await Console.Out.WriteLineAsync($"Response: {responseContent}");
