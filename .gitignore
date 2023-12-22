@@ -369,8 +369,8 @@ FodyWeavers.xsd
 
 # Ocelot
 **/ocelot.Development.json
-#**/ocelot.Staging.json
-#**/ocelot.Production.json
+**/ocelot.Staging.json
+**/ocelot.Production.json
 
 # pfx
 *.pfx
