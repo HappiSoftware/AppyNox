@@ -77,40 +77,6 @@ openssl pkcs12 -export -out appynox.pfx -inkey appynox.key -in appynox.crt -pass
 <br>
 <br>
 
-# Advanced
+# Read Also
 
-<details>
-   <summary><b>Add pfx Secrets to Github for Workflow</b></summary>
-
-1.  **Extract The .pfx to Base64**
-
-```bash
-$fileContentBytes = Get-Content '{pfx-full-path}\appynox.pfx' -Encoding Byte
-
-[System.Convert]::ToBase64String($fileContentBytes) | Out-File '{pfx-full-path}\appynox.txt'
-```
-
-<br>
-
-2. **Create Secrets In Repository**
-
-Navigate to repository > `Secrets and variables` > Actions and create 2 repository secrets called `PFX_CERTIFICATE` and `PFX_PASSWORD`. `PFX_CERTIFICATE` will be Base64 encoded .pfx and `PFX_PASSWORD` will be the password used to create the ssl.
-
-<br>
-
-3. **Modify workflow**
-
-Add the following content to workflow.
-
-```yml
-- name: Trust self-signed certificate
-        run: |
-          echo "${{ secrets.PFX_CERTIFICATE }}" | base64 --decode > appynox_staging.pfx
-          # Extract the certificate from the .pfx file
-          openssl pkcs12 -in appynox_staging.pfx -clcerts -nokeys -out appynox_staging.crt -password pass:${{ secrets.PFX_PASSWORD }}
-          # Trust the certificate
-          sudo cp appynox_staging.crt /usr/local/share/ca-certificates/
-          sudo update-ca-certificates
-```
-
-</details>
+- [GitHub .pfx Secrets](github.md#add-pfx-secrets-to-github-for-workflow)

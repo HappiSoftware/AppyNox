@@ -490,3 +490,7 @@ Since appsetting files are gitignored, you must create the `appsettings.{Environ
 </details>
 
 </details>
+
+# Read Also
+
+- [GitHub appsetting Secrets](github.md#add-appsetting-secrets-to-github-for-workflow)
