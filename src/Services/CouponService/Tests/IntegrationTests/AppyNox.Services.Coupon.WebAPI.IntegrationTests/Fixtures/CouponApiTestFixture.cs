@@ -109,7 +109,8 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTests.Fixtures
                 try
                 {
                     var response = await Client.GetAsync(healthUri);
-                    await Console.Out.WriteLineAsync(response.Content.ToString());
+                    var responseContent = await response.Content.ReadAsStringAsync();
+                    await Console.Out.WriteLineAsync($"Response: {responseContent}");
                     if (response.IsSuccessStatusCode)
                     {
                         return; // Service is healthy, exit the loop
