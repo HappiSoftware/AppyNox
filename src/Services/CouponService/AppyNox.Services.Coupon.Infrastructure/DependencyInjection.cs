@@ -1,5 +1,6 @@
 ﻿using AppyNox.Services.Base.Domain.Common;
 using AppyNox.Services.Base.Domain.Interfaces;
+using AppyNox.Services.Base.Infrastructure;
 using AppyNox.Services.Base.Infrastructure.Interfaces;
 using AppyNox.Services.Base.Infrastructure.Repositories;
 using AppyNox.Services.Coupon.Infrastructure.Data;
@@ -26,6 +27,7 @@ namespace AppyNox.Services.Coupon.Infrastructure
             };
             services.AddDbContext<CouponDbContext>(options =>
                 options.UseNpgsql(connectionString));
+            services.AddHostedService<DatabaseStartupHostedService<CouponDbContext>>();
 
             services.AddScoped(typeof(IGenericRepositoryBase<>), typeof(GenericRepository<>));
             services.AddScoped<IUnitOfWorkBase, UnitOfWork>();

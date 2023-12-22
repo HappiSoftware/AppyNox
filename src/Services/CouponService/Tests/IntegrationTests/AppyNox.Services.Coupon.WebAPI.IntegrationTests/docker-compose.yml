@@ -1,0 +1,106 @@
+version: '3.8'
+
+networks:
+  integration-test:
+    driver: bridge
+
+volumes:
+  app_data:
+
+services:
+
+  appynox-consul:
+    image: "hashicorp/consul:latest"
+    networks:
+      - integration-test
+    healthcheck:
+      test: ["CMD", "consul", "info"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  appynox-gateway-ocelotgateway:
+    image: appynoxgatewayocelotgateway
+    depends_on:
+        - appynox-consul
+    environment:
+     - ASPNETCORE_ENVIRONMENT=Staging
+     - ASPNETCORE_HTTPS_PORTS=443
+    volumes:
+     - ./ssl:/https
+    ports:
+     - "7000:443"
+    networks:
+      - integration-test
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail https://appynox-gateway-ocelotgateway:7000/health || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: always
+
+  appynox-coupon-db-test:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: AppyNox_Coupon_Test
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: coupon_password
+    restart: always
+    ports:
+      - "5434:5432" # allow external access to be able to set the DbContext to assert tests
+    networks:
+      - integration-test
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+
+  appynox-services-coupon-webapi:
+    image: appynoxservicescouponwebapi
+    depends_on:
+        - appynox-coupon-db-test
+        - appynox-consul
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Staging
+      - ASPNETCORE_URLS=http://+:7002
+    networks:
+     - integration-test
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail http://appynox-services-coupon-webapi:7002/api/health || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  appynox-authentication-db-test:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: AppyNox_Authentication_Test
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: auth_password
+    restart: always
+    networks:
+      - integration-test
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  appynox-services-authentication-webapi:
+    image: appynoxservicesauthenticationwebapi
+    depends_on:
+        - appynox-authentication-db-test
+        - appynox-consul
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Staging
+      - ASPNETCORE_URLS=http://+:7001
+    networks:
+     - integration-test
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail http://appynox-services-authentication-webapi:7001/api/health || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 20 
+      

@@ -37,13 +37,4 @@
     <ProjectReference Include="..\AppyNox.Services.Authentication.Infrastructure\AppyNox.Services.Authentication.Infrastructure.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Update="ssl\authentication-service.pfx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="ssl\crt\authentication-service.crt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
 </Project>

@@ -9,34 +9,24 @@ using Microsoft.AspNetCore.Mvc;
 namespace AppyNox.Services.Authentication.WebAPI.Controllers.Authentication
 {
     [ApiController]
-    public class AuthenticationController : ControllerBase
+    [Route("api/[controller]")]
+    public class AuthenticationController(ICustomUserManager customUserManager,
+        ICustomTokenManager customTokenManager, IValidator<LoginDto> loginDtoValidator) : ControllerBase
     {
         #region [ Fields ]
 
-        private readonly ICustomUserManager _customUserManager;
+        private readonly ICustomUserManager _customUserManager = customUserManager;
 
-        private readonly ICustomTokenManager _customTokenManager;
+        private readonly ICustomTokenManager _customTokenManager = customTokenManager;
 
-        private readonly IValidator<LoginDto> _loginDtoValidator;
-
-        #endregion
-
-        #region [ Public Constructors ]
-
-        public AuthenticationController(ICustomUserManager customUserManager,
-            ICustomTokenManager customTokenManager, IValidator<LoginDto> loginDtoValidator)
-        {
-            _customUserManager = customUserManager;
-            _customTokenManager = customTokenManager;
-            _loginDtoValidator = loginDtoValidator;
-        }
+        private readonly IValidator<LoginDto> _loginDtoValidator = loginDtoValidator;
 
         #endregion
 
         #region [ JWT Operations ]
 
         [HttpPost]
-        [Route("api/connect/token")]
+        [Route("connect/token")]
         public async Task<ApiResponse> Authenticate([FromBody] LoginDto userCredential)
         {
             var validationResult = await _loginDtoValidator.ValidateAsync(userCredential);
@@ -57,20 +47,20 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers.Authentication
         }
 
         [HttpGet]
-        [Route("api/verifytoken/{token}")]
+        [Route("verifytoken/{token}")]
         public ApiResponse Verify(string token)
         {
             return new ApiResponse(_customTokenManager.VerifyToken(token), 200);
         }
 
         [HttpGet]
-        [Route("api/getuserinfo")]
+        [Route("getuserinfo")]
         public ApiResponse GetUserInfoByToken(string token)
         {
             return new ApiResponse(_customTokenManager.GetUserInfoByToken(token), 200);
         }
 
-        [HttpPost("api/refresh")]
+        [HttpPost("refresh")]
         public async Task<ApiResponse> Refresh([FromBody] RefreshTokenDto model)
         {
             var userId = _customTokenManager.GetUserInfoByToken(model.Token);

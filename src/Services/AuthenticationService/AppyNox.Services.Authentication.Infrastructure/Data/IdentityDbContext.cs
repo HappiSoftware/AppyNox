@@ -71,7 +71,12 @@ namespace AppyNox.Services.Authentication.Infrastructure.Data
                 new IdentityRoleClaim<string> { Id = 7, RoleId = adminRoleId, ClaimType = "Permission", ClaimValue = "Roles.Edit" },
                 new IdentityRoleClaim<string> { Id = 8, RoleId = adminRoleId, ClaimType = "Permission", ClaimValue = "Roles.Delete" },
                 new IdentityRoleClaim<string> { Id = 9, RoleId = adminRoleId, ClaimType = "Permission", ClaimValue = "Roles.AssignPermission" },
-                new IdentityRoleClaim<string> { Id = 10, RoleId = adminRoleId, ClaimType = "Permission", ClaimValue = "Roles.WithdrawPermission" }
+                new IdentityRoleClaim<string> { Id = 10, RoleId = adminRoleId, ClaimType = "Permission", ClaimValue = "Roles.WithdrawPermission" },
+
+                new IdentityRoleClaim<string> { Id = 11, RoleId = adminRoleId, ClaimType = "Permission", ClaimValue = "Coupons.View" },
+                new IdentityRoleClaim<string> { Id = 12, RoleId = adminRoleId, ClaimType = "Permission", ClaimValue = "Coupons.Create" },
+                new IdentityRoleClaim<string> { Id = 13, RoleId = adminRoleId, ClaimType = "Permission", ClaimValue = "Coupons.Edit" },
+                new IdentityRoleClaim<string> { Id = 14, RoleId = adminRoleId, ClaimType = "Permission", ClaimValue = "Coupons.Delete" }
             );
 
             // Add User Roles

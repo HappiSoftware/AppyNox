@@ -18,9 +18,35 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
     {
         fileName = Directory.GetCurrentDirectory() + "/ssl/appynox.pfx";
     }
-    else if (builder.Environment.IsProduction() || builder.Environment.IsStaging())
+    else if (builder.Environment.IsStaging())
+    {
+        fileName = "../https/appynox.pfx";
+    }
+    else if (builder.Environment.IsProduction())
     {
         fileName = "/https/appynox.pfx";
+    }
+
+    Console.WriteLine($"SSL Certificate Path: {fileName}");
+
+    // Check if the file exists and log the result
+    if (File.Exists(fileName))
+    {
+        Console.WriteLine("SSL Certificate file found.");
+        try
+        {
+            // Try to read the file (optional, as just checking existence might be sufficient)
+            var fileContent = File.ReadAllText(fileName);
+            Console.WriteLine("SSL Certificate file read successfully.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error reading SSL Certificate file: {ex.Message}");
+        }
+    }
+    else
+    {
+        Console.WriteLine("SSL Certificate file not found.");
     }
 
     serverOptions.ConfigureEndpointDefaults(listenOptions =>

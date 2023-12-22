@@ -1,5 +1,6 @@
 ﻿using AppyNox.Services.Authentication.Infrastructure.Data;
 using AppyNox.Services.Base.Domain.Common;
+using AppyNox.Services.Base.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,14 +24,17 @@ namespace AppyNox.Services.Authentication.Infrastructure
 
             services.AddDbContext<IdentityDbContext>(options =>
                 options.UseNpgsql(connectionString));
+            services.AddHostedService<DatabaseStartupHostedService<IdentityDbContext>>();
         }
 
         public static void ApplyMigrations(IServiceProvider serviceProvider)
         {
+            Console.WriteLine("test-------------------------------");
             using var scope = serviceProvider.CreateScope();
             var _db = scope.ServiceProvider.GetRequiredService<IdentityDbContext>();
             if (_db.Database.GetPendingMigrations().Any())
             {
+                Console.WriteLine("test2-------------------------------");
                 _db.Database.Migrate();
             }
         }
