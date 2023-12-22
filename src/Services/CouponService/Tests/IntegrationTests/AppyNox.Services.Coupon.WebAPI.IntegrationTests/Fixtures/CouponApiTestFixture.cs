@@ -101,7 +101,7 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTests.Fixtures
             services.AddDbContext<CouponDbContext>(options => options.UseNpgsql(connectionString));
         }
 
-        private async Task WaitForServicesHealth(string healthUri, int maxAttempts = 10)
+        private async Task WaitForServicesHealth(string healthUri, int maxAttempts = 20)
         {
             int attempts = 0;
             while (attempts < maxAttempts)
@@ -109,6 +109,7 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTests.Fixtures
                 try
                 {
                     var response = await Client.GetAsync(healthUri);
+                    await Console.Out.WriteLineAsync(response.Content.ToString());
                     if (response.IsSuccessStatusCode)
                     {
                         return; // Service is healthy, exit the loop
@@ -119,7 +120,7 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTests.Fixtures
                     // The request failed, possibly because the service is not up yet. Ignore and retry.
                 }
 
-                await Task.Delay(TimeSpan.FromSeconds(5));
+                await Task.Delay(TimeSpan.FromSeconds(10));
                 attempts++;
             }
 
