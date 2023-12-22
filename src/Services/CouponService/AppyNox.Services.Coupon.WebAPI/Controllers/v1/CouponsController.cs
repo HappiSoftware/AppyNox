@@ -21,26 +21,18 @@ namespace AppyNox.Services.Coupon.WebAPI.Controllers.v1
     [ApiController]
     [ApiVersion("1.0")]
     [Route("api/[controller]")]
-    public class CouponsController : Controller
+    public class CouponsController(IGenericService<CouponEntity> couponService) : Controller
     {
         #region [ Fields ]
 
-        private readonly IGenericService<CouponEntity> _couponService;
-
-        #endregion
-
-        #region [ Public Constructors ]
-
-        public CouponsController(IGenericService<CouponEntity> couponService)
-        {
-            _couponService = couponService;
-        }
+        private readonly IGenericService<CouponEntity> _couponService = couponService;
 
         #endregion
 
         #region [ Public Methods ]
 
         [HttpGet]
+        [Authorize(Permissions.Coupons.View)]
         public async Task<ApiResponse> GetAll([FromQuery] QueryParametersViewModel queryParameters)
         {
             var coupons = await _couponService.GetAllAsync(queryParameters);

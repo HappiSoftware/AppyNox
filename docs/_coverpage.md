@@ -1,6 +1,6 @@
-![logo](_media/icon.png)
+<img src="_media/icon.png" alt="AppyNox Logo" width="350" height="350">
 
-# AppyNox <small>0.1</small>
+<h1>AppyNox <small>0.1</small></h1>
 
 > AppyNox Documentation
 

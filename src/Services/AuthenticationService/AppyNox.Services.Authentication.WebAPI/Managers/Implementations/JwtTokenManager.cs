@@ -9,29 +9,20 @@ using System.Security.Cryptography;
 
 namespace AppyNox.Services.Authentication.WebAPI.Managers.Implementations
 {
-    public class JwtTokenManager : ICustomTokenManager
+    public class JwtTokenManager(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager,
+        JwtConfiguration jwtConfiguration, IConfiguration configuration) : ICustomTokenManager
     {
         #region [ Fields ]
 
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<IdentityUser> _userManager = userManager;
 
-        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly RoleManager<IdentityRole> _roleManager = roleManager;
 
-        private readonly JwtConfiguration _jwtConfiguration;
+        private readonly JwtConfiguration _jwtConfiguration = jwtConfiguration;
 
-        private readonly JwtSecurityTokenHandler _tokenHandler;
+        private readonly JwtSecurityTokenHandler _tokenHandler = new();
 
-        #endregion
-
-        #region [ Public Constructors ]
-
-        public JwtTokenManager(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, JwtConfiguration jwtConfiguration)
-        {
-            _userManager = userManager;
-            _roleManager = roleManager;
-            _tokenHandler = new JwtSecurityTokenHandler();
-            _jwtConfiguration = jwtConfiguration;
-        }
+        private readonly IConfiguration _configuration = configuration;
 
         #endregion
 
@@ -39,7 +30,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Managers.Implementations
 
         public async Task<string> CreateToken(string userId)
         {
-            List<Claim> claims = new List<Claim>();
+            List<Claim> claims = [];
 
             var user = await _userManager.FindByIdAsync(userId);
 
@@ -66,7 +57,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Managers.Implementations
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.UtcNow.AddMinutes(20),
+                Expires = DateTime.UtcNow.AddMinutes(_configuration.GetValue<int>("JwtSettings:TokenLifetimeMinutes")),
                 Issuer = _jwtConfiguration.Issuer,
                 Audience = _jwtConfiguration.Audience,
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(_jwtConfiguration.GetSecretKeyBytes()), SecurityAlgorithms.HmacSha256Signature),
@@ -127,7 +118,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Managers.Implementations
 
         #endregion
 
-        #region [ Refresh Token]
+        #region [ Refresh Token ]
 
         public string CreateRefreshToken()
         {

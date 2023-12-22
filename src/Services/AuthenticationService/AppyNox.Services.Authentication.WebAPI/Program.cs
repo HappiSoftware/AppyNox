@@ -7,6 +7,7 @@ using AppyNox.Services.Authentication.WebAPI.Managers.Interfaces;
 using AppyNox.Services.Authentication.WebAPI.Utilities;
 using AppyNox.Services.Base.API.Helpers;
 using AppyNox.Services.Base.Domain.Common;
+using AppyNox.Services.Base.Infrastructure;
 using Asp.Versioning;
 using AutoWrapper;
 using Consul;
@@ -149,8 +150,16 @@ app.MapControllers();
 
 app.UseApiResponseAndExceptionWrapper(new AutoWrapperOptions { UseApiProblemDetailsException = true });
 
-AppyNox.Services.Authentication.Infrastructure.DependencyInjection.ApplyMigrations(app.Services);
-
 app.UseHealthChecks("/api/health");
+
+var databaseStartupService = app.Services.GetServices<IHostedService>()
+    .OfType<DatabaseStartupHostedService<IdentityDbContext>>()
+    .FirstOrDefault()!;
+
+databaseStartupService.OnDatabaseConnected += () =>
+{
+    AppyNox.Services.Authentication.Infrastructure.DependencyInjection.ApplyMigrations(app.Services);
+    return Task.CompletedTask;
+};
 
 app.Run();

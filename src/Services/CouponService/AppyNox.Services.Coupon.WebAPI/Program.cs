@@ -1,12 +1,15 @@
 using AppyNox.Services.Base.API.Helpers;
 using AppyNox.Services.Base.API.Middleware;
 using AppyNox.Services.Base.Domain.Common;
+using AppyNox.Services.Base.Infrastructure;
+using AppyNox.Services.Coupon.Infrastructure.Data;
 using AppyNox.Services.Coupon.WebAPI.Helpers;
 using AppyNox.Services.Coupon.WebAPI.Helpers.Permissions;
 using AutoWrapper;
 using Consul;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using NLog;
@@ -139,8 +142,17 @@ app.MapControllers();
 app.UseApiResponseAndExceptionWrapper(new AutoWrapperOptions { IsApiOnly = true, ShowApiVersion = true, ApiVersion = "1.0" });
 app.UseMiddleware<QueryParameterValidateMiddleware>();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
-AppyNox.Services.Coupon.Infrastructure.DependencyInjection.ApplyMigrations(app.Services);
 
 app.UseHealthChecks("/api/health");
+
+var databaseStartupService = app.Services.GetServices<IHostedService>()
+    .OfType<DatabaseStartupHostedService<CouponDbContext>>()
+    .FirstOrDefault()!;
+
+databaseStartupService.OnDatabaseConnected += () =>
+{
+    AppyNox.Services.Coupon.Infrastructure.DependencyInjection.ApplyMigrations(app.Services);
+    return Task.CompletedTask;
+};
 
 app.Run();

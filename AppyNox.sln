@@ -63,9 +63,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppyNox.Services.Base.Infra
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppyNox.Services.Coupon.Application.UnitTest", "src\Services\CouponService\Tests\UnitTests\AppyNox.Services.Coupon.Application.UnitTest\AppyNox.Services.Coupon.Application.UnitTest.csproj", "{44427A10-C34F-441E-AE0D-EE1B09D991A6}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IntegrationTetsts", "IntegrationTetsts", "{9C257B11-A2A1-4E1E-88DD-845E02E0B60F}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppyNox.Services.Coupon.WebAPI.IntegrationTests", "src\Services\CouponService\Tests\IntegrationTests\AppyNox.Services.Coupon.IntegrationTests\AppyNox.Services.Coupon.WebAPI.IntegrationTests.csproj", "{3D1A93C1-A572-4189-8F5A-8DABF5647E42}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IntegrationTests", "IntegrationTests", "{9C257B11-A2A1-4E1E-88DD-845E02E0B60F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IntegrationTests", "IntegrationTests", "{7D9414BD-3672-4CD5-BD70-79C31A3C50D2}"
 EndProject
@@ -75,7 +73,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{F19E23FD
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{C485CEF8-E581-46AB-8DE7-5F9E7FCD9F0A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppyNox.BuildingBlocks.EventBus.UnitTest", "src\BuildingBlocks\Tests\UnitTests\AppyNox.BuildingBlocks.EventBus.UnitTest\AppyNox.BuildingBlocks.EventBus.UnitTest.csproj", "{8CC55341-593F-4E57-80C3-8C6C3CEF3DA4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppyNox.BuildingBlocks.EventBus.UnitTest", "src\BuildingBlocks\Tests\UnitTests\AppyNox.BuildingBlocks.EventBus.UnitTest\AppyNox.BuildingBlocks.EventBus.UnitTest.csproj", "{8CC55341-593F-4E57-80C3-8C6C3CEF3DA4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppyNox.Services.Coupon.WebAPI.IntegrationTests", "src\Services\CouponService\Tests\IntegrationTests\AppyNox.Services.Coupon.WebAPI.IntegrationTests\AppyNox.Services.Coupon.WebAPI.IntegrationTests.csproj", "{A9D74765-C06D-4A6A-B123-2FC9DCCE9855}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -159,10 +159,6 @@ Global
 		{44427A10-C34F-441E-AE0D-EE1B09D991A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{44427A10-C34F-441E-AE0D-EE1B09D991A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{44427A10-C34F-441E-AE0D-EE1B09D991A6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3D1A93C1-A572-4189-8F5A-8DABF5647E42}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3D1A93C1-A572-4189-8F5A-8DABF5647E42}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3D1A93C1-A572-4189-8F5A-8DABF5647E42}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3D1A93C1-A572-4189-8F5A-8DABF5647E42}.Release|Any CPU.Build.0 = Release|Any CPU
 		{120B7821-549C-4C48-B381-B8BD0A705AAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{120B7821-549C-4C48-B381-B8BD0A705AAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{120B7821-549C-4C48-B381-B8BD0A705AAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -171,6 +167,10 @@ Global
 		{8CC55341-593F-4E57-80C3-8C6C3CEF3DA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8CC55341-593F-4E57-80C3-8C6C3CEF3DA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8CC55341-593F-4E57-80C3-8C6C3CEF3DA4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A9D74765-C06D-4A6A-B123-2FC9DCCE9855}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A9D74765-C06D-4A6A-B123-2FC9DCCE9855}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A9D74765-C06D-4A6A-B123-2FC9DCCE9855}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A9D74765-C06D-4A6A-B123-2FC9DCCE9855}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -203,12 +203,12 @@ Global
 		{10490B79-2C4D-4B86-83DF-A2574AD3DE04} = {14E3528C-2F6B-4296-BAD1-E91F32F679EC}
 		{44427A10-C34F-441E-AE0D-EE1B09D991A6} = {ACE959CF-8213-4670-A525-7FE188336843}
 		{9C257B11-A2A1-4E1E-88DD-845E02E0B60F} = {5BAC57A7-56E7-4E7C-9118-24F61870BA91}
-		{3D1A93C1-A572-4189-8F5A-8DABF5647E42} = {9C257B11-A2A1-4E1E-88DD-845E02E0B60F}
 		{7D9414BD-3672-4CD5-BD70-79C31A3C50D2} = {A21BCC3E-A75C-40B5-91B1-2253953B59AA}
 		{120B7821-549C-4C48-B381-B8BD0A705AAD} = {7D9414BD-3672-4CD5-BD70-79C31A3C50D2}
 		{F19E23FD-E8CC-4872-83E3-CD8C5E174F66} = {CE4E6F5C-8B09-41BE-A985-252420CD1D9D}
 		{C485CEF8-E581-46AB-8DE7-5F9E7FCD9F0A} = {F19E23FD-E8CC-4872-83E3-CD8C5E174F66}
 		{8CC55341-593F-4E57-80C3-8C6C3CEF3DA4} = {C485CEF8-E581-46AB-8DE7-5F9E7FCD9F0A}
+		{A9D74765-C06D-4A6A-B123-2FC9DCCE9855} = {9C257B11-A2A1-4E1E-88DD-845E02E0B60F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EA4F2302-DC43-4149-814A-609940BEC847}
