@@ -26,9 +26,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-buildx-
 
-      - name: Build Docker Images
-        run: docker-compose -f docker-compose.yml -f docker-compose.development.yml build
-
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v1
         with:
@@ -43,7 +40,7 @@ jobs:
           dotnet test ./src/Services/CouponService/Tests/UnitTests/AppyNox.Services.Coupon.Application.UnitTest/ --no-restore
           dotnet test ./src/Services/.BaseService/Tests/UnitTests/AppyNox.Services.Base.Infrastructure.UnitTest/ --no-restore
 
-      - name: Build Images
+      - name: Build Docker Images
         run: docker-compose -f docker-compose.yml -f docker-compose.development.yml build
 
       - name: Run Integration Tests
