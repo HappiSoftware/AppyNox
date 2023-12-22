@@ -373,7 +373,7 @@ FodyWeavers.xsd
 #**/ocelot.Production.json
 
 # pfx
-#*.pfx
+*.pfx
 
 # Sonar
 /.sonarqube/conf

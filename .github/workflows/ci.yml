@@ -32,14 +32,14 @@ jobs:
         with:
           dotnet-version: "8.0.x"
 
-      # - name: Setup SSL Certificates for Services
-      #   run: |
-      #     mkdir -p ./src/Gateways/AppyNox.Gateway.OcelotGateway/ssl
-      #     mkdir -p ./src/Services/CouponService/Tests/IntegrationTests/AppyNox.Services.Coupon.WebAPI.IntegrationTests/ssl
-      #     echo '${{ secrets.PFX_CERTIFICATE }}' | base64 --decode > ./src/Gateways/AppyNox.Gateway.OcelotGateway/ssl/appynox.pfx
-      #     echo '${{ secrets.PFX_CERTIFICATE }}' | base64 --decode > ./src/Services/CouponService/Tests/IntegrationTests/AppyNox.Services.Coupon.WebAPI.IntegrationTests/ssl/appynox.pfx
-      #     sudo chmod 644 ./src/Gateways/AppyNox.Gateway.OcelotGateway/ssl/appynox.pfx
-      #     sudo chmod 644 ./src/Services/CouponService/Tests/IntegrationTests/AppyNox.Services.Coupon.WebAPI.IntegrationTests/ssl/appynox.pfx
+      - name: Setup SSL Certificates for Services
+        run: |
+          mkdir -p ./src/Gateways/AppyNox.Gateway.OcelotGateway/ssl
+          mkdir -p ./src/Services/CouponService/Tests/IntegrationTests/AppyNox.Services.Coupon.WebAPI.IntegrationTests/ssl
+          echo '${{ secrets.PFX_CERTIFICATE }}' | base64 --decode > ./src/Gateways/AppyNox.Gateway.OcelotGateway/ssl/appynox.pfx
+          echo '${{ secrets.PFX_CERTIFICATE }}' | base64 --decode > ./src/Services/CouponService/Tests/IntegrationTests/AppyNox.Services.Coupon.WebAPI.IntegrationTests/ssl/appynox.pfx
+          sudo chmod 644 ./src/Gateways/AppyNox.Gateway.OcelotGateway/ssl/appynox.pfx
+          sudo chmod 644 ./src/Services/CouponService/Tests/IntegrationTests/AppyNox.Services.Coupon.WebAPI.IntegrationTests/ssl/appynox.pfx
 
       - name: Restore dependencies
         run: dotnet restore ./AppyNox.sln
