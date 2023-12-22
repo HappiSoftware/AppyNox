@@ -364,8 +364,6 @@ FodyWeavers.xsd
 
 # appsettings
 appsettings.Development.json
-appsettings.Staging.json
-appsettings.Production.json
 
 # Sonar
 /.sonarqube/conf
@@ -374,5 +372,3 @@ appsettings.Production.json
 docker-compose.override.yml
 
 ocelot.Development.json
-ocelot.Staging.json
-ocelot.Production.json
