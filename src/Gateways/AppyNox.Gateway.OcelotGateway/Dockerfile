@@ -12,7 +12,7 @@ WORKDIR /src
 COPY ["src/Gateways/AppyNox.Gateway.OcelotGateway/AppyNox.Gateway.OcelotGateway.csproj", "src/Gateways/AppyNox.Gateway.OcelotGateway/"]
 RUN dotnet restore "./src/Gateways/AppyNox.Gateway.OcelotGateway/./AppyNox.Gateway.OcelotGateway.csproj"
 COPY . .
-WORKDIR "/src/src/Gateways/AppyNox.Gateway.OcelotGateway"
+WORKDIR "/src/Gateways/AppyNox.Gateway.OcelotGateway"
 RUN dotnet build "./AppyNox.Gateway.OcelotGateway.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
