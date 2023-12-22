@@ -49,9 +49,9 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTests.Fixtures
         {
             Client = new HttpClient { BaseAddress = new(ServiceURIs.GatewayURI) };
             Task.WhenAll(
-                WaitForServicesHealth(ServiceURIs.CouponServiceHealthURI),
+                WaitForServicesHealth(ServiceURIs.CouponServiceHealthURI)
 
-                //WaitForServicesHealth(ServiceURIs.AuthenticationServiceHealthURI)
+            //WaitForServicesHealth(ServiceURIs.AuthenticationServiceHealthURI)
             ).GetAwaiter().GetResult();
             AuthenticateAndGetToken().GetAwaiter().GetResult();
 
