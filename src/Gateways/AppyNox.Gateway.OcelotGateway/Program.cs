@@ -8,6 +8,20 @@ using Ocelot.Provider.Consul;
 
 var builder = WebApplication.CreateBuilder(args);
 
+#region [ Logger Setup ]
+
+if (!builder.Environment.IsDevelopment())
+{
+    NLog.LogManager.Setup().LoadConfigurationFromFile($"Configurations/nlog.config");
+}
+
+builder.Logging.ClearProviders();
+builder.Host.UseNLog();
+
+var logger = NLog.LogManager.GetCurrentClassLogger();
+
+#endregion
+
 #region [ SSL Configuration ]
 
 builder.WebHost.ConfigureKestrel(serverOptions =>
@@ -27,26 +41,26 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
         fileName = "/https/appynox.pfx";
     }
 
-    Console.WriteLine($"SSL Certificate Path: {fileName}");
+    logger.Info($"SSL Certificate Path: {fileName}");
 
     // Check if the file exists and log the result
     if (File.Exists(fileName))
     {
-        Console.WriteLine("SSL Certificate file found.");
+        logger.Info("SSL Certificate file found.");
         try
         {
             // Try to read the file (optional, as just checking existence might be sufficient)
             var fileContent = File.ReadAllText(fileName);
-            Console.WriteLine("SSL Certificate file read successfully.");
+            logger.Info("SSL Certificate file read successfully.");
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error reading SSL Certificate file: {ex.Message}");
+            logger.Info($"Error reading SSL Certificate file: {ex.Message}");
         }
     }
     else
     {
-        Console.WriteLine("SSL Certificate file not found.");
+        logger.Info("SSL Certificate file not found.");
     }
 
     serverOptions.ConfigureEndpointDefaults(listenOptions =>
@@ -62,17 +76,6 @@ builder.Configuration.SetBasePath(builder.Environment.ContentRootPath)
     .AddEnvironmentVariables();
 
 builder.Services.AddHealthChecks();
-
-#region [ Logger Setup ]
-
-if (!builder.Environment.IsDevelopment())
-{
-    NLog.LogManager.Setup().LoadConfigurationFromFile($"Configurations/nlog.config");
-    builder.Logging.ClearProviders();
-    builder.Host.UseNLog();
-}
-
-#endregion
 
 builder.Services.AddOcelot(builder.Configuration).AddConsul();
 
