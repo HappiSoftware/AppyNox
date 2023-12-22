@@ -35,6 +35,15 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore ./AppyNox.sln
 
+      - name: Trust self-signed certificate
+        run: |
+          echo "${{ secrets.PFX_CERTIFICATE }}" | base64 --decode > appynox_staging.pfx
+          # Extract the certificate from the .pfx file
+          openssl pkcs12 -in appynox_staging.pfx -clcerts -nokeys -out appynox_staging.crt -password pass:${{ secrets.PFX_PASSWORD }}
+          # Trust the certificate
+          sudo cp appynox_staging.crt /usr/local/share/ca-certificates/
+          sudo update-ca-certificates
+
       - name: Run Unit Tests
         run: |
           dotnet test ./src/Services/CouponService/Tests/UnitTests/AppyNox.Services.Coupon.Infrastructure.UnitTest/ --no-restore
