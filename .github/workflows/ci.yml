@@ -32,9 +32,6 @@ jobs:
         with:
           dotnet-version: "8.0.x"
 
-      - name: Restore dependencies
-        run: dotnet restore ./AppyNox.sln
-
       - name: Setup SSL Certificates for Services
         run: |
           mkdir -p ./src/Gateways/AppyNox.Gateway.OcelotGateway/ssl
@@ -43,6 +40,12 @@ jobs:
           echo '${{ secrets.PFX_CERTIFICATE }}' | base64 --decode > ./src/Services/CouponService/Tests/IntegrationTests/AppyNox.Services.Coupon.WebAPI.IntegrationTests/ssl/appynox.pfx
           sudo chmod 644 ./src/Gateways/AppyNox.Gateway.OcelotGateway/ssl/appynox.pfx
           sudo chmod 644 ./src/Services/CouponService/Tests/IntegrationTests/AppyNox.Services.Coupon.WebAPI.IntegrationTests/ssl/appynox.pfx
+
+      - name: Restore dependencies
+        run: dotnet restore ./AppyNox.sln
+
+      - name: Build .NET Solution
+        run: dotnet build ./AppyNox.sln --configuration Production --no-restore
 
       - name: Trust self-signed certificate
         run: |
