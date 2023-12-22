@@ -34,11 +34,11 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
     }
     else if (builder.Environment.IsStaging())
     {
-        fileName = "../https/appynox.pfx";
+        fileName = "/https2/appynox.pfx";
     }
     else if (builder.Environment.IsProduction())
     {
-        fileName = "/https/appynox.pfx";
+        fileName = "/https2/appynox.pfx";
     }
 
     logger.Info($"SSL Certificate Path: {fileName}");
