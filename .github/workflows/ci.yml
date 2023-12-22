@@ -45,7 +45,7 @@ jobs:
         run: dotnet restore ./AppyNox.sln
 
       - name: Build .NET Solution
-        run: dotnet build ./AppyNox.sln --configuration Production --no-restore
+        run: dotnet build ./AppyNox.sln --configuration Release --no-restore
 
       - name: Trust self-signed certificate
         run: |
