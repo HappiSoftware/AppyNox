@@ -11,6 +11,7 @@ using Ductus.FluentDocker.Services.Impl;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,6 +29,8 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTests.Fixtures
         #region [ Fields ]
 
         private readonly ServiceCollection _services;
+
+        private readonly ILogger<CouponApiTestFixture> _logger;
 
         #endregion
 
@@ -47,17 +50,18 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTests.Fixtures
 
         public CouponApiTestFixture()
         {
-            Client = new HttpClient { BaseAddress = new(ServiceURIs.GatewayURI) };
-            Task.WhenAll(
-                WaitForServicesHealth(ServiceURIs.CouponServiceHealthURI)
-
-            //WaitForServicesHealth(ServiceURIs.AuthenticationServiceHealthURI)
-            ).GetAwaiter().GetResult();
-            AuthenticateAndGetToken().GetAwaiter().GetResult();
-
             _services = new ServiceCollection();
             ConfigureServices(_services);
             var serviceProvider = _services.BuildServiceProvider();
+            _logger = serviceProvider.GetRequiredService<ILogger<CouponApiTestFixture>>();
+
+            Client = new HttpClient { BaseAddress = new(ServiceURIs.GatewayURI) };
+            Task.WhenAll(
+                WaitForServicesHealth(ServiceURIs.CouponServiceHealthURI),
+                WaitForServicesHealth(ServiceURIs.AuthenticationServiceHealthURI)
+            ).GetAwaiter().GetResult();
+            AuthenticateAndGetToken().GetAwaiter().GetResult();
+
             DbContext = serviceProvider.GetRequiredService<CouponDbContext>();
             JsonSerializerOptions = new JsonSerializerOptions
             {
@@ -89,6 +93,8 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTests.Fixtures
 
         private static void ConfigureServices(IServiceCollection services)
         {
+            services.AddLogging(configure => configure.AddConsole());
+
             // Build the connection string from api appsettings.json
             IConfiguration config = new ConfigurationBuilder()
                 .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), @"../../../../../../AppyNox.Services.Coupon.WebAPI"))
@@ -109,24 +115,25 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTests.Fixtures
             {
                 try
                 {
-                    await Console.Out.WriteLineAsync($"Checking service health at '{healthUri}'");
+                    _logger.LogInformation($"Checking service health at '{healthUri}'");
                     var response = await Client.GetAsync(healthUri);
                     var responseContent = await response.Content.ReadAsStringAsync();
-                    await Console.Out.WriteLineAsync($"Response: {responseContent}");
+                    _logger.LogInformation($"Response: {responseContent}");
                     if (response.IsSuccessStatusCode)
                     {
                         return; // Service is healthy, exit the loop
                     }
                 }
-                catch
+                catch (Exception ex)
                 {
-                    // The request failed, possibly because the service is not up yet. Ignore and retry.
+                    _logger.LogError(ex, "Error while checking service health");
                 }
 
                 await Task.Delay(TimeSpan.FromSeconds(10));
                 attempts++;
             }
 
+            _logger.LogError($"Service did not become healthy in time '{healthUri}'");
             throw new Exception($"Service did not become healthy in time '{healthUri}'");
         }
 
