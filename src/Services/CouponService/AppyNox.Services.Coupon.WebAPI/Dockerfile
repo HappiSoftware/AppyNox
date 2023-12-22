@@ -15,7 +15,7 @@ COPY ["src/Services/CouponService/AppyNox.Services.Coupon.Domain/AppyNox.Service
 COPY ["src/Services/CouponService/AppyNox.Services.Coupon.Infrastructure/AppyNox.Services.Coupon.Infrastructure.csproj", "src/Services/CouponService/AppyNox.Services.Coupon.Infrastructure/"]
 RUN dotnet restore "src/Services/CouponService/AppyNox.Services.Coupon.WebAPI/AppyNox.Services.Coupon.WebAPI.csproj"
 COPY . .
-WORKDIR "/src/Services/CouponService/AppyNox.Services.Coupon.WebAPI"
+WORKDIR "/src/src/Services/CouponService/AppyNox.Services.Coupon.WebAPI"
 RUN dotnet build "AppyNox.Services.Coupon.WebAPI.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish

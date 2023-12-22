@@ -14,7 +14,7 @@ COPY ["src/Services/AuthenticationService/AppyNox.Services.Authentication.Applic
 COPY ["src/Services/AuthenticationService/AppyNox.Services.Authentication.Infrastructure/AppyNox.Services.Authentication.Infrastructure.csproj", "src/Services/AuthenticationService/AppyNox.Services.Authentication.Infrastructure/"]
 RUN dotnet restore "src/Services/AuthenticationService/AppyNox.Services.Authentication.WebAPI/AppyNox.Services.Authentication.WebAPI.csproj"
 COPY . .
-WORKDIR "/src/Services/AuthenticationService/AppyNox.Services.Authentication.WebAPI"
+WORKDIR "/src/src/Services/AuthenticationService/AppyNox.Services.Authentication.WebAPI"
 RUN dotnet build "AppyNox.Services.Authentication.WebAPI.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
