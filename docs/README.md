@@ -1,5 +1,7 @@
 # Introduction
 
+[![AppyNox CI](https://github.com/HappiSoftware/AppyNox/actions/workflows/ci.yml/badge.svg)](https://github.com/HappiSoftware/AppyNox/actions/workflows/ci.yml)
+
 [![ASP.NET Core](https://img.shields.io/badge/ASP.NET%20Core-latest-brightgreen.svg)](https://docs.microsoft.com/en-us/aspnet/core)
 [![Entity Framework Core](https://img.shields.io/badge/Entity%20Framework%20Core-Latest-brightgreen.svg)](https://docs.microsoft.com/en-us/ef/core/)
 [![FluentValidation](https://img.shields.io/badge/FluentValidation-Latest-brightgreen.svg)](https://fluentvalidation.net/)
