@@ -41,20 +41,20 @@ jobs:
           sudo chmod 644 ./src/Gateways/AppyNox.Gateway.OcelotGateway/ssl/appynox.pfx
           sudo chmod 644 ./src/Services/CouponService/Tests/IntegrationTests/AppyNox.Services.Coupon.WebAPI.IntegrationTests/ssl/appynox.pfx
 
-      # - name: Create Ocelot Settings for Gateway
-      #   run: |
-      #     echo '${{ secrets.GATEWAY_OCELOT_STAGING }}' > .\src\Gateways\AppyNox.Gateway.OcelotGateway\Configurations\ocelot.Staging.json
-      #     echo '${{ secrets.GATEWAY_OCELOT_PRODUCTION }}' > .\src\Gateways\AppyNox.Gateway.OcelotGateway\Configurations\ocelot.Production.json
+      - name: Create Ocelot Settings for Gateway
+        run: |
+          echo '${{ secrets.GATEWAY_OCELOT_STAGING }}' > ./src/Gateways/AppyNox.Gateway.OcelotGateway/Configurations/ocelot.Staging.json
+          echo '${{ secrets.GATEWAY_OCELOT_PRODUCTION }}' > ./src/Gateways/AppyNox.Gateway.OcelotGateway/Configurations/ocelot.Production.json
 
       - name: Create Authentication Service appsettings
         run: |
-          echo '${{ secrets.AUTHENTICATION_APPSETTINGS_STAGING }}' > .\src\Services\AuthenticationService\AppyNox.Services.Authentication.WebAPI\appsettings.Staging.json
-          echo '${{ secrets.AUTHENTICATION_APPSETTINGS_PRODUCTION }}' > .\src\Services\AuthenticationService\AppyNox.Services.Authentication.WebAPI\appsettings.Production.json
+          echo '${{ secrets.AUTHENTICATION_APPSETTINGS_STAGING }}' > ./src/Services/AuthenticationService/AppyNox.Services.Authentication.WebAPI/appsettings.Staging.json
+          echo '${{ secrets.AUTHENTICATION_APPSETTINGS_PRODUCTION }}' > ./src/Services/AuthenticationService/AppyNox.Services.Authentication.WebAPI/appsettings.Production.json
 
       - name: Create Coupon Service appsettings
         run: |
-          echo '${{ secrets.COUPON_APPSETTINGS_STAGING }}' > .\src\Services\CouponService\AppyNox.Services.Coupon.WebAPI\appsettings.Staging.json
-          echo '${{ secrets.COUPON_APPSETTINGS_PRODUCTION }}' > .\src\Services\CouponService\AppyNox.Services.Coupon.WebAPI\appsettings.Production.json
+          echo '${{ secrets.COUPON_APPSETTINGS_STAGING }}' > ./src/Services/CouponService/AppyNox.Services.Coupon.WebAPI/appsettings.Staging.json
+          echo '${{ secrets.COUPON_APPSETTINGS_PRODUCTION }}' > ./src/Services/CouponService/AppyNox.Services.Coupon.WebAPI/appsettings.Production.json
 
       - name: Restore dependencies
         run: dotnet restore ./AppyNox.sln
