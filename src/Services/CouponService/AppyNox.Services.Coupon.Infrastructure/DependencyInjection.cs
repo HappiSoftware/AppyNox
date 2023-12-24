@@ -8,6 +8,8 @@ using AppyNox.Services.Coupon.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using NLog;
 
 namespace AppyNox.Services.Coupon.Infrastructure
 {
@@ -15,7 +17,7 @@ namespace AppyNox.Services.Coupon.Infrastructure
     {
         #region [ Public Methods ]
 
-        public static void ConfigureServices(IServiceCollection services, IConfiguration configuration, ApplicationEnvironment environment)
+        public static void ConfigureServices(IServiceCollection services, IConfiguration configuration, ApplicationEnvironment environment, Logger logger)
         {
             string? connectionString = string.Empty;
             connectionString = environment switch
@@ -25,6 +27,9 @@ namespace AppyNox.Services.Coupon.Infrastructure
                 ApplicationEnvironment.Production => configuration.GetConnectionString("ProductionConnection"),
                 _ => configuration.GetConnectionString("DefaultConnection"),
             };
+
+            logger.Info($"Infrastructure is starting... Connection string: {connectionString}");
+
             services.AddDbContext<CouponDbContext>(options =>
                 options.UseNpgsql(connectionString));
             services.AddHostedService<DatabaseStartupHostedService<CouponDbContext>>();

@@ -58,7 +58,6 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
 
         [HttpGet("{id}")]
         [Authorize(Permissions.Users.View)]
-        [GuidCheckFilter]
         public async Task<ApiResponse> GetById(string id, [FromQuery] QueryParametersViewModel queryParameters)
         {
             var identityUser = await _baseDependencies.UserManager.FindByIdAsync(id);
@@ -73,7 +72,6 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
 
         [HttpPut("{id}")]
         [Authorize(Permissions.Users.Edit)]
-        [GuidCheckFilter]
         public async Task<IActionResult> Put(string id, IdentityUserUpdateDto identityUserUpdateDto)
         {
             if (id != identityUserUpdateDto.Id)
@@ -178,7 +176,6 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
 
         [HttpDelete("{id}")]
         [Authorize(Permissions.Users.Delete)]
-        [GuidCheckFilter]
         public async Task<IActionResult> Delete(string id)
         {
             var identityUser = await _baseDependencies.UserManager.FindByIdAsync(id);
@@ -208,7 +205,6 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
         [HttpGet]
         [Authorize(Permissions.Users.View)]
         [Route("/api/Users/{uid}/Roles")]
-        [GuidCheckFilter("uid")]
         public async Task<ApiResponse> GetRoles(string uid)
         {
             var user = await _baseDependencies.UserManager.FindByIdAsync(uid);
@@ -230,7 +226,6 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
         [HttpPost]
         [Authorize(Permissions.Users.Edit)]
         [Route("/api/Users/{uid}/Roles/{rid}")]
-        [GuidCheckFilter("uid,rid")]
         public async Task<ApiResponse> AssignRole(string uid, string rid)
         {
             var user = await _baseDependencies.UserManager.FindByIdAsync(uid);
@@ -268,7 +263,6 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
         [HttpDelete]
         [Authorize(Permissions.Users.Edit)]
         [Route("/api/Users/{uid}/Roles/{rid}")]
-        [GuidCheckFilter("uid,rid")]
         public async Task<IActionResult> WithdrawRole(string uid, string rid)
         {
             var user = await _baseDependencies.UserManager.FindByIdAsync(uid);

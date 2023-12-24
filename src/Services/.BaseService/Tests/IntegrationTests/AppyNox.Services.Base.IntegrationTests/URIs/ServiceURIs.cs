@@ -6,19 +6,19 @@ using System.Threading.Tasks;
 
 namespace AppyNox.Services.Base.IntegrationTests.URIs
 {
-    public static class ServiceURIs
+    public class ServiceURIs
     {
-        #region [ Fields ]
+        #region [ Properties ]
 
-        public const string GatewayURI = "https://localhost:7000/";
+        public string GatewayURI { get; set; } = string.Empty;
 
-        public const string CouponServiceURI = $"coupon-service";
+        public string CouponServiceURI { get; set; } = string.Empty;
 
-        public const string CouponServiceHealthURI = $"{CouponServiceURI}/health";
+        public string CouponServiceHealthURI { get; set; } = string.Empty;
 
-        public const string AuthenticationServiceURI = $"authentication-service";
+        public string AuthenticationServiceURI { get; set; } = string.Empty;
 
-        public const string AuthenticationServiceHealthURI = $"{AuthenticationServiceURI}/health";
+        public string AuthenticationServiceHealthURI { get; set; } = string.Empty;
 
         #endregion
     }

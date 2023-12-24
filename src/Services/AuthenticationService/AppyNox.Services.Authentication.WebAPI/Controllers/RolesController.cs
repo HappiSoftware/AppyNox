@@ -61,7 +61,6 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
 
         [HttpGet("{id}")]
         [Authorize(Roles.View)]
-        [GuidCheckFilter]
         public async Task<ApiResponse> GetById(string id, [FromQuery] QueryParametersViewModel queryParameters)
         {
             var identityRole = await _roleManager.FindByIdAsync(id.ToString());
@@ -75,7 +74,6 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
 
         [HttpPut("{id}")]
         [Authorize(Roles.Edit)]
-        [GuidCheckFilter]
         public async Task<IActionResult> Put(string id, [FromBody] IdentityRoleUpdateDto identityRoleUpdateDto)
         {
             if (id != identityRoleUpdateDto.Id)
@@ -159,7 +157,6 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
 
         [HttpDelete("{id}")]
         [Authorize(Roles.Delete)]
-        [GuidCheckFilter]
         public async Task<IActionResult> Delete(string id)
         {
             var identityRole = await _roleManager.FindByIdAsync(id.ToString());
@@ -180,7 +177,6 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
         [HttpGet]
         [Authorize(Roles.View)]
         [Route("/api/roles/{rid}/claims")]
-        [GuidCheckFilter("rid")]
         public async Task<ApiResponse> GetClaims(string rid)
         {
             List<string> parameterList = new List<string> { "Value1", "Value2" };
@@ -200,7 +196,6 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
         [HttpPost]
         [Authorize(Roles.AssignPermission)]
         [Route("/api/Roles/{rid}/Claims")]
-        [GuidCheckFilter("rid")]
         public async Task<ApiResponse> AssignClaim(string rid, [FromBody] ClaimDto claim)
         {
             var role = await _roleManager.FindByIdAsync(rid);
@@ -237,7 +232,6 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
         [HttpDelete]
         [Authorize(Roles.WithdrawPermission)]
         [Route("/api/Roles/{rid}/Claims/{claimValue}")]
-        [GuidCheckFilter("rid")]
         public async Task<IActionResult> WithdrawClaim(string rid, string claimValue)
         {
             var role = await _roleManager.FindByIdAsync(rid);

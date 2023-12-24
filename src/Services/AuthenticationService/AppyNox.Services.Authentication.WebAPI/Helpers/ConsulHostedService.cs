@@ -32,12 +32,8 @@ public class ConsulHostedService : IHostedService
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        var serviceConfig = _configuration.GetSection("consul").Get<ConsulConfig>();
-
-        if (serviceConfig == null)
-        {
+        var serviceConfig = _configuration.GetSection("consul").Get<ConsulConfig>() ??
             throw new AuthenticationBaseException("Consul configuration is not defined. Service will not be discovered.", (int)NoxServerErrorResponseCodes.ServiceUnavailable);
-        }
 
         var registration = new AgentServiceRegistration
         {
@@ -48,17 +44,8 @@ public class ConsulHostedService : IHostedService
             Tags = serviceConfig.Tags
         };
 
-        //var check = new AgentServiceCheck
-        //{
-        //    HTTP = $"{serviceConfig.Scheme}://{serviceConfig.ServiceHost}:{serviceConfig.ServicePort}/{serviceConfig.HealthCheckUrl}",
-        //    Interval = TimeSpan.FromSeconds(serviceConfig.HealthCheckIntervalSeconds),
-        //    Timeout = TimeSpan.FromSeconds(serviceConfig.HealthCheckTimeoutSeconds)
-        //};
-
-        //registration.Checks = new[] { check };
-
         var logMsg = $"Registering service with Consul: {registration.Name}";
-        _logger.LogInformation(logMsg);
+        _logger.LogInformation("{Message}", logMsg);
 
         await _consulClient.Agent.ServiceDeregister(registration.ID, cancellationToken);
         await _consulClient.Agent.ServiceRegister(registration, cancellationToken);
@@ -77,7 +64,7 @@ public class ConsulHostedService : IHostedService
         var registration = new AgentServiceRegistration { ID = serviceConfig.ServiceId };
 
         var logMsg = $"Deregistering service from Consul: {registration.ID}";
-        _logger.LogInformation(logMsg);
+        _logger.LogInformation("{Message}", logMsg);
 
         await _consulClient.Agent.ServiceDeregister(registration.ID, cancellationToken);
     }

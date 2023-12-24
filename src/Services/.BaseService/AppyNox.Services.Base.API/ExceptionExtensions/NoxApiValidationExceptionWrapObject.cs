@@ -12,7 +12,7 @@ namespace AppyNox.Services.Base.API.ExceptionExtensions
     public class NoxApiValidationExceptionWrapObject(NoxException error, string correlationId, IEnumerable<ValidationError> validationErrors)
         : NoxApiExceptionWrapObject(error, correlationId)
     {
-        #region Properties
+        #region [ Properties ]
 
         [AutoWrapperPropertyMap(Prop.ResponseException)]
         public new object Error { get; set; } = new NoxError(error, correlationId, validationErrors);

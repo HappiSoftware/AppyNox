@@ -15,4 +15,14 @@
 	  <PackageReference Include="Ductus.FluentDocker.XUnit" Version="2.10.59" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="serviceuris.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="URIs\" />
+  </ItemGroup>
+
 </Project>

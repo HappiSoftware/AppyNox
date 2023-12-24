@@ -10,26 +10,17 @@ using AppyNox.Services.Base.IntegrationTests.URIs;
 
 namespace AppyNox.Services.Coupon.WebAPI.IntegrationTests
 {
-    public class CouponApiTests : IClassFixture<CouponApiTestFixture>
+    public class CouponApiTests(CouponApiTestFixture couponApiTestFixture) : IClassFixture<CouponApiTestFixture>
     {
         #region [ Fields ]
 
-        private readonly JsonSerializerOptions _jsonSerializerOptions;
+        private readonly JsonSerializerOptions _jsonSerializerOptions = couponApiTestFixture.JsonSerializerOptions;
 
-        private readonly CouponApiTestFixture _couponApiTestFixture;
+        private readonly CouponApiTestFixture _couponApiTestFixture = couponApiTestFixture;
 
-        private HttpClient _client;
+        private readonly HttpClient _client = couponApiTestFixture.Client;
 
-        #endregion
-
-        #region [ Public Constructors ]
-
-        public CouponApiTests(CouponApiTestFixture couponApiTestFixture)
-        {
-            _couponApiTestFixture = couponApiTestFixture;
-            _jsonSerializerOptions = couponApiTestFixture.JsonSerializerOptions;
-            _client = couponApiTestFixture.Client;
-        }
+        private readonly ServiceURIs _serviceURIs = couponApiTestFixture.ServiceURIs;
 
         #endregion
 
@@ -39,7 +30,7 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTests
         public async Task GetAll_ShouldReturnSuccessStatusCode()
         {
             // Act
-            var response = await _client.GetAsync($"{ServiceURIs.CouponServiceURI}/coupons");
+            var response = await _client.GetAsync($"{_serviceURIs.CouponServiceURI}/coupons");
 
             var jsonResponse = await response.Content.ReadAsStringAsync();
             var apiResponse = Unwrapper.Unwrap<ApiResponse>(jsonResponse);
@@ -72,7 +63,7 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTests
 
             // Arrange
             var id = coupon.Id;
-            var requestUri = $"{ServiceURIs.CouponServiceURI}/coupons/{id}";
+            var requestUri = $"{_serviceURIs.CouponServiceURI}/coupons/{id}";
 
             // Act
             var response = await _client.GetAsync(requestUri);
@@ -95,7 +86,7 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTests
             #region [ Create Coupon ]
 
             // Arrange
-            var requestUri = $"{ServiceURIs.CouponServiceURI}/coupons";
+            var requestUri = $"{_serviceURIs.CouponServiceURI}/coupons";
             var uniqueCode = "ffff2";
             var requestBody = new
             {
@@ -148,7 +139,7 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTests
             var newDiscountAmount = coupon.DiscountAmount + 1;
             var newDescription = $"{coupon.Code} updated on test method!";
             var newMinAmount = coupon.MinAmount + 1;
-            var requestUri = $"{ServiceURIs.CouponServiceURI}/coupons/{id}";
+            var requestUri = $"{_serviceURIs.CouponServiceURI}/coupons/{id}";
             var requestBody = new
             {
                 code = coupon.Code,
@@ -181,6 +172,7 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTests
             Assert.NotNull(coupon);
             Assert.Equal(newDiscountAmount, coupon.DiscountAmount);
             Assert.Equal(newMinAmount, coupon.MinAmount);
+
             //Assert.Equal(newDescription, coupon.Description);
             // TODO Yasin, fix this test
             // Update takes CouponSimpleUpadteDto and this causes Description to be null. We don't want to change description.
@@ -205,7 +197,7 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTests
 
             // Arrange
             var id = coupon.Id;
-            var requestUri = $"{ServiceURIs.CouponServiceURI}/coupons/{id}";
+            var requestUri = $"{_serviceURIs.CouponServiceURI}/coupons/{id}";
 
             // Act
             var response = await _client.DeleteAsync(requestUri);
