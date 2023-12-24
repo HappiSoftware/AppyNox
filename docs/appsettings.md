@@ -33,7 +33,7 @@ Since appsetting files are gitignored, you must create the `appsettings.{Environ
   "Consul": {
     "ServiceId": "CouponService",
     "ServiceName": "CouponService",
-    "Scheme": "https",
+    "Scheme": "http",
     "ServiceHost": "localhost",
     "ServicePort": "7002",
     "Tags": ["Coupon", "Coupons"],
@@ -58,7 +58,7 @@ Since appsetting files are gitignored, you must create the `appsettings.{Environ
     }
   },
   "ConnectionStrings": {
-    "StagingConnection": "User ID=postgres;Password=coupon_password;Server=appynox-coupon-db-test;Port=5432;Database=AppyNox_Coupon_Test",
+    "StagingConnection": "User ID=postgres;Password=coupon_password;Server=appynox-coupon-db-test;Port=5432;Database=AppyNox_Coupon_Test;Pooling=true",
     "DefaultConnection": "User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_Coupon;Pooling=true",
     "TestConnection": "User ID=postgres;Password=coupon_password;Server=localhost;Port=5434;Database=AppyNox_Coupon_Test"
   },
@@ -73,7 +73,7 @@ Since appsetting files are gitignored, you must create the `appsettings.{Environ
   "Consul": {
     "ServiceId": "CouponService",
     "ServiceName": "CouponService",
-    "Scheme": "https",
+    "Scheme": "http",
     "ServiceHost": "appynox-services-coupon-webapi",
     "ServicePort": "7002",
     "Tags": ["Coupon", "Coupons"],
@@ -112,7 +112,7 @@ Since appsetting files are gitignored, you must create the `appsettings.{Environ
   "Consul": {
     "ServiceId": "CouponService",
     "ServiceName": "CouponService",
-    "Scheme": "https",
+    "Scheme": "http",
     "ServiceHost": "appynox-services-coupon-webapi",
     "ServicePort": "7002",
     "Tags": ["Coupon", "Coupons"],
@@ -147,12 +147,13 @@ Since appsetting files are gitignored, you must create the `appsettings.{Environ
   "ConnectionStrings": {
     "DevelopmentConnection": "User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_Authentication",
     "DefaultConnection": "User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_Authentication",
-    "TestConnection": "" // for integration tests, use this to connect to dockerized database container from localhost
+    "TestConnection": ""
   },
   "JwtSettings": {
     "SecretKey": "vA+A/of8yadsbwe/CmS6PD0Kp837BozrQFMDuQ2Kwwg=",
     "Issuer": "AuthServerV1",
-    "Audience": "AppyNoxBasic"
+    "Audience": "AppyNoxBasic",
+    "TokenLifetimeMinutes": "5"
   },
   "ConsulConfig": {
     "Address": "http://localhost:8500"
@@ -160,7 +161,7 @@ Since appsetting files are gitignored, you must create the `appsettings.{Environ
   "Consul": {
     "ServiceId": "AuthenticationService",
     "ServiceName": "AuthenticationService",
-    "Scheme": "https",
+    "Scheme": "http",
     "ServiceHost": "localhost",
     "ServicePort": "7001",
     "Tags": ["Authentication", "SSO"],
@@ -187,12 +188,13 @@ Since appsetting files are gitignored, you must create the `appsettings.{Environ
   "ConnectionStrings": {
     "StagingConnection": "User ID=postgres;Password=auth_password;Server=appynox-authentication-db-test;Port=5432;Database=AppyNox_Authentication_Test",
     "DefaultConnection": "User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_Authentication",
-    "TestConnection": "" // for integration tests, use this to connect to dockerized database container from localhost
+    "TestConnection": ""
   },
   "JwtSettings": {
     "SecretKey": "vA+A/of8yadsbwe/CmS6PD0Kp837BozrQFMDuQ2Kwwg=",
     "Issuer": "AuthServerV1",
-    "Audience": "AppyNoxBasic"
+    "Audience": "AppyNoxBasic",
+    "TokenLifetimeMinutes": "30"
   },
   "ConsulConfig": {
     "Address": "http://appynox-consul:8500"
@@ -200,7 +202,7 @@ Since appsetting files are gitignored, you must create the `appsettings.{Environ
   "Consul": {
     "ServiceId": "AuthenticationService",
     "ServiceName": "AuthenticationService",
-    "Scheme": "https",
+    "Scheme": "http",
     "ServiceHost": "appynox-services-authentication-webapi",
     "ServicePort": "7001",
     "Tags": ["Authentication", "SSO"],
@@ -225,25 +227,25 @@ Since appsetting files are gitignored, you must create the `appsettings.{Environ
     }
   },
   "ConnectionStrings": {
-    "ProductionConnection": "User ID=postgres;Password=auth_password;Server=appynox-authentication-db;Port=5432;Database=AppyNox_Authentication",
-    "DefaultConnection": "User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_Authentication",
-    "TestConnection": "" // for integration tests, use this to connect to dockerized database container from localhost
+    "ProductionConnection": "User ID=postgres;Password=coupon_password;Server=appynox-coupon-db;Port=5432;Database=AppyNox_Coupon",
+    "DefaultConnection": "User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_Coupon;Pooling=true"
   },
   "JwtSettings": {
     "SecretKey": "vA+A/of8yadsbwe/CmS6PD0Kp837BozrQFMDuQ2Kwwg=",
     "Issuer": "AuthServerV1",
-    "Audience": "AppyNoxBasic"
+    "Audience": "AppyNoxBasic",
+    "TokenLifetimeMinutes": "1"
   },
   "ConsulConfig": {
     "Address": "http://appynox-consul:8500"
   },
   "Consul": {
-    "ServiceId": "AuthenticationService",
-    "ServiceName": "AuthenticationService",
-    "Scheme": "https",
-    "ServiceHost": "appynox-services-authentication-webapi",
-    "ServicePort": "7001",
-    "Tags": ["Authentication", "SSO"],
+    "ServiceId": "CouponService",
+    "ServiceName": "CouponService",
+    "Scheme": "http",
+    "ServiceHost": "appynox-services-coupon-webapi",
+    "ServicePort": "7002",
+    "Tags": ["Coupon", "Coupons"],
     "HealthCheckUrl": "health-check",
     "HealthCheckIntervalSeconds": 30,
     "HealthCheckTimeoutSeconds": 5
@@ -295,21 +297,21 @@ Since appsetting files are gitignored, you must create the `appsettings.{Environ
     },
     {
       "UseServiceDiscovery": true,
-      "ServiceName": "IdentityService",
+      "ServiceName": "AuthenticationService",
 
-      "DownstreamPathTemplate": "/{everything}",
+      "DownstreamPathTemplate": "/api/{everything}",
       "DownstreamScheme": "http",
 
-      "UpstreamPathTemplate": "/auth/{everything}",
+      "UpstreamPathTemplate": "/authentication-service/{everything}",
       "UpstreamHttpMethod": ["Get", "Post", "Delete", "Put"],
       "UpstreamScheme": "https",
 
       "RateLimitOptions": {
         "ClientWhitelist": [],
         "EnableRateLimiting": true,
-        "Period": "3s", // Depends on service needs
-        "PeriodTimespan": 3, // Depends on service needs
-        "Limit": 3 // Depends on service needs
+        "Period": "3s",
+        "PeriodTimespan": 3,
+        "Limit": 3
       }
     },
     {
@@ -326,9 +328,9 @@ Since appsetting files are gitignored, you must create the `appsettings.{Environ
       "RateLimitOptions": {
         "ClientWhitelist": [],
         "EnableRateLimiting": true,
-        "Period": "3s", // Depends on service needs
-        "PeriodTimespan": 3, // Depends on service needs
-        "Limit": 5 // Depends on service needs
+        "Period": "3s",
+        "PeriodTimespan": 3,
+        "Limit": 5
       }
     }
   ]
@@ -364,28 +366,28 @@ Since appsetting files are gitignored, you must create the `appsettings.{Environ
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7000
+          "Port": 443
         }
       ],
       "Priority": 1 // High priority to ensure it takes precedence
     },
     {
       "UseServiceDiscovery": true,
-      "ServiceName": "IdentityService",
+      "ServiceName": "AuthenticationService",
 
-      "DownstreamPathTemplate": "/{everything}",
+      "DownstreamPathTemplate": "/api/{everything}",
       "DownstreamScheme": "http",
 
-      "UpstreamPathTemplate": "/auth/{everything}",
+      "UpstreamPathTemplate": "/authentication-service/{everything}",
       "UpstreamHttpMethod": ["Get", "Post", "Delete", "Put"],
       "UpstreamScheme": "https",
 
       "RateLimitOptions": {
         "ClientWhitelist": [],
         "EnableRateLimiting": true,
-        "Period": "3s", // Depends on service needs
-        "PeriodTimespan": 3, // Depends on service needs
-        "Limit": 3 // Depends on service needs
+        "Period": "3s",
+        "PeriodTimespan": 3,
+        "Limit": 3
       }
     },
     {
@@ -402,9 +404,9 @@ Since appsetting files are gitignored, you must create the `appsettings.{Environ
       "RateLimitOptions": {
         "ClientWhitelist": [],
         "EnableRateLimiting": true,
-        "Period": "3s", // Depends on service needs
-        "PeriodTimespan": 3, // Depends on service needs
-        "Limit": 5 // Depends on service needs
+        "Period": "3s",
+        "PeriodTimespan": 3,
+        "Limit": 5
       }
     }
   ]
@@ -440,28 +442,28 @@ Since appsetting files are gitignored, you must create the `appsettings.{Environ
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7000
+          "Port": 443
         }
       ],
       "Priority": 1 // High priority to ensure it takes precedence
     },
     {
       "UseServiceDiscovery": true,
-      "ServiceName": "IdentityService",
+      "ServiceName": "AuthenticationService",
 
       "DownstreamPathTemplate": "/api/{everything}",
       "DownstreamScheme": "http",
 
-      "UpstreamPathTemplate": "/auth/{everything}",
+      "UpstreamPathTemplate": "/authentication-service/{everything}",
       "UpstreamHttpMethod": ["Get", "Post", "Delete", "Put"],
       "UpstreamScheme": "https",
 
       "RateLimitOptions": {
         "ClientWhitelist": [],
         "EnableRateLimiting": true,
-        "Period": "3s", // Depends on service needs
-        "PeriodTimespan": 3, // Depends on service needs
-        "Limit": 3 // Depends on service needs
+        "Period": "3s",
+        "PeriodTimespan": 3,
+        "Limit": 3
       }
     },
     {
@@ -478,9 +480,9 @@ Since appsetting files are gitignored, you must create the `appsettings.{Environ
       "RateLimitOptions": {
         "ClientWhitelist": [],
         "EnableRateLimiting": true,
-        "Period": "3s", // Depends on service needs
-        "PeriodTimespan": 3, // Depends on service needs
-        "Limit": 5 // Depends on service needs
+        "Period": "3s",
+        "PeriodTimespan": 3,
+        "Limit": 5
       }
     }
   ]
