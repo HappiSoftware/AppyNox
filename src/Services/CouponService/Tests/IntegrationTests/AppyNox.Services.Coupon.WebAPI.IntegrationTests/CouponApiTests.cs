@@ -43,10 +43,11 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTests
 
             var jsonResponse = await response.Content.ReadAsStringAsync();
             var apiResponse = Unwrapper.Unwrap<ApiResponse>(jsonResponse);
+            apiResponse.ValidateOk();
 
             // Deserialize the result (assuming apiResponse.Result is a JSON array of CouponSimpleDto)
             var coupons = apiResponse?.Result is not null
-                ? JsonSerializer.Deserialize<IList<CouponSimpleDto>>(apiResponse.Result.ToString(), _jsonSerializerOptions)
+                ? JsonSerializer.Deserialize<IList<CouponSimpleDto>>(apiResponse.Result.ToString()!, _jsonSerializerOptions)
                 : null;
 
             // Assert
