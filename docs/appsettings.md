@@ -227,8 +227,8 @@ Since appsetting files are gitignored, you must create the `appsettings.{Environ
     }
   },
   "ConnectionStrings": {
-    "ProductionConnection": "User ID=postgres;Password=coupon_password;Server=appynox-coupon-db;Port=5432;Database=AppyNox_Coupon",
-    "DefaultConnection": "User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_Coupon;Pooling=true"
+    "ProductionConnection": "User ID=postgres;Password=auth_password;Server=appynox-authentication-db;Port=5432;Database=AppyNox_Authentication",
+    "DefaultConnection": "User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_Authentication;Pooling=true"
   },
   "JwtSettings": {
     "SecretKey": "vA+A/of8yadsbwe/CmS6PD0Kp837BozrQFMDuQ2Kwwg=",
@@ -240,12 +240,12 @@ Since appsetting files are gitignored, you must create the `appsettings.{Environ
     "Address": "http://appynox-consul:8500"
   },
   "Consul": {
-    "ServiceId": "CouponService",
-    "ServiceName": "CouponService",
+    "ServiceId": "AuthenticationService",
+    "ServiceName": "AuthenticationService",
     "Scheme": "http",
-    "ServiceHost": "appynox-services-coupon-webapi",
-    "ServicePort": "7002",
-    "Tags": ["Coupon", "Coupons"],
+    "ServiceHost": "appynox-services-authentication-webapi",
+    "ServicePort": "7001",
+    "Tags": ["Authentication", "SSO"],
     "HealthCheckUrl": "health-check",
     "HealthCheckIntervalSeconds": 30,
     "HealthCheckTimeoutSeconds": 5
