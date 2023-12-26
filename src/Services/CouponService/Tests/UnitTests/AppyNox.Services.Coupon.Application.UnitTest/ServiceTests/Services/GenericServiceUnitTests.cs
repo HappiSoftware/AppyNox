@@ -123,7 +123,7 @@ namespace AppyNox.Services.Coupon.Application.UnitTest.ServiceTests.Services
             JsonElement root = jsonDocument.RootElement;
 
             // Act
-            var result = _fixture.GenericServiceBase.UpdateAsync(root);
+            var result = _fixture.GenericServiceBase.UpdateAsync(root, CouponUpdateDetailLevel.Simple.GetDisplayName());
 
             // Assert
             Assert.NotNull(result);

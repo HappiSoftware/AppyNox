@@ -229,7 +229,8 @@ namespace AppyNox.Services.Coupon.Infrastructure.UnitTest.RepositoryTests
             existingCoupon.MinAmount = 1;
             existingCoupon.CouponDetailEntityId = existingCoupon2.CouponDetailEntityId;
 
-            repository.UpdateAsync(existingCoupon);
+            List<string> propertyList = ["Code","Description", "DiscountAmount", "MinAmount", "CouponDetailEntityId"];
+            repository.UpdateAsync(existingCoupon, propertyList);
             await unitOfWork.SaveChangesAsync();
 
             var propertyNames = typeof(CouponEntity).GetProperties().Select(p => p.Name).ToList();

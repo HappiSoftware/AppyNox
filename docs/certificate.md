@@ -72,7 +72,8 @@ openssl pkcs12 -export -out appynox.pfx -inkey appynox.key -in appynox.crt -pass
 
 6. **Trust The Certificate**
 
-   Just double click the appynox.pfx and `next next next`
+   Just double click the appynox.pfx. `next next next.
+   In the "Certificate Storage" step, select "Place all certificates in the following storage (option 2)", click the browse button and select "Trusted root certification authorities (usually option 2)" and continue.`
 
 <br>
 <br>

@@ -33,7 +33,7 @@ namespace AppyNox.Services.Base.API.Middleware
                 string correlationId = (context.Items["CorrelationId"] ?? string.Empty).ToString() ?? string.Empty;
                 var actionContext = new ActionContext(context, context.GetRouteData(), new ControllerActionDescriptor());
                 var modelState = new ModelStateDictionary();
-                ValidationHandlerBase.HandleValidationResult(modelState, ex.ValidationResult, actionContext);
+                ValidationHelpers.HandleValidationResult(modelState, ex.ValidationResult, actionContext);
                 throw new ApiException(new NoxApiValidationExceptionWrapObject(ex, correlationId, modelState.AllErrors()), statusCode: ex.StatusCode);
             }
             catch (NoxException ex)
