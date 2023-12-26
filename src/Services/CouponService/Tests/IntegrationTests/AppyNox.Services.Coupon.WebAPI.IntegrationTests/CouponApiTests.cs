@@ -140,7 +140,7 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTests
             var newDiscountAmount = coupon.DiscountAmount + 1;
             var newMinAmount = coupon.MinAmount + 1;
             var newDescription = "new description";
-            var requestUri = $"{ServiceURIs.CouponServiceURI}/coupons/{id}";
+            var requestUri = $"{_serviceURIs.CouponServiceURI}/coupons/{id}";
             var requestBody = new
             {
                 code = coupon.Code,
