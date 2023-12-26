@@ -15,6 +15,19 @@
     <Content Include="..\..\..\..\.BaseService\Tests\IntegrationTests\AppyNox.Services.Base.IntegrationTests\serviceuris.json" Link="serviceuris.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="..\..\..\AppyNox.Services.Coupon.WebAPI\appsettings.Staging.json" Link="appsettings.Staging.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+	  <None Include="..\..\..\..\..\..\docker-compose.Staging.yml" Link="docker-compose.Staging.yml">
+		  <DependentUpon>docker-compose.yml</DependentUpon>
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+    <None Include="..\..\..\..\..\..\docker-compose.yml" Link="docker-compose.yml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
@@ -39,16 +52,9 @@
   </ItemGroup>
 
 	<ItemGroup>
-		<None Include="docker-compose.yml">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-	</ItemGroup>
-
-	<ItemGroup>
 	  <None Update="ssl\appynox.pfx">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
 	</ItemGroup>
 	
-
 </Project>

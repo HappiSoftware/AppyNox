@@ -99,14 +99,17 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTests.Fixtures
         protected override ICompositeService Build()
         {
             var file = Path.Combine(Directory.GetCurrentDirectory(), (TemplateString)"docker-compose.yml");
+            var fileStaging = Path.Combine(Directory.GetCurrentDirectory(), (TemplateString)"docker-compose.staging.yml");
 
             return new DockerComposeCompositeService(DockerHost,
                 new Ductus.FluentDocker.Model.Compose.DockerComposeConfig
                 {
-                    ComposeFilePath = new List<string> { file },
+                    ComposeFilePath = new List<string> { file, fileStaging },
                     ForceRecreate = true,
                     RemoveOrphans = true,
-                    StopOnDispose = true
+                    StopOnDispose = true,
+                    Services = ["appynox-consul", "appynox-gateway-ocelotgateway", "appynox-coupon-db",
+                        "appynox-services-coupon-webapi", "appynox-authentication-db", "appynox-services-authentication-webapi"]
                 });
         }
 
@@ -120,7 +123,7 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTests.Fixtures
 
             // Build the connection string from api appsettings.json
             IConfiguration config = new ConfigurationBuilder()
-                .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), @"../../../../../../AppyNox.Services.Coupon.WebAPI"))
+                .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .AddJsonFile($"appsettings.Staging.json", optional: true)
                 .AddEnvironmentVariables()

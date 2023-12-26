@@ -1,0 +1,82 @@
+version: "3.8"
+
+networks:
+  integration-test:
+    driver: bridge
+
+volumes:
+  app_data:
+
+services:
+    appynox-authentication-db:
+        environment:
+            POSTGRES_DB: AppyNox_Authentication_Test
+            POSTGRES_PASSWORD: auth_password
+        restart: always
+        ports:
+            - "5435:5432" # allow external access to be able to set the DbContext to assert tests
+        networks:
+            - integration-test
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U postgres"]
+            interval: 5s
+            timeout: 5s
+            retries: 20
+
+    appynox-coupon-db:
+        environment:
+            POSTGRES_DB: AppyNox_Coupon_Test
+            POSTGRES_PASSWORD: coupon_password
+        restart: always
+        ports:
+            - "5434:5432" # allow external access to be able to set the DbContext to assert tests
+        networks:
+            - integration-test
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U postgres"]
+            interval: 5s
+            timeout: 5s
+            retries: 20
+
+    appynox-consul:
+        networks:
+            - integration-test
+        healthcheck:
+            test: ["CMD", "consul", "info"]
+            interval: 5s
+            timeout: 5s
+            retries: 20
+        ports:
+          - "8500:8500"
+          - "8600:8600/udp"
+
+    appynox-gateway-ocelotgateway:
+        environment:
+            - ASPNETCORE_ENVIRONMENT=Staging
+        volumes:
+            - ./ssl:/https2
+        networks:
+            - integration-test
+        healthcheck:
+            test: ["CMD-SHELL", "curl --fail https://appynox-gateway-ocelotgateway:7000/health || exit 1"]
+            interval: 5s
+            timeout: 5s
+            retries: 20
+        restart: always
+
+    appynox-services-coupon-webapi:
+        environment:
+            ASPNETCORE_ENVIRONMENT: Staging
+        networks:
+            - integration-test
+        healthcheck:
+            test: ["CMD-SHELL", "curl --fail http://appynox-services-coupon-webapi:7002/api/health || exit 1"]
+            interval: 5s
+            timeout: 5s
+            retries: 20
+
+    appynox-services-authentication-webapi:
+        environment:
+            ASPNETCORE_ENVIRONMENT: Staging
+        networks:
+            - integration-test
