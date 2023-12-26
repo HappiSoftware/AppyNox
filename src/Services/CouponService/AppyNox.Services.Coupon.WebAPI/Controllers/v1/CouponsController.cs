@@ -57,16 +57,16 @@ namespace AppyNox.Services.Coupon.WebAPI.Controllers.v1
 
         [HttpPut("{id}")]
         [Authorize(Permissions.Coupons.Edit)]
-        public async Task<IActionResult> Update(Guid id, [FromBody] CouponSimpleUpdateDto couponDto)
+        public async Task<IActionResult> Update(Guid id, [FromBody] dynamic couponDto, string detailLevel = "Simple")
         {
-            if (id != couponDto.Id)
+            if (id != ValidationHelpers.GetIdFromDynamicDto(couponDto))
             {
                 return BadRequest();
             }
 
             await _couponService.GetByIdAsync(id, QueryParameters.CreateForIdOnly());
 
-            await _couponService.UpdateAsync(couponDto);
+            await _couponService.UpdateAsync(couponDto, detailLevel);
             return NoContent();
         }
 

@@ -9,5 +9,10 @@ public static class StringExtensions
         return data.Replace("\\r", "").Replace("\\n", "").Replace("\\t", "").Replace("\\\"", "\"");
     }
 
+    public static bool IsNullOrEmpty(this string? data)
+    {
+        return string.IsNullOrEmpty(data);
+    }
+
     #endregion
 }

@@ -135,22 +135,24 @@ namespace AppyNox.Services.Base.Application.Services.Implementations
             return (guid: mappedEntity.Id, basicDto: createdObject);
         }
 
-        public async Task UpdateAsync(dynamic dto)
+        public async Task UpdateAsync(dynamic dto, string detailLevel)
         {
             #region [ Dynamic Dto Convertion ]
 
-            var dtoType = _dtoMappingRegistry.GetDtoType(DtoLevelMappingTypes.Update, typeof(TEntity), CommonDtoLevelEnums.Simple.GetDisplayName());
+            var dtoType = _dtoMappingRegistry.GetDtoType(DtoLevelMappingTypes.Update, typeof(TEntity), detailLevel);
+            var dtoObject = JsonSerializer.Deserialize(dto, dtoType, options: _jsonSerializerOptions);
 
             #endregion
 
             #region [ FluentValidation ]
 
-            FluentValidate(dtoType, dto);
+            FluentValidate(dtoType, dtoObject);
 
             #endregion
 
-            var mappedEntity = _mapper.Map(dto, dtoType, typeof(TEntity));
-            _repository.UpdateAsync(mappedEntity);
+            var mappedEntity = _mapper.Map(dtoObject, dtoType, typeof(TEntity));
+            List<string> propertyList = (dtoObject as object).GetType().GetProperties().Select(x => x.Name).ToList();
+            _repository.UpdateAsync(mappedEntity, propertyList);
             await _unitOfWork.SaveChangesAsync();
         }
 

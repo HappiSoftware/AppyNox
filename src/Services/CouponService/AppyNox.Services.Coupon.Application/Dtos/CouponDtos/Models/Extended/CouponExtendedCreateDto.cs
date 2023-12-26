@@ -13,7 +13,7 @@ namespace AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Extended
     {
         #region [ Properties ]
 
-        public string? Description { get; set; }
+        public string? Detail { get; set; }
 
         #endregion
     }

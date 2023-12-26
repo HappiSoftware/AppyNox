@@ -15,13 +15,13 @@ namespace AppyNox.Services.Coupon.Domain.Entities
 
         public string Code { get; set; } = string.Empty;
 
-        public string? Description { get; set; }
+        public string Description { get; set; } = string.Empty;
 
         public double DiscountAmount { get; set; }
 
         public int MinAmount { get; set; }
 
-        public int DetailValue { get; set; }
+        public string? Detail { get; set; }
 
         #endregion
 

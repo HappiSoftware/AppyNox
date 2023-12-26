@@ -10,6 +10,8 @@ namespace AppyNox.Services.Coupon.Application.Dtos.CouponDetailDtos.Models.Basic
 
         public Guid Id { get; set; }
 
+        // Ommitted for simplicity
+
         #endregion
     }
 }
