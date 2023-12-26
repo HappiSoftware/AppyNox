@@ -11,8 +11,6 @@ namespace AppyNox.Services.Base.Infrastructure.Repositories.Common
 
         private string _detailLevel = string.Empty;
 
-        private DtoLevelMappingTypes _accessType = DtoLevelMappingTypes.DataAccess;
-
         [Range(1, int.MaxValue, ErrorMessage = "Page number must be greater than 0.")]
         public int PageNumber { get; set; } = 1;
 
@@ -21,21 +19,17 @@ namespace AppyNox.Services.Base.Infrastructure.Repositories.Common
 
         public CommonDtoLevelEnums CommonDtoLevel { get => _commonDtoLevel; }
 
-        public DtoLevelMappingTypes AccessType
-        {
-            get => _accessType;
-            set => _accessType = value;
-        }
+        public DtoLevelMappingTypes AccessType { get; set; } = DtoLevelMappingTypes.DataAccess;
 
         /// <summary>
-        /// Used only for converting AccessType, dont use this variable in code.
+        /// Used only for converting AccessType, do not use this variable in code.
         /// </summary>
         public string Access
         {
             get => string.Empty;
             set
             {
-                _accessType = Enum.TryParse<DtoLevelMappingTypes>(value, true, out var result)
+                AccessType = Enum.TryParse<DtoLevelMappingTypes>(value, true, out var result)
                     ? result
                     : DtoLevelMappingTypes.DataAccess;
             }

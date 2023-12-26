@@ -15,10 +15,10 @@ COPY ["src/Services/AuthenticationService/AppyNox.Services.Authentication.Infras
 RUN dotnet restore "src/Services/AuthenticationService/AppyNox.Services.Authentication.WebAPI/AppyNox.Services.Authentication.WebAPI.csproj"
 COPY . .
 WORKDIR "/src/src/Services/AuthenticationService/AppyNox.Services.Authentication.WebAPI"
-RUN dotnet build "AppyNox.Services.Authentication.WebAPI.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "AppyNox.Services.Authentication.WebAPI.csproj" -c "$BUILD_CONFIGURATION" -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "AppyNox.Services.Authentication.WebAPI.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "AppyNox.Services.Authentication.WebAPI.csproj" -c "$BUILD_CONFIGURATION" -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app

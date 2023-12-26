@@ -12,6 +12,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="..\..\..\..\.BaseService\Tests\IntegrationTests\AppyNox.Services.Base.IntegrationTests\serviceuris.json" Link="serviceuris.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoWrapper.Server" Version="2.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />

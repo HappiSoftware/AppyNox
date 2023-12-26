@@ -29,10 +29,7 @@ namespace AppyNox.EventBus.RabbitMQ
         {
             if (config.Connection != null)
             {
-                var connJson = JsonSerializer.Serialize(EventBusConfig.Connection, new JsonSerializerOptions()
-                {
-                    ReferenceHandler = ReferenceHandler.IgnoreCycles
-                });
+                var connJson = JsonSerializer.Serialize(EventBusConfig.Connection, jsonSerializerOptions);
 
                 _connectionFactory = JsonSerializer.Deserialize<ConnectionFactory>(connJson)!;
             }

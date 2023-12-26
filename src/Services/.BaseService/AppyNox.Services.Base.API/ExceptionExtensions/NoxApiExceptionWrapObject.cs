@@ -11,18 +11,18 @@ namespace AppyNox.Services.Base.API.ExceptionExtensions
 {
     public class NoxApiExceptionWrapObject(NoxException error, string correlationId)
     {
-        #region Properties
+        #region [ Properties ]
 
         [AutoWrapperPropertyMap(Prop.ResponseException)]
         public object Error { get; set; } = new NoxError(error, correlationId);
 
         #endregion
 
-        #region Classes
+        #region [ Classes ]
 
         protected class NoxError(NoxException error, string correlationId)
         {
-            #region Properties
+            #region [ Properties ]
 
             public int Code { get; set; } = error.StatusCode;
 

@@ -7,18 +7,43 @@ namespace AppyNox.Services.Base.IntegrationTests.Ductus
     {
         #region Fields
 
-        protected ICompositeService CompositeService;
+        protected ICompositeService? CompositeService;
 
         protected IHostService? DockerHost;
+
+        private bool _disposed;
 
         #endregion
 
         #region Public Constructors
 
-        public DockerComposeTestBase()
+        protected DockerComposeTestBase()
         {
             EnsureDockerHost();
+        }
 
+        #endregion
+
+        #region Public Methods
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        #endregion
+
+        #region Protected Methods
+
+        protected abstract ICompositeService Build();
+
+        protected virtual void OnContainerTearDown()
+        {
+        }
+
+        protected void Initialize()
+        {
             CompositeService = Build();
             try
             {
@@ -33,38 +58,34 @@ namespace AppyNox.Services.Base.IntegrationTests.Ductus
             }
         }
 
-        #endregion
-
-        #region Public Methods
-
-        public void Dispose()
+        protected virtual void Dispose(bool disposing)
         {
-            OnContainerTearDown();
-            var compositeService = CompositeService;
-            CompositeService = null!;
-            try
+            if (_disposed)
             {
-                compositeService?.Dispose();
+                return;
             }
-            catch
+
+            if (disposing)
             {
-                // ignored
+                OnContainerTearDown();
+                CompositeService?.Dispose();
+                DockerHost?.Dispose();
             }
+            _disposed = true;
         }
 
         #endregion
 
-        #region Protected Methods
+        #region Destructor
 
-        protected abstract ICompositeService Build();
-
-        protected virtual void OnContainerTearDown()
+        ~DockerComposeTestBase()
         {
+            Dispose(false);
         }
 
         #endregion
 
-        #region Private Methods
+        #region [ Private Methods ]
 
         private void EnsureDockerHost()
         {
@@ -80,7 +101,7 @@ namespace AppyNox.Services.Base.IntegrationTests.Ductus
                 return;
             }
 
-            if (hosts.Count == 0) DockerHost = hosts.First();
+            if (hosts.Count == 0) DockerHost = hosts[0];
 
             if (DockerHost != null) return;
 

@@ -2,6 +2,8 @@
 using AppyNox.EventBus.Base.SubscriptionManagers;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace AppyNox.EventBus.Base.Events
 {
@@ -12,6 +14,15 @@ namespace AppyNox.EventBus.Base.Events
         public readonly IServiceProvider serviceProvider;
 
         public readonly IEventBusSubscriptionManager subsManager;
+
+        protected static readonly JsonSerializerOptions jsonSerializerOptions = new()
+        {
+            ReferenceHandler = ReferenceHandler.IgnoreCycles
+        };
+
+        #endregion
+
+        #region [ Properties ]
 
         public EventBusConfig EventBusConfig { get; set; }
 
@@ -53,10 +64,7 @@ namespace AppyNox.EventBus.Base.Events
         {
             Dispose(true);
         }
-        protected virtual void Dispose(bool disposing)
-        {
-            EventBusConfig = null!;
-        }
+
         public async Task<bool> ProcessEvent(string eventName, string message)
         {
             eventName = ProcessEventName(eventName);
@@ -98,6 +106,11 @@ namespace AppyNox.EventBus.Base.Events
         public abstract void Subscribe<T, TH>() where T : IntegrationEvent where TH : IIntegrationEventHandler<T>;
 
         public abstract void Unsubscribe<T, TH>() where T : IntegrationEvent where TH : IIntegrationEventHandler<T>;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            EventBusConfig = null!;
+        }
 
         #endregion
     }

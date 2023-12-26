@@ -32,12 +32,8 @@ public class ConsulHostedService : IHostedService
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        var serviceConfig = _configuration.GetSection("consul").Get<ConsulConfig>();
-
-        if (serviceConfig == null)
-        {
+        var serviceConfig = _configuration.GetSection("consul").Get<ConsulConfig>() ??
             throw new CouponBaseException("Consul configuration is not defined. Service will not be discovered.", (int)NoxServerErrorResponseCodes.ServiceUnavailable);
-        }
 
         var registration = new AgentServiceRegistration
         {
@@ -47,15 +43,6 @@ public class ConsulHostedService : IHostedService
             Port = serviceConfig.ServicePort,
             Tags = serviceConfig.Tags
         };
-
-        //var check = new AgentServiceCheck
-        //{
-        //    HTTP = $"{serviceConfig.Scheme}://{serviceConfig.ServiceHost}:{serviceConfig.ServicePort}/{serviceConfig.HealthCheckUrl}",
-        //    Interval = TimeSpan.FromSeconds(serviceConfig.HealthCheckIntervalSeconds),
-        //    Timeout = TimeSpan.FromSeconds(serviceConfig.HealthCheckTimeoutSeconds)
-        //};
-
-        //registration.Checks = new[] { check };
 
         var logMsg = $"Registering service with Consul: {registration.Name}";
         _logger.LogInformation("{Message}", logMsg);

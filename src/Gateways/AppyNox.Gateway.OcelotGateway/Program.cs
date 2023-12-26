@@ -10,11 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 #region [ Logger Setup ]
 
-if (!builder.Environment.IsDevelopment())
-{
-    NLog.LogManager.Setup().LoadConfigurationFromFile($"Configurations/nlog.config");
-}
-
+NLog.LogManager.Setup().LoadConfigurationFromFile($"Configurations/nlog.config");
 builder.Logging.ClearProviders();
 builder.Host.UseNLog();
 
@@ -32,31 +28,15 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
     {
         fileName = Directory.GetCurrentDirectory() + "/ssl/appynox.pfx";
     }
-    else if (builder.Environment.IsStaging())
+    else if (builder.Environment.IsStaging() || builder.Environment.IsProduction())
     {
         fileName = "/https2/appynox.pfx";
     }
-    else if (builder.Environment.IsProduction())
-    {
-        fileName = "/https2/appynox.pfx";
-    }
-
-    logger.Info($"SSL Certificate Path: {fileName}");
 
     // Check if the file exists and log the result
     if (File.Exists(fileName))
     {
         logger.Info("SSL Certificate file found.");
-        try
-        {
-            // Try to read the file (optional, as just checking existence might be sufficient)
-            var fileContent = File.ReadAllText(fileName);
-            logger.Info("SSL Certificate file read successfully.");
-        }
-        catch (Exception ex)
-        {
-            logger.Info($"Error reading SSL Certificate file: {ex.Message}");
-        }
     }
     else
     {

@@ -26,12 +26,11 @@ builder.Services.AddEndpointsApiExplorer();
 
 #region [ Logger Setup ]
 
-if (!builder.Environment.IsDevelopment())
-{
-    NLog.LogManager.Setup().LoadConfigurationFromFile("nlog.config");
-    builder.Logging.ClearProviders();
-    builder.Host.UseNLog();
-}
+NLog.LogManager.Setup().LoadConfigurationFromFile("nlog.config");
+builder.Logging.ClearProviders();
+builder.Host.UseNLog();
+
+var logger = NLog.LogManager.GetCurrentClassLogger();
 
 #endregion
 
@@ -49,7 +48,7 @@ builder.Services.Configure<ConsulConfig>(configuration.GetSection("consul"));
 
 builder.Services.AddHealthChecks();
 
-AppyNox.Services.Coupon.Infrastructure.DependencyInjection.ConfigureServices(builder.Services, configuration, builder.Environment.GetEnvironment());
+AppyNox.Services.Coupon.Infrastructure.DependencyInjection.ConfigureServices(builder.Services, configuration, builder.Environment.GetEnvironment(), logger);
 AppyNox.Services.Coupon.Application.DependencyInjection.ConfigureServices(builder.Services, configuration);
 
 #region [ JWT Configuration ]

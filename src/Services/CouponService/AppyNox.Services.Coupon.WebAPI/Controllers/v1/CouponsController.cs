@@ -1,7 +1,9 @@
 ﻿using AppyNox.Services.Base.API.Helpers;
 using AppyNox.Services.Base.API.ViewModels;
 using AppyNox.Services.Base.Application.ExceptionExtensions;
+using AppyNox.Services.Base.Application.Services.Implementations;
 using AppyNox.Services.Base.Application.Services.Interfaces;
+using AppyNox.Services.Base.Infrastructure.Interfaces;
 using AppyNox.Services.Base.Infrastructure.Repositories.Common;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
 using AppyNox.Services.Coupon.Application.Services.Implementations;

@@ -1,5 +1,6 @@
 ﻿using AppyNox.Services.Base.Domain.Interfaces;
 using AppyNox.Services.Base.Infrastructure.Repositories.Common;
+using System.Linq.Expressions;
 
 namespace AppyNox.Services.Base.Application.Services.Interfaces
 {
@@ -16,7 +17,9 @@ namespace AppyNox.Services.Base.Application.Services.Interfaces
 
         Task UpdateAsync(dynamic dto);
 
-        Task DeleteAsync(Guid dto);
+        Task DeleteAsync(Guid id);
+
+        Type GetEntityType() => typeof(TEntity);
 
         #endregion
     }
