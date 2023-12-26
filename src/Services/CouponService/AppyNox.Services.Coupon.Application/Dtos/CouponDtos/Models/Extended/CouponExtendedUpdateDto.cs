@@ -1,4 +1,4 @@
-﻿using AppyNox.Services.Coupon.Application.Dtos.CouponDetailDtos.Models.Basic;
+﻿using AppyNox.Services.Base.Application.Dtos;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.DetailLevel;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
 using System;
@@ -9,15 +9,9 @@ using System.Threading.Tasks;
 
 namespace AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Extended
 {
-    [CouponDetailLevel(CouponDataAccessDetailLevel.WithAllRelations)]
-    public class CouponWithAllRelationsDto : CouponExtendedCreateDto
+    [CouponDetailLevel(CouponUpdateDetailLevel.Extended)]
+    public class CouponExtendedUpdateDto : CouponExtendedCreateDto, IUpdateDto
     {
-        #region [ Relations ]
-
         public Guid Id { get; set; }
-
-        public virtual CouponDetailSimpleDto CouponDetailEntity { get; set; } = null!;
-
-        #endregion
     }
 }

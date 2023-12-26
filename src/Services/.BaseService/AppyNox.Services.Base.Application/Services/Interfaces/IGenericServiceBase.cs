@@ -15,7 +15,7 @@ namespace AppyNox.Services.Base.Application.Services.Interfaces
 
         Task<(Guid guid, dynamic basicDto)> AddAsync(dynamic dto, string detailLevel);
 
-        Task UpdateAsync(dynamic dto);
+        Task UpdateAsync(dynamic dto, string detailLevel);
 
         Task DeleteAsync(Guid id);
 

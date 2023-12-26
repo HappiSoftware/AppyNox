@@ -52,9 +52,14 @@ namespace AppyNox.Services.Base.Infrastructure.Repositories
             return entity;
         }
 
-        public void UpdateAsync(TEntity entity)
+        public void UpdateAsync(TEntity entity, IList<string> properties)
         {
-            _context.Set<TEntity>().Entry(entity).State = EntityState.Modified;
+            _context.Set<TEntity>().Entry(entity).State = EntityState.Unchanged;
+            properties = properties.Where(p => p != nameof(entity.Id)).ToList();
+            foreach (var property in properties)
+            {
+                _context.Entry(entity).Property(property).IsModified = true;
+            }
         }
 
         public void DeleteAsync(TEntity entity)

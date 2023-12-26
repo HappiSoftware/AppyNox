@@ -16,7 +16,7 @@ namespace AppyNox.Services.Base.Infrastructure.Interfaces
 
         Task<TEntity> GetByIdAsync(Guid id, Expression<Func<TEntity, dynamic>> selectedColumns);
 
-        void UpdateAsync(TEntity entity);
+        void UpdateAsync(TEntity entity, IList<string> properties);
 
         #endregion
 

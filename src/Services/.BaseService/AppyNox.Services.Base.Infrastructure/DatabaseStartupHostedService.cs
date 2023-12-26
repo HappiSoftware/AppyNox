@@ -48,6 +48,8 @@ namespace AppyNox.Services.Base.Infrastructure
         {
             using var scope = serviceProvider.CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<TContext>();
+
+            await dbContext.Database.EnsureCreatedAsync(cancellationToken);
             int attempts = 0;
 
             while (attempts < maxAttempts)

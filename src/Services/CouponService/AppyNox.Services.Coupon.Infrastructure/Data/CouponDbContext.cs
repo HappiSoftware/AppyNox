@@ -98,6 +98,7 @@ namespace AppyNox.Services.Coupon.Infrastructure.Data
                     Description = "Description",
                     DiscountAmount = 10.65,
                     MinAmount = 100,
+                    Detail = "Detail1",
                     CouponDetailEntityId = Guid.Parse("c2feaca4-d82a-4d2e-ba5a-667b685212b4")
                 });
 
@@ -109,6 +110,7 @@ namespace AppyNox.Services.Coupon.Infrastructure.Data
                     Description = "Description2",
                     DiscountAmount = 20.55,
                     MinAmount = 200,
+                    Detail = "Detail2",
                     CouponDetailEntityId = Guid.Parse("c2feaca4-d82a-4d2e-ba5a-667b685212b4")
                 });
         }

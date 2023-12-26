@@ -1,12 +1,14 @@
-﻿using AutoWrapper.Extensions;
+﻿using AppyNox.Services.Base.Application.Dtos;
+using AutoWrapper.Extensions;
 using AutoWrapper.Wrappers;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System.Text.Json;
 
 namespace AppyNox.Services.Base.API.Helpers
 {
-    public static class ValidationHandlerBase
+    public static class ValidationHelpers
     {
         #region [ Public Methods ]
 
@@ -19,6 +21,12 @@ namespace AppyNox.Services.Base.API.Helpers
 
             // Use the actionContext to set the ModelState
             actionContext.ModelState.Merge(modelState);
+        }
+
+        public static Guid GetIdFromDynamicDto(dynamic dto)
+        {
+            var dtoObject = JsonSerializer.Deserialize<BaseUpdateDto>(dto, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            return (Guid)dtoObject.Id;
         }
 
         #endregion

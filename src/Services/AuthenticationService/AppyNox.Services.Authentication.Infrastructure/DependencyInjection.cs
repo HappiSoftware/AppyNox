@@ -29,12 +29,10 @@ namespace AppyNox.Services.Authentication.Infrastructure
 
         public static void ApplyMigrations(IServiceProvider serviceProvider)
         {
-            Console.WriteLine("test-------------------------------");
             using var scope = serviceProvider.CreateScope();
             var _db = scope.ServiceProvider.GetRequiredService<IdentityDbContext>();
             if (_db.Database.GetPendingMigrations().Any())
             {
-                Console.WriteLine("test2-------------------------------");
                 _db.Database.Migrate();
             }
         }

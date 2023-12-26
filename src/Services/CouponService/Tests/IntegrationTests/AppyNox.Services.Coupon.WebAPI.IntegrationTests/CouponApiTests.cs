@@ -34,10 +34,11 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTests
 
             var jsonResponse = await response.Content.ReadAsStringAsync();
             var apiResponse = Unwrapper.Unwrap<ApiResponse>(jsonResponse);
+            apiResponse.ValidateOk();
 
             // Deserialize the result (assuming apiResponse.Result is a JSON array of CouponSimpleDto)
             var coupons = apiResponse?.Result is not null
-                ? JsonSerializer.Deserialize<IList<CouponSimpleDto>>(apiResponse.Result.ToString(), _jsonSerializerOptions)
+                ? JsonSerializer.Deserialize<IList<CouponSimpleDto>>(apiResponse.Result.ToString()!, _jsonSerializerOptions)
                 : null;
 
             // Assert
@@ -137,8 +138,8 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTests
             // Arrange
             var id = coupon.Id;
             var newDiscountAmount = coupon.DiscountAmount + 1;
-            var newDescription = $"{coupon.Code} updated on test method!";
             var newMinAmount = coupon.MinAmount + 1;
+            var newDescription = "new description";
             var requestUri = $"{_serviceURIs.CouponServiceURI}/coupons/{id}";
             var requestBody = new
             {
@@ -172,10 +173,7 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTests
             Assert.NotNull(coupon);
             Assert.Equal(newDiscountAmount, coupon.DiscountAmount);
             Assert.Equal(newMinAmount, coupon.MinAmount);
-
-            //Assert.Equal(newDescription, coupon.Description);
-            // TODO Yasin, fix this test
-            // Update takes CouponSimpleUpadteDto and this causes Description to be null. We don't want to change description.
+            Assert.Equal(newDescription, coupon.Description);
 
             #endregion
         }
