@@ -9,6 +9,7 @@ on:
 
 jobs:
   build-and-test:
+
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.merged == true) || (github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
 
@@ -54,7 +55,13 @@ jobs:
       - name: Create Coupon Service appsettings
         run: |
           echo '${{ secrets.COUPON_APPSETTINGS_STAGING }}' > ./src/Services/CouponService/AppyNox.Services.Coupon.WebAPI/appsettings.Staging.json
+          echo '${{ secrets.COUPON_APPSETTINGS_STAGING }}' > ./src/Services/CouponService/Tests/IntegrationTests/AppyNox.Services.Coupon.WebAPI.IntegrationTests/appsettings.Staging.json
           echo '${{ secrets.COUPON_APPSETTINGS_PRODUCTION }}' > ./src/Services/CouponService/AppyNox.Services.Coupon.WebAPI/appsettings.Production.json
+      
+      - name: Copy Docker Compose file
+        run: |
+          cp ./docker-compose.yml ./src/Services/CouponService/Tests/IntegrationTests/AppyNox.Services.Coupon.WebAPI.IntegrationTests/docker-compose.yml
+          cp ./docker-compose.Staging.yml ./src/Services/CouponService/Tests/IntegrationTests/AppyNox.Services.Coupon.WebAPI.IntegrationTests/docker-compose.Staging.yml
 
       - name: Restore dependencies
         run: dotnet restore ./AppyNox.sln
