@@ -85,7 +85,7 @@ jobs:
           dotnet test ./src/Services/.BaseService/Tests/UnitTests/AppyNox.Services.Base.Infrastructure.UnitTest/ --no-restore
 
       - name: Build Docker Images
-        run: docker-compose -f docker-compose.yml -f docker-compose.development.yml build
+        run: docker-compose -f docker-compose.yml -f docker-compose.Development.yml build
 
       - name: Run Integration Tests
         run: dotnet test ./src/Services/CouponService/Tests/IntegrationTests/AppyNox.Services.Coupon.WebAPI.IntegrationTests --no-restore

@@ -379,6 +379,5 @@ FodyWeavers.xsd
 /.sonarqube/conf
 
 # Docker
-docker-compose.override.yml
+**/docker-compose.override.yml
 
-ocelot.Development.json

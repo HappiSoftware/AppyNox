@@ -39,7 +39,7 @@ services:
       context: .
       dockerfile: src/Gateways/AppyNox.Gateway.OcelotGateway/Dockerfile
     ports:
-     - "7000:443"
+      - "7000:443"
     networks:
       - nox_network
     healthcheck:
@@ -64,7 +64,7 @@ services:
       context: .
       dockerfile: src/Services/AuthenticationService/AppyNox.Services.Authentication.WebAPI/Dockerfile
     networks:
-     - nox_network
+      - nox_network
     healthcheck:
       test: ["CMD-SHELL", "curl --fail http://appynox-services-authentication-webapi:7001/api/health || exit 1"]
       interval: 5s
@@ -86,7 +86,7 @@ services:
       context: .
       dockerfile: src/Services/CouponService/AppyNox.Services.Coupon.WebAPI/Dockerfile
     networks:
-     - nox_network
+      - nox_network
     healthcheck:
       test: ["CMD-SHELL", "curl --fail http://appynox-services-coupon-webapi:7002/api/health || exit 1"]
       interval: 5s

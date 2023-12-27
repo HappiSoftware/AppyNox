@@ -17,15 +17,15 @@ services:
   appynox-gateway-ocelotgateway:
     image: ${DOCKER_REGISTRY-}appynoxgatewayocelotgateway
     environment:
-     - ASPNETCORE_ENVIRONMENT=Production
-     - ASPNETCORE_URLS=https://+:443
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=https://+:443
     depends_on:
-        - appynox-consul
+      - appynox-consul
     volumes:
-     - ./src/Gateways/AppyNox.Gateway.OcelotGateway/ssl:/https2
-     - ./src/Gateways/AppyNox.Gateway.OcelotGateway/ssl/crt:/usr/local/share/ca-certificates/
+      - ./src/Gateways/AppyNox.Gateway.OcelotGateway/ssl:/https2
+      - ./src/Gateways/AppyNox.Gateway.OcelotGateway/ssl/crt:/usr/local/share/ca-certificates/
     ports:
-     - "7000:443"
+      - "7000:443"
 
   appynox-authentication-db:
     image: postgres:latest
@@ -39,11 +39,15 @@ services:
   appynox-services-authentication-webapi:
     image: ${DOCKER_REGISTRY-}appynoxservicesauthenticationwebapi
     depends_on:
-        - appynox-consul
-        - appynox-authentication-db
+      - appynox-consul
+      - appynox-authentication-db
     environment:
-     - ASPNETCORE_ENVIRONMENT=Production
-     - ASPNETCORE_URLS=http://+:7001
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:7001
+      - WAIT_HOSTS=appynox-authentication-db:5432
+      - WAIT_TIMEOUT=300
+      - WAIT_SLEEP_INTERVAL=30
+      - WAIT_HOST_CONNECT_TIMEOUT=30
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
@@ -56,15 +60,21 @@ services:
       POSTGRES_PASSWORD: coupon_password
     volumes:
       - app_data:/var/lib/coupondb/data
+    ports:
+      - "5434:5432"
 
   appynox-services-coupon-webapi:
     image: ${DOCKER_REGISTRY-}appynoxservicescouponwebapi
     depends_on:
-        - appynox-consul
-        - appynox-coupon-db
+      - appynox-consul
+      - appynox-coupon-db
     environment:
-     - ASPNETCORE_ENVIRONMENT=Production
-     - ASPNETCORE_URLS=http://+:7002
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:7002
+      - WAIT_HOSTS=appynox-coupon-db:5432
+      - WAIT_TIMEOUT=300
+      - WAIT_SLEEP_INTERVAL=30
+      - WAIT_HOST_CONNECT_TIMEOUT=30
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro

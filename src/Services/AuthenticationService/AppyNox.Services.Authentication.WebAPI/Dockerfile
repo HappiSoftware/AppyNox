@@ -5,6 +5,11 @@ USER app
 WORKDIR /app
 EXPOSE 7001
 
+USER root
+# Add the wait script to the image
+ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.12.1/wait /app/wait
+RUN chmod +x /app/wait
+
 USER app
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Production
@@ -24,4 +29,4 @@ FROM base AS final
 WORKDIR /app
 
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "AppyNox.Services.Authentication.WebAPI.dll"]
+ENTRYPOINT /app/wait && dotnet AppyNox.Services.Authentication.WebAPI.dll
