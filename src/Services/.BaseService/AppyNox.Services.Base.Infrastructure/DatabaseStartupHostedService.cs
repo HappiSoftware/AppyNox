@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,17 +10,21 @@ using System.Threading.Tasks;
 
 namespace AppyNox.Services.Base.Infrastructure
 {
-    public class DatabaseStartupHostedService<TContext>(IServiceProvider serviceProvider) : IHostedService where TContext : DbContext
+    public class DatabaseStartupHostedService<TContext>(IServiceProvider serviceProvider, ILogger<DatabaseStartupHostedService<TContext>> logger) : IHostedService where TContext : DbContext
     {
         #region [ Fields ]
 
         private readonly IServiceProvider _serviceProvider = serviceProvider;
 
+        private readonly ILogger<DatabaseStartupHostedService<TContext>> _logger = logger;
+
         #endregion
 
-        #region Events
+        #region [ Events ]
 
         public event Func<Task>? OnDatabaseConnected;
+
+        public event Func<Task>? OnDatabaseConnectionFailed;
 
         #endregion
 
@@ -29,12 +34,13 @@ namespace AppyNox.Services.Base.Infrastructure
         {
             try
             {
-                await WaitForDatabaseAsync(_serviceProvider, cancellationToken);
+                await WaitForDatabaseAsync(_serviceProvider, _logger, cancellationToken);
                 OnDatabaseConnected?.Invoke();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // Log or handle the exception as necessary
+                _logger.LogCritical(ex, "{Message}", $"Unexpected error thrown");
+                OnDatabaseConnectionFailed?.Invoke();
             }
         }
 
@@ -44,12 +50,13 @@ namespace AppyNox.Services.Base.Infrastructure
 
         #region [ Private Methods ]
 
-        private static async Task WaitForDatabaseAsync(IServiceProvider serviceProvider, CancellationToken cancellationToken, int maxAttempts = 10)
+        private static async Task WaitForDatabaseAsync(IServiceProvider serviceProvider, ILogger logger, CancellationToken cancellationToken, int maxAttempts = 10)
         {
             using var scope = serviceProvider.CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<TContext>();
 
-            await dbContext.Database.EnsureCreatedAsync(cancellationToken);
+            logger.LogInformation("{Message}", $"Attempting to connect to the database {dbContext.Database.GetDbConnection().ConnectionString}");
+
             int attempts = 0;
 
             while (attempts < maxAttempts)
@@ -58,18 +65,20 @@ namespace AppyNox.Services.Base.Infrastructure
                 {
                     if (await dbContext.Database.CanConnectAsync(cancellationToken))
                     {
+                        logger.LogInformation("{Message}", $"Successfully connected to the database {dbContext.Database.GetDbConnection().ConnectionString}");
                         return;
                     }
                 }
-                catch
+                catch (Exception ex)
                 {
-                    // Log or handle the exception as necessary
+                    logger.LogError(ex, "{Message}", $"Failed to connect to the database {dbContext.Database.GetDbConnection().ConnectionString}");
                 }
 
                 await Task.Delay(TimeSpan.FromSeconds(5), cancellationToken);
                 attempts++;
             }
 
+            logger.LogError("{Message}", $"Failed to connect to the database after {attempts} attempts. {dbContext.Database.GetDbConnection().ConnectionString}");
             throw new InvalidOperationException("Unable to connect to the database.");
         }
 

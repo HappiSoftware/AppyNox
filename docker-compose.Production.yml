@@ -11,7 +11,7 @@ services:
 
   appynox-rabbitmq-service:
     networks:
-        - nox_network
+      - nox_network
 
   appynox-consul:
     deploy:
@@ -22,7 +22,7 @@ services:
       restart_policy:
         condition: on-failure
     networks:
-        - nox_network
+      - nox_network
 
   appynox-gateway-ocelotgateway:
     deploy:
@@ -33,11 +33,11 @@ services:
       restart_policy:
         condition: on-failure
     networks:
-        - nox_network
+      - nox_network
 
   appynox-authentication-db:
     networks:
-        - nox_network
+      - nox_network
 
   appynox-services-authentication-webapi:
     deploy:
@@ -48,11 +48,11 @@ services:
       restart_policy:
         condition: on-failure
     networks:
-        - nox_network
+      - nox_network
 
   appynox-coupon-db:
     networks:
-        - nox_network
+      - nox_network
 
   appynox-services-coupon-webapi:
     deploy:
@@ -63,4 +63,4 @@ services:
       restart_policy:
         condition: on-failure
     networks:
-        - nox_network
+      - nox_network

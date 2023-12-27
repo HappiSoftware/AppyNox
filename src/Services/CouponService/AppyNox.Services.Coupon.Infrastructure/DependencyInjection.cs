@@ -1,6 +1,7 @@
 ﻿using AppyNox.Services.Base.Domain.Common;
 using AppyNox.Services.Base.Domain.Interfaces;
 using AppyNox.Services.Base.Infrastructure;
+using AppyNox.Services.Base.Infrastructure.Helpers;
 using AppyNox.Services.Base.Infrastructure.Interfaces;
 using AppyNox.Services.Base.Infrastructure.Repositories;
 using AppyNox.Services.Coupon.Infrastructure.Data;
@@ -9,7 +10,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using NLog;
 
 namespace AppyNox.Services.Coupon.Infrastructure
 {
@@ -17,7 +17,7 @@ namespace AppyNox.Services.Coupon.Infrastructure
     {
         #region [ Public Methods ]
 
-        public static void ConfigureServices(IServiceCollection services, IConfiguration configuration, ApplicationEnvironment environment, Logger logger)
+        public static IServiceCollection AddCouponInfrastructure(this IServiceCollection services, IConfiguration configuration, ApplicationEnvironment environment, ILogger logger)
         {
             string? connectionString = string.Empty;
             connectionString = environment switch
@@ -28,7 +28,7 @@ namespace AppyNox.Services.Coupon.Infrastructure
                 _ => configuration.GetConnectionString("DefaultConnection"),
             };
 
-            logger.Info($"Infrastructure is starting... Connection string: {connectionString}");
+            logger.LogInformation("{Message}", $"Infrastructure is starting... Connection string: {connectionString}");
 
             services.AddDbContext<CouponDbContext>(options =>
                 options.UseNpgsql(connectionString));
@@ -36,17 +36,7 @@ namespace AppyNox.Services.Coupon.Infrastructure
 
             services.AddScoped(typeof(IGenericRepositoryBase<>), typeof(GenericRepository<>));
             services.AddScoped<IUnitOfWorkBase, UnitOfWork>();
-        }
-
-        public static void ApplyMigrations(IServiceProvider serviceProvider)
-        {
-            using var scope = serviceProvider.CreateScope();
-            var _db = scope.ServiceProvider.GetRequiredService<CouponDbContext>();
-
-            if (_db.Database.GetPendingMigrations().Any())
-            {
-                _db.Database.Migrate();
-            }
+            return services;
         }
 
         #endregion

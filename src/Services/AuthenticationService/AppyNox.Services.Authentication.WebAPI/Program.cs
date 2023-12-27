@@ -164,4 +164,11 @@ databaseStartupService.OnDatabaseConnected += () =>
     return Task.CompletedTask;
 };
 
+databaseStartupService.OnDatabaseConnectionFailed += () =>
+{
+    var lifeTime = app.Services.GetService<IHostApplicationLifetime>();
+    lifeTime?.StopApplication();
+    return Task.CompletedTask;
+};
+
 app.Run();
