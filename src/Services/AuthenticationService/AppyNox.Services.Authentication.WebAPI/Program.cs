@@ -47,11 +47,13 @@ if (!builder.Environment.IsDevelopment())
     builder.Logging.ClearProviders();
     builder.Host.UseNLog();
 }
+var logger = NLog.LogManager.GetCurrentClassLogger();
 
 #endregion
 
 #region [ Consul Discovery Service ]
 
+logger.Log(NLog.LogLevel.Info, $"Configuring Consul Discovery Service {configuration["ConsulConfig:Address"]}");
 builder.Services.AddSingleton<IConsulClient, ConsulClient>(p => new ConsulClient(consulConfig =>
 {
     var address = configuration["ConsulConfig:Address"] ?? "http://localhost:8500";

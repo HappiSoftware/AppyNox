@@ -31,9 +31,12 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTests.Fixtures
 
         private static readonly IConfiguration Configuration = IntegrationTestHelpers.GetConfiguration();
 
-        private readonly ServiceCollection _services;
+        private static readonly ILogger _logger = LoggerFactory.Create(builder =>
+        {
+            builder.AddConsole();
+        }).CreateLogger<CouponApiTestFixture>();
 
-        private readonly ILogger<CouponApiTestFixture> _logger;
+        private readonly ServiceCollection _services;
 
         private readonly IServiceProvider _serviceProvider;
 
@@ -60,7 +63,6 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTests.Fixtures
             Initialize();
             _services = new ServiceCollection();
             _serviceProvider = ConfigureServices(_services);
-            _logger = _serviceProvider.GetRequiredService<ILogger<CouponApiTestFixture>>();
 
             ServiceURIs = Configuration.GetSection("ServiceUris").Get<ServiceURIs>()
                           ?? throw new InvalidOperationException("Service URIs configuration section is missing or invalid.");
@@ -119,8 +121,6 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTests.Fixtures
 
         private static ServiceProvider ConfigureServices(IServiceCollection services)
         {
-            services.AddLogging(configure => configure.AddConsole());
-
             // Build the connection string from api appsettings.json
             IConfiguration config = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())

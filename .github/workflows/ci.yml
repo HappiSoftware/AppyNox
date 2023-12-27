@@ -2,9 +2,9 @@ name: AppyNox CI
 
 on:
   push:
-    branches: [master]
+    branches: [AppyNox-79]
   pull_request:
-    branches: [master]
+    branches: [AppyNox-79]
   workflow_dispatch:
 
 jobs:
