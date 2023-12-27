@@ -101,7 +101,7 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTests.Fixtures
         protected override ICompositeService Build()
         {
             var file = Path.Combine(Directory.GetCurrentDirectory(), (TemplateString)"docker-compose.yml");
-            var fileStaging = Path.Combine(Directory.GetCurrentDirectory(), (TemplateString)"docker-compose.staging.yml");
+            var fileStaging = Path.Combine(Directory.GetCurrentDirectory(), (TemplateString)"docker-compose.Staging.yml");
 
             return new DockerComposeCompositeService(DockerHost,
                 new Ductus.FluentDocker.Model.Compose.DockerComposeConfig
