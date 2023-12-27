@@ -1,5 +1,7 @@
-﻿using Ductus.FluentDocker.Services;
+﻿using Ductus.FluentDocker.Common;
+using Ductus.FluentDocker.Services;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace AppyNox.Services.Base.IntegrationTests.Ductus
 {
@@ -10,6 +12,11 @@ namespace AppyNox.Services.Base.IntegrationTests.Ductus
         protected ICompositeService? CompositeService;
 
         protected IHostService? DockerHost;
+
+        private static readonly ILogger _logger = LoggerFactory.Create(builder =>
+        {
+            builder.AddConsole();
+        }).CreateLogger<DockerComposeTestBase>();
 
         private bool _disposed;
 
@@ -44,6 +51,7 @@ namespace AppyNox.Services.Base.IntegrationTests.Ductus
 
         protected void Initialize()
         {
+            _logger.LogInformation("{Message}", "Initializing Docker Compose Test Base");
             CompositeService = Build();
             try
             {
@@ -51,7 +59,7 @@ namespace AppyNox.Services.Base.IntegrationTests.Ductus
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
+                _logger.LogError(ex, "Error starting docker compose");
 
                 CompositeService.Dispose();
                 throw;
