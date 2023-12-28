@@ -25,4 +25,8 @@
     <Folder Include="URIs\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\AppyNox.Services.Base.Application\AppyNox.Services.Base.Application.csproj" />
+  </ItemGroup>
+
 </Project>

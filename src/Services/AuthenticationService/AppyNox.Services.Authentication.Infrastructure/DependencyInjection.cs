@@ -24,7 +24,8 @@ namespace AppyNox.Services.Authentication.Infrastructure
 
             services.AddDbContext<IdentityDbContext>(options =>
                 options.UseNpgsql(connectionString));
-            services.AddHostedService<DatabaseStartupHostedService<IdentityDbContext>>();
+
+            //services.AddHostedService<DatabaseStartupHostedService<IdentityDbContext>>();
         }
 
         public static void ApplyMigrations(IServiceProvider serviceProvider)

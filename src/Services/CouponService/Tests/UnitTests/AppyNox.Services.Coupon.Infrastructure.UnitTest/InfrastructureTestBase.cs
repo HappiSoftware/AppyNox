@@ -1,4 +1,5 @@
-﻿using AppyNox.Services.Coupon.Domain.Entities;
+﻿using AppyNox.Services.Base.Infrastructure.UnitTests.Stubs;
+using AppyNox.Services.Coupon.Domain.Entities;
 using AppyNox.Services.Coupon.Infrastructure.Data;
 using AppyNox.Services.Coupon.Infrastructure.UnitTest.Seeds.CouponSeeds;
 using Microsoft.EntityFrameworkCore;
@@ -12,15 +13,17 @@ namespace AppyNox.Services.Coupon.Infrastructure.UnitTest
 {
     public class InfrastructureTestBase : IDisposable
     {
-        #region Fields
+        #region [ Fields ]
 
         protected readonly DbContextOptions<CouponDbContext> _options;
 
         protected readonly CouponDbContext _context;
 
+        protected readonly NoxInfrastructureLoggerStub _noxLoggerStub = new();
+
         #endregion
 
-        #region Events
+        #region [ Events ]
 
         protected static event Func<CouponDbContext, CouponEntity>? SeedOneCoupon;
 
@@ -35,7 +38,6 @@ namespace AppyNox.Services.Coupon.Infrastructure.UnitTest
             _options = new DbContextOptionsBuilder<CouponDbContext>()
                 .UseInMemoryDatabase(databaseName: "TestDatabase")
                 .Options;
-
             _context = new CouponDbContext(_options);
 
             SeedOneCoupon += GenericCouponTestSeedData.SeedOneCoupon;
@@ -57,7 +59,7 @@ namespace AppyNox.Services.Coupon.Infrastructure.UnitTest
 
         #endregion
 
-        #region Protected Methods
+        #region [ Protected Methods ]
 
         protected static CouponEntity? RaiseSeedOneCoupon(CouponDbContext context)
         {

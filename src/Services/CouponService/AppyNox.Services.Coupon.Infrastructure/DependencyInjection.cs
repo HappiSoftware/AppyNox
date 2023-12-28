@@ -3,7 +3,9 @@ using AppyNox.Services.Base.Domain.Interfaces;
 using AppyNox.Services.Base.Infrastructure;
 using AppyNox.Services.Base.Infrastructure.Helpers;
 using AppyNox.Services.Base.Infrastructure.Interfaces;
+using AppyNox.Services.Base.Infrastructure.Logger;
 using AppyNox.Services.Base.Infrastructure.Repositories;
+using AppyNox.Services.Base.Infrastructure.Services;
 using AppyNox.Services.Coupon.Infrastructure.Data;
 using AppyNox.Services.Coupon.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -17,8 +19,9 @@ namespace AppyNox.Services.Coupon.Infrastructure
     {
         #region [ Public Methods ]
 
-        public static IServiceCollection AddCouponInfrastructure(this IServiceCollection services, IConfiguration configuration, ApplicationEnvironment environment, ILogger logger)
+        public static IServiceCollection AddCouponInfrastructure(this IServiceCollection services, IConfiguration configuration, ApplicationEnvironment environment)
         {
+            services.AddScoped<INoxInfrastructureLogger, NoxInfrastructureLogger>();
             string? connectionString = string.Empty;
             connectionString = environment switch
             {
@@ -28,14 +31,16 @@ namespace AppyNox.Services.Coupon.Infrastructure
                 _ => configuration.GetConnectionString("DefaultConnection"),
             };
 
-            logger.LogInformation("{Message}", $"Infrastructure is starting... Connection string: {connectionString}");
-
             services.AddDbContext<CouponDbContext>(options =>
-                options.UseNpgsql(connectionString));
-            services.AddHostedService<DatabaseStartupHostedService<CouponDbContext>>();
+            {
+                options.UseNpgsql(connectionString);
+            });
+
+            //services.AddHostedService<DatabaseStartupHostedService<CouponDbContext>>();
 
             services.AddScoped(typeof(IGenericRepositoryBase<>), typeof(GenericRepository<>));
             services.AddScoped<IUnitOfWorkBase, UnitOfWork>();
+
             return services;
         }
 

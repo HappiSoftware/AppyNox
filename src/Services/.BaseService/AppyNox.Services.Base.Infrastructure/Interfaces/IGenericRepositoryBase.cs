@@ -10,13 +10,13 @@ namespace AppyNox.Services.Base.Infrastructure.Interfaces
 
         Task<TEntity> AddAsync(TEntity entity);
 
-        void DeleteAsync(TEntity entity);
+        void Remove(TEntity entity);
 
         Task<IEnumerable<object>> GetAllAsync(QueryParametersBase queryParameters, Expression<Func<TEntity, dynamic>> selectedColumns);
 
         Task<TEntity> GetByIdAsync(Guid id, Expression<Func<TEntity, dynamic>> selectedColumns);
 
-        void UpdateAsync(TEntity entity, IList<string> properties);
+        void Update(TEntity entity, IList<string> properties);
 
         #endregion
 

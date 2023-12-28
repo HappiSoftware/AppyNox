@@ -16,6 +16,7 @@ using AutoWrapper.Wrappers;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 using System.Text.Json;
 
 namespace AppyNox.Services.Coupon.WebAPI.Controllers.v1
