@@ -6,8 +6,8 @@ using AppyNox.Services.Authentication.WebAPI.Managers.Implementations;
 using AppyNox.Services.Authentication.WebAPI.Managers.Interfaces;
 using AppyNox.Services.Authentication.WebAPI.Utilities;
 using AppyNox.Services.Base.API.Helpers;
+using AppyNox.Services.Base.API.Logger;
 using AppyNox.Services.Base.Domain.Common;
-using AppyNox.Services.Base.Infrastructure;
 using AppyNox.Services.Base.Infrastructure.Helpers;
 using Asp.Versioning;
 using AutoWrapper;
@@ -44,6 +44,8 @@ builder.Host.UseSerilog((context, services, config) =>
           .ReadFrom.Services(services)
           .Enrich.FromLogContext()
 );
+
+builder.Services.AddScoped<INoxApiLogger, NoxApiLogger>();
 
 var loggerFactory = LoggerFactory.Create(loggingBuilder =>
 {
@@ -155,6 +157,17 @@ app.MapControllers();
 app.UseApiResponseAndExceptionWrapper(new AutoWrapperOptions { UseApiProblemDetailsException = true });
 
 app.UseHealthChecks("/api/health");
+
+var consulHostedService = app.Services.GetServices<IHostedService>()
+    .OfType<ConsulHostedService>()
+    .First();
+
+consulHostedService.OnConsulConnectionFailed += () =>
+{
+    var lifeTime = app.Services.GetService<IHostApplicationLifetime>();
+    lifeTime?.StopApplication();
+    return Task.CompletedTask;
+};
 
 app.Services.ApplyMigrations<IdentityDbContext>();
 
