@@ -1,17 +1,14 @@
 ﻿using AppyNox.Services.Base.Domain.Common;
-using AppyNox.Services.Base.Domain.Interfaces;
-using AppyNox.Services.Base.Infrastructure;
-using AppyNox.Services.Base.Infrastructure.Helpers;
+using AppyNox.Services.Base.Infrastructure.HostedServices;
 using AppyNox.Services.Base.Infrastructure.Interfaces;
 using AppyNox.Services.Base.Infrastructure.Logger;
-using AppyNox.Services.Base.Infrastructure.Repositories;
-using AppyNox.Services.Base.Infrastructure.Services;
 using AppyNox.Services.Coupon.Infrastructure.Data;
 using AppyNox.Services.Coupon.Infrastructure.Repositories;
+using Consul;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Hosting;
 
 namespace AppyNox.Services.Coupon.Infrastructure
 {
@@ -22,6 +19,9 @@ namespace AppyNox.Services.Coupon.Infrastructure
         public static IServiceCollection AddCouponInfrastructure(this IServiceCollection services, IConfiguration configuration, ApplicationEnvironment environment)
         {
             services.AddScoped<INoxInfrastructureLogger, NoxInfrastructureLogger>();
+
+            #region [ Database Configuration ]
+
             string? connectionString = string.Empty;
             connectionString = environment switch
             {
@@ -35,6 +35,20 @@ namespace AppyNox.Services.Coupon.Infrastructure
             {
                 options.UseNpgsql(connectionString);
             });
+
+            #endregion
+
+            #region [ Consul Discovery Service ]
+
+            services.AddSingleton<IConsulClient, ConsulClient>(p => new ConsulClient(consulConfig =>
+            {
+                var address = configuration["ConsulConfig:Address"] ?? "http://localhost:8500";
+                consulConfig.Address = new Uri(address);
+            }));
+            services.AddSingleton<IHostedService, ConsulHostedService>();
+            services.Configure<ConsulConfig>(configuration.GetSection("consul"));
+
+            #endregion
 
             //services.AddHostedService<DatabaseStartupHostedService<CouponDbContext>>();
 

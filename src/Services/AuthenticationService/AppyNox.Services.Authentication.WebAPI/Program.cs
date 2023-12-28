@@ -1,17 +1,15 @@
 using AppyNox.Services.Authentication.Infrastructure.Data;
 using AppyNox.Services.Authentication.WebAPI.Configuration;
 using AppyNox.Services.Authentication.WebAPI.ControllerDependencies;
-using AppyNox.Services.Authentication.WebAPI.Helpers;
 using AppyNox.Services.Authentication.WebAPI.Managers.Implementations;
 using AppyNox.Services.Authentication.WebAPI.Managers.Interfaces;
 using AppyNox.Services.Authentication.WebAPI.Utilities;
 using AppyNox.Services.Base.API.Helpers;
 using AppyNox.Services.Base.API.Logger;
-using AppyNox.Services.Base.Domain.Common;
 using AppyNox.Services.Base.Infrastructure.Helpers;
+using AppyNox.Services.Base.Infrastructure.HostedServices;
 using Asp.Versioning;
 using AutoWrapper;
-using Consul;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -55,19 +53,6 @@ var logger = loggerFactory.CreateLogger<Program>();
 
 #endregion
 
-#region [ Consul Discovery Service ]
-
-logger.LogInformation("Configuring Consul Discovery Service {ConsulAddress}", configuration["ConsulConfig:Address"]);
-builder.Services.AddSingleton<IConsulClient, ConsulClient>(p => new ConsulClient(consulConfig =>
-{
-    var address = configuration["ConsulConfig:Address"] ?? "http://localhost:8500";
-    consulConfig.Address = new Uri(address);
-}));
-builder.Services.AddSingleton<IHostedService, ConsulHostedService>();
-builder.Services.Configure<ConsulConfig>(configuration.GetSection("consul"));
-
-#endregion
-
 // Add Identity
 builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddSignInManager()
         .AddEntityFrameworkStores<IdentityDbContext>().AddRoles<IdentityRole>();
@@ -82,7 +67,7 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Password.RequireLowercase = true;
 });
 
-AppyNox.Services.Authentication.Infrastructure.DependencyInjection.ConfigureServices(builder.Services, configuration, builder.Environment.GetEnvironment());
+AppyNox.Services.Authentication.Infrastructure.DependencyInjection.AddAuthenticationInfrastructure(builder.Services, configuration, builder.Environment.GetEnvironment());
 AppyNox.Services.Authentication.Application.DependencyInjection.ConfigureServices(builder.Services, configuration);
 
 builder.Services.AddHealthChecks();
