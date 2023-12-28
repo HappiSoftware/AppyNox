@@ -1,15 +1,14 @@
 using AppyNox.Services.Base.API.Helpers;
 using AppyNox.Services.Base.API.Logger;
 using AppyNox.Services.Base.API.Middleware;
-using AppyNox.Services.Base.Domain.Common;
 using AppyNox.Services.Base.Infrastructure.Helpers;
+using AppyNox.Services.Base.Infrastructure.HostedServices;
 using AppyNox.Services.Coupon.Application;
 using AppyNox.Services.Coupon.Infrastructure;
 using AppyNox.Services.Coupon.Infrastructure.Data;
 using AppyNox.Services.Coupon.WebAPI.Helpers;
 using AppyNox.Services.Coupon.WebAPI.Helpers.Permissions;
 using AutoWrapper;
-using Consul;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
@@ -33,18 +32,6 @@ builder.Host.UseSerilog((context, services, config) =>
 );
 
 builder.Services.AddScoped<INoxApiLogger, NoxApiLogger>();
-
-#endregion
-
-#region [ Consul Discovery Service ]
-
-builder.Services.AddSingleton<IConsulClient, ConsulClient>(p => new ConsulClient(consulConfig =>
-{
-    var address = configuration["ConsulConfig:Address"] ?? "http://localhost:8500";
-    consulConfig.Address = new Uri(address);
-}));
-builder.Services.AddSingleton<IHostedService, ConsulHostedService>();
-builder.Services.Configure<ConsulConfig>(configuration.GetSection("consul"));
 
 #endregion
 
