@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 
-namespace AppyNox.Services.Base.Infrastructure.Services
+namespace AppyNox.Services.Base.Infrastructure.Services.LoggerService
 {
     public class NoxLogger(ILogger<NoxLogger> logger, string layer) : INoxLogger
     {

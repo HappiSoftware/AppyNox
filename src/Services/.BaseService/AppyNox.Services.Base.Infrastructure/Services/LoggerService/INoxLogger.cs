@@ -1,5 +1,4 @@
-﻿
-namespace AppyNox.Services.Base.Infrastructure.Services
+﻿namespace AppyNox.Services.Base.Infrastructure.Services.LoggerService
 {
     public interface INoxLogger
     {

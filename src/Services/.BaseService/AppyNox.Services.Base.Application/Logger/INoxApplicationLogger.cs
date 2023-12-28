@@ -1,4 +1,4 @@
-﻿using AppyNox.Services.Base.Infrastructure.Services;
+﻿using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
 using System;
 using System.Collections.Generic;
 using System.Linq;
