@@ -1,4 +1,5 @@
-﻿using AppyNox.Services.Base.Domain.Common;
+﻿using AppyNox.Services.Base.API.Logger;
+using AppyNox.Services.Base.Domain.Common;
 using AppyNox.Services.Base.Domain.Common.HttpStatusCodes;
 using AppyNox.Services.Coupon.WebAPI.ExceptionExtensions.Base;
 using Consul;
@@ -13,13 +14,19 @@ public class ConsulHostedService : IHostedService
 
     private readonly IConfiguration _configuration;
 
-    private readonly ILogger<ConsulHostedService> _logger;
+    private readonly INoxApiLogger _logger;
+
+    #endregion
+
+    #region [ Events ]
+
+    public event Func<Task>? OnConsulConnectionFailed;
 
     #endregion
 
     #region [ Public Constructors ]
 
-    public ConsulHostedService(IConsulClient consulClient, IConfiguration configuration, ILogger<ConsulHostedService> logger)
+    public ConsulHostedService(IConsulClient consulClient, IConfiguration configuration, INoxApiLogger logger)
     {
         _consulClient = consulClient;
         _configuration = configuration;
@@ -32,23 +39,32 @@ public class ConsulHostedService : IHostedService
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        var serviceConfig = _configuration.GetSection("consul").Get<ConsulConfig>() ??
+        try
+        {
+            var serviceConfig = _configuration.GetSection("consul").Get<ConsulConfig>() ??
             throw new CouponBaseException("Consul configuration is not defined. Service will not be discovered.", (int)NoxServerErrorResponseCodes.ServiceUnavailable);
 
-        var registration = new AgentServiceRegistration
+            var registration = new AgentServiceRegistration
+            {
+                ID = serviceConfig.ServiceId,
+                Name = serviceConfig.ServiceName,
+                Address = serviceConfig.ServiceHost,
+                Port = serviceConfig.ServicePort,
+                Tags = serviceConfig.Tags
+            };
+
+            _logger.LogInformation($"Registering service with Consul: {registration.Name}");
+
+            await _consulClient.Agent.ServiceDeregister(registration.ID, cancellationToken);
+            await _consulClient.Agent.ServiceRegister(registration, cancellationToken);
+
+            _logger.LogInformation($"Registering service with Consul is successfull: {registration.Name}");
+        }
+        catch (Exception ex)
         {
-            ID = serviceConfig.ServiceId,
-            Name = serviceConfig.ServiceName,
-            Address = serviceConfig.ServiceHost,
-            Port = serviceConfig.ServicePort,
-            Tags = serviceConfig.Tags
-        };
-
-        var logMsg = $"Registering service with Consul: {registration.Name}";
-        _logger.LogInformation("{Message}", logMsg);
-
-        await _consulClient.Agent.ServiceDeregister(registration.ID, cancellationToken);
-        await _consulClient.Agent.ServiceRegister(registration, cancellationToken);
+            _logger.LogError(ex, "An error occurred while attempting to register to Consul service.");
+            OnConsulConnectionFailed?.Invoke();
+        }
     }
 
     public async Task StopAsync(CancellationToken cancellationToken)
@@ -57,16 +73,17 @@ public class ConsulHostedService : IHostedService
 
         if (serviceConfig == null)
         {
-            _logger.LogWarning("{Message}", "Consul configuration is not found. Service will not be deregistered from Consul.");
+            _logger.LogWarning("Consul configuration is not found. Service will not be deregistered from Consul.");
             return;
         }
 
         var registration = new AgentServiceRegistration { ID = serviceConfig.ServiceId };
 
-        var logMsg = $"Deregistering service from Consul: {registration.ID}";
-        _logger.LogInformation("{Message}", logMsg);
+        _logger.LogInformation($"Deregistering service from Consul: {registration.ID}");
 
         await _consulClient.Agent.ServiceDeregister(registration.ID, cancellationToken);
+
+        _logger.LogInformation($"Deregistering service from Consul is successfull: {registration.ID}");
     }
 
     #endregion

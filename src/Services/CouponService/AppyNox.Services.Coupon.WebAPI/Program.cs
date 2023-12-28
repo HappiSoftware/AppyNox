@@ -1,4 +1,5 @@
 using AppyNox.Services.Base.API.Helpers;
+using AppyNox.Services.Base.API.Logger;
 using AppyNox.Services.Base.API.Middleware;
 using AppyNox.Services.Base.Domain.Common;
 using AppyNox.Services.Base.Infrastructure.Helpers;
@@ -30,6 +31,8 @@ builder.Host.UseSerilog((context, services, config) =>
     config.ReadFrom.Configuration(context.Configuration)
           .ReadFrom.Services(services)
 );
+
+builder.Services.AddScoped<INoxApiLogger, NoxApiLogger>();
 
 #endregion
 
@@ -148,6 +151,17 @@ app.UseMiddleware<QueryParameterValidateMiddleware>();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseHealthChecks("/api/health");
+
+var consulHostedService = app.Services.GetServices<IHostedService>()
+    .OfType<ConsulHostedService>()
+    .First();
+
+consulHostedService.OnConsulConnectionFailed += () =>
+{
+    var lifeTime = app.Services.GetService<IHostApplicationLifetime>();
+    lifeTime?.StopApplication();
+    return Task.CompletedTask;
+};
 
 app.Services.ApplyMigrations<CouponDbContext>();
 
