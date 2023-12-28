@@ -1,22 +1,21 @@
 ﻿using AppyNox.Services.Base.Application.DtoUtilities;
-using AppyNox.Services.Base.Domain.Common;
-using AppyNox.Services.Base.Application.Helpers;
 using AppyNox.Services.Base.Infrastructure.Interfaces;
 using AppyNox.Services.Base.Infrastructure.Repositories.Common;
-using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
 using AutoMapper;
 using Moq;
 using System.Linq.Expressions;
 using AppyNox.Services.Base.Application.Services.Implementations;
 using AppyNox.Services.Base.Domain.Interfaces;
 using AppyNox.Services.Coupon.Application.Services.Implementations;
-using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.DetailLevel;
+using AppyNox.Services.Base.Application.Logger;
+using Castle.Core.Logging;
+using Microsoft.Extensions.Logging;
 
 namespace AppyNox.Services.Coupon.Application.UnitTest.ServiceTests.Fixtures
 {
     public class ServiceFixture<TEntity> : IDisposable where TEntity : class, IEntityWithGuid
     {
-        #region Fields
+        #region [ Properties ]
 
         public readonly Mock<IGenericRepositoryBase<TEntity>> MockRepository;
 
@@ -30,9 +29,13 @@ namespace AppyNox.Services.Coupon.Application.UnitTest.ServiceTests.Fixtures
 
         public readonly GenericServiceBase<TEntity> GenericServiceBase;
 
+        public readonly NoxApplicationLogger NoxApplicationLogger;
+
+        private readonly Mock<ILogger<NoxApplicationLogger>> _mockLogger;
+
         #endregion
 
-        #region Public Constructors
+        #region [ Public Constructors ]
 
         public ServiceFixture()
         {
@@ -41,7 +44,9 @@ namespace AppyNox.Services.Coupon.Application.UnitTest.ServiceTests.Fixtures
             MockDtoMappingRegistry = new();
             MockUnitOfWork = new();
             MockServiceProvider = new();
-            GenericServiceBase = new GenericService<TEntity>(MockRepository.Object, MockMapper.Object, MockDtoMappingRegistry.Object, MockUnitOfWork.Object, MockServiceProvider.Object);
+            _mockLogger = new();
+            NoxApplicationLogger = new(_mockLogger.Object);
+            GenericServiceBase = new GenericService<TEntity>(MockRepository.Object, MockMapper.Object, MockDtoMappingRegistry.Object, MockUnitOfWork.Object, MockServiceProvider.Object, NoxApplicationLogger);
 
             #region [ Repository Mocks ]
 

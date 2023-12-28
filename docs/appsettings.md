@@ -12,11 +12,28 @@ Since appsetting files are gitignored, you must create the `appsettings.{Environ
 
 ```json
 {
-  "Logging": {
-    "LogLevel": {
-      "Default": "Information",
-      "Microsoft.AspNetCore": "Warning"
-    }
+  "Serilog": {
+    "Using": ["Serilog.Sinks.Console", "Serilog.Sinks.Debug"],
+    "MinimumLevel": {
+      "Default": "Debug",
+      "Override": {
+        "Microsoft": "Information",
+        "System": "Information"
+      }
+    },
+    "WriteTo": [
+      {
+        "Name": "Console",
+        "Args": {
+          "outputTemplate": "[{Timestamp:dd-MM-yyyy HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}"
+        }
+      },
+      {
+        "Name": "Debug",
+        "Args": { "restrictedToMinimumLevel": "Debug" }
+      }
+    ],
+    "Enrich": ["FromLogContext"]
   },
   "ConnectionStrings": {
     "DevelopmentConnection": "User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_Coupon;Pooling=true",
@@ -51,15 +68,30 @@ Since appsetting files are gitignored, you must create the `appsettings.{Environ
 
 ```json
 {
-  "Logging": {
-    "LogLevel": {
+  "Serilog": {
+    "Using": ["Serilog.Sinks.Console", "Serilog.Sinks.File"],
+    "MinimumLevel": {
       "Default": "Information",
-      "Microsoft.AspNetCore": "Warning"
-    }
+      "Override": {
+        "Microsoft": "Warning",
+        "System": "Error"
+      }
+    },
+    "WriteTo": [
+      { "Name": "Console" },
+      {
+        "Name": "File",
+        "Args": {
+          "path": "Logs/staging-log-.txt",
+          "rollingInterval": "Day"
+        }
+      }
+    ],
+    "Enrich": ["FromLogContext"]
   },
   "ConnectionStrings": {
-    "StagingConnection": "User ID=postgres;Password=coupon_password;Server=appynox-coupon-db-test;Port=5432;Database=AppyNox_Coupon_Test;Pooling=true",
-    "DefaultConnection": "User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_Coupon;Pooling=true",
+    "StagingConnection": "User ID=postgres;Password=coupon_password;Server=appynox-coupon-db;Port=5432;Database=AppyNox_Coupon_Test",
+    "DefaultConnection": "User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_Coupon",
     "TestConnection": "User ID=postgres;Password=coupon_password;Server=localhost;Port=5434;Database=AppyNox_Coupon_Test"
   },
   "JwtSettings": {
@@ -91,11 +123,26 @@ Since appsetting files are gitignored, you must create the `appsettings.{Environ
 
 ```json
 {
-  "Logging": {
-    "LogLevel": {
-      "Default": "Information",
-      "Microsoft.AspNetCore": "Warning"
-    }
+  "Serilog": {
+    "Using": ["Serilog.Sinks.Console", "Serilog.Sinks.File"],
+    "MinimumLevel": {
+      "Default": "Warning",
+      "Override": {
+        "Microsoft": "Error",
+        "System": "Error"
+      }
+    },
+    "WriteTo": [
+      { "Name": "Console" },
+      {
+        "Name": "File",
+        "Args": {
+          "path": "Logs/production-log-.txt",
+          "rollingInterval": "Day"
+        }
+      }
+    ],
+    "Enrich": ["FromLogContext"]
   },
   "ConnectionStrings": {
     "ProductionConnection": "User ID=postgres;Password=coupon_password;Server=appynox-coupon-db;Port=5432;Database=AppyNox_Coupon",
@@ -138,11 +185,23 @@ Since appsetting files are gitignored, you must create the `appsettings.{Environ
 
 ```json
 {
-  "Logging": {
-    "LogLevel": {
-      "Default": "Information",
-      "Microsoft.AspNetCore": "Warning"
-    }
+  "Serilog": {
+    "Using": ["Serilog.Sinks.Console", "Serilog.Sinks.Debug"],
+    "MinimumLevel": {
+      "Default": "Debug",
+      "Override": {
+        "Microsoft": "Information",
+        "System": "Information"
+      }
+    },
+    "WriteTo": [
+      { "Name": "Console" },
+      {
+        "Name": "Debug",
+        "Args": { "restrictedToMinimumLevel": "Debug" }
+      }
+    ],
+    "Enrich": ["FromLogContext"]
   },
   "ConnectionStrings": {
     "DevelopmentConnection": "User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_Authentication",
@@ -179,16 +238,31 @@ Since appsetting files are gitignored, you must create the `appsettings.{Environ
 
 ```json
 {
-  "Logging": {
-    "LogLevel": {
+  "Serilog": {
+    "Using": ["Serilog.Sinks.Console", "Serilog.Sinks.File"],
+    "MinimumLevel": {
       "Default": "Information",
-      "Microsoft.AspNetCore": "Warning"
-    }
+      "Override": {
+        "Microsoft": "Warning",
+        "System": "Error"
+      }
+    },
+    "WriteTo": [
+      { "Name": "Console" },
+      {
+        "Name": "File",
+        "Args": {
+          "path": "Logs/staging-log-.txt",
+          "rollingInterval": "Day"
+        }
+      }
+    ],
+    "Enrich": ["FromLogContext"]
   },
   "ConnectionStrings": {
-    "StagingConnection": "User ID=postgres;Password=auth_password;Server=appynox-authentication-db-test;Port=5432;Database=AppyNox_Authentication_Test",
+    "StagingConnection": "User ID=postgres;Password=auth_password;Server=appynox-authentication-db;Port=5432;Database=AppyNox_Authentication_Test",
     "DefaultConnection": "User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_Authentication",
-    "TestConnection": ""
+    "TestConnection": "" // for integration tests, use this to connect to dockerized database container from localhost
   },
   "JwtSettings": {
     "SecretKey": "vA+A/of8yadsbwe/CmS6PD0Kp837BozrQFMDuQ2Kwwg=",
@@ -220,11 +294,26 @@ Since appsetting files are gitignored, you must create the `appsettings.{Environ
 
 ```json
 {
-  "Logging": {
-    "LogLevel": {
-      "Default": "Information",
-      "Microsoft.AspNetCore": "Warning"
-    }
+  "Serilog": {
+    "Using": ["Serilog.Sinks.Console", "Serilog.Sinks.File"],
+    "MinimumLevel": {
+      "Default": "Warning",
+      "Override": {
+        "Microsoft": "Error",
+        "System": "Error"
+      }
+    },
+    "WriteTo": [
+      { "Name": "Console" },
+      {
+        "Name": "File",
+        "Args": {
+          "path": "Logs/production-log-.txt",
+          "rollingInterval": "Day"
+        }
+      }
+    ],
+    "Enrich": ["FromLogContext"]
   },
   "ConnectionStrings": {
     "ProductionConnection": "User ID=postgres;Password=auth_password;Server=appynox-authentication-db;Port=5432;Database=AppyNox_Authentication",

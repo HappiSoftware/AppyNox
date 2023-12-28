@@ -61,9 +61,10 @@ namespace AppyNox.Services.Base.Domain.ExceptionExtensions.Base
             _statusCode = statusCode;
         }
 
-        protected NoxException(string message, Exception innerException)
+        protected NoxException(Enum title, string message, Exception innerException)
             : base(message, innerException)
         {
+            _title = title.GetDisplayName();
             _statusCode = 500;
         }
 

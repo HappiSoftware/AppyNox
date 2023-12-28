@@ -77,6 +77,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppyNox.BuildingBlocks.Even
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppyNox.Services.Coupon.WebAPI.IntegrationTests", "src\Services\CouponService\Tests\IntegrationTests\AppyNox.Services.Coupon.WebAPI.IntegrationTests\AppyNox.Services.Coupon.WebAPI.IntegrationTests.csproj", "{A9D74765-C06D-4A6A-B123-2FC9DCCE9855}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppyNox.Services.Base.Infrastructure.UnitTests", "src\Services\.BaseService\Tests\UnitTests\AppyNox.Services.Base.Infrastructure.UnitTests\AppyNox.Services.Base.Infrastructure.UnitTests.csproj", "{2A9714FE-3DF3-42C8-9D76-800A47804AAD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -171,6 +173,10 @@ Global
 		{A9D74765-C06D-4A6A-B123-2FC9DCCE9855}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A9D74765-C06D-4A6A-B123-2FC9DCCE9855}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A9D74765-C06D-4A6A-B123-2FC9DCCE9855}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2A9714FE-3DF3-42C8-9D76-800A47804AAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A9714FE-3DF3-42C8-9D76-800A47804AAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A9714FE-3DF3-42C8-9D76-800A47804AAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A9714FE-3DF3-42C8-9D76-800A47804AAD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -209,6 +215,7 @@ Global
 		{C485CEF8-E581-46AB-8DE7-5F9E7FCD9F0A} = {F19E23FD-E8CC-4872-83E3-CD8C5E174F66}
 		{8CC55341-593F-4E57-80C3-8C6C3CEF3DA4} = {C485CEF8-E581-46AB-8DE7-5F9E7FCD9F0A}
 		{A9D74765-C06D-4A6A-B123-2FC9DCCE9855} = {9C257B11-A2A1-4E1E-88DD-845E02E0B60F}
+		{2A9714FE-3DF3-42C8-9D76-800A47804AAD} = {14E3528C-2F6B-4296-BAD1-E91F32F679EC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EA4F2302-DC43-4149-814A-609940BEC847}

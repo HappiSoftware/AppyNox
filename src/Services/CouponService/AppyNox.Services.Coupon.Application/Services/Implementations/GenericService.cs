@@ -14,6 +14,7 @@ using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
 using FluentValidation.Internal;
 using AppyNox.Services.Coupon.Application.Services.Interfaces;
 using AppyNox.Services.Base.Application.DtoUtilities;
+using AppyNox.Services.Base.Application.Logger;
 
 namespace AppyNox.Services.Coupon.Application.Services.Implementations
 {
@@ -23,8 +24,8 @@ namespace AppyNox.Services.Coupon.Application.Services.Implementations
         #region [ Public Constructors ]
 
         public GenericService(IGenericRepositoryBase<TEntity> repository, IMapper mapper, IDtoMappingRegistryBase dtoMappingRegistry, IUnitOfWorkBase unitOfWork,
-            IServiceProvider serviceProvider)
-            : base(repository, mapper, dtoMappingRegistry, unitOfWork, serviceProvider)
+            IServiceProvider serviceProvider, INoxApplicationLogger logger)
+            : base(repository, mapper, dtoMappingRegistry, unitOfWork, serviceProvider, logger)
         {
         }
 

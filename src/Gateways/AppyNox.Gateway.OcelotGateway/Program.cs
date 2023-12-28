@@ -1,20 +1,27 @@
 using AppyNox.Gateway.OcelotGateway.Middlewares;
 using AppyNox.Services.Base.API.Middleware;
-using NLog;
-using NLog.Web;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
 using Ocelot.Provider.Consul;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
 #region [ Logger Setup ]
 
-NLog.LogManager.Setup().LoadConfigurationFromFile($"Configurations/nlog.config");
-builder.Logging.ClearProviders();
-builder.Host.UseNLog();
+builder.Host.UseSerilog((context, services, config) =>
+    config.ReadFrom.Configuration(context.Configuration)
+          .ReadFrom.Services(services)
+          .Enrich.FromLogContext()
+          .WriteTo.Console()
+          .WriteTo.File("logs/appynox.txt", rollingInterval: RollingInterval.Day)
+);
 
-var logger = NLog.LogManager.GetCurrentClassLogger();
+var loggerFactory = LoggerFactory.Create(loggingBuilder =>
+{
+    loggingBuilder.AddSerilog();
+});
+var logger = loggerFactory.CreateLogger<Program>();
 
 #endregion
 
@@ -36,11 +43,11 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
     // Check if the file exists and log the result
     if (File.Exists(fileName))
     {
-        logger.Info("SSL Certificate file found.");
+        logger.LogInformation("SSL Certificate file found at {FilePath}.", fileName);
     }
     else
     {
-        logger.Info("SSL Certificate file not found.");
+        logger.LogWarning("SSL Certificate file not found at {FilePath}.", fileName);
     }
 
     serverOptions.ConfigureEndpointDefaults(listenOptions =>

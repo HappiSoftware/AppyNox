@@ -1,4 +1,5 @@
-﻿using AppyNox.Services.Coupon.Domain.Entities;
+﻿using AppyNox.Services.Base.Infrastructure.Services;
+using AppyNox.Services.Coupon.Domain.Entities;
 using AppyNox.Services.Coupon.Infrastructure.Data.Configurations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -14,7 +15,8 @@ namespace AppyNox.Services.Coupon.Infrastructure.Data
         {
         }
 
-        public CouponDbContext(DbContextOptions<CouponDbContext> options) : base(options)
+        public CouponDbContext(DbContextOptions<CouponDbContext> options)
+            : base(options)
         {
         }
 
@@ -36,7 +38,6 @@ namespace AppyNox.Services.Coupon.Infrastructure.Data
             {
                 // Get environment
                 string? environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-                Console.WriteLine($"Environment: {environment}");
 
                 // Build config
                 IConfiguration config = new ConfigurationBuilder()
@@ -46,7 +47,6 @@ namespace AppyNox.Services.Coupon.Infrastructure.Data
                     .AddEnvironmentVariables()
                     .Build();
                 var connectionString = config.GetConnectionString("DefaultConnection");
-                Console.WriteLine($"Connection String: {connectionString}");
                 optionsBuilder.UseNpgsql(connectionString);
             }
         }

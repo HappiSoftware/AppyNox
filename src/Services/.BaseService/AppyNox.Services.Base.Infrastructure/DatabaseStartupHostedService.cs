@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace AppyNox.Services.Base.Infrastructure
 {
+    [Obsolete("DatabaseStartupHostedService is deprecated for now. Database wait ops for apis moved to docker-compose-wait. Might need to consider usage later in future.")]
     public class DatabaseStartupHostedService<TContext>(IServiceProvider serviceProvider, ILogger<DatabaseStartupHostedService<TContext>> logger) : IHostedService where TContext : DbContext
     {
         #region [ Fields ]

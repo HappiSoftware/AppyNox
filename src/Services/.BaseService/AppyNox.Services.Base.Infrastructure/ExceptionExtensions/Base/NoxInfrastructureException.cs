@@ -8,9 +8,20 @@ using System.Threading.Tasks;
 
 namespace AppyNox.Services.Base.Infrastructure.ExceptionExtensions.Base
 {
-    public class NoxInfrastructureException(string message, int statusCode) 
-        : NoxException(ExceptionThrownLayer.InfrastructureBase, message, statusCode)
+    public class NoxInfrastructureException : NoxException
     {
+        #region [ Public Constructors ]
 
+        public NoxInfrastructureException(string message, int statusCode)
+        : base(ExceptionThrownLayer.InfrastructureBase, message, statusCode)
+        {
+        }
+
+        public NoxInfrastructureException(Exception ex, string message = "Unexpected error")
+            : base(ExceptionThrownLayer.InfrastructureBase, message, ex)
+        {
+        }
+
+        #endregion
     }
 }

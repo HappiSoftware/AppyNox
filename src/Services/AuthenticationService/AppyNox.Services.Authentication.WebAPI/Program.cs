@@ -8,17 +8,15 @@ using AppyNox.Services.Authentication.WebAPI.Utilities;
 using AppyNox.Services.Base.API.Helpers;
 using AppyNox.Services.Base.Domain.Common;
 using AppyNox.Services.Base.Infrastructure;
+using AppyNox.Services.Base.Infrastructure.Helpers;
 using Asp.Versioning;
 using AutoWrapper;
 using Consul;
-using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
-using NLog;
-using NLog.Web;
-using System.Reflection;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
@@ -41,19 +39,23 @@ builder.Services.AddSwaggerGen(options =>
 
 #region [ Logger Setup ]
 
-if (!builder.Environment.IsDevelopment())
+builder.Host.UseSerilog((context, services, config) =>
+    config.ReadFrom.Configuration(context.Configuration)
+          .ReadFrom.Services(services)
+          .Enrich.FromLogContext()
+);
+
+var loggerFactory = LoggerFactory.Create(loggingBuilder =>
 {
-    NLog.LogManager.Setup().LoadConfigurationFromFile("nlog.config");
-    builder.Logging.ClearProviders();
-    builder.Host.UseNLog();
-}
-var logger = NLog.LogManager.GetCurrentClassLogger();
+    loggingBuilder.AddSerilog();
+});
+var logger = loggerFactory.CreateLogger<Program>();
 
 #endregion
 
 #region [ Consul Discovery Service ]
 
-logger.Log(NLog.LogLevel.Info, $"Configuring Consul Discovery Service {configuration["ConsulConfig:Address"]}");
+logger.LogInformation("Configuring Consul Discovery Service {ConsulAddress}", configuration["ConsulConfig:Address"]);
 builder.Services.AddSingleton<IConsulClient, ConsulClient>(p => new ConsulClient(consulConfig =>
 {
     var address = configuration["ConsulConfig:Address"] ?? "http://localhost:8500";
@@ -154,21 +156,6 @@ app.UseApiResponseAndExceptionWrapper(new AutoWrapperOptions { UseApiProblemDeta
 
 app.UseHealthChecks("/api/health");
 
-var databaseStartupService = app.Services.GetServices<IHostedService>()
-    .OfType<DatabaseStartupHostedService<IdentityDbContext>>()
-    .FirstOrDefault()!;
-
-databaseStartupService.OnDatabaseConnected += () =>
-{
-    AppyNox.Services.Authentication.Infrastructure.DependencyInjection.ApplyMigrations(app.Services);
-    return Task.CompletedTask;
-};
-
-databaseStartupService.OnDatabaseConnectionFailed += () =>
-{
-    var lifeTime = app.Services.GetService<IHostApplicationLifetime>();
-    lifeTime?.StopApplication();
-    return Task.CompletedTask;
-};
+app.Services.ApplyMigrations<IdentityDbContext>();
 
 app.Run();
