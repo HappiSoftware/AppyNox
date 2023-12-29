@@ -8,15 +8,8 @@ using System.Threading.Tasks;
 
 namespace AppyNox.Services.Base.API.ExceptionExtensions.Base
 {
-    internal class NoxApiException : NoxException
+    internal class NoxApiException(string message, int statusCode)
+        : NoxException(ExceptionThrownLayer.ApiBase, message, statusCode)
     {
-        #region Internal Constructors
-
-        internal NoxApiException(string message, int statusCode)
-            : base(ExceptionThrownLayer.ApiBase, message, statusCode)
-        {
-        }
-
-        #endregion
     }
 }

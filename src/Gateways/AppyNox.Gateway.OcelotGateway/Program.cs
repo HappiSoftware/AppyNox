@@ -1,5 +1,8 @@
+using AppyNox.Gateway.OcelotGateway.Handlers;
 using AppyNox.Gateway.OcelotGateway.Middlewares;
+using AppyNox.Services.Base.API.Logger;
 using AppyNox.Services.Base.API.Middleware;
+using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
 using Ocelot.Provider.Consul;
@@ -12,14 +15,22 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog((context, services, config) =>
     config.ReadFrom.Configuration(context.Configuration)
           .ReadFrom.Services(services)
-          .Enrich.FromLogContext()
 );
 
-var loggerFactory = LoggerFactory.Create(loggingBuilder =>
+#region [ Logger for Before DI Initialization ]
+
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .CreateLogger();
+
+var loggerFactory = LoggerFactory.Create(builder =>
 {
-    loggingBuilder.AddSerilog();
+    builder.AddSerilog();
 });
-var logger = loggerFactory.CreateLogger<Program>();
+var logger = loggerFactory.CreateLogger<INoxLogger>();
+NoxLogger noxLogger = new(logger, "GatewayHost");
+
+#endregion
 
 #endregion
 
@@ -41,11 +52,11 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
     // Check if the file exists and log the result
     if (File.Exists(fileName))
     {
-        logger.LogInformation("SSL Certificate file found at {FilePath}.", fileName);
+        noxLogger.LogInformation($"SSL Certificate file found at {fileName}.");
     }
     else
     {
-        logger.LogWarning("SSL Certificate file not found at {FilePath}.", fileName);
+        noxLogger.LogWarning($"SSL Certificate file not found at {fileName}.");
     }
 
     serverOptions.ConfigureEndpointDefaults(listenOptions =>
@@ -65,8 +76,6 @@ builder.Services.AddHealthChecks();
 builder.Services.AddOcelot(builder.Configuration).AddConsul();
 
 var app = builder.Build();
-
-app.UseMiddleware<CorrelationIdMiddleware>();
 
 app.UseMiddleware<LoggingMiddleware>();
 

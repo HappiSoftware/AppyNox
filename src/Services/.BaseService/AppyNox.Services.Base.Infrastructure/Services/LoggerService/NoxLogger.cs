@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using AppyNox.Services.Base.Infrastructure.Helpers;
+using Microsoft.Extensions.Logging;
 
 namespace AppyNox.Services.Base.Infrastructure.Services.LoggerService
 {
@@ -74,12 +75,15 @@ namespace AppyNox.Services.Base.Infrastructure.Services.LoggerService
         protected virtual object CreateLogData(string message, LogLevel logLevel)
         {
             var timeStamp = DateTime.UtcNow;
+            var correlationId = CorrelationContext.CorrelationId;
+
             return new
             {
                 Level = logLevel.ToString(),
                 Layer = _layer,
                 TimeStamp = timeStamp,
-                Message = message
+                Message = message,
+                CorrelationId = correlationId
             };
         }
 

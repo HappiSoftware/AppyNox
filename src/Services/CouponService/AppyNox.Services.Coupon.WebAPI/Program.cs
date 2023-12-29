@@ -32,7 +32,7 @@ builder.Host.UseSerilog((context, services, config) =>
           .ReadFrom.Services(services)
 );
 
-builder.Services.AddScoped<INoxApiLogger, NoxApiLogger>();
+builder.Services.AddSingleton<INoxApiLogger, NoxApiLogger>();
 
 #region [ Logger for Before DI Initialization ]
 
@@ -149,6 +149,8 @@ if (!app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseMiddleware<CorrelationIdMiddleware>();
 
 app.UseHttpsRedirection();
 

@@ -16,7 +16,7 @@ namespace AppyNox.Services.Authentication.Infrastructure
 
         public static void AddAuthenticationInfrastructure(this IServiceCollection services, IConfiguration configuration, ApplicationEnvironment environment)
         {
-            services.AddScoped<INoxInfrastructureLogger, NoxInfrastructureLogger>();
+            services.AddSingleton<INoxInfrastructureLogger, NoxInfrastructureLogger>();
 
             #region [ Database Configuration ]
 

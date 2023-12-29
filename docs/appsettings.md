@@ -367,7 +367,8 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
     "RateLimitOptions": {
       "QuotaExceededMessage": "You have sent too many requests in a row.",
       "ClientIdHeader": "ClientId"
-    }
+    },
+    "RequestIdKey": "X-Correlation-ID"
   },
   "Routes": [
     {
@@ -443,7 +444,8 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
     "RateLimitOptions": {
       "QuotaExceededMessage": "You have sent too many requests in a row.",
       "ClientIdHeader": "ClientId"
-    }
+    },
+    "RequestIdKey": "X-Correlation-ID"
   },
   "Routes": [
     {
@@ -519,7 +521,8 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
     "RateLimitOptions": {
       "QuotaExceededMessage": "You have sent too many requests in a row.",
       "ClientIdHeader": "ClientId"
-    }
+    },
+    "RequestIdKey": "X-Correlation-ID"
   },
   "Routes": [
     {

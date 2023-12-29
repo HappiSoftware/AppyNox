@@ -8,6 +8,7 @@ using AppyNox.Services.Authentication.WebAPI.Managers.Interfaces;
 using AppyNox.Services.Authentication.WebAPI.Utilities;
 using AppyNox.Services.Base.API.Helpers;
 using AppyNox.Services.Base.API.Logger;
+using AppyNox.Services.Base.API.Middleware;
 using AppyNox.Services.Base.Infrastructure.Helpers;
 using AppyNox.Services.Base.Infrastructure.HostedServices;
 using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
@@ -48,6 +49,7 @@ builder.Host.UseSerilog((context, services, config) =>
           .ReadFrom.Services(services)
           .Enrich.FromLogContext()
 );
+builder.Services.AddSingleton<INoxApiLogger, NoxApiLogger>();
 
 #region [ Logger for Before DI Initialization ]
 
@@ -152,6 +154,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseMiddleware<CorrelationIdMiddleware>();
 
 app.UseHttpsRedirection();
 
