@@ -57,7 +57,7 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
 #endregion
 
 builder.Configuration.SetBasePath(builder.Environment.ContentRootPath)
-    .AddJsonFile($"Configurations/ocelot.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: true)
+    .AddJsonFile($"ocelot.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: true)
     .AddEnvironmentVariables();
 
 builder.Services.AddHealthChecks();
