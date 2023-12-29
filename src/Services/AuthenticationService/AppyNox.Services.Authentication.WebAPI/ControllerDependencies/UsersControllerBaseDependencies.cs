@@ -1,9 +1,11 @@
-﻿using AppyNox.Services.Authentication.WebAPI.Helpers;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 
 namespace AppyNox.Services.Authentication.WebAPI.ControllerDependencies
 {
+    /// <summary>
+    /// Provides dependencies for user-related controllers.
+    /// </summary>
     public class UsersControllerBaseDependencies
     {
         #region [ Fields ]

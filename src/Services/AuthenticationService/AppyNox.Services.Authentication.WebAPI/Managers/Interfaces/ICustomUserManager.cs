@@ -2,6 +2,9 @@
 
 namespace AppyNox.Services.Authentication.WebAPI.Managers.Interfaces
 {
+    /// <summary>
+    /// Defines the required functionalities for a custom user manager.
+    /// </summary>
     public interface ICustomUserManager
     {
         #region [ Public Methods ]
@@ -10,7 +13,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Managers.Interfaces
 
         Task<string> RetrieveStoredRefreshToken(string userId);
 
-        Task<bool> SaveRefreshToken(string userId, string refreshToken);
+        Task SaveRefreshToken(string userId, string refreshToken);
 
         #endregion
     }

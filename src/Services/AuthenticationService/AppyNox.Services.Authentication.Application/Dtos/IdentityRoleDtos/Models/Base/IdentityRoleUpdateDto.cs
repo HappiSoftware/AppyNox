@@ -1,8 +1,8 @@
-﻿using AppyNox.Services.Authentication.Application.Dtos.IdentityRoleDtos.DetailLevel;
-
-namespace AppyNox.Services.Authentication.Application.Dtos.IdentityRoleDtos.Models.Base
+﻿namespace AppyNox.Services.Authentication.Application.Dtos.IdentityRoleDtos.Models.Base
 {
-    [IdentityRoleDetailLevel(IdentityRoleUpdateDetailLevel.Simple)]
+    /// <summary>
+    /// Data transfer object for updating an existing identity role.
+    /// </summary>
     public class IdentityRoleUpdateDto : IdentityRoleCreateDto, IHasGuid
     {
         #region [ Properties ]

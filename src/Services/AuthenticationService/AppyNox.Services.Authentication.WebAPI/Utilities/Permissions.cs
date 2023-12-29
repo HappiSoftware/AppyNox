@@ -2,6 +2,9 @@
 
 namespace AppyNox.Services.Authentication.WebAPI.Utilities
 {
+    /// <summary>
+    /// Defines static permission strings for role and user operations.
+    /// </summary>
     public static class Permissions
     {
         #region [ Classes ]

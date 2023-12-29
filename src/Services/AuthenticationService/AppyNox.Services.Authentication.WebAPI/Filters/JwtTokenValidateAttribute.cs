@@ -6,6 +6,9 @@ using Microsoft.Net.Http.Headers;
 namespace AppyNox.Services.Authentication.WebAPI.Filters
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = false, AllowMultiple = false)]
+    /// <summary>
+    /// Attribute for validating JWT tokens in requests.
+    /// </summary>
     public class JwtTokenValidateAttribute : Attribute, IAuthorizationFilter
     {
         #region [ Public Methods ]

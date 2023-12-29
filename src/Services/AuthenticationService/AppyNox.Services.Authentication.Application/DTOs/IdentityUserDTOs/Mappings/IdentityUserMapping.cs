@@ -5,6 +5,10 @@ using Microsoft.AspNetCore.Identity;
 
 namespace AppyNox.Services.Authentication.Application.Dtos.IdentityUserDtos.Mappings
 {
+    /// <summary>
+    /// Represents the mapping configuration for IdentityUser related DTOs and IdentityUser entity.
+    /// Defines AutoMapper mappings to facilitate object conversions.
+    /// </summary>
     public class IdentityUserMapping : Profile
     {
         #region [ Public Constructors ]

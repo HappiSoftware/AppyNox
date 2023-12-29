@@ -1,5 +1,8 @@
 ﻿namespace AppyNox.Services.Authentication.Application.Dtos.ClaimDtos.Models.Base
 {
+    /// <summary>
+    /// Data transfer object representing a claim.
+    /// </summary>
     public class ClaimDto
     {
         #region [ Properties ]

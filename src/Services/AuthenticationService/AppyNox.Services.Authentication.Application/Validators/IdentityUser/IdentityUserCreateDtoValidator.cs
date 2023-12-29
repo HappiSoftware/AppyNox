@@ -5,6 +5,10 @@ using FluentValidation;
 
 namespace AppyNox.Services.Authentication.Application.Validators.IdentityUser
 {
+    /// <summary>
+    /// Validator class for IdentityUserCreateDto using FluentValidation.
+    /// Includes rules for validating user creation data.
+    /// </summary>
     public class IdentityUserCreateDtoValidator : AbstractValidator<IdentityUserCreateDto>
     {
         #region [ Public Constructors ]

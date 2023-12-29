@@ -1,8 +1,8 @@
-﻿using AppyNox.Services.Authentication.Application.Dtos.IdentityUserDtos.DetailLevel;
-
-namespace AppyNox.Services.Authentication.Application.Dtos.IdentityUserDtos.Models.Base
+﻿namespace AppyNox.Services.Authentication.Application.Dtos.IdentityUserDtos.Models.Base
 {
-    [IdentityUserDetailLevel(IdentityUserUpdateDetailLevel.Simple)]
+    /// <summary>
+    /// Data transfer object for updating an existing identity user.
+    /// </summary>
     public class IdentityUserUpdateDto : IdentityUserCreateDto
     {
         #region [ Properties ]

@@ -1,9 +1,11 @@
-﻿using AppyNox.Services.Authentication.Application.Dtos.IdentityUserDtos.DetailLevel;
-using AppyNox.Services.Base.Application.Dtos;
+﻿using AppyNox.Services.Base.Application.Dtos;
 
 namespace AppyNox.Services.Authentication.Application.Dtos.IdentityUserDtos.Models.Base
 {
-    [IdentityUserDetailLevel(IdentityUserCreateDetailLevel.Simple)]
+    /// <summary>
+    /// Data transfer object for creating a new identity user.
+    /// Contains user credentials and personal information.
+    /// </summary>
     public class IdentityUserCreateDto : BaseDto
     {
         #region [ Properties ]

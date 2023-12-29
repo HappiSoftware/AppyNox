@@ -165,7 +165,8 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.UseApiResponseAndExceptionWrapper(new AutoWrapperOptions { UseApiProblemDetailsException = true });
+app.UseApiResponseAndExceptionWrapper(new AutoWrapperOptions { IsApiOnly = true, ShowApiVersion = true, ApiVersion = "1.0" });
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseHealthChecks("/api/health");
 
