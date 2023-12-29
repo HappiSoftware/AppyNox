@@ -5,6 +5,9 @@ using System.Security.Claims;
 
 namespace AppyNox.Services.Authentication.WebAPI.Utilities
 {
+    /// <summary>
+    /// Handles authorization based on permission requirements.
+    /// </summary>
     internal class PermissionAuthorizationHandler : AuthorizationHandler<PermissionRequirement>
     {
         #region [ Public Constructors ]

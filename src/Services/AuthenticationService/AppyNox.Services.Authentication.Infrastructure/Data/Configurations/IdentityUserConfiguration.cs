@@ -4,13 +4,26 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace AppyNox.Services.Authentication.Infrastructure.Data.Configurations
 {
+    /// <summary>
+    /// Configures the entity type IdentityUser and seeds initial data.
+    /// </summary>
     public class IdentityUserConfiguration : IEntityTypeConfiguration<IdentityUser>
     {
         private readonly string _adminUserId;
+
+        /// <summary>
+        /// Initializes a new instance of the IdentityUserConfiguration class with the specified admin user ID.
+        /// </summary>
+        /// <param name="adminUserId">The ID of the admin user for seeding data.</param>
         public IdentityUserConfiguration(string adminUserId)
         {
             _adminUserId = adminUserId;
         }
+
+        /// <summary>
+        /// Configures the IdentityUser entity type and seeds data.
+        /// </summary>
+        /// <param name="builder">The builder being used to construct the entity type model.</param>
         public void Configure(EntityTypeBuilder<IdentityUser> builder)
         {
             #region [ Configurations ]

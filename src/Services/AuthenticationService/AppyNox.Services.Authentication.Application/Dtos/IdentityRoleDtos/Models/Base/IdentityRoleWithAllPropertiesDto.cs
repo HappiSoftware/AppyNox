@@ -2,6 +2,9 @@
 
 namespace AppyNox.Services.Authentication.Application.Dtos.IdentityRoleDtos.Models.Base
 {
+    /// <summary>
+    /// Extended data transfer object for an identity role, including all properties.
+    /// </summary>
     internal class IdentityRoleWithAllPropertiesDto : IdentityRoleDto
     {
         #region [ Properties ]

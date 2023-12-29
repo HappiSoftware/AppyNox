@@ -2,6 +2,9 @@
 
 namespace AppyNox.Services.Authentication.WebAPI.Managers.Interfaces
 {
+    /// <summary>
+    /// Defines the required functionalities for a custom user manager.
+    /// </summary>
     public interface ICustomUserManager
     {
         #region [ Public Methods ]

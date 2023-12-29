@@ -7,6 +7,9 @@ using System.Net;
 
 namespace AppyNox.Services.Authentication.WebAPI.Managers.Implementations
 {
+    /// <summary>
+    /// Custom implementation of user management functionalities.
+    /// </summary>
     public class CustomUserManager : ICustomUserManager
     {
         #region [ Fields ]
@@ -32,6 +35,12 @@ namespace AppyNox.Services.Authentication.WebAPI.Managers.Implementations
 
         #region [ Public Methods ]
 
+        /// <summary>
+        /// Authenticates a user and generates JWT and refresh tokens.
+        /// </summary>
+        /// <param name="user">The user's login information.</param>
+        /// <returns>A tuple containing the JWT token and refresh token.</returns>
+        /// <exception cref="AuthenticationServiceException">Thrown when authentication fails.</exception>
         public async Task<(string jwtToken, string refreshToken)> Authenticate(LoginDto user)
         {
             var loggedUser = await _userManager.FindByNameAsync(user.UserName);
@@ -57,6 +66,12 @@ namespace AppyNox.Services.Authentication.WebAPI.Managers.Implementations
             else throw new AuthenticationServiceException("Wrong credentials", (int)HttpStatusCode.BadRequest);
         }
 
+        /// <summary>
+        /// Saves a refresh token for a specified user.
+        /// </summary>
+        /// <param name="userId">The user's identifier.</param>
+        /// <param name="refreshToken">The refresh token to save.</param>
+        /// <exception cref="ApiException">Thrown when saving the refresh token fails.</exception>
         public async Task SaveRefreshToken(string userId, string refreshToken)
         {
             try
@@ -75,6 +90,12 @@ namespace AppyNox.Services.Authentication.WebAPI.Managers.Implementations
             }
         }
 
+        /// <summary>
+        /// Retrieves the stored refresh token for a specified user.
+        /// </summary>
+        /// <param name="userId">The user's identifier.</param>
+        /// <returns>The stored refresh token.</returns>
+        /// <exception cref="AuthenticationServiceException">Thrown when the user or refresh token is not found.</exception>
         public async Task<string> RetrieveStoredRefreshToken(string userId)
         {
             try

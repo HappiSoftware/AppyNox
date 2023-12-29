@@ -2,6 +2,10 @@
 
 namespace AppyNox.Services.Authentication.Application.Dtos.IdentityUserDtos.Models.Base
 {
+    /// <summary>
+    /// Data transfer object for creating a new identity user.
+    /// Contains user credentials and personal information.
+    /// </summary>
     public class IdentityUserCreateDto : BaseDto
     {
         #region [ Properties ]

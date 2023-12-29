@@ -3,6 +3,9 @@ using FluentValidation;
 
 namespace AppyNox.Services.Authentication.Application.Validators.Account
 {
+    /// <summary>
+    /// Validator class for LoginDto using FluentValidation.
+    /// </summary>
     public class LoginDtoValidator : AbstractValidator<LoginDto>
     {
         #region [ Public Constructors ]

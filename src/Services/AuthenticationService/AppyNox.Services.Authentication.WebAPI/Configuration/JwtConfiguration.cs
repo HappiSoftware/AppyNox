@@ -2,6 +2,9 @@
 
 namespace AppyNox.Services.Authentication.WebAPI.Configuration
 {
+    /// <summary>
+    /// Contains configuration settings for JWT (JSON Web Token).
+    /// </summary>
     public class JwtConfiguration
     {
         #region [ Properties ]
@@ -16,6 +19,10 @@ namespace AppyNox.Services.Authentication.WebAPI.Configuration
 
         #region [ Public Methods ]
 
+        /// <summary>
+        /// Converts the SecretKey string to a byte array.
+        /// </summary>
+        /// <returns>A byte array representing the SecretKey.</returns>
         public byte[] GetSecretKeyBytes()
         {
             return Encoding.ASCII.GetBytes(SecretKey);

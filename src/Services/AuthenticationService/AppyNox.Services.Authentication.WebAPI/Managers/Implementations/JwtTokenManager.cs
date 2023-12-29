@@ -11,6 +11,9 @@ using System.Security.Cryptography;
 
 namespace AppyNox.Services.Authentication.WebAPI.Managers.Implementations
 {
+    /// <summary>
+    /// Manages the creation and validation of JWT tokens.
+    /// </summary>
     public class JwtTokenManager(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager,
         JwtConfiguration jwtConfiguration, IConfiguration configuration) : ICustomTokenManager
     {
@@ -30,6 +33,12 @@ namespace AppyNox.Services.Authentication.WebAPI.Managers.Implementations
 
         #region [ JWT Token ]
 
+        /// <summary>
+        /// Creates a JWT token for a specified user.
+        /// </summary>
+        /// <param name="userId">The user's identifier.</param>
+        /// <returns>A JWT token string.</returns>
+        /// <exception cref="AuthenticationServiceException">Thrown when user information is not found.</exception>
         public async Task<string> CreateToken(string userId)
         {
             List<Claim> claims = [];
@@ -70,6 +79,12 @@ namespace AppyNox.Services.Authentication.WebAPI.Managers.Implementations
             return _tokenHandler.WriteToken(token);
         }
 
+        /// <summary>
+        /// Retrieves user information by validating a given JWT token.
+        /// </summary>
+        /// <param name="token">The JWT token.</param>
+        /// <returns>User information if token is valid.</returns>
+        /// <exception cref="AuthenticationServiceException">Thrown when token is invalid or user information is not found.</exception>
         public string GetUserInfoByToken(string token)
         {
             if (string.IsNullOrWhiteSpace(token)) return string.Empty;
@@ -86,6 +101,12 @@ namespace AppyNox.Services.Authentication.WebAPI.Managers.Implementations
             return string.Empty;
         }
 
+        /// <summary>
+        /// Validates a JWT token.
+        /// </summary>
+        /// <param name="token">The JWT token to validate.</param>
+        /// <returns>True if the token is valid; otherwise, false.</returns>
+        /// <exception cref="AuthenticationServiceException">Thrown when token has expired.</exception>
         public bool VerifyToken(string token)
         {
             SecurityToken securityToken;
@@ -122,6 +143,10 @@ namespace AppyNox.Services.Authentication.WebAPI.Managers.Implementations
 
         #region [ Refresh Token ]
 
+        /// <summary>
+        /// Creates a new refresh token.
+        /// </summary>
+        /// <returns>A new refresh token.</returns>
         public string CreateRefreshToken()
         {
             var randomNumber = new byte[32];
@@ -130,6 +155,12 @@ namespace AppyNox.Services.Authentication.WebAPI.Managers.Implementations
             return Convert.ToBase64String(randomNumber);
         }
 
+        /// <summary>
+        /// Verifies if a given refresh token matches the stored token.
+        /// </summary>
+        /// <param name="tokenToVerify">The refresh token to verify.</param>
+        /// <param name="storedToken">The stored refresh token.</param>
+        /// <returns>True if the tokens match; otherwise, false.</returns>
         public bool VerifyRefreshToken(string tokenToVerify, string storedToken)
         {
             return tokenToVerify == storedToken;

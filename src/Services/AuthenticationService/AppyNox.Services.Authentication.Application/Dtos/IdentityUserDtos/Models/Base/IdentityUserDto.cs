@@ -2,6 +2,9 @@
 
 namespace AppyNox.Services.Authentication.Application.Dtos.IdentityUserDtos.Models.Base
 {
+    /// <summary>
+    /// Data transfer object representing an identity user.
+    /// </summary>
     public class IdentityUserDto : BaseDto
     {
         #region [ Properties ]

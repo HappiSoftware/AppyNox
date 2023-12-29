@@ -10,10 +10,19 @@ using Microsoft.Extensions.Hosting;
 
 namespace AppyNox.Services.Authentication.Infrastructure
 {
+    /// <summary>
+    /// Provides extension methods for IServiceCollection to register authentication infrastructure.
+    /// </summary>
     public static class DependencyInjection
     {
         #region [ Public Methods ]
 
+        /// <summary>
+        /// Adds authentication infrastructure services, including database configuration and Consul Discovery Service.
+        /// </summary>
+        /// <param name="services">The IServiceCollection to add services to.</param>
+        /// <param name="configuration">The IConfiguration instance to access application settings.</param>
+        /// <param name="environment">The current application environment.</param>
         public static void AddAuthenticationInfrastructure(this IServiceCollection services, IConfiguration configuration, ApplicationEnvironment environment)
         {
             services.AddSingleton<INoxInfrastructureLogger, NoxInfrastructureLogger>();
@@ -49,6 +58,10 @@ namespace AppyNox.Services.Authentication.Infrastructure
             //services.AddHostedService<DatabaseStartupHostedService<IdentityDbContext>>();
         }
 
+        /// <summary>
+        /// Applies any pending migrations for the context to the database.
+        /// </summary>
+        /// <param name="serviceProvider">The IServiceProvider to retrieve the IdentityDbContext instance.</param>
         public static void ApplyMigrations(IServiceProvider serviceProvider)
         {
             using var scope = serviceProvider.CreateScope();

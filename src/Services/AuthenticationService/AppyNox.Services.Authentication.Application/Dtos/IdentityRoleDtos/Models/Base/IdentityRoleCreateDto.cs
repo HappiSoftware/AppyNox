@@ -2,6 +2,9 @@
 
 namespace AppyNox.Services.Authentication.Application.Dtos.IdentityRoleDtos.Models.Base
 {
+    /// <summary>
+    /// Data transfer object for creating a new identity role.
+    /// </summary>
     public class IdentityRoleCreateDto : BaseDto
     {
         #region [ Properties ]

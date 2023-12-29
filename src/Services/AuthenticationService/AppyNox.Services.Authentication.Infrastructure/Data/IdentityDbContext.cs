@@ -6,6 +6,9 @@ using Microsoft.Extensions.Configuration;
 
 namespace AppyNox.Services.Authentication.Infrastructure.Data
 {
+    /// <summary>
+    /// Represents the database context for identity-related entities, extending the IdentityDbContext with custom configurations.
+    /// </summary>
     public class IdentityDbContext : IdentityDbContext<IdentityUser>
     {
         #region [ Public Constructors ]

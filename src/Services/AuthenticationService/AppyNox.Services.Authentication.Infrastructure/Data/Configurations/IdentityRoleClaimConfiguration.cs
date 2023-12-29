@@ -4,13 +4,26 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace AppyNox.Services.Authentication.Infrastructure.Data.Configurations
 {
+    /// <summary>
+    /// Configures the entity type IdentityRoleClaim and seeds initial data.
+    /// </summary>
     public class IdentityRoleClaimConfiguration : IEntityTypeConfiguration<IdentityRoleClaim<string>>
     {
         private readonly string _adminRoleId;
+
+        /// <summary>
+        /// Initializes a new instance of the IdentityRoleClaimConfiguration class with the specified admin role ID.
+        /// </summary>
+        /// <param name="adminRoleId">The ID of the admin role for seeding data.</param>
         public IdentityRoleClaimConfiguration(string adminRoleId)
         {
             _adminRoleId = adminRoleId;
         }
+
+        /// <summary>
+        /// Configures the IdentityRoleClaim entity type and seeds data.
+        /// </summary>
+        /// <param name="builder">The builder being used to construct the entity type model.</param>
         public void Configure(EntityTypeBuilder<IdentityRoleClaim<string>> builder)
         {
             #region [ Configurations ]
