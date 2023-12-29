@@ -2,6 +2,7 @@ using AppyNox.Services.Base.API.Helpers;
 using AppyNox.Services.Base.API.Logger;
 using AppyNox.Services.Base.API.Middleware;
 using AppyNox.Services.Base.Infrastructure.Helpers;
+using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
 using AppyNox.Services.Base.Infrastructure.HostedServices;
 using AppyNox.Services.Coupon.Application;
 using AppyNox.Services.Coupon.Infrastructure;
@@ -33,19 +34,37 @@ builder.Host.UseSerilog((context, services, config) =>
 
 builder.Services.AddScoped<INoxApiLogger, NoxApiLogger>();
 
+#region [ Logger for Before DI Initialization ]
+
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .CreateLogger();
+
+var loggerFactory = LoggerFactory.Create(builder =>
+{
+    builder.AddSerilog();
+});
+var logger = loggerFactory.CreateLogger<INoxLogger>();
+NoxLogger noxLogger = new(logger, "CouponHost");
+
+#endregion
+
 #endregion
 
 builder.Services.AddHealthChecks();
 
 #region [ DI For Layers ]
 
-builder.Services.AddCouponInfrastructure(configuration, builder.Environment.GetEnvironment());
+noxLogger.LogInformation("Registering DI's for layers.");
+builder.Services.AddCouponInfrastructure(configuration, builder.Environment.GetEnvironment(), noxLogger);
 builder.Services.AddCouponApplication();
+noxLogger.LogInformation("Registering DI's for layers completed.");
 
 #endregion
 
 #region [ JWT Configuration ]
 
+noxLogger.LogInformation("Registering JWT Configuration.");
 var jwtConfiguration = new JwtConfiguration();
 configuration.GetSection("JwtSettings").Bind(jwtConfiguration);
 builder.Services.AddSingleton(jwtConfiguration);
@@ -68,20 +87,23 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-builder.Services.AddSwaggerGen(opt =>
+if (!builder.Environment.IsDevelopment())
 {
-    opt.SwaggerDoc("v1", new OpenApiInfo { Title = "Coupons Service", Version = "v1" });
-    opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    noxLogger.LogInformation("Adjusting swagger endpoints.");
+    builder.Services.AddSwaggerGen(opt =>
     {
-        In = ParameterLocation.Header,
-        Description = "Please enter token",
-        Name = "Authorization",
-        Type = SecuritySchemeType.Http,
-        BearerFormat = "JWT",
-        Scheme = "bearer"
-    });
+        opt.SwaggerDoc("v1", new OpenApiInfo { Title = "Coupons Service", Version = "v1" });
+        opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+        {
+            In = ParameterLocation.Header,
+            Description = "Please enter token",
+            Name = "Authorization",
+            Type = SecuritySchemeType.Http,
+            BearerFormat = "JWT",
+            Scheme = "bearer"
+        });
 
-    opt.AddSecurityRequirement(new OpenApiSecurityRequirement
+        opt.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
             new OpenApiSecurityScheme
@@ -95,7 +117,9 @@ builder.Services.AddSwaggerGen(opt =>
             Array.Empty<string>()
         }
     });
-});
+    });
+    noxLogger.LogInformation("Adjusting swagger endpoints completed.");
+}
 
 // Add Policy-based Authorization
 builder.Services.AddAuthorization(options =>
@@ -112,12 +136,13 @@ builder.Services.AddAuthorization(options =>
 });
 
 builder.Services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
+noxLogger.LogInformation("Registering JWT Configuration completed.");
 
 #endregion
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+#region [ Pipeline ]
 
 if (!app.Environment.IsDevelopment())
 {
@@ -137,14 +162,17 @@ app.UseApiResponseAndExceptionWrapper(new AutoWrapperOptions { IsApiOnly = true,
 app.UseMiddleware<QueryParameterValidateMiddleware>();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
+#endregion
+
 app.UseHealthChecks("/api/health");
 
 var consulHostedService = app.Services.GetServices<IHostedService>()
     .OfType<ConsulHostedService>()
     .First();
 
-consulHostedService.OnConsulConnectionFailed += () =>
+consulHostedService.OnConsulConnectionFailed += (Exception ex) =>
 {
+    noxLogger.LogError(ex, "Consul connection failed. Stopping application.");
     var lifeTime = app.Services.GetService<IHostApplicationLifetime>();
     lifeTime?.StopApplication();
     return Task.CompletedTask;

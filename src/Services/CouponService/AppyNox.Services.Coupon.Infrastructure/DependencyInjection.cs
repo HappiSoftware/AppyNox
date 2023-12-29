@@ -2,6 +2,7 @@
 using AppyNox.Services.Base.Infrastructure.HostedServices;
 using AppyNox.Services.Base.Infrastructure.Interfaces;
 using AppyNox.Services.Base.Infrastructure.Logger;
+using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
 using AppyNox.Services.Coupon.Infrastructure.Data;
 using AppyNox.Services.Coupon.Infrastructure.Repositories;
 using Consul;
@@ -16,9 +17,9 @@ namespace AppyNox.Services.Coupon.Infrastructure
     {
         #region [ Public Methods ]
 
-        public static IServiceCollection AddCouponInfrastructure(this IServiceCollection services, IConfiguration configuration, ApplicationEnvironment environment)
+        public static IServiceCollection AddCouponInfrastructure(this IServiceCollection services, IConfiguration configuration, ApplicationEnvironment environment, INoxLogger logger)
         {
-            services.AddScoped<INoxInfrastructureLogger, NoxInfrastructureLogger>();
+            services.AddSingleton<INoxInfrastructureLogger, NoxInfrastructureLogger>();
 
             #region [ Database Configuration ]
 
@@ -30,6 +31,8 @@ namespace AppyNox.Services.Coupon.Infrastructure
                 ApplicationEnvironment.Production => configuration.GetConnectionString("ProductionConnection"),
                 _ => configuration.GetConnectionString("DefaultConnection"),
             };
+
+            logger.LogInformation($"Connection String: {connectionString}");
 
             services.AddDbContext<CouponDbContext>(options =>
             {

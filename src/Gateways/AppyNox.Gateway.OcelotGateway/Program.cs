@@ -13,8 +13,6 @@ builder.Host.UseSerilog((context, services, config) =>
     config.ReadFrom.Configuration(context.Configuration)
           .ReadFrom.Services(services)
           .Enrich.FromLogContext()
-          .WriteTo.Console()
-          .WriteTo.File("logs/appynox.txt", rollingInterval: RollingInterval.Day)
 );
 
 var loggerFactory = LoggerFactory.Create(loggingBuilder =>

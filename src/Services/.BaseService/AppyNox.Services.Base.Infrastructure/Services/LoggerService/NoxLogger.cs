@@ -2,7 +2,7 @@
 
 namespace AppyNox.Services.Base.Infrastructure.Services.LoggerService
 {
-    public class NoxLogger(ILogger<NoxLogger> logger, string layer) : INoxLogger
+    public class NoxLogger(ILogger<INoxLogger> logger, string layer) : INoxLogger
     {
         #region [ Fields ]
 

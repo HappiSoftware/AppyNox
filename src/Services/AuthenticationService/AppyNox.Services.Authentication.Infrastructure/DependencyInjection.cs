@@ -14,11 +14,12 @@ namespace AppyNox.Services.Authentication.Infrastructure
     {
         #region [ Public Methods ]
 
-        public static void AddAuthenticationInfrastructure(IServiceCollection services, IConfiguration configuration, ApplicationEnvironment environment)
+        public static void AddAuthenticationInfrastructure(this IServiceCollection services, IConfiguration configuration, ApplicationEnvironment environment)
         {
             services.AddScoped<INoxInfrastructureLogger, NoxInfrastructureLogger>();
 
             #region [ Database Configuration ]
+
             string? connectionString = string.Empty;
             connectionString = environment switch
             {

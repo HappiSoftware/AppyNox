@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace AppyNox.Services.Base.Infrastructure.Logger
 {
-    public class NoxInfrastructureLogger(ILogger<NoxInfrastructureLogger> logger) : NoxLogger(logger, "Infrastructure"), INoxInfrastructureLogger
+    public class NoxInfrastructureLogger(ILogger<INoxInfrastructureLogger> logger) : NoxLogger(logger, "Infrastructure"), INoxInfrastructureLogger
     {
     }
 }

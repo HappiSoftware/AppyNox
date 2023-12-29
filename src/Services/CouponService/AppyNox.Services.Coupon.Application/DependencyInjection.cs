@@ -24,7 +24,7 @@ namespace AppyNox.Services.Coupon.Application
 
             services.AddScoped(typeof(IGenericService<>), typeof(GenericService<>));
             services.AddSingleton(typeof(IDtoMappingRegistryBase), typeof(DtoMappingRegistry));
-            services.AddScoped<INoxApplicationLogger, NoxApplicationLogger>();
+            services.AddSingleton<INoxApplicationLogger, NoxApplicationLogger>();
         }
 
         #endregion

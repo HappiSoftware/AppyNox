@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using AppyNox.Services.Base.Infrastructure.ExceptionExtensions.Base;
 using Consul;
 using Microsoft.Extensions.Logging;
+using AppyNox.Services.Base.Infrastructure.Logger;
 
 namespace AppyNox.Services.Base.Infrastructure.HostedServices;
 
@@ -18,20 +19,19 @@ public class ConsulHostedService : IHostedService
 
     private readonly ConsulConfig _consulConfig;
 
-    // TODO Behlul : Logger değiştirilecek, Scoped servis olduğu için NoxInfraLogger kullanamadım
-    private readonly ILogger<ConsulHostedService> _logger;
+    private readonly INoxInfrastructureLogger _logger;
 
     #endregion
 
     #region [ Events ]
 
-    public event Func<Task>? OnConsulConnectionFailed;
+    public event Func<Exception, Task>? OnConsulConnectionFailed;
 
     #endregion
 
     #region [ Public Constructors ]
 
-    public ConsulHostedService(IConsulClient consulClient, IConfiguration configuration, ILogger<ConsulHostedService> logger)
+    public ConsulHostedService(IConsulClient consulClient, IConfiguration configuration, INoxInfrastructureLogger logger)
     {
         _consulClient = consulClient;
         _configuration = configuration;
@@ -52,6 +52,7 @@ public class ConsulHostedService : IHostedService
     {
         try
         {
+            _logger.LogInformation("Starting Consul Hosted Service.");
             var registration = new AgentServiceRegistration
             {
                 ID = _consulConfig.ServiceId,
@@ -66,12 +67,12 @@ public class ConsulHostedService : IHostedService
             await _consulClient.Agent.ServiceDeregister(registration.ID, cancellationToken);
             await _consulClient.Agent.ServiceRegister(registration, cancellationToken);
 
-            _logger.LogInformation($"Registering service with Consul is successfull: {registration.Name}");
+            _logger.LogInformation($"Registering service with Consul is successful: {registration.Name}");
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "An error occurred while attempting to register to Consul service.");
-            OnConsulConnectionFailed?.Invoke();
+            OnConsulConnectionFailed?.Invoke(ex);
         }
     }
 
@@ -87,7 +88,7 @@ public class ConsulHostedService : IHostedService
 
         await _consulClient.Agent.ServiceDeregister(registration.ID, cancellationToken);
 
-        _logger.LogInformation($"Deregistering service from Consul is successfull: {registration.ID}");
+        _logger.LogInformation($"Deregistering service from Consul is successful: {registration.ID}");
     }
 
     #endregion
