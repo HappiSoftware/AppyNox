@@ -9,7 +9,8 @@
     "RateLimitOptions": {
       "QuotaExceededMessage": "",
       "ClientIdHeader": ""
-    }
+    },
+    "RequestIdKey": "X-Correlation-ID"
   },
   "Routes": [
     {

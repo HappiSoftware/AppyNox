@@ -2,7 +2,7 @@
 
 First of all it's good the understand the project structure. AppyNox uses all the **functions of stages of development** `(Development, Staging, Production)`.
 
-Since appsetting files are gitignored, you must create the `appsettings.{Environment}.json` files manually. You can either copy the content of `appsettings.json` to the created json files and fill the content or copy the contents from below. Take note that examples are below is configurations of a developer from **Neon Ninjas** so it might not be **compatible** with you.
+Since appsettings files are gitignored, you must create the `appsettings.{Environment}.json` files manually. You can either copy the content of `appsettings.json` to the created json files and fill the content or copy the contents from below. Take note that examples are below is configurations of a developer from **Neon Ninjas** so it might not be **compatible** with you.
 
 <details>
     <summary>Coupon Service</summary>
@@ -367,7 +367,8 @@ Since appsetting files are gitignored, you must create the `appsettings.{Environ
     "RateLimitOptions": {
       "QuotaExceededMessage": "You have sent too many requests in a row.",
       "ClientIdHeader": "ClientId"
-    }
+    },
+    "RequestIdKey": "X-Correlation-ID"
   },
   "Routes": [
     {
@@ -443,7 +444,8 @@ Since appsetting files are gitignored, you must create the `appsettings.{Environ
     "RateLimitOptions": {
       "QuotaExceededMessage": "You have sent too many requests in a row.",
       "ClientIdHeader": "ClientId"
-    }
+    },
+    "RequestIdKey": "X-Correlation-ID"
   },
   "Routes": [
     {
@@ -519,7 +521,8 @@ Since appsetting files are gitignored, you must create the `appsettings.{Environ
     "RateLimitOptions": {
       "QuotaExceededMessage": "You have sent too many requests in a row.",
       "ClientIdHeader": "ClientId"
-    }
+    },
+    "RequestIdKey": "X-Correlation-ID"
   },
   "Routes": [
     {
@@ -580,7 +583,107 @@ Since appsetting files are gitignored, you must create the `appsettings.{Environ
 
 </details>
 
+<br>
+
+<details>
+    <summary>appsettings.Development.json Example</summary>
+
+```json
+{
+  "Serilog": {
+    "Using": ["Serilog.Sinks.Console", "Serilog.Sinks.Debug"],
+    "MinimumLevel": {
+      "Default": "Debug",
+      "Override": {
+        "Microsoft": "Information",
+        "System": "Information"
+      }
+    },
+    "WriteTo": [
+      {
+        "Name": "Console",
+        "Args": {
+          "outputTemplate": "[{Timestamp:dd-MM-yyyy HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}"
+        }
+      },
+      {
+        "Name": "Debug",
+        "Args": { "restrictedToMinimumLevel": "Debug" }
+      }
+    ],
+    "Enrich": ["FromLogContext"]
+  }
+}
+```
+
 </details>
+
+<details>
+    <summary>appsettings.Staging.json Example</summary>
+
+```json
+{
+  "Serilog": {
+    "Using": ["Serilog.Sinks.Console", "Serilog.Sinks.File"],
+    "MinimumLevel": {
+      "Default": "Information",
+      "Override": {
+        "Microsoft": "Warning",
+        "System": "Error"
+      }
+    },
+    "WriteTo": [
+      { "Name": "Console" },
+      {
+        "Name": "File",
+        "Args": {
+          "path": "Logs/staging-log-.txt",
+          "rollingInterval": "Day"
+        }
+      }
+    ],
+    "Enrich": ["FromLogContext"]
+  }
+}
+```
+
+</details>
+
+<details>
+    <summary>appsettings.Production.json Example</summary>
+
+```json
+{
+  "Serilog": {
+    "Using": ["Serilog.Sinks.Console", "Serilog.Sinks.File"],
+    "MinimumLevel": {
+      "Default": "Warning",
+      "Override": {
+        "Microsoft": "Error",
+        "System": "Error"
+      }
+    },
+    "WriteTo": [
+      { "Name": "Console" },
+      {
+        "Name": "File",
+        "Args": {
+          "path": "Logs/production-log-.txt",
+          "rollingInterval": "Day"
+        }
+      }
+    ],
+    "Enrich": ["FromLogContext"]
+  }
+}
+```
+
+</details>
+
+</details>
+
+<br>
+<br>
 
 # Read Also
 

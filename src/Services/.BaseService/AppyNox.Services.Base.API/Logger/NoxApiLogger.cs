@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace AppyNox.Services.Base.API.Logger
 {
-    public class NoxApiLogger(ILogger<NoxApiLogger> logger) : NoxLogger(logger, "Api"), INoxApiLogger
+    public class NoxApiLogger(ILogger<INoxApiLogger> logger) : NoxLogger(logger, "Api"), INoxApiLogger
     {
     }
 }

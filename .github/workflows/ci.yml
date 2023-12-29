@@ -9,7 +9,6 @@ on:
 
 jobs:
   build-and-test:
-
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.merged == true) || (github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
 
@@ -44,8 +43,10 @@ jobs:
 
       - name: Create Ocelot Settings for Gateway
         run: |
-          echo '${{ secrets.GATEWAY_OCELOT_STAGING }}' > ./src/Gateways/AppyNox.Gateway.OcelotGateway/Configurations/ocelot.Staging.json
-          echo '${{ secrets.GATEWAY_OCELOT_PRODUCTION }}' > ./src/Gateways/AppyNox.Gateway.OcelotGateway/Configurations/ocelot.Production.json
+          echo '${{ secrets.GATEWAY_OCELOT_STAGING }}' > ./src/Gateways/AppyNox.Gateway.OcelotGateway/ocelot.Staging.json
+          echo '${{ secrets.GATEWAY_OCELOT_PRODUCTION }}' > ./src/Gateways/AppyNox.Gateway.OcelotGateway/ocelot.Production.json
+          echo '${{ secrets.GATEWAY_APPSETTINGS_STAGING }}' > ./src/Gateways/AppyNox.Gateway.OcelotGateway/appsettings.Staging.json
+          echo '${{ secrets.GATEWAY_APPSETTINGS_PRODUCTION }}' > ./src/Gateways/AppyNox.Gateway.OcelotGateway/appsettings.Production.json
 
       - name: Create Authentication Service appsettings
         run: |
@@ -57,7 +58,7 @@ jobs:
           echo '${{ secrets.COUPON_APPSETTINGS_STAGING }}' > ./src/Services/CouponService/AppyNox.Services.Coupon.WebAPI/appsettings.Staging.json
           echo '${{ secrets.COUPON_APPSETTINGS_STAGING }}' > ./src/Services/CouponService/Tests/IntegrationTests/AppyNox.Services.Coupon.WebAPI.IntegrationTests/appsettings.Staging.json
           echo '${{ secrets.COUPON_APPSETTINGS_PRODUCTION }}' > ./src/Services/CouponService/AppyNox.Services.Coupon.WebAPI/appsettings.Production.json
-      
+
       - name: Copy Docker Compose file
         run: |
           cp ./docker-compose.yml ./src/Services/CouponService/Tests/IntegrationTests/AppyNox.Services.Coupon.WebAPI.IntegrationTests/docker-compose.yml

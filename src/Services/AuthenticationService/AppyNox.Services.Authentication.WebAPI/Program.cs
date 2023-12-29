@@ -1,3 +1,5 @@
+using AppyNox.Services.Authentication.Application;
+using AppyNox.Services.Authentication.Infrastructure;
 using AppyNox.Services.Authentication.Infrastructure.Data;
 using AppyNox.Services.Authentication.WebAPI.Configuration;
 using AppyNox.Services.Authentication.WebAPI.ControllerDependencies;
@@ -6,8 +8,10 @@ using AppyNox.Services.Authentication.WebAPI.Managers.Interfaces;
 using AppyNox.Services.Authentication.WebAPI.Utilities;
 using AppyNox.Services.Base.API.Helpers;
 using AppyNox.Services.Base.API.Logger;
+using AppyNox.Services.Base.API.Middleware;
 using AppyNox.Services.Base.Infrastructure.Helpers;
 using AppyNox.Services.Base.Infrastructure.HostedServices;
+using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
 using Asp.Versioning;
 using AutoWrapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -21,6 +25,9 @@ var configuration = builder.Configuration;
 
 // Add services to the container.
 builder.Services.AddControllers();
+
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddApiVersioning(options =>
 {
@@ -42,14 +49,22 @@ builder.Host.UseSerilog((context, services, config) =>
           .ReadFrom.Services(services)
           .Enrich.FromLogContext()
 );
+builder.Services.AddSingleton<INoxApiLogger, NoxApiLogger>();
 
-builder.Services.AddScoped<INoxApiLogger, NoxApiLogger>();
+#region [ Logger for Before DI Initialization ]
 
-var loggerFactory = LoggerFactory.Create(loggingBuilder =>
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .CreateLogger();
+
+var loggerFactory = LoggerFactory.Create(builder =>
 {
-    loggingBuilder.AddSerilog();
+    builder.AddSerilog();
 });
-var logger = loggerFactory.CreateLogger<Program>();
+var logger = loggerFactory.CreateLogger<INoxLogger>();
+NoxLogger noxLogger = new(logger, "AuthenticationHost");
+
+#endregion
 
 #endregion
 
@@ -67,8 +82,14 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Password.RequireLowercase = true;
 });
 
-AppyNox.Services.Authentication.Infrastructure.DependencyInjection.AddAuthenticationInfrastructure(builder.Services, configuration, builder.Environment.GetEnvironment());
-AppyNox.Services.Authentication.Application.DependencyInjection.ConfigureServices(builder.Services, configuration);
+#region [ DI For Layers ]
+
+noxLogger.LogInformation("Registering DI's for layers.");
+builder.Services.AddAuthenticationInfrastructure(configuration, builder.Environment.GetEnvironment());
+builder.Services.AddAuthenticationApplication(configuration);
+noxLogger.LogInformation("Registering DI's for layers completed.");
+
+#endregion
 
 builder.Services.AddHealthChecks();
 
@@ -78,6 +99,7 @@ builder.Services.AddScoped<UsersControllerBaseDependencies>();
 
 #region [ Jwt Settings ]
 
+noxLogger.LogInformation("Registering JWT Configuration.");
 var jwtConfiguration = new JwtConfiguration();
 configuration.GetSection("JwtSettings").Bind(jwtConfiguration);
 builder.Services.AddSingleton(jwtConfiguration);
@@ -119,17 +141,21 @@ builder.Services.AddAuthorization(options =>
 });
 
 builder.Services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
+noxLogger.LogInformation("Registering JWT Configuration completed.");
 
 #endregion
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+#region [ Pipeline ]
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseMiddleware<CorrelationIdMiddleware>();
 
 app.UseHttpsRedirection();
 
@@ -143,12 +169,15 @@ app.UseApiResponseAndExceptionWrapper(new AutoWrapperOptions { UseApiProblemDeta
 
 app.UseHealthChecks("/api/health");
 
+#endregion
+
 var consulHostedService = app.Services.GetServices<IHostedService>()
     .OfType<ConsulHostedService>()
     .First();
 
-consulHostedService.OnConsulConnectionFailed += () =>
+consulHostedService.OnConsulConnectionFailed += (Exception ex) =>
 {
+    noxLogger.LogError(ex, "Consul connection failed. Stopping application.");
     var lifeTime = app.Services.GetService<IHostApplicationLifetime>();
     lifeTime?.StopApplication();
     return Task.CompletedTask;
