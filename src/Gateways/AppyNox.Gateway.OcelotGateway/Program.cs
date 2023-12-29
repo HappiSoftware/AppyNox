@@ -1,7 +1,4 @@
-using AppyNox.Gateway.OcelotGateway.Handlers;
 using AppyNox.Gateway.OcelotGateway.Middlewares;
-using AppyNox.Services.Base.API.Logger;
-using AppyNox.Services.Base.API.Middleware;
 using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
