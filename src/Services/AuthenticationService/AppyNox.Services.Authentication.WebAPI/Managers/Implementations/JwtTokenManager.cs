@@ -1,9 +1,11 @@
 ﻿using AppyNox.Services.Authentication.WebAPI.Configuration;
+using AppyNox.Services.Authentication.WebAPI.ExceptionExtensions.Base;
 using AppyNox.Services.Authentication.WebAPI.Managers.Interfaces;
 using AutoWrapper.Wrappers;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Security.Claims;
 using System.Security.Cryptography;
 
@@ -34,9 +36,9 @@ namespace AppyNox.Services.Authentication.WebAPI.Managers.Implementations
 
             var user = await _userManager.FindByIdAsync(userId);
 
-            IList<string> roles = await _userManager.GetRolesAsync(user ?? throw new ApiProblemDetailsException("Wrong Credentials", 404));
+            IList<string> roles = await _userManager.GetRolesAsync(user ?? throw new AuthenticationServiceException("Wrong Credentials", (int)HttpStatusCode.NotFound));
 
-            claims.Add(new Claim(ClaimTypes.Name, user.Email ?? throw new ApiProblemDetailsException("Wrong Credentials", 404)));
+            claims.Add(new Claim(ClaimTypes.Name, user.Email ?? throw new AuthenticationServiceException("Wrong Credentials", (int)HttpStatusCode.NotFound)));
             claims.Add(new Claim(ClaimTypes.NameIdentifier, userId.ToString()));
 
             //create an empty list for userClaims
@@ -46,7 +48,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Managers.Implementations
             foreach (var item in roles)
             {
                 var role = await _roleManager.FindByNameAsync(item);
-                userClaims = userClaims.Concat(await _roleManager.GetClaimsAsync(role ?? throw new ApiProblemDetailsException("Wrong Credentials", 404)));
+                userClaims = userClaims.Concat(await _roleManager.GetClaimsAsync(role ?? throw new AuthenticationServiceException("Wrong Credentials", (int)HttpStatusCode.NotFound)));
             }
 
             foreach (var item in userClaims)
@@ -76,7 +78,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Managers.Implementations
 
             if (jwtToken == null)
             {
-                throw new ApiProblemDetailsException("Wrong Credentials", 404);
+                throw new AuthenticationServiceException("Wrong Credentials", (int)HttpStatusCode.NotFound);
             }
 
             var claim = jwtToken.Claims.FirstOrDefault(x => x.Type == "nameid");
@@ -106,7 +108,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Managers.Implementations
             }
             catch (SecurityTokenExpiredException)
             {
-                throw new ApiProblemDetailsException("Token has expired", 401);
+                throw new AuthenticationServiceException("Token has expired", (int)HttpStatusCode.Unauthorized);
             }
             catch (Exception)
             {

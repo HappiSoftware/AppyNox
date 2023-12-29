@@ -1,10 +1,12 @@
 ﻿using AppyNox.Services.Authentication.Application.Dtos.AccountDtos.Models.Base;
 using AppyNox.Services.Authentication.Application.Dtos.RefreshTokenDtos.Models.Base;
-using AppyNox.Services.Authentication.WebAPI.Helpers;
+using AppyNox.Services.Authentication.WebAPI.ExceptionExtensions.Base;
 using AppyNox.Services.Authentication.WebAPI.Managers.Interfaces;
+using AppyNox.Services.Base.Application.ExceptionExtensions;
 using AutoWrapper.Wrappers;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace AppyNox.Services.Authentication.WebAPI.Controllers.Authentication
 {
@@ -30,17 +32,20 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers.Authentication
         public async Task<ApiResponse> Authenticate([FromBody] LoginDto userCredential)
         {
             var validationResult = await _loginDtoValidator.ValidateAsync(userCredential);
-            ValidationHandler.HandleValidationResult(ModelState, validationResult);
+            if (!validationResult.IsValid)
+            {
+                throw new FluentValidationException(typeof(LoginDto), validationResult);
+            }
 
             var tokens = await _customUserManager.Authenticate(userCredential);
 
             if (string.IsNullOrEmpty(tokens.jwtToken) || string.IsNullOrEmpty(tokens.refreshToken))
             {
-                throw new ApiProblemDetailsException("Invalid login attempt", 401);
+                throw new AuthenticationServiceException("Invalid login attempt", (int)HttpStatusCode.Unauthorized);
             }
             if (tokens.jwtToken == "I am a teapot")
             {
-                throw new ApiProblemDetailsException("I am a teapot", 418);
+                throw new AuthenticationServiceException("I am a teapot", (int)HttpStatusCode.Locked);
             }
 
             return new ApiResponse(new { Token = tokens.jwtToken, RefreshToken = tokens.refreshToken }, 200);
@@ -68,17 +73,12 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers.Authentication
 
             if (!_customTokenManager.VerifyRefreshToken(model.RefreshToken, storedRefreshToken))
             {
-                throw new ApiProblemDetailsException("", 401);
+                throw new AuthenticationServiceException("", (int)HttpStatusCode.Unauthorized);
             }
 
             var newJwtToken = await _customTokenManager.CreateToken(userId);
             var newRefreshToken = _customTokenManager.CreateRefreshToken();
             await _customUserManager.SaveRefreshToken(userId, newRefreshToken);
-
-            if (!await _customUserManager.SaveRefreshToken(userId, newRefreshToken))
-            {
-                throw new ApiException("Error saving new refresh token.");
-            }
 
             return new ApiResponse(new { Token = newJwtToken, RefreshToken = newRefreshToken });
         }

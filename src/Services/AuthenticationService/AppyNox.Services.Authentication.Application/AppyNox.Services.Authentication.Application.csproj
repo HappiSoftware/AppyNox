@@ -19,6 +19,8 @@
 	  <Folder Include="Dtos\AccountDtos\Models\Extended\" />
 	  <Folder Include="Dtos\ClaimDtos\DetailLevel\" />
 	  <Folder Include="Dtos\ClaimDtos\Models\Extended\" />
+	  <Folder Include="Dtos\IdentityRoleDtos\DetailLevel\" />
+	  <Folder Include="Dtos\IdentityUserDtos\DetailLevel\" />
 	  <Folder Include="Dtos\RefreshTokenDtos\DetailLevel\" />
 	  <Folder Include="Dtos\RefreshTokenDtos\Mappings\" />
 	  <Folder Include="Dtos\RefreshTokenDtos\Models\Extended\" />

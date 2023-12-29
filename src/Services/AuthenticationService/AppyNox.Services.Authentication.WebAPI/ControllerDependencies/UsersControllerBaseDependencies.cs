@@ -1,5 +1,4 @@
-﻿using AppyNox.Services.Authentication.WebAPI.Helpers;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 
 namespace AppyNox.Services.Authentication.WebAPI.ControllerDependencies

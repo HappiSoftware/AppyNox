@@ -1,7 +1,9 @@
 ﻿using AppyNox.Services.Authentication.Application.Dtos.AccountDtos.Models.Base;
+using AppyNox.Services.Authentication.WebAPI.ExceptionExtensions.Base;
 using AppyNox.Services.Authentication.WebAPI.Managers.Interfaces;
 using AutoWrapper.Wrappers;
 using Microsoft.AspNetCore.Identity;
+using System.Net;
 
 namespace AppyNox.Services.Authentication.WebAPI.Managers.Implementations
 {
@@ -35,7 +37,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Managers.Implementations
             var loggedUser = await _userManager.FindByNameAsync(user.UserName);
             if (loggedUser == null || string.IsNullOrEmpty(loggedUser.UserName))
             {
-                throw new ApiProblemDetailsException("Wrong credentials", 400);
+                throw new AuthenticationServiceException("Wrong credentials", (int)HttpStatusCode.BadRequest);
             }
 
             //validate credentials !! 3. parameter is for rememberme
@@ -51,22 +53,21 @@ namespace AppyNox.Services.Authentication.WebAPI.Managers.Implementations
             }
 
             // Account is locked
-            if (result.IsLockedOut) throw new ApiProblemDetailsException("I am a teapot", 418);
-            else throw new ApiProblemDetailsException("Wrong credentials", 400);
+            if (result.IsLockedOut) throw new AuthenticationServiceException("I am a teapot", (int)HttpStatusCode.Locked);
+            else throw new AuthenticationServiceException("Wrong credentials", (int)HttpStatusCode.BadRequest);
         }
 
-        public async Task<bool> SaveRefreshToken(string userId, string refreshToken)
+        public async Task SaveRefreshToken(string userId, string refreshToken)
         {
             try
             {
                 var user = await _userManager.FindByIdAsync(userId);
                 if (user == null)
                 {
-                    throw new ApiProblemDetailsException("Wrong credentials", 400);
+                    throw new AuthenticationServiceException("Wrong credentials", (int)HttpStatusCode.BadRequest);
                 }
                 await _userManager.RemoveAuthenticationTokenAsync(user, "RefreshTokenProvider", "RefreshToken");
                 await _userManager.SetAuthenticationTokenAsync(user, "RefreshTokenProvider", "RefreshToken", refreshToken);
-                return true;
             }
             catch (Exception)
             {
@@ -81,14 +82,14 @@ namespace AppyNox.Services.Authentication.WebAPI.Managers.Implementations
                 var user = await _userManager.FindByIdAsync(userId);
                 if (user == null)
                 {
-                    throw new ApiProblemDetailsException("Wrong credentials", 400);
+                    throw new AuthenticationServiceException("Wrong credentials", (int)HttpStatusCode.BadRequest);
                 }
                 var refreshToken = await _userManager.GetAuthenticationTokenAsync(user, "RefreshTokenProvider", "RefreshToken");
-                return refreshToken ?? throw new ApiProblemDetailsException("No refresh token found. Please re-login to get a new one.", 400);
+                return refreshToken ?? throw new AuthenticationServiceException("No refresh token found. Please re-login to get a new one.", (int)HttpStatusCode.BadRequest);
             }
             catch (Exception)
             {
-                throw new ApiProblemDetailsException("No refresh token found. Please re-login to get a new one.", 400);
+                throw new AuthenticationServiceException("No refresh token found. Please re-login to get a new one.", (int)HttpStatusCode.BadRequest);
             }
         }
 

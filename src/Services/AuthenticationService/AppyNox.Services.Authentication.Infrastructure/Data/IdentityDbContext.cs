@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using AppyNox.Services.Authentication.Infrastructure.Data.Configurations;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -46,43 +47,21 @@ namespace AppyNox.Services.Authentication.Infrastructure.Data
         {
             base.OnModelCreating(builder);
 
-            var hasher = new PasswordHasher<IdentityUser>();
+            #region [ Common Ids ]
 
             string adminUserId = Guid.NewGuid().ToString();
             string adminRoleId = Guid.NewGuid().ToString();
 
-            // Create Roles
-            var adminRole = new IdentityRole { Id = adminRoleId, Name = "Admin", NormalizedName = "ADMIN" };
-            builder.Entity<IdentityRole>().HasData(adminRole);
+            #endregion
 
-            // Create Users
-            var adminUser = new IdentityUser { Id = adminUserId, UserName = "admin", NormalizedUserName = "ADMIN", Email = "admin@email.com", NormalizedEmail = "ADMIN@EMAIL.COM", EmailConfirmed = true, PasswordHash = hasher.HashPassword(new IdentityUser(), "Admin@123") };
-            builder.Entity<IdentityUser>().HasData(adminUser);
+            #region [ Entity Configurations ]
 
-            // Add Role Claims
-            builder.Entity<IdentityRoleClaim<string>>().HasData(
-                new IdentityRoleClaim<string> { Id = 1, RoleId = adminRoleId, ClaimType = "Permission", ClaimValue = "Users.View" },
-                new IdentityRoleClaim<string> { Id = 2, RoleId = adminRoleId, ClaimType = "Permission", ClaimValue = "Users.Create" },
-                new IdentityRoleClaim<string> { Id = 3, RoleId = adminRoleId, ClaimType = "Permission", ClaimValue = "Users.Edit" },
-                new IdentityRoleClaim<string> { Id = 4, RoleId = adminRoleId, ClaimType = "Permission", ClaimValue = "Users.Delete" },
+            builder.ApplyConfiguration(new IdentityRoleConfiguration(adminRoleId));
+            builder.ApplyConfiguration(new IdentityUserConfiguration(adminUserId));
+            builder.ApplyConfiguration(new IdentityRoleClaimConfiguration(adminRoleId));
+            builder.ApplyConfiguration(new IdentityUserRoleConfiguration(adminRoleId, adminUserId));
 
-                new IdentityRoleClaim<string> { Id = 5, RoleId = adminRoleId, ClaimType = "Permission", ClaimValue = "Roles.View" },
-                new IdentityRoleClaim<string> { Id = 6, RoleId = adminRoleId, ClaimType = "Permission", ClaimValue = "Roles.Create" },
-                new IdentityRoleClaim<string> { Id = 7, RoleId = adminRoleId, ClaimType = "Permission", ClaimValue = "Roles.Edit" },
-                new IdentityRoleClaim<string> { Id = 8, RoleId = adminRoleId, ClaimType = "Permission", ClaimValue = "Roles.Delete" },
-                new IdentityRoleClaim<string> { Id = 9, RoleId = adminRoleId, ClaimType = "Permission", ClaimValue = "Roles.AssignPermission" },
-                new IdentityRoleClaim<string> { Id = 10, RoleId = adminRoleId, ClaimType = "Permission", ClaimValue = "Roles.WithdrawPermission" },
-
-                new IdentityRoleClaim<string> { Id = 11, RoleId = adminRoleId, ClaimType = "Permission", ClaimValue = "Coupons.View" },
-                new IdentityRoleClaim<string> { Id = 12, RoleId = adminRoleId, ClaimType = "Permission", ClaimValue = "Coupons.Create" },
-                new IdentityRoleClaim<string> { Id = 13, RoleId = adminRoleId, ClaimType = "Permission", ClaimValue = "Coupons.Edit" },
-                new IdentityRoleClaim<string> { Id = 14, RoleId = adminRoleId, ClaimType = "Permission", ClaimValue = "Coupons.Delete" }
-            );
-
-            // Add User Roles
-            builder.Entity<IdentityUserRole<string>>().HasData(
-                new IdentityUserRole<string> { RoleId = adminRoleId, UserId = adminUserId }
-            );
+            #endregion
         }
 
         #endregion

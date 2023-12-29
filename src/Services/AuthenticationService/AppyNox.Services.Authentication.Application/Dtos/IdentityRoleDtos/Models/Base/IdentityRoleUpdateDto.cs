@@ -1,8 +1,5 @@
-﻿using AppyNox.Services.Authentication.Application.Dtos.IdentityRoleDtos.DetailLevel;
-
-namespace AppyNox.Services.Authentication.Application.Dtos.IdentityRoleDtos.Models.Base
+﻿namespace AppyNox.Services.Authentication.Application.Dtos.IdentityRoleDtos.Models.Base
 {
-    [IdentityRoleDetailLevel(IdentityRoleUpdateDetailLevel.Simple)]
     public class IdentityRoleUpdateDto : IdentityRoleCreateDto, IHasGuid
     {
         #region [ Properties ]

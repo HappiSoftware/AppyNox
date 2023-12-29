@@ -3,15 +3,18 @@ using AppyNox.Services.Authentication.Application.Dtos.IdentityUserDtos.Models.B
 using AppyNox.Services.Authentication.Application.Dtos.IdentityUserDtos.Models.Extended;
 using AppyNox.Services.Authentication.Application.Validators.IdentityUser;
 using AppyNox.Services.Authentication.WebAPI.ControllerDependencies;
+using AppyNox.Services.Authentication.WebAPI.ExceptionExtensions.Base;
 using AppyNox.Services.Authentication.WebAPI.Filters;
 using AppyNox.Services.Authentication.WebAPI.Utilities;
-using AppyNox.Services.Base.API.ViewModels;
+using AppyNox.Services.Base.Application.ExceptionExtensions;
 using Asp.Versioning;
 using AutoWrapper.Wrappers;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 
 namespace AppyNox.Services.Authentication.WebAPI.Controllers
 {
@@ -44,7 +47,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
 
         [HttpGet]
         [Authorize(Permissions.Users.View)]
-        public async Task<ApiResponse> GetAll([FromQuery] QueryParametersViewModel queryParameters)
+        public async Task<ApiResponse> GetAll()
         {
             var entities = await _baseDependencies.UserManager.Users.ToListAsync();
             object response = new
@@ -58,13 +61,13 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
 
         [HttpGet("{id}")]
         [Authorize(Permissions.Users.View)]
-        public async Task<ApiResponse> GetById(string id, [FromQuery] QueryParametersViewModel queryParameters)
+        public async Task<ApiResponse> GetById(Guid id)
         {
-            var identityUser = await _baseDependencies.UserManager.FindByIdAsync(id);
+            var identityUser = await _baseDependencies.UserManager.FindByIdAsync(id.ToString());
 
             if (identityUser == null)
             {
-                throw new ApiProblemDetailsException("Not Found", 404);
+                throw new AuthenticationServiceException("User Not Found", (int)HttpStatusCode.NotFound);
             }
 
             return new ApiResponse(_baseDependencies.Mapper.Map(identityUser, identityUser.GetType(), typeof(IdentityUserDto)));
@@ -72,17 +75,17 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
 
         [HttpPut("{id}")]
         [Authorize(Permissions.Users.Edit)]
-        public async Task<IActionResult> Put(string id, IdentityUserUpdateDto identityUserUpdateDto)
+        public async Task<IActionResult> Put(Guid id, IdentityUserUpdateDto identityUserUpdateDto)
         {
-            if (id != identityUserUpdateDto.Id)
+            if (id.ToString() != identityUserUpdateDto.Id)
             {
-                throw new ApiProblemDetailsException("Ids don't match", 422);
+                throw new AuthenticationServiceException("Ids don't match", (int)HttpStatusCode.UnprocessableEntity);
             }
 
-            var existingUser = await _baseDependencies.UserManager.FindByIdAsync(id);
+            var existingUser = await _baseDependencies.UserManager.FindByIdAsync(id.ToString());
             if (existingUser == null)
             {
-                throw new ApiProblemDetailsException("Role Not Found", 404);
+                throw new AuthenticationServiceException("User Not Found", (int)HttpStatusCode.NotFound);
             }
 
             var concurrencyStamp = existingUser.ConcurrencyStamp;
@@ -91,11 +94,13 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
             var result = await _baseDependencies.UserValidator.ValidateAsync(_baseDependencies.UserManager, existingUser);
             if (!result.Succeeded)
             {
+                ValidationResult validationResult = new();
                 foreach (var error in result.Errors)
                 {
-                    ModelState.AddModelError(error.Code, error.Description);
+                    ValidationFailure validationFailure = new(error.Code, error.Description);
+                    validationResult.Errors.Add(validationFailure);
                 }
-                throw new ApiProblemDetailsException(ModelState);
+                throw new FluentValidationException(typeof(IdentityUser), validationResult);
             }
 
             try
@@ -104,18 +109,20 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
                 IdentityResult identityResuls = await _baseDependencies.UserManager.UpdateAsync(existingUser);
                 if (!identityResuls.Succeeded)
                 {
-                    foreach (var item in identityResuls.Errors)
+                    ValidationResult validationResult = new();
+                    foreach (var error in identityResuls.Errors)
                     {
-                        ModelState.AddModelError(item.Code, item.Description);
+                        ValidationFailure validationFailure = new(error.Code, error.Description);
+                        validationResult.Errors.Add(validationFailure);
                     }
-                    throw new ApiProblemDetailsException(ModelState);
+                    throw new FluentValidationException(typeof(IdentityUser), validationResult);
                 }
             }
             catch (DbUpdateConcurrencyException)
             {
                 if (!await IdentityUserExists(id))
                 {
-                    throw new ApiProblemDetailsException(404);
+                    throw new AuthenticationServiceException("User Not Found", (int)HttpStatusCode.NotFound);
                 }
                 else
                 {
@@ -133,33 +140,33 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
             var dtoValidationResult = await _identityUserCreateDtoValidator.ValidateAsync(registerDto);
             if (!dtoValidationResult.IsValid)
             {
-                foreach (var error in dtoValidationResult.Errors)
-                {
-                    ModelState.AddModelError(error.ErrorCode, error.ErrorMessage);
-                }
-                throw new ApiProblemDetailsException(ModelState);
+                throw new FluentValidationException(typeof(IdentityUser), dtoValidationResult);
             }
 
             var userEntity = _baseDependencies.Mapper.Map<IdentityUser>(registerDto);
             var result = await _baseDependencies.UserValidator.ValidateAsync(_baseDependencies.UserManager, userEntity);
             if (!result.Succeeded)
             {
+                ValidationResult validationResult = new();
                 foreach (var error in result.Errors)
                 {
-                    ModelState.AddModelError(error.Code, error.Description);
+                    ValidationFailure validationFailure = new(error.Code, error.Description);
+                    validationResult.Errors.Add(validationFailure);
                 }
-                throw new ApiProblemDetailsException(ModelState);
+                throw new FluentValidationException(typeof(IdentityUser), validationResult);
             }
 
             var passwordResult = await _baseDependencies.PasswordValidator.ValidateAsync(_baseDependencies.UserManager, userEntity, registerDto.Password);
 
             if (!passwordResult.Succeeded)
             {
+                ValidationResult validationResult = new();
                 foreach (var error in passwordResult.Errors)
                 {
-                    ModelState.AddModelError(error.Code, error.Description);
+                    ValidationFailure validationFailure = new(error.Code, error.Description);
+                    validationResult.Errors.Add(validationFailure);
                 }
-                throw new ApiProblemDetailsException(ModelState);
+                throw new FluentValidationException(typeof(IdentityUser), validationResult);
             }
 
             userEntity.PasswordHash = _baseDependencies.PasswordHasher.HashPassword(userEntity, registerDto.Password);
@@ -176,12 +183,12 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
 
         [HttpDelete("{id}")]
         [Authorize(Permissions.Users.Delete)]
-        public async Task<IActionResult> Delete(string id)
+        public async Task<IActionResult> Delete(Guid id)
         {
-            var identityUser = await _baseDependencies.UserManager.FindByIdAsync(id);
+            var identityUser = await _baseDependencies.UserManager.FindByIdAsync(id.ToString());
             if (identityUser == null)
             {
-                throw new ApiProblemDetailsException("Not Found", 404);
+                throw new AuthenticationServiceException("User Not Found", (int)HttpStatusCode.NotFound);
             }
 
             await _baseDependencies.UserManager.DeleteAsync(identityUser);
@@ -193,9 +200,9 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
 
         #region [ Private Methods ]
 
-        private async Task<bool> IdentityUserExists(string id)
+        private async Task<bool> IdentityUserExists(Guid id)
         {
-            return await _baseDependencies.UserManager.Users.AnyAsync(u => id == u.Id);
+            return await _baseDependencies.UserManager.Users.AnyAsync(u => id.ToString() == u.Id);
         }
 
         #endregion
@@ -205,11 +212,11 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
         [HttpGet]
         [Authorize(Permissions.Users.View)]
         [Route("/api/Users/{uid}/Roles")]
-        public async Task<ApiResponse> GetRoles(string uid)
+        public async Task<ApiResponse> GetRoles(Guid uid)
         {
-            var user = await _baseDependencies.UserManager.FindByIdAsync(uid);
+            var user = await _baseDependencies.UserManager.FindByIdAsync(uid.ToString());
             if (user == null)
-                throw new ApiProblemDetailsException($"Record with id: {uid} does not exist.", 404);
+                throw new AuthenticationServiceException($"Record with id: {uid} does not exist.", (int)HttpStatusCode.NotFound);
             IList<string> roleNames = await _baseDependencies.UserManager.GetRolesAsync(user);
             List<IdentityRoleDto> roles = new List<IdentityRoleDto>();
 
@@ -226,24 +233,26 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
         [HttpPost]
         [Authorize(Permissions.Users.Edit)]
         [Route("/api/Users/{uid}/Roles/{rid}")]
-        public async Task<ApiResponse> AssignRole(string uid, string rid)
+        public async Task<ApiResponse> AssignRole(Guid uid, Guid rid)
         {
-            var user = await _baseDependencies.UserManager.FindByIdAsync(uid);
-            var role = await _baseDependencies.RoleManager.FindByIdAsync(rid);
+            var user = await _baseDependencies.UserManager.FindByIdAsync(uid.ToString());
+            var role = await _baseDependencies.RoleManager.FindByIdAsync(rid.ToString());
             if (user == null)
-                throw new ApiProblemDetailsException($"Record with id: {uid} does not exist.", 404);
+                throw new AuthenticationServiceException($"Record with id: {uid} does not exist.", (int)HttpStatusCode.NotFound);
             if (role == null || string.IsNullOrEmpty(role.Name))
-                throw new ApiProblemDetailsException($"Record with id: {rid} does not exist.", 404);
+                throw new AuthenticationServiceException($"Record with id: {rid} does not exist.", (int)HttpStatusCode.NotFound);
 
             //Assign the role from user
             IdentityResult response = await _baseDependencies.UserManager.AddToRoleAsync(user, role.Name);
             if (!response.Succeeded)
             {
+                ValidationResult validationResult = new();
                 foreach (var error in response.Errors)
                 {
-                    ModelState.AddModelError(error.Code, error.Description);
+                    ValidationFailure validationFailure = new(error.Code, error.Description);
+                    validationResult.Errors.Add(validationFailure);
                 }
-                throw new ApiProblemDetailsException(ModelState);
+                throw new FluentValidationException(typeof(IdentityUser), validationResult);
             }
             IList<string> roleNames = await _baseDependencies.UserManager.GetRolesAsync(user);
 
@@ -263,25 +272,27 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
         [HttpDelete]
         [Authorize(Permissions.Users.Edit)]
         [Route("/api/Users/{uid}/Roles/{rid}")]
-        public async Task<IActionResult> WithdrawRole(string uid, string rid)
+        public async Task<IActionResult> WithdrawRole(Guid uid, Guid rid)
         {
-            var user = await _baseDependencies.UserManager.FindByIdAsync(uid);
-            var role = await _baseDependencies.RoleManager.FindByIdAsync(rid);
+            var user = await _baseDependencies.UserManager.FindByIdAsync(uid.ToString());
+            var role = await _baseDependencies.RoleManager.FindByIdAsync(rid.ToString());
             if (user == null)
-                throw new ApiProblemDetailsException($"Record with id: {uid} does not exist.", 404);
+                throw new AuthenticationServiceException($"Record with id: {uid} does not exist.", (int)HttpStatusCode.NotFound);
             if (role == null || string.IsNullOrEmpty(role.Name))
-                throw new ApiProblemDetailsException($"Record with id: {rid} does not exist.", 404);
+                throw new AuthenticationServiceException($"Record with id: {rid} does not exist.", (int)HttpStatusCode.NotFound);
 
             //Withdraw the role from user
             IdentityResult response = await _baseDependencies.UserManager.RemoveFromRoleAsync(user, role.Name);
 
             if (!response.Succeeded)
             {
+                ValidationResult validationResult = new();
                 foreach (var error in response.Errors)
                 {
-                    ModelState.AddModelError(error.Code, error.Description);
+                    ValidationFailure validationFailure = new(error.Code, error.Description);
+                    validationResult.Errors.Add(validationFailure);
                 }
-                throw new ApiProblemDetailsException(ModelState);
+                throw new FluentValidationException(typeof(IdentityUser), validationResult);
             }
 
             return NoContent();
