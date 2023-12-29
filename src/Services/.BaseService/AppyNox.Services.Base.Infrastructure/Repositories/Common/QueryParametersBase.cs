@@ -3,6 +3,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace AppyNox.Services.Base.Infrastructure.Repositories.Common
 {
+    /// <summary>
+    /// Provides a base implementation for query parameters with common functionality.
+    /// </summary>
     public abstract class QueryParametersBase : IQueryParameters
     {
         #region [ Properties ]
@@ -66,10 +69,11 @@ namespace AppyNox.Services.Base.Infrastructure.Repositories.Common
         #region [ Public Static Methods ]
 
         /// <summary>
-        /// This method should be overridden by derived classes.
+        /// Creates a new instance of <see cref="QueryParametersBase"/> for queries that require only the ID.
+        /// This method should be overridden in derived classes.
         /// </summary>
-        /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
+        /// <returns>A new <see cref="QueryParametersBase"/> instance.</returns>
+        /// <exception cref="NotImplementedException">Thrown when not implemented in derived classes.</exception>
         public static QueryParametersBase CreateForIdOnly()
         {
             throw new NotImplementedException("CreateForIdOnly must be implemented in derived classes.");
@@ -79,11 +83,19 @@ namespace AppyNox.Services.Base.Infrastructure.Repositories.Common
 
         #region [ Protected Constructors ]
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="QueryParametersBase"/> class with default settings.
+        /// </summary>
         protected QueryParametersBase()
         {
             DetailLevel = string.Empty;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="QueryParametersBase"/> class with a specified common DTO level.
+        /// </summary>
+        /// <param name="commonDtoLevel">The common DTO level for the query.</param>
+        /// <exception cref="ArgumentException">Thrown when an invalid common DTO level is provided.</exception>
         protected QueryParametersBase(CommonDtoLevelEnums commonDtoLevel) : this()
         {
             switch (commonDtoLevel)

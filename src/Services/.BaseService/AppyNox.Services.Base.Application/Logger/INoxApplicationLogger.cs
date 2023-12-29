@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace AppyNox.Services.Base.Application.Logger
 {
+    /// <summary>
+    /// Defines the logger interface for application-related logging.
+    /// </summary>
     public interface INoxApplicationLogger : INoxLogger
     {
     }

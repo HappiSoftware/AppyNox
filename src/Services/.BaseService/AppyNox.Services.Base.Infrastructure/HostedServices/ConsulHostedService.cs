@@ -1,11 +1,10 @@
 ﻿using AppyNox.Services.Base.Domain.Common;
-using AppyNox.Services.Base.Domain.Common.HttpStatusCodes;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using AppyNox.Services.Base.Infrastructure.ExceptionExtensions.Base;
 using Consul;
-using Microsoft.Extensions.Logging;
 using AppyNox.Services.Base.Infrastructure.Logger;
+using System.Net;
 
 namespace AppyNox.Services.Base.Infrastructure.HostedServices;
 
@@ -37,7 +36,7 @@ public class ConsulHostedService : IHostedService
         _configuration = configuration;
         _logger = logger;
         _consulConfig = _configuration.GetSection("consul").Get<ConsulConfig>() ??
-            throw new NoxInfrastructureException("Consul configuration is not defined. Service will not be discovered.", (int)NoxServerErrorResponseCodes.ServiceUnavailable);
+            throw new NoxInfrastructureException("Consul configuration is not defined. Service will not be discovered.", (int)HttpStatusCode.ServiceUnavailable);
     }
 
     #endregion

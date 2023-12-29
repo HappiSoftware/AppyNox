@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AppyNox.Services.Base.Infrastructure.Helpers
+﻿namespace AppyNox.Services.Base.Infrastructure.Helpers
 {
+    /// <summary>
+    /// Provides a context for storing and retrieving the current request's correlation ID.
+    /// </summary>
     public static class CorrelationContext
     {
         #region [ Fields ]
@@ -16,6 +13,9 @@ namespace AppyNox.Services.Base.Infrastructure.Helpers
 
         #region [ Properties ]
 
+        /// <summary>
+        /// Gets or sets the correlation ID for the current request.
+        /// </summary>
         public static string CorrelationId
         {
             get => _correlationId.Value;

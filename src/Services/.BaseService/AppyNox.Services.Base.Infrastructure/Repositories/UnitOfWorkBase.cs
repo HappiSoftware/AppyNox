@@ -6,6 +6,10 @@ using Microsoft.EntityFrameworkCore.Storage;
 
 namespace AppyNox.Services.Base.Infrastructure.Repositories
 {
+    /// <summary>
+    /// Provides an implementation of the Unit of Work pattern.
+    /// This class manages transactions and changes to the database context in a cohesive manner.
+    /// </summary>
     public class UnitOfWorkBase(DbContext dbContext, INoxInfrastructureLogger logger) : IUnitOfWorkBase
     {
         #region [ Fields ]

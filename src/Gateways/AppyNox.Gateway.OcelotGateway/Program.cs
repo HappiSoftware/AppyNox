@@ -1,4 +1,5 @@
 using AppyNox.Gateway.OcelotGateway.Middlewares;
+using AppyNox.Services.Base.API.Logger;
 using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
@@ -13,6 +14,7 @@ builder.Host.UseSerilog((context, services, config) =>
     config.ReadFrom.Configuration(context.Configuration)
           .ReadFrom.Services(services)
 );
+builder.Services.AddSingleton<INoxApiLogger, NoxApiLogger>();
 
 #region [ Logger for Before DI Initialization ]
 

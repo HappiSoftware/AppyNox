@@ -1,15 +1,24 @@
-﻿using AppyNox.Services.Base.Domain.Common.HttpStatusCodes;
-using AppyNox.Services.Base.Domain.ExceptionExtensions;
-using System.ComponentModel;
+﻿using AppyNox.Services.Base.Domain.ExceptionExtensions;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 
 namespace AppyNox.Services.Base.Domain.Helpers
 {
+    /// <summary>
+    /// Provides extension methods for enums.
+    /// </summary>
     public static class NoxEnumExtensionsBase
     {
         #region [ Public Methods ]
 
+        /// <summary>
+        /// Gets the display name attribute of an enum value.
+        /// </summary>
+        /// <param name="value">The enum value.</param>
+        /// <returns>The display name of the enum value.</returns>
+        /// <exception cref="EnumDisplayNameNotFoundException">
+        /// Thrown if the display name is not found for the enum value.
+        /// </exception>
         public static string GetDisplayName(this Enum value)
         {
             var attribute = value.GetAttributeOfType<DisplayAttribute>();
@@ -19,8 +28,17 @@ namespace AppyNox.Services.Base.Domain.Helpers
 
         #endregion
 
-        #region Private Methods
+        #region [ Private Methods ]
 
+        /// <summary>
+        /// Gets an attribute of a specified type from an enum value.
+        /// </summary>
+        /// <typeparam name="T">The type of attribute to get.</typeparam>
+        /// <param name="enumValue">The enum value.</param>
+        /// <returns>The attribute of the specified type.</returns>
+        /// <exception cref="EnumDisplayNameNotFoundException">
+        /// Thrown if the attribute of the specified type is not found for the enum value.
+        /// </exception>
         private static T GetAttributeOfType<T>(this Enum enumValue) where T : Attribute
         {
             var type = enumValue.GetType();

@@ -1,30 +1,31 @@
 ﻿namespace AppyNox.Services.Base.Domain.Common;
 
-public class RequestLogModel
+/// <summary>
+/// Model representing the log information of an HTTP request.
+/// </summary>
+public class RequestLogModel(string method, string path, string? queryString, string? body)
 {
-    #region [ Public Constructors ]
-
-    public RequestLogModel(string method, string path, string? queryString, string? body)
-    {
-        Method = method;
-        Path = path;
-        QueryString = queryString;
-        Body = body;
-    }
-
-    #endregion
-
     #region [ Properties ]
 
-    public string Method { get; set; }
+    /// <summary>
+    /// Gets or sets the HTTP method of the request (e.g., GET, POST).
+    /// </summary>
+    public string Method { get; set; } = method;
 
-    public string Path { get; set; }
+    /// <summary>
+    /// Gets or sets the path of the request.
+    /// </summary>
+    public string Path { get; set; } = path;
 
-    public string? QueryString { get; set; }
+    /// <summary>
+    /// Gets or sets the query string of the request, if any.
+    /// </summary>
+    public string? QueryString { get; set; } = queryString;
 
-    public string? Body { get; set; }
+    /// <summary>
+    /// Gets or sets the body content of the request, if any.
+    /// </summary>
+    public string? Body { get; set; } = body;
 
     #endregion
-
-    // others .. if needed
 }

@@ -2,7 +2,6 @@
   "profiles": {
     "OcelotGateway-Development": {
       "commandName": "Project",
-      "launchUrl": "swagger",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "OCELOT_POST_SERVICE_HOST": "localhost"

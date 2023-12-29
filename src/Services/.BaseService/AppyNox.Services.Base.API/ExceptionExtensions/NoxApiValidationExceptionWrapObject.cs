@@ -1,14 +1,12 @@
 ﻿using AppyNox.Services.Base.Domain.ExceptionExtensions.Base;
 using AutoWrapper;
 using AutoWrapper.Wrappers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AppyNox.Services.Base.API.ExceptionExtensions
 {
+    /// <summary>
+    /// Represents a wrapper object for API validation exceptions, extending the standard error response with validation errors.
+    /// </summary>
     public class NoxApiValidationExceptionWrapObject(NoxException error, string correlationId, IEnumerable<ValidationError> validationErrors)
         : NoxApiExceptionWrapObject(error, correlationId)
     {

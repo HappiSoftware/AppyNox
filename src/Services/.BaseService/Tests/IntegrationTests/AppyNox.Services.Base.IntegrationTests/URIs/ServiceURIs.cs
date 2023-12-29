@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AppyNox.Services.Base.IntegrationTests.URIs
+﻿namespace AppyNox.Services.Base.IntegrationTests.URIs
 {
+    /// <summary>
+    /// Holds the URIs for various services used in integration tests, facilitating easy access to these endpoints.
+    /// </summary>
     public class ServiceURIs
     {
         #region [ Properties ]

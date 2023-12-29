@@ -12,16 +12,23 @@ using Microsoft.AspNetCore.Routing;
 
 namespace AppyNox.Services.Base.API.Middleware
 {
+    /// <summary>
+    /// Middleware for handling exceptions that occur in the request pipeline.
+    /// </summary>
     public class ExceptionHandlingMiddleware(RequestDelegate next)
     {
-        #region Fields
+        #region [ Fields ]
 
         private readonly RequestDelegate _next = next ?? throw new ArgumentNullException(nameof(next));
 
         #endregion
 
-        #region Public Methods
+        #region [ Public Methods ]
 
+        /// <summary>
+        /// Invokes the middleware to catch and handle exceptions during request processing.
+        /// </summary>
+        /// <param name="context">The HTTP context for the current request.</param>
         public async Task InvokeAsync(HttpContext context)
         {
             try
