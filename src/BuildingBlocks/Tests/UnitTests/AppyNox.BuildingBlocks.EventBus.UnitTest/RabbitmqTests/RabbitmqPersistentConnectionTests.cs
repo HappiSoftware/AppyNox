@@ -1,9 +1,9 @@
 ﻿using AppyNox.EventBus.Base.ExceptionExtensions.Base;
 using AppyNox.EventBus.RabbitMQ;
-using AppyNox.Services.Base.Domain.Common.HttpStatusCodes;
 using Moq;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using System.Net;
 
 namespace AppyNox.BuildingBlocks.EventBus.UnitTest.RabbitmqTests
 {
@@ -42,7 +42,7 @@ namespace AppyNox.BuildingBlocks.EventBus.UnitTest.RabbitmqTests
 
             var exception = Assert.Throws<EventBusBaseException>(() => persistentConnection.CreateModel());
 
-            Assert.Equal((int)NoxServerErrorResponseCodes.InternalServerError, exception.StatusCode);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, exception.StatusCode);
         }
 
         [Fact]

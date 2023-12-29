@@ -10,6 +10,10 @@ using System.Linq.Expressions;
 
 namespace AppyNox.Services.Base.Infrastructure.Repositories
 {
+    /// <summary>
+    /// Defines a generic repository abstract class for CRUD operations.
+    /// </summary>
+    /// <typeparam name="TEntity">The type of entity the repository manages.</typeparam>
     public abstract class GenericRepositoryBase<TEntity> : IGenericRepositoryBase<TEntity> where TEntity : class, IEntityWithGuid
     {
         #region [ Fields ]
@@ -70,13 +74,6 @@ namespace AppyNox.Services.Base.Infrastructure.Repositories
             }
         }
 
-        /// <summary>
-        /// Retrieves a collection of entities of type TEntity based on the provided query parameters, selecting specific columns.
-        /// </summary>
-        /// <param name="queryParameters">The parameters to apply for filtering and pagination.</param>
-        /// <param name="selectedColumns">An expression defining the columns to select for each entity.</param>
-        /// <returns>A collection of entities satisfying the query parameters</returns>
-        /// <exception cref="NoxInfrastructureException">Thrown if an unexpected error occurs.</exception>
         public async Task<IEnumerable<object>> GetAllAsync(QueryParametersBase queryParameters, Expression<Func<TEntity, dynamic>> selectedColumns)
         {
             try

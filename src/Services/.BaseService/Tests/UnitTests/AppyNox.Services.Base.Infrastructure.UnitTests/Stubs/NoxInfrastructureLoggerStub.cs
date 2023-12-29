@@ -2,6 +2,9 @@
 
 namespace AppyNox.Services.Base.Infrastructure.UnitTests.Stubs
 {
+    /// <summary>
+    /// A stub implementation of <see cref="INoxInfrastructureLogger"/> for integration testing, simulating logging behavior.
+    /// </summary>
     public class NoxInfrastructureLoggerStub : INoxInfrastructureLogger
     {
         #region [ Public Methods ]

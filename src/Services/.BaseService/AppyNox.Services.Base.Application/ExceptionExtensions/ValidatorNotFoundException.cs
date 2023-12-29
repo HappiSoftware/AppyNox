@@ -1,22 +1,13 @@
 ﻿using AppyNox.Services.Base.Application.ExceptionExtensions.Base;
-using AppyNox.Services.Base.Domain.Common.HttpStatusCodes;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Net;
 
 namespace AppyNox.Services.Base.Application.ExceptionExtensions
 {
-    internal class ValidatorNotFoundException : NoxApplicationException
+    /// <summary>
+    /// Exception thrown when no validator is found for a given DTO type.
+    /// </summary>
+    internal class ValidatorNotFoundException(Type dtoType)
+        : NoxApplicationException($"No validator found for '{dtoType}'.")
     {
-        #region Internal Constructors
-
-        internal ValidatorNotFoundException(Type dtoType)
-            : base($"No validator found for '{dtoType}'.", (int)NoxServerErrorResponseCodes.InternalServerError)
-        {
-        }
-
-        #endregion
     }
 }

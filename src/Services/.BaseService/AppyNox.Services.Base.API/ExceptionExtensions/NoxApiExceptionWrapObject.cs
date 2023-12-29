@@ -1,14 +1,11 @@
 ﻿using AppyNox.Services.Base.Domain.ExceptionExtensions.Base;
 using AutoWrapper;
-using AutoWrapper.Wrappers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AppyNox.Services.Base.API.ExceptionExtensions
 {
+    /// <summary>
+    /// Represents a wrapper object for API exceptions, used for standardizing error responses.
+    /// </summary>
     public class NoxApiExceptionWrapObject(NoxException error, string correlationId)
     {
         #region [ Properties ]

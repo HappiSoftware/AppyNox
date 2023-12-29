@@ -1,16 +1,18 @@
 ﻿using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AppyNox.Services.Base.IntegrationTests.Helpers
 {
+    /// <summary>
+    /// Provides utility methods for integration testing, including configuration retrieval and environment setup.
+    /// </summary>
     public static class IntegrationTestHelpers
     {
         #region [ Public Methods ]
 
+        /// <summary>
+        /// Retrieves the configuration settings for integration tests.
+        /// </summary>
+        /// <returns>The configuration root containing test settings.</returns>
         public static IConfigurationRoot GetConfiguration()
         {
             return new ConfigurationBuilder()

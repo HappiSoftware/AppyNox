@@ -4,16 +4,18 @@ using Microsoft.Extensions.Hosting;
 
 namespace AppyNox.Services.Base.API.Helpers
 {
+    /// <summary>
+    /// Provides helper methods for working with application environments.
+    /// </summary>
     public static class EnvironmentHelpers
     {
         #region [ Public Methods ]
 
         /// <summary>
-        /// Returns the current environment to ApplicationEnvironment enum type. Makes it possible to use the enum in class projects.
+        /// Determines the application environment based on the web host environment settings.
         /// </summary>
-        /// <param name="environment"></param>
-        /// <returns></returns>
-        /// <exception cref="InvalidOperationException"></exception>
+        /// <param name="environment">The web host environment.</param>
+        /// <returns>The determined application environment.</returns>
         public static ApplicationEnvironment GetEnvironment(this IWebHostEnvironment environment)
         {
             if (environment.IsDevelopment())

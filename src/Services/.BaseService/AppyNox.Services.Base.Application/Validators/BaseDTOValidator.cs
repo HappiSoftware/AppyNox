@@ -4,10 +4,18 @@ using FluentValidation;
 
 namespace AppyNox.Services.Base.Application.Validators
 {
+    /// <summary>
+    /// Provides a Fluent Validation validator for BaseDto and its derived types.
+    /// </summary>
+    /// <typeparam name="T">The type of the DTO being validated, which must be derived from BaseDto.</typeparam>
     public class BaseDtoValidator<T> : AbstractValidator<T> where T : BaseDto
     {
         #region [ Public Constructors ]
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BaseDtoValidator{T}"/> class,
+        /// setting up validation rules for BaseDto properties.
+        /// </summary>
         public BaseDtoValidator()
         {
             RuleFor(dto => dto.Code).ValidateCode();

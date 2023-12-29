@@ -6,6 +6,9 @@ using System.Net;
 
 namespace AppyNox.Services.Base.API.Middleware
 {
+    /// <summary>
+    /// Middleware for ensuring that each HTTP request includes a correlation ID.
+    /// </summary>
     public class CorrelationIdMiddleware(RequestDelegate next, INoxApiLogger logger)
     {
         #region [ Fields ]
@@ -18,6 +21,10 @@ namespace AppyNox.Services.Base.API.Middleware
 
         #region [ Public Methods ]
 
+        /// <summary>
+        /// Invokes the middleware to check for a correlation ID in the incoming request.
+        /// </summary>
+        /// <param name="context">The HTTP context for the current request.</param>
         public async Task Invoke(HttpContext context)
         {
             string? correlationId = context.Request.Headers["X-Correlation-ID"].FirstOrDefault();

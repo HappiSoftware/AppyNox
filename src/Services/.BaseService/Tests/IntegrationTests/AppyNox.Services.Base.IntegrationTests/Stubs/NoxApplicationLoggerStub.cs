@@ -1,12 +1,10 @@
 ﻿using AppyNox.Services.Base.Application.Logger;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AppyNox.Services.Base.IntegrationTests.Stubs
 {
+    /// <summary>
+    /// A stub implementation of <see cref="INoxApplicationLogger"/> for integration testing, simulating logging behavior.
+    /// </summary>
     public class NoxApplicationLoggerStub : INoxApplicationLogger
     {
         #region [ Public Methods ]

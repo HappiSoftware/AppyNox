@@ -7,6 +7,9 @@ using System.Reflection;
 
 namespace AppyNox.Services.Base.Application.DtoUtilities
 {
+    /// <summary>
+    /// Provides a base implementation for a registry managing mappings between entities and their corresponding DTOs.
+    /// </summary>
     public abstract class DtoMappingRegistryBase : IDtoMappingRegistryBase
     {
         #region [ Fields ]
@@ -54,8 +57,17 @@ namespace AppyNox.Services.Base.Application.DtoUtilities
 
         #region [ Protected Methods ]
 
+        /// <summary>
+        /// Registers entity to DTO mappings. This method should be implemented in derived classes.
+        /// </summary>
         protected abstract void RegisterDtos();
 
+        /// <summary>
+        /// Registers a mapping between an entity type and a DTO type.
+        /// </summary>
+        /// <param name="entityType">The entity type.</param>
+        /// <param name="dtoType">The DTO type.</param>
+        /// <param name="attribute">The attribute used to determine the detail level of the mapping.</param>
         protected void RegisterMapping(Type entityType, Type dtoType, Attribute attribute)
         {
             string dtoName = dtoType.Name;

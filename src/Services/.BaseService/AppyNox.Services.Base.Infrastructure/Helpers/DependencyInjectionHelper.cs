@@ -1,18 +1,21 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AppyNox.Services.Base.Infrastructure.Helpers
 {
+    /// <summary>
+    /// Provides helper methods for dependency injection and service configuration.
+    /// </summary>
     public static class DependencyInjectionHelper
     {
         #region [ Protected Methods ]
 
+        /// <summary>
+        /// Applies any pending database migrations for a given DbContext.
+        /// </summary>
+        /// <typeparam name="TDbContext">The type of the DbContext.</typeparam>
+        /// <param name="serviceProvider">The service provider instance.</param>
         public static void ApplyMigrations<TDbContext>(this IServiceProvider serviceProvider)
             where TDbContext : DbContext
         {
@@ -23,14 +26,6 @@ namespace AppyNox.Services.Base.Infrastructure.Helpers
             {
                 _db.Database.Migrate();
             }
-        }
-
-        public static ILogger ConfigureLogging(IServiceCollection services, string name)
-        {
-            using ServiceProvider serviceProvider = services.BuildServiceProvider();
-            ILoggerFactory? loggerFactory = serviceProvider.GetService<ILoggerFactory>()
-                ?? throw new InvalidOperationException("LoggerFactory not available");
-            return loggerFactory.CreateLogger(name);
         }
 
         #endregion

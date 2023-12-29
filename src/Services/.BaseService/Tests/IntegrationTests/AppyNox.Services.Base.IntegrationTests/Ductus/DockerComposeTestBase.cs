@@ -1,13 +1,14 @@
-﻿using Ductus.FluentDocker.Common;
-using Ductus.FluentDocker.Services;
-using Microsoft.Extensions.Hosting;
+﻿using Ductus.FluentDocker.Services;
 using Microsoft.Extensions.Logging;
 
 namespace AppyNox.Services.Base.IntegrationTests.Ductus
 {
+    /// <summary>
+    /// Provides a base class for integration tests using Docker Compose.
+    /// </summary>
     public abstract class DockerComposeTestBase : IDisposable
     {
-        #region Fields
+        #region [ Fields ]
 
         protected ICompositeService? CompositeService;
 
@@ -22,8 +23,11 @@ namespace AppyNox.Services.Base.IntegrationTests.Ductus
 
         #endregion
 
-        #region Public Constructors
+        #region [ Public Constructors ]
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DockerComposeTestBase"/> class.
+        /// </summary>
         protected DockerComposeTestBase()
         {
             EnsureDockerHost();
@@ -33,6 +37,9 @@ namespace AppyNox.Services.Base.IntegrationTests.Ductus
 
         #region Public Methods
 
+        /// <summary>
+        /// Disposes resources used by the test, handling container teardown.
+        /// </summary>
         public void Dispose()
         {
             Dispose(true);
@@ -41,14 +48,24 @@ namespace AppyNox.Services.Base.IntegrationTests.Ductus
 
         #endregion
 
-        #region Protected Methods
+        #region [ Protected Methods ]
 
+        /// <summary>
+        /// Builds the composite service required for the test.
+        /// </summary>
+        /// <returns>The built composite service.</returns>
         protected abstract ICompositeService Build();
 
+        /// <summary>
+        /// Performs additional container teardown operations when disposing.
+        /// </summary>
         protected virtual void OnContainerTearDown()
         {
         }
 
+        /// <summary>
+        /// Initializes the Docker Compose environment for testing.
+        /// </summary>
         protected void Initialize()
         {
             _logger.LogInformation("{Message}", "Initializing Docker Compose Test Base");
@@ -66,6 +83,10 @@ namespace AppyNox.Services.Base.IntegrationTests.Ductus
             }
         }
 
+        /// <summary>
+        /// Disposes of the resources used by the DockerComposeTestBase instance.
+        /// </summary>
+        /// <param name="disposing">Indicates whether the method is being called from the Dispose method (true) or from the finalizer (false).</param>
         protected virtual void Dispose(bool disposing)
         {
             if (_disposed)
@@ -84,8 +105,11 @@ namespace AppyNox.Services.Base.IntegrationTests.Ductus
 
         #endregion
 
-        #region Destructor
+        #region [ Destructor ]
 
+        /// <summary>
+        /// Finalizes the DockerComposeTestBase instance, ensuring proper resource cleanup.
+        /// </summary>
         ~DockerComposeTestBase()
         {
             Dispose(false);

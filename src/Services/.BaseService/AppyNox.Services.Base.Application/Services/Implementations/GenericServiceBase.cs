@@ -1,5 +1,4 @@
-﻿using AppyNox.Services.Base.Application.Dtos;
-using AppyNox.Services.Base.Application.DtoUtilities;
+﻿using AppyNox.Services.Base.Application.DtoUtilities;
 using AppyNox.Services.Base.Application.ExceptionExtensions;
 using AppyNox.Services.Base.Application.ExceptionExtensions.Base;
 using AppyNox.Services.Base.Application.Helpers;
@@ -7,19 +6,15 @@ using AppyNox.Services.Base.Application.Logger;
 using AppyNox.Services.Base.Application.Services.Interfaces;
 using AppyNox.Services.Base.Domain.Common;
 using AppyNox.Services.Base.Domain.Interfaces;
-using AppyNox.Services.Base.Infrastructure.ExceptionExtensions;
 using AppyNox.Services.Base.Infrastructure.ExceptionExtensions.Base;
 using AppyNox.Services.Base.Infrastructure.Interfaces;
 using AppyNox.Services.Base.Infrastructure.Repositories.Common;
 using AutoMapper;
 using FluentValidation;
 using FluentValidation.Internal;
-using FluentValidation.Results;
 using Microsoft.Extensions.DependencyInjection;
-using System;
 using System.Dynamic;
 using System.Linq.Expressions;
-using System.Security.Cryptography.Xml;
 using System.Text.Json;
 
 namespace AppyNox.Services.Base.Application.Services.Implementations

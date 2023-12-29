@@ -1,9 +1,9 @@
 ﻿using AppyNox.EventBus.Base.ExceptionExtensions.Base;
-using AppyNox.Services.Base.Domain.Common.HttpStatusCodes;
 using Polly;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using RabbitMQ.Client.Exceptions;
+using System.Net;
 using System.Net.Sockets;
 
 namespace AppyNox.EventBus.RabbitMQ
@@ -16,9 +16,9 @@ namespace AppyNox.EventBus.RabbitMQ
 
         private readonly int _retryCount;
 
-        private IConnection? connection;
-
         private readonly object lock_object = new();
+
+        private IConnection? connection;
 
         private bool _disposed;
 
@@ -44,9 +44,9 @@ namespace AppyNox.EventBus.RabbitMQ
 
         public IModel CreateModel()
         {
-            if(connection == null)
+            if (connection == null)
             {
-                throw new EventBusBaseException("RabbitMQ connection is null while trying CreateModel", (int)NoxServerErrorResponseCodes.InternalServerError);
+                throw new EventBusBaseException("RabbitMQ connection is null while trying CreateModel", (int)HttpStatusCode.InternalServerError);
             }
             return connection.CreateModel();
         }
@@ -54,7 +54,7 @@ namespace AppyNox.EventBus.RabbitMQ
         public void Dispose()
         {
             _disposed = true;
-            if(connection != null )
+            if (connection != null)
             {
                 connection.Dispose();
             }
