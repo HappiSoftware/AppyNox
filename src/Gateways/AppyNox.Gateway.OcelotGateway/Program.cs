@@ -1,5 +1,6 @@
 using AppyNox.Gateway.OcelotGateway.Middlewares;
 using AppyNox.Services.Base.API.Logger;
+using AppyNox.Services.Base.Infrastructure.Helpers;
 using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
@@ -7,6 +8,14 @@ using Ocelot.Provider.Consul;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+
+#region [ Configuration Service ]
+
+await builder.AddConsulConfiguration("OcelotService");
+await builder.AddConsulConfiguration("OcelotService", "ocelot");
+var configuration = builder.Configuration;
+
+#endregion
 
 #region [ Logger Setup ]
 
@@ -66,20 +75,20 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
 
 #endregion
 
-builder.Configuration.SetBasePath(builder.Environment.ContentRootPath)
-    .AddJsonFile($"ocelot.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: true)
-    .AddEnvironmentVariables();
-
 builder.Services.AddHealthChecks();
 
 builder.Services.AddOcelot(builder.Configuration).AddConsul();
 
 var app = builder.Build();
 
+#region [ Pipeline ]
+
 app.UseMiddleware<LoggingMiddleware>();
 
 app.MapHealthChecks("/health");
 
 await app.UseOcelot();
+
+#endregion
 
 app.Run();
