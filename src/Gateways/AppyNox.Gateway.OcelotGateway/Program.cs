@@ -77,7 +77,7 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
 
 builder.Services.AddHealthChecks();
 
-builder.Services.AddOcelot(builder.Configuration).AddConsul();
+builder.Services.AddOcelot(builder.Configuration.GetSection("Gateway")).AddConsul();
 
 var app = builder.Build();
 
