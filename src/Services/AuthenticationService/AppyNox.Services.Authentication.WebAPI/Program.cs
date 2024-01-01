@@ -21,26 +21,13 @@ using Microsoft.IdentityModel.Tokens;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+
+#region [ Configuration Service ]
+
+await builder.AddConsulConfiguration("AuthenticationService");
 var configuration = builder.Configuration;
 
-// Add services to the container.
-builder.Services.AddControllers();
-
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-
-builder.Services.AddApiVersioning(options =>
-{
-    options.ReportApiVersions = true;
-    options.AssumeDefaultVersionWhenUnspecified = true;
-    options.DefaultApiVersion = new ApiVersion(1, 0);
-    options.ApiVersionReader = new HeaderApiVersionReader("X-API-Version");
-});
-
-builder.Services.AddSwaggerGen(options =>
-{
-    options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "Web API v1", Version = "version 1" });
-});
+#endregion
 
 #region [ Logger Setup ]
 
@@ -68,7 +55,8 @@ NoxLogger noxLogger = new(logger, "AuthenticationHost");
 
 #endregion
 
-// Add Identity
+#region [ Identity ]
+
 builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddSignInManager()
         .AddEntityFrameworkStores<IdentityDbContext>().AddRoles<IdentityRole>();
 
@@ -82,7 +70,34 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Password.RequireLowercase = true;
 });
 
-#region [ DI For Layers ]
+#endregion
+
+#region [ Configure Services ]
+
+// Add services to the container.
+builder.Services.AddControllers();
+
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+
+builder.Services.AddApiVersioning(options =>
+{
+    options.ReportApiVersions = true;
+    options.AssumeDefaultVersionWhenUnspecified = true;
+    options.DefaultApiVersion = new ApiVersion(1, 0);
+    options.ApiVersionReader = new HeaderApiVersionReader("X-API-Version");
+});
+
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "Web API v1", Version = "version 1" });
+});
+
+builder.Services.AddHealthChecks();
+
+#endregion
+
+#region [ Dependency Injection For Layers ]
 
 noxLogger.LogInformation("Registering DI's for layers.");
 builder.Services.AddAuthenticationInfrastructure(configuration, builder.Environment.GetEnvironment());
@@ -91,11 +106,13 @@ noxLogger.LogInformation("Registering DI's for layers completed.");
 
 #endregion
 
-builder.Services.AddHealthChecks();
+#region [ Dependency Injection Setup ]
 
 builder.Services.AddScoped<PasswordValidator<IdentityUser>>();
 builder.Services.AddScoped<PasswordHasher<IdentityUser>>();
 builder.Services.AddScoped<UsersControllerBaseDependencies>();
+
+#endregion
 
 #region [ Jwt Settings ]
 
@@ -155,7 +172,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseMiddleware<CorrelationIdMiddleware>();
+app.UseMiddleware<CorrelationIdMiddleware>(app.Environment);
 
 app.UseHttpsRedirection();
 
@@ -172,6 +189,8 @@ app.UseHealthChecks("/api/health");
 
 #endregion
 
+#region [ Hosted Services ]
+
 var consulHostedService = app.Services.GetServices<IHostedService>()
     .OfType<ConsulHostedService>()
     .First();
@@ -183,6 +202,8 @@ consulHostedService.OnConsulConnectionFailed += (Exception ex) =>
     lifeTime?.StopApplication();
     return Task.CompletedTask;
 };
+
+#endregion
 
 app.Services.ApplyMigrations<IdentityDbContext>();
 

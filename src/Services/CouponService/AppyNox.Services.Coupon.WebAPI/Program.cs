@@ -17,13 +17,13 @@ using Microsoft.OpenApi.Models;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+
+#region [ Configuration Service ]
+
+await builder.AddConsulConfiguration("CouponService");
 var configuration = builder.Configuration;
 
-// Add services to the container.
-builder.Services.AddControllers();
-
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
+#endregion
 
 #region [ Logger Setup ]
 
@@ -51,12 +51,22 @@ NoxLogger noxLogger = new(logger, "CouponHost");
 
 #endregion
 
+#region [ Configure Services ]
+
+// Add services to the container.
+builder.Services.AddControllers();
+
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+
 builder.Services.AddHealthChecks();
 
-#region [ DI For Layers ]
+#endregion
+
+#region [ Dependency Injection For Layers ]
 
 noxLogger.LogInformation("Registering DI's for layers.");
-builder.Services.AddCouponInfrastructure(configuration, builder.Environment.GetEnvironment(), noxLogger);
+builder.Services.AddCouponInfrastructure(builder, builder.Environment.GetEnvironment(), noxLogger);
 builder.Services.AddCouponApplication();
 noxLogger.LogInformation("Registering DI's for layers completed.");
 
@@ -150,7 +160,7 @@ if (!app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseMiddleware<CorrelationIdMiddleware>();
+app.UseMiddleware<CorrelationIdMiddleware>(app.Environment);
 
 app.UseHttpsRedirection();
 
@@ -164,9 +174,11 @@ app.UseApiResponseAndExceptionWrapper(new AutoWrapperOptions { IsApiOnly = true,
 app.UseMiddleware<QueryParameterValidateMiddleware>();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
+app.UseHealthChecks("/api/health");
+
 #endregion
 
-app.UseHealthChecks("/api/health");
+#region [ Hosted Services ]
 
 var consulHostedService = app.Services.GetServices<IHostedService>()
     .OfType<ConsulHostedService>()
@@ -179,6 +191,8 @@ consulHostedService.OnConsulConnectionFailed += (Exception ex) =>
     lifeTime?.StopApplication();
     return Task.CompletedTask;
 };
+
+#endregion
 
 app.Services.ApplyMigrations<CouponDbContext>();
 

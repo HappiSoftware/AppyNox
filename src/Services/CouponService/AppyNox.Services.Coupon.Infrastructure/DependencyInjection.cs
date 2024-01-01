@@ -10,6 +10,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Winton.Extensions.Configuration.Consul;
+using AppyNox.Services.Base.Infrastructure.Helpers;
 
 namespace AppyNox.Services.Coupon.Infrastructure
 {
@@ -17,8 +19,19 @@ namespace AppyNox.Services.Coupon.Infrastructure
     {
         #region [ Public Methods ]
 
-        public static IServiceCollection AddCouponInfrastructure(this IServiceCollection services, IConfiguration configuration, ApplicationEnvironment environment, INoxLogger logger)
+        /// <summary>
+        /// Centralized Dependency Injection For Infrastructure Layer.
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="builder"></param>
+        /// <param name="environment"></param>
+        /// <param name="logger"></param>
+        /// <returns></returns>
+        public static IServiceCollection AddCouponInfrastructure(this IServiceCollection services, IHostApplicationBuilder builder, ApplicationEnvironment environment, INoxLogger logger)
         {
+            IConfiguration configuration = builder.Configuration;
+            string environmentName = builder.Environment.EnvironmentName;
+
             services.AddSingleton<INoxInfrastructureLogger, NoxInfrastructureLogger>();
 
             #region [ Database Configuration ]
@@ -32,12 +45,10 @@ namespace AppyNox.Services.Coupon.Infrastructure
                 _ => configuration.GetConnectionString("DefaultConnection"),
             };
 
-            logger.LogInformation($"Connection String: {connectionString}");
-
             services.AddDbContext<CouponDbContext>(options =>
-            {
-                options.UseNpgsql(connectionString);
-            });
+                options.UseNpgsql(connectionString));
+
+            logger.LogInformation($"Connection String: {connectionString}");
 
             #endregion
 
@@ -52,8 +63,6 @@ namespace AppyNox.Services.Coupon.Infrastructure
             services.Configure<ConsulConfig>(configuration.GetSection("consul"));
 
             #endregion
-
-            //services.AddHostedService<DatabaseStartupHostedService<CouponDbContext>>();
 
             services.AddScoped(typeof(IGenericRepositoryBase<>), typeof(GenericRepository<>));
             services.AddScoped<IUnitOfWorkBase, UnitOfWork>();
