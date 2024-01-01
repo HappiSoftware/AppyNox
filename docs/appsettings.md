@@ -262,7 +262,7 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
   "ConnectionStrings": {
     "StagingConnection": "User ID=postgres;Password=auth_password;Server=appynox-authentication-db;Port=5432;Database=AppyNox_Authentication_Test",
     "DefaultConnection": "User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_Authentication",
-    "TestConnection": "" // for integration tests, use this to connect to dockerized database container from localhost
+    "TestConnection": ""
   },
   "JwtSettings": {
     "SecretKey": "vA+A/of8yadsbwe/CmS6PD0Kp837BozrQFMDuQ2Kwwg=",
@@ -357,73 +357,74 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
 
 ```json
 {
-  "GlobalConfiguration": {
-    "BaseUrl": "https://localhost:7000",
-    "ServiceDiscoveryProvider": {
-      "Host": "localhost",
-      "Port": 8500,
-      "Type": "Consul"
+  "Gateway": {
+    "GlobalConfiguration": {
+      "BaseUrl": "https://localhost:7000",
+      "ServiceDiscoveryProvider": {
+        "Host": "localhost",
+        "Port": 8500,
+        "Type": "Consul"
+      },
+      "RateLimitOptions": {
+        "QuotaExceededMessage": "You have sent too many requests in a row.",
+        "ClientIdHeader": "ClientId"
+      },
+      "RequestIdKey": "X-Correlation-ID"
     },
-    "RateLimitOptions": {
-      "QuotaExceededMessage": "You have sent too many requests in a row.",
-      "ClientIdHeader": "ClientId"
-    },
-    "RequestIdKey": "X-Correlation-ID"
-  },
-  "Routes": [
-    {
-      // Special route for /health to bypass Ocelot
-      "DownstreamPathTemplate": "/health",
-      "UpstreamPathTemplate": "/health",
-      "UpstreamHttpMethod": ["Get"],
-      "DownstreamScheme": "https",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 7000
+    "Routes": [
+      {
+        "DownstreamPathTemplate": "/health",
+        "UpstreamPathTemplate": "/health",
+        "UpstreamHttpMethod": ["Get"],
+        "DownstreamScheme": "https",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "localhost",
+            "Port": 7000
+          }
+        ],
+        "Priority": 1
+      },
+      {
+        "UseServiceDiscovery": true,
+        "ServiceName": "AuthenticationService",
+
+        "DownstreamPathTemplate": "/api/{everything}",
+        "DownstreamScheme": "http",
+
+        "UpstreamPathTemplate": "/authentication-service/{everything}",
+        "UpstreamHttpMethod": ["Get", "Post", "Delete", "Put"],
+        "UpstreamScheme": "https",
+
+        "RateLimitOptions": {
+          "ClientWhitelist": [],
+          "EnableRateLimiting": true,
+          "Period": "3s",
+          "PeriodTimespan": 3,
+          "Limit": 3
         }
-      ],
-      "Priority": 1 // High priority to ensure it takes precedence
-    },
-    {
-      "UseServiceDiscovery": true,
-      "ServiceName": "AuthenticationService",
+      },
+      {
+        "UseServiceDiscovery": true,
+        "ServiceName": "CouponService",
 
-      "DownstreamPathTemplate": "/api/{everything}",
-      "DownstreamScheme": "http",
+        "DownstreamPathTemplate": "/api/{everything}",
+        "DownstreamScheme": "http",
 
-      "UpstreamPathTemplate": "/authentication-service/{everything}",
-      "UpstreamHttpMethod": ["Get", "Post", "Delete", "Put"],
-      "UpstreamScheme": "https",
+        "UpstreamPathTemplate": "/coupon-service/{everything}",
+        "UpstreamHttpMethod": ["Get", "Post", "Delete", "Put"],
+        "UpstreamScheme": "https",
 
-      "RateLimitOptions": {
-        "ClientWhitelist": [],
-        "EnableRateLimiting": true,
-        "Period": "3s",
-        "PeriodTimespan": 3,
-        "Limit": 3
+        "RateLimitOptions": {
+          "ClientWhitelist": [],
+          "EnableRateLimiting": true,
+          "Period": "3s",
+          "PeriodTimespan": 3,
+          "Limit": 5
+        }
       }
-    },
-    {
-      "UseServiceDiscovery": true,
-      "ServiceName": "CouponService",
-
-      "DownstreamPathTemplate": "/api/{everything}",
-      "DownstreamScheme": "http",
-
-      "UpstreamPathTemplate": "/coupon-service/{everything}",
-      "UpstreamHttpMethod": ["Get", "Post", "Delete", "Put"],
-      "UpstreamScheme": "https",
-
-      "RateLimitOptions": {
-        "ClientWhitelist": [],
-        "EnableRateLimiting": true,
-        "Period": "3s",
-        "PeriodTimespan": 3,
-        "Limit": 5
-      }
-    }
-  ]
+    ]
+  }
 }
 ```
 
@@ -434,73 +435,74 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
 
 ```json
 {
-  "GlobalConfiguration": {
-    "BaseUrl": "https://appynox-gateway-ocelotgateway:7000",
-    "ServiceDiscoveryProvider": {
-      "Host": "appynox-consul",
-      "Port": 8500,
-      "Type": "Consul"
+  "Gateway": {
+    "GlobalConfiguration": {
+      "BaseUrl": "https://appynox-gateway-ocelotgateway:7000",
+      "ServiceDiscoveryProvider": {
+        "Host": "appynox-consul",
+        "Port": 8500,
+        "Type": "Consul"
+      },
+      "RateLimitOptions": {
+        "QuotaExceededMessage": "You have sent too many requests in a row.",
+        "ClientIdHeader": "ClientId"
+      },
+      "RequestIdKey": "X-Correlation-ID"
     },
-    "RateLimitOptions": {
-      "QuotaExceededMessage": "You have sent too many requests in a row.",
-      "ClientIdHeader": "ClientId"
-    },
-    "RequestIdKey": "X-Correlation-ID"
-  },
-  "Routes": [
-    {
-      // Special route for /health to bypass Ocelot
-      "DownstreamPathTemplate": "/health",
-      "UpstreamPathTemplate": "/health",
-      "UpstreamHttpMethod": ["Get"],
-      "DownstreamScheme": "https",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 443
+    "Routes": [
+      {
+        "DownstreamPathTemplate": "/health",
+        "UpstreamPathTemplate": "/health",
+        "UpstreamHttpMethod": ["Get"],
+        "DownstreamScheme": "https",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "localhost",
+            "Port": 443
+          }
+        ],
+        "Priority": 1
+      },
+      {
+        "UseServiceDiscovery": true,
+        "ServiceName": "AuthenticationService",
+
+        "DownstreamPathTemplate": "/api/{everything}",
+        "DownstreamScheme": "http",
+
+        "UpstreamPathTemplate": "/authentication-service/{everything}",
+        "UpstreamHttpMethod": ["Get", "Post", "Delete", "Put"],
+        "UpstreamScheme": "https",
+
+        "RateLimitOptions": {
+          "ClientWhitelist": [],
+          "EnableRateLimiting": true,
+          "Period": "3s",
+          "PeriodTimespan": 3,
+          "Limit": 3
         }
-      ],
-      "Priority": 1 // High priority to ensure it takes precedence
-    },
-    {
-      "UseServiceDiscovery": true,
-      "ServiceName": "AuthenticationService",
+      },
+      {
+        "UseServiceDiscovery": true,
+        "ServiceName": "CouponService",
 
-      "DownstreamPathTemplate": "/api/{everything}",
-      "DownstreamScheme": "http",
+        "DownstreamPathTemplate": "/api/{everything}",
+        "DownstreamScheme": "http",
 
-      "UpstreamPathTemplate": "/authentication-service/{everything}",
-      "UpstreamHttpMethod": ["Get", "Post", "Delete", "Put"],
-      "UpstreamScheme": "https",
+        "UpstreamPathTemplate": "/coupon-service/{everything}",
+        "UpstreamHttpMethod": ["Get", "Post", "Delete", "Put"],
+        "UpstreamScheme": "https",
 
-      "RateLimitOptions": {
-        "ClientWhitelist": [],
-        "EnableRateLimiting": true,
-        "Period": "3s",
-        "PeriodTimespan": 3,
-        "Limit": 3
+        "RateLimitOptions": {
+          "ClientWhitelist": [],
+          "EnableRateLimiting": true,
+          "Period": "3s",
+          "PeriodTimespan": 3,
+          "Limit": 5
+        }
       }
-    },
-    {
-      "UseServiceDiscovery": true,
-      "ServiceName": "CouponService",
-
-      "DownstreamPathTemplate": "/api/{everything}",
-      "DownstreamScheme": "http",
-
-      "UpstreamPathTemplate": "/coupon-service/{everything}",
-      "UpstreamHttpMethod": ["Get", "Post", "Delete", "Put"],
-      "UpstreamScheme": "https",
-
-      "RateLimitOptions": {
-        "ClientWhitelist": [],
-        "EnableRateLimiting": true,
-        "Period": "3s",
-        "PeriodTimespan": 3,
-        "Limit": 5
-      }
-    }
-  ]
+    ]
+  }
 }
 ```
 
@@ -511,73 +513,75 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
 
 ```json
 {
-  "GlobalConfiguration": {
-    "BaseUrl": "https://appynox-gateway-ocelotgateway:7000",
-    "ServiceDiscoveryProvider": {
-      "Host": "appynox-consul",
-      "Port": 8500,
-      "Type": "Consul"
+  "Gateway": {
+    "GlobalConfiguration": {
+      "BaseUrl": "https://appynox-gateway-ocelotgateway:7000",
+      "ServiceDiscoveryProvider": {
+        "Host": "appynox-consul",
+        "Port": 8500,
+        "Type": "Consul"
+      },
+      "RateLimitOptions": {
+        "QuotaExceededMessage": "You have sent too many requests in a row.",
+        "ClientIdHeader": "ClientId"
+      },
+      "RequestIdKey": "X-Correlation-ID"
     },
-    "RateLimitOptions": {
-      "QuotaExceededMessage": "You have sent too many requests in a row.",
-      "ClientIdHeader": "ClientId"
-    },
-    "RequestIdKey": "X-Correlation-ID"
-  },
-  "Routes": [
-    {
-      // Special route for /health to bypass Ocelot
-      "DownstreamPathTemplate": "/health",
-      "UpstreamPathTemplate": "/health",
-      "UpstreamHttpMethod": ["Get"],
-      "DownstreamScheme": "https",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 443
+    "Routes": [
+      {
+        // Special route for /health to bypass Ocelot
+        "DownstreamPathTemplate": "/health",
+        "UpstreamPathTemplate": "/health",
+        "UpstreamHttpMethod": ["Get"],
+        "DownstreamScheme": "https",
+        "DownstreamHostAndPorts": [
+          {
+            "Host": "localhost",
+            "Port": 443
+          }
+        ],
+        "Priority": 1 // High priority to ensure it takes precedence
+      },
+      {
+        "UseServiceDiscovery": true,
+        "ServiceName": "AuthenticationService",
+
+        "DownstreamPathTemplate": "/api/{everything}",
+        "DownstreamScheme": "http",
+
+        "UpstreamPathTemplate": "/authentication-service/{everything}",
+        "UpstreamHttpMethod": ["Get", "Post", "Delete", "Put"],
+        "UpstreamScheme": "https",
+
+        "RateLimitOptions": {
+          "ClientWhitelist": [],
+          "EnableRateLimiting": true,
+          "Period": "3s",
+          "PeriodTimespan": 3,
+          "Limit": 3
         }
-      ],
-      "Priority": 1 // High priority to ensure it takes precedence
-    },
-    {
-      "UseServiceDiscovery": true,
-      "ServiceName": "AuthenticationService",
+      },
+      {
+        "UseServiceDiscovery": true,
+        "ServiceName": "CouponService",
 
-      "DownstreamPathTemplate": "/api/{everything}",
-      "DownstreamScheme": "http",
+        "DownstreamPathTemplate": "/api/{everything}",
+        "DownstreamScheme": "http",
 
-      "UpstreamPathTemplate": "/authentication-service/{everything}",
-      "UpstreamHttpMethod": ["Get", "Post", "Delete", "Put"],
-      "UpstreamScheme": "https",
+        "UpstreamPathTemplate": "/coupon-service/{everything}",
+        "UpstreamHttpMethod": ["Get", "Post", "Delete", "Put"],
+        "UpstreamScheme": "https",
 
-      "RateLimitOptions": {
-        "ClientWhitelist": [],
-        "EnableRateLimiting": true,
-        "Period": "3s",
-        "PeriodTimespan": 3,
-        "Limit": 3
+        "RateLimitOptions": {
+          "ClientWhitelist": [],
+          "EnableRateLimiting": true,
+          "Period": "3s",
+          "PeriodTimespan": 3,
+          "Limit": 5
+        }
       }
-    },
-    {
-      "UseServiceDiscovery": true,
-      "ServiceName": "CouponService",
-
-      "DownstreamPathTemplate": "/api/{everything}",
-      "DownstreamScheme": "http",
-
-      "UpstreamPathTemplate": "/coupon-service/{everything}",
-      "UpstreamHttpMethod": ["Get", "Post", "Delete", "Put"],
-      "UpstreamScheme": "https",
-
-      "RateLimitOptions": {
-        "ClientWhitelist": [],
-        "EnableRateLimiting": true,
-        "Period": "3s",
-        "PeriodTimespan": 3,
-        "Limit": 5
-      }
-    }
-  ]
+    ]
+  }
 }
 ```
 
@@ -612,6 +616,9 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
       }
     ],
     "Enrich": ["FromLogContext"]
+  },
+  "ConsulConfig": {
+    "Address": "http://localhost:8500"
   }
 }
 ```
@@ -643,6 +650,9 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
       }
     ],
     "Enrich": ["FromLogContext"]
+  },
+  "ConsulConfig": {
+    "Address": "http://appynox-consul:8500"
   }
 }
 ```
@@ -674,6 +684,9 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
       }
     ],
     "Enrich": ["FromLogContext"]
+  },
+  "ConsulConfig": {
+    "Address": "http://appynox-consul:8500"
   }
 }
 ```
