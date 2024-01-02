@@ -13,10 +13,6 @@
 		<PackageReference Include="Finbuckle.MultiTenant.EntityFrameworkCore" Version="6.13.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.DynamicLinq" Version="8.3.7" />
 		<PackageReference Include="LinqKit.Microsoft.EntityFrameworkCore" Version="8.1.5" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
 
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="8.0.0" />

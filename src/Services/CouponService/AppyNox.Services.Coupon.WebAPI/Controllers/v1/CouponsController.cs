@@ -9,6 +9,7 @@ using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
 using AppyNox.Services.Coupon.Application.Services.Implementations;
 using AppyNox.Services.Coupon.Application.Services.Interfaces;
 using AppyNox.Services.Coupon.Domain.Entities;
+using AppyNox.Services.Coupon.Infrastructure.Data;
 using AppyNox.Services.Coupon.WebAPI.Helpers.Permissions;
 using Asp.Versioning;
 using AutoWrapper.Extensions;
@@ -24,11 +25,13 @@ namespace AppyNox.Services.Coupon.WebAPI.Controllers.v1
     [ApiController]
     [ApiVersion("1.0")]
     [Route("api/[controller]")]
-    public class CouponsController(IGenericService<CouponEntity> couponService) : Controller
+    public class CouponsController(IGenericService<CouponEntity> couponService, IConfiguration configuration1) : Controller
     {
         #region [ Fields ]
 
         private readonly IGenericService<CouponEntity> _couponService = couponService;
+
+        private readonly IConfiguration _configuration = configuration1;
 
         #endregion
 

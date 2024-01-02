@@ -54,22 +54,6 @@ namespace AppyNox.Services.Authentication.Infrastructure
             services.Configure<ConsulConfig>(configuration.GetSection("consul"));
 
             #endregion
-
-            //services.AddHostedService<DatabaseStartupHostedService<IdentityDbContext>>();
-        }
-
-        /// <summary>
-        /// Applies any pending migrations for the context to the database.
-        /// </summary>
-        /// <param name="serviceProvider">The IServiceProvider to retrieve the IdentityDbContext instance.</param>
-        public static void ApplyMigrations(IServiceProvider serviceProvider)
-        {
-            using var scope = serviceProvider.CreateScope();
-            var _db = scope.ServiceProvider.GetRequiredService<IdentityDbContext>();
-            if (_db.Database.GetPendingMigrations().Any())
-            {
-                _db.Database.Migrate();
-            }
         }
 
         #endregion

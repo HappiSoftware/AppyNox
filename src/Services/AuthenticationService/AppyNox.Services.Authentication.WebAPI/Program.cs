@@ -1,4 +1,5 @@
 using AppyNox.Services.Authentication.Application;
+using AppyNox.Services.Authentication.Domain.Entities;
 using AppyNox.Services.Authentication.Infrastructure;
 using AppyNox.Services.Authentication.Infrastructure.Data;
 using AppyNox.Services.Authentication.WebAPI.Configuration;
@@ -57,7 +58,7 @@ NoxLogger noxLogger = new(logger, "AuthenticationHost");
 
 #region [ Identity ]
 
-builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddSignInManager()
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddSignInManager()
         .AddEntityFrameworkStores<IdentityDbContext>().AddRoles<IdentityRole>();
 
 builder.Services.Configure<IdentityOptions>(options =>
@@ -108,8 +109,8 @@ noxLogger.LogInformation("Registering DI's for layers completed.");
 
 #region [ Dependency Injection Setup ]
 
-builder.Services.AddScoped<PasswordValidator<IdentityUser>>();
-builder.Services.AddScoped<PasswordHasher<IdentityUser>>();
+builder.Services.AddScoped<PasswordValidator<ApplicationUser>>();
+builder.Services.AddScoped<PasswordHasher<ApplicationUser>>();
 builder.Services.AddScoped<UsersControllerBaseDependencies>();
 
 #endregion

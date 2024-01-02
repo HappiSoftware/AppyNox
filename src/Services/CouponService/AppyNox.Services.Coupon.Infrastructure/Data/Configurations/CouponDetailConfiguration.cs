@@ -4,8 +4,14 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace AppyNox.Services.Coupon.Infrastructure.Data.Configurations
 {
-    public class CouponDetailConfiguration : IEntityTypeConfiguration<CouponDetailEntity>
+    internal class CouponDetailConfiguration(Guid couponDetailId) : IEntityTypeConfiguration<CouponDetailEntity>
     {
+        #region [ Fields ]
+
+        private readonly Guid _couponDetailId = couponDetailId;
+
+        #endregion
+
         #region [ Public Methods ]
 
         public void Configure(EntityTypeBuilder<CouponDetailEntity> builder)
@@ -29,7 +35,7 @@ namespace AppyNox.Services.Coupon.Infrastructure.Data.Configurations
 
             builder.HasData(new CouponDetailEntity
             {
-                Id = Guid.Parse("c2feaca4-d82a-4d2e-ba5a-667b685212b4"),
+                Id = _couponDetailId,
                 Code = "EXF50",
                 Detail = "TestDetail"
             });
