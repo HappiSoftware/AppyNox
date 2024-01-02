@@ -24,6 +24,12 @@ services:
     volumes:
       - ./src/Gateways/AppyNox.Gateway.OcelotGateway/ssl:/https2:ro
       - ./src/Gateways/AppyNox.Gateway.OcelotGateway/ssl/crt:/usr/local/share/ca-certificates/:ro
+      - ./src/Gateways/AppyNox.Gateway.OcelotGateway/ocelot.Development.json:/app/ocelot.Development.json:ro
+      - ./src/Gateways/AppyNox.Gateway.OcelotGateway/ocelot.Staging.json:/app/ocelot.Staging.json:ro
+      - ./src/Gateways/AppyNox.Gateway.OcelotGateway/ocelot.Production.json:/app/ocelot.Production.json:ro
+      - ./src/Gateways/AppyNox.Gateway.OcelotGateway/appsettings.Development.json:/app/appsettings.Development.json:ro
+      - ./src/Gateways/AppyNox.Gateway.OcelotGateway/appsettings.Staging.json:/app/appsettings.Staging.json:ro
+      - ./src/Gateways/AppyNox.Gateway.OcelotGateway/appsettings.Production.json:/app/appsettings.Production.json:ro
     ports:
       - "7000:443"
 
@@ -51,6 +57,9 @@ services:
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+      - ./src/Services/AuthenticationService/AppyNox.Services.Authentication.WebAPI/appsettings.Development.json:/app/appsettings.Development.json:ro
+      - ./src/Services/AuthenticationService/AppyNox.Services.Authentication.WebAPI/appsettings.Staging.json:/app/appsettings.Staging.json:ro
+      - ./src/Services/AuthenticationService/AppyNox.Services.Authentication.WebAPI/appsettings.Production.json:/app/appsettings.Production.json:ro
 
   appynox-coupon-db:
     image: postgres:latest
@@ -78,3 +87,6 @@ services:
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+      - ./src/Services/CouponService/AppyNox.Services.Coupon.WebAPI/appsettings.Development.json:/app/appsettings.Development.json:ro
+      - ./src/Services/CouponService/AppyNox.Services.Coupon.WebAPI/appsettings.Staging.json:/app/appsettings.Staging.json:ro
+      - ./src/Services/CouponService/AppyNox.Services.Coupon.WebAPI/appsettings.Production.json:/app/appsettings.Production.json:ro

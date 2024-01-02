@@ -23,3 +23,15 @@
 **/values.dev.yaml
 LICENSE
 README.md
+# appsettings
+**/appsettings.Development.json
+**/appsettings.Staging.json
+**/appsettings.Production.json
+
+# Ocelot
+**/ocelot.Development.json
+**/ocelot.Staging.json
+**/ocelot.Production.json
+
+# pfx
+*.pfx

@@ -9,3 +9,15 @@ node_modules
 *.sln
 *.csproj.user
 *.editorconfig
+# appsettings
+**/appsettings.Development.json
+**/appsettings.Staging.json
+**/appsettings.Production.json
+
+# Ocelot
+**/ocelot.Development.json
+**/ocelot.Staging.json
+**/ocelot.Production.json
+
+# pfx
+*.pfx
