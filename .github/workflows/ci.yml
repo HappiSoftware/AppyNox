@@ -61,7 +61,7 @@ jobs:
 
       - name: Create License Service appsettings
         run: |
-          echo '${{ secrets.LICENSE_APPSETTINGS_STAGING }}' > ./src/Services/LicenseService/AppyNox.Services.v.WebAPI/appsettings.Staging.json
+          echo '${{ secrets.LICENSE_APPSETTINGS_STAGING }}' > ./src/Services/LicenseService/AppyNox.Services.License.WebAPI/appsettings.Staging.json
           echo '${{ secrets.LICENSE_APPSETTINGS_STAGING }}' > ./src/Services/LicenseService/Tests/IntegrationTests/AppyNox.Services.License.WebAPI.IntegrationTests/appsettings.Staging.json
           echo '${{ secrets.LICENSE_APPSETTINGS_PRODUCTION }}' > ./src/Services/LicenseService/AppyNox.Services.License.WebAPI/appsettings.Production.json
 
