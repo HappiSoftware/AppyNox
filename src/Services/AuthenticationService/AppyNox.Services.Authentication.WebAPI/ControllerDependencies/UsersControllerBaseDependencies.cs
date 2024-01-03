@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using AppyNox.Services.Authentication.Domain.Entities;
+using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 
 namespace AppyNox.Services.Authentication.WebAPI.ControllerDependencies
@@ -10,25 +11,25 @@ namespace AppyNox.Services.Authentication.WebAPI.ControllerDependencies
     {
         #region [ Fields ]
 
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
 
         private readonly RoleManager<IdentityRole> _roleManager;
 
-        private readonly IUserValidator<IdentityUser> _userValidator;
+        private readonly IUserValidator<ApplicationUser> _userValidator;
 
         private readonly IMapper _mapper;
 
-        private readonly PasswordValidator<IdentityUser> _passwordValidator;
+        private readonly PasswordValidator<ApplicationUser> _passwordValidator;
 
-        private readonly PasswordHasher<IdentityUser> _passwordHasher;
+        private readonly PasswordHasher<ApplicationUser> _passwordHasher;
 
         #endregion
 
         #region [ Public Constructors ]
 
-        public UsersControllerBaseDependencies(IMapper mapper, UserManager<IdentityUser> userManager,
-            IUserValidator<IdentityUser> userValidator, RoleManager<IdentityRole> roleManager, PasswordValidator<IdentityUser> passwordValidator,
-            PasswordHasher<IdentityUser> passwordHasher)
+        public UsersControllerBaseDependencies(IMapper mapper, UserManager<ApplicationUser> userManager,
+            IUserValidator<ApplicationUser> userValidator, RoleManager<IdentityRole> roleManager, PasswordValidator<ApplicationUser> passwordValidator,
+            PasswordHasher<ApplicationUser> passwordHasher)
         {
             _mapper = mapper;
             _userManager = userManager;
@@ -42,17 +43,17 @@ namespace AppyNox.Services.Authentication.WebAPI.ControllerDependencies
 
         #region [ Properties ]
 
-        public UserManager<IdentityUser> UserManager => _userManager;
+        public UserManager<ApplicationUser> UserManager => _userManager;
 
         public RoleManager<IdentityRole> RoleManager => _roleManager;
 
-        public IUserValidator<IdentityUser> UserValidator => _userValidator;
+        public IUserValidator<ApplicationUser> UserValidator => _userValidator;
 
         public IMapper Mapper => _mapper;
 
-        public PasswordValidator<IdentityUser> PasswordValidator => _passwordValidator;
+        public PasswordValidator<ApplicationUser> PasswordValidator => _passwordValidator;
 
-        public PasswordHasher<IdentityUser> PasswordHasher => _passwordHasher;
+        public PasswordHasher<ApplicationUser> PasswordHasher => _passwordHasher;
 
         #endregion
     }

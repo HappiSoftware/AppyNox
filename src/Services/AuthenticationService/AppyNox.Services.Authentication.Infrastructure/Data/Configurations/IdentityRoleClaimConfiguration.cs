@@ -7,18 +7,19 @@ namespace AppyNox.Services.Authentication.Infrastructure.Data.Configurations
     /// <summary>
     /// Configures the entity type IdentityRoleClaim and seeds initial data.
     /// </summary>
-    public class IdentityRoleClaimConfiguration : IEntityTypeConfiguration<IdentityRoleClaim<string>>
+    /// <remarks>
+    /// Initializes a new instance of the IdentityRoleClaimConfiguration class with the specified admin role ID.
+    /// </remarks>
+    /// <param name="adminRoleId">The ID of the admin role for seeding data.</param>
+    internal class IdentityRoleClaimConfiguration(string adminRoleId) : IEntityTypeConfiguration<IdentityRoleClaim<string>>
     {
-        private readonly string _adminRoleId;
+        #region [ Fields ]
 
-        /// <summary>
-        /// Initializes a new instance of the IdentityRoleClaimConfiguration class with the specified admin role ID.
-        /// </summary>
-        /// <param name="adminRoleId">The ID of the admin role for seeding data.</param>
-        public IdentityRoleClaimConfiguration(string adminRoleId)
-        {
-            _adminRoleId = adminRoleId;
-        }
+        private readonly string _adminRoleId = adminRoleId;
+
+        #endregion
+
+        #region [ Public Methods ]
 
         /// <summary>
         /// Configures the IdentityRoleClaim entity type and seeds data.
@@ -26,9 +27,6 @@ namespace AppyNox.Services.Authentication.Infrastructure.Data.Configurations
         /// <param name="builder">The builder being used to construct the entity type model.</param>
         public void Configure(EntityTypeBuilder<IdentityRoleClaim<string>> builder)
         {
-            #region [ Configurations ]
-            #endregion
-
             #region [ Seeds ]
 
             builder.HasData(
@@ -52,5 +50,7 @@ namespace AppyNox.Services.Authentication.Infrastructure.Data.Configurations
 
             #endregion
         }
+
+        #endregion
     }
 }

@@ -95,7 +95,7 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTests
                 discountAmount = 2,
                 minAmount = 12,
                 description = "string",
-                couponDetailEntityId = "c2feaca4-d82a-4d2e-ba5a-667b685212b4"
+                couponDetailEntityId = "ec80532f-58f0-4690-b40c-2133b067d5f2"
             };
             var jsonRequest = JsonSerializer.Serialize(requestBody);
             var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");

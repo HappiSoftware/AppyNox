@@ -1,4 +1,5 @@
 ﻿using AppyNox.Services.Authentication.Application.Dtos.AccountDtos.Models.Base;
+using AppyNox.Services.Authentication.Domain.Entities;
 using AppyNox.Services.Authentication.WebAPI.ExceptionExtensions.Base;
 using AppyNox.Services.Authentication.WebAPI.Managers.Interfaces;
 using AutoWrapper.Wrappers;
@@ -16,15 +17,15 @@ namespace AppyNox.Services.Authentication.WebAPI.Managers.Implementations
 
         private readonly ICustomTokenManager customTokenManager;
 
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
 
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
 
         #endregion
 
         #region [ Public Constructors ]
 
-        public CustomUserManager(ICustomTokenManager customTokenManager, SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager)
+        public CustomUserManager(ICustomTokenManager customTokenManager, SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager)
         {
             this.customTokenManager = customTokenManager;
             _signInManager = signInManager;

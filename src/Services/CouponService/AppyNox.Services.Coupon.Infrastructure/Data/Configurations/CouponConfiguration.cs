@@ -4,8 +4,18 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace AppyNox.Services.Coupon.Infrastructure.Data.Configurations
 {
-    public class CouponConfiguration : IEntityTypeConfiguration<CouponEntity>
+    internal class CouponConfiguration(Guid couponId1, Guid couponId2, Guid couponDetailId) : IEntityTypeConfiguration<CouponEntity>
     {
+        #region [ Fields ]
+
+        private readonly Guid _couponId1 = couponId1;
+
+        private readonly Guid _couponId2 = couponId2;
+
+        private readonly Guid _couponDetailId = couponDetailId;
+
+        #endregion
+
         #region [ Public Methods ]
 
         public void Configure(EntityTypeBuilder<CouponEntity> builder)
@@ -33,25 +43,25 @@ namespace AppyNox.Services.Coupon.Infrastructure.Data.Configurations
             builder.HasData(
                 new CouponEntity
                 {
-                    Id = Guid.NewGuid(),
+                    Id = _couponId1,
                     Code = "EXF50",
                     Description = "Description",
                     DiscountAmount = 10.65,
                     MinAmount = 100,
                     Detail = "Detail1",
-                    CouponDetailEntityId = Guid.Parse("c2feaca4-d82a-4d2e-ba5a-667b685212b4")
+                    CouponDetailEntityId = _couponDetailId
                 });
 
             builder.HasData(
                 new CouponEntity
                 {
-                    Id = Guid.NewGuid(),
+                    Id = _couponId2,
                     Code = "EXF60",
                     Description = "Description2",
                     DiscountAmount = 20.55,
                     MinAmount = 200,
                     Detail = "Detail2",
-                    CouponDetailEntityId = Guid.Parse("c2feaca4-d82a-4d2e-ba5a-667b685212b4")
+                    CouponDetailEntityId = _couponDetailId
                 });
 
             #endregion

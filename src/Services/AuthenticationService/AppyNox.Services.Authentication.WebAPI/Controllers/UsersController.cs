@@ -2,6 +2,7 @@
 using AppyNox.Services.Authentication.Application.Dtos.IdentityUserDtos.Models.Base;
 using AppyNox.Services.Authentication.Application.Dtos.IdentityUserDtos.Models.Extended;
 using AppyNox.Services.Authentication.Application.Validators.IdentityUser;
+using AppyNox.Services.Authentication.Domain.Entities;
 using AppyNox.Services.Authentication.WebAPI.ControllerDependencies;
 using AppyNox.Services.Authentication.WebAPI.ExceptionExtensions.Base;
 using AppyNox.Services.Authentication.WebAPI.Filters;
@@ -143,7 +144,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
                 throw new FluentValidationException(typeof(IdentityUser), dtoValidationResult);
             }
 
-            var userEntity = _baseDependencies.Mapper.Map<IdentityUser>(registerDto);
+            var userEntity = _baseDependencies.Mapper.Map<ApplicationUser>(registerDto);
             var result = await _baseDependencies.UserValidator.ValidateAsync(_baseDependencies.UserManager, userEntity);
             if (!result.Succeeded)
             {
@@ -153,7 +154,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
                     ValidationFailure validationFailure = new(error.Code, error.Description);
                     validationResult.Errors.Add(validationFailure);
                 }
-                throw new FluentValidationException(typeof(IdentityUser), validationResult);
+                throw new FluentValidationException(typeof(ApplicationUser), validationResult);
             }
 
             var passwordResult = await _baseDependencies.PasswordValidator.ValidateAsync(_baseDependencies.UserManager, userEntity, registerDto.Password);
@@ -166,7 +167,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
                     ValidationFailure validationFailure = new(error.Code, error.Description);
                     validationResult.Errors.Add(validationFailure);
                 }
-                throw new FluentValidationException(typeof(IdentityUser), validationResult);
+                throw new FluentValidationException(typeof(ApplicationUser), validationResult);
             }
 
             userEntity.PasswordHash = _baseDependencies.PasswordHasher.HashPassword(userEntity, registerDto.Password);

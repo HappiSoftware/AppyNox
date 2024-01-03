@@ -7,7 +7,6 @@
     <LangVersion>preview</LangVersion>
   </PropertyGroup>
 
-
   <ItemGroup>
     <ProjectReference Include="..\..\.BaseService\AppyNox.Services.Base.Infrastructure\AppyNox.Services.Base.Infrastructure.csproj" />
     <ProjectReference Include="..\AppyNox.Services.Coupon.Domain\AppyNox.Services.Coupon.Domain.csproj" />

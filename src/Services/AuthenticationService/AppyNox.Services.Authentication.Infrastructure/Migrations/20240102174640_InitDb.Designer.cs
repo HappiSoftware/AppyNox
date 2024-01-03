@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AppyNox.Services.Authentication.Infrastructure.Migrations
 {
     [DbContext(typeof(IdentityDbContext))]
-    [Migration("20231222062509_SeedCouponPerms")]
-    partial class SeedCouponPerms
+    [Migration("20240102174640_InitDb")]
+    partial class InitDb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,172 +25,16 @@ namespace AppyNox.Services.Authentication.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
-                    b.Property<string>("NormalizedName")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedName")
-                        .IsUnique()
-                        .HasDatabaseName("RoleNameIndex");
-
-                    b.ToTable("AspNetRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "81b3d8ea-626e-457c-9e90-a2f2392fc811",
-                            Name = "Admin",
-                            NormalizedName = "ADMIN"
-                        });
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ClaimType")
-                        .HasColumnType("text");
-
-                    b.Property<string>("ClaimValue")
-                        .HasColumnType("text");
-
-                    b.Property<string>("RoleId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RoleId");
-
-                    b.ToTable("AspNetRoleClaims", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            ClaimType = "Permission",
-                            ClaimValue = "Users.View",
-                            RoleId = "81b3d8ea-626e-457c-9e90-a2f2392fc811"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            ClaimType = "Permission",
-                            ClaimValue = "Users.Create",
-                            RoleId = "81b3d8ea-626e-457c-9e90-a2f2392fc811"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            ClaimType = "Permission",
-                            ClaimValue = "Users.Edit",
-                            RoleId = "81b3d8ea-626e-457c-9e90-a2f2392fc811"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            ClaimType = "Permission",
-                            ClaimValue = "Users.Delete",
-                            RoleId = "81b3d8ea-626e-457c-9e90-a2f2392fc811"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            ClaimType = "Permission",
-                            ClaimValue = "Roles.View",
-                            RoleId = "81b3d8ea-626e-457c-9e90-a2f2392fc811"
-                        },
-                        new
-                        {
-                            Id = 6,
-                            ClaimType = "Permission",
-                            ClaimValue = "Roles.Create",
-                            RoleId = "81b3d8ea-626e-457c-9e90-a2f2392fc811"
-                        },
-                        new
-                        {
-                            Id = 7,
-                            ClaimType = "Permission",
-                            ClaimValue = "Roles.Edit",
-                            RoleId = "81b3d8ea-626e-457c-9e90-a2f2392fc811"
-                        },
-                        new
-                        {
-                            Id = 8,
-                            ClaimType = "Permission",
-                            ClaimValue = "Roles.Delete",
-                            RoleId = "81b3d8ea-626e-457c-9e90-a2f2392fc811"
-                        },
-                        new
-                        {
-                            Id = 9,
-                            ClaimType = "Permission",
-                            ClaimValue = "Roles.AssignPermission",
-                            RoleId = "81b3d8ea-626e-457c-9e90-a2f2392fc811"
-                        },
-                        new
-                        {
-                            Id = 10,
-                            ClaimType = "Permission",
-                            ClaimValue = "Roles.WithdrawPermission",
-                            RoleId = "81b3d8ea-626e-457c-9e90-a2f2392fc811"
-                        },
-                        new
-                        {
-                            Id = 11,
-                            ClaimType = "Permission",
-                            ClaimValue = "Coupons.View",
-                            RoleId = "81b3d8ea-626e-457c-9e90-a2f2392fc811"
-                        },
-                        new
-                        {
-                            Id = 12,
-                            ClaimType = "Permission",
-                            ClaimValue = "Coupons.Create",
-                            RoleId = "81b3d8ea-626e-457c-9e90-a2f2392fc811"
-                        },
-                        new
-                        {
-                            Id = 13,
-                            ClaimType = "Permission",
-                            ClaimValue = "Coupons.Edit",
-                            RoleId = "81b3d8ea-626e-457c-9e90-a2f2392fc811"
-                        },
-                        new
-                        {
-                            Id = 14,
-                            ClaimType = "Permission",
-                            ClaimValue = "Coupons.Delete",
-                            RoleId = "81b3d8ea-626e-457c-9e90-a2f2392fc811"
-                        });
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUser", b =>
+            modelBuilder.Entity("AppyNox.Services.Authentication.Domain.Entities.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("text");
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -238,6 +82,8 @@ namespace AppyNox.Services.Authentication.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CompanyId");
+
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
 
@@ -250,19 +96,201 @@ namespace AppyNox.Services.Authentication.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "3152a4bf-e990-44af-87d7-daba6f065834",
+                            Id = "a8bfc75b-2ac3-47e2-b013-8b8a1efba45d",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "ad440c35-b635-47c6-b17e-be7728cc903a",
+                            CompanyId = new Guid("221e8b2c-59d5-4e5b-b010-86c239b66738"),
+                            ConcurrencyStamp = "468c8d69-45fe-4ec7-a01b-f8d45ebc95c8",
                             Email = "admin@email.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@EMAIL.COM",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEHDxelvqUn2XgUwPsTWYh2MvjmqAI5YOp71HVvSxtIZguKEPqxTHDm6zVCoGmcwY9Q==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEL7Gq3iAfQONsdMxy9S61TFzNLFzZrvKGpDNN0797cq/oGYclbYydXc0nHxZVvvVww==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "5b8d5e3e-62a6-43e9-8aa2-8e333bb90a5b",
+                            SecurityStamp = "2422d31d-716c-4968-9108-a2b3f9602721",
                             TwoFactorEnabled = false,
                             UserName = "admin"
+                        });
+                });
+
+            modelBuilder.Entity("AppyNox.Services.Authentication.Domain.Entities.CompanyEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Companies");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("221e8b2c-59d5-4e5b-b010-86c239b66738"),
+                            Name = "HappiSoft"
+                        });
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex");
+
+                    b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "e24e99e7-00e4-4007-a042-565eac12d96d",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        });
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("text");
+
+                    b.Property<string>("RoleId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AspNetRoleClaims", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ClaimType = "Permission",
+                            ClaimValue = "Users.View",
+                            RoleId = "e24e99e7-00e4-4007-a042-565eac12d96d"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            ClaimType = "Permission",
+                            ClaimValue = "Users.Create",
+                            RoleId = "e24e99e7-00e4-4007-a042-565eac12d96d"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            ClaimType = "Permission",
+                            ClaimValue = "Users.Edit",
+                            RoleId = "e24e99e7-00e4-4007-a042-565eac12d96d"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            ClaimType = "Permission",
+                            ClaimValue = "Users.Delete",
+                            RoleId = "e24e99e7-00e4-4007-a042-565eac12d96d"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            ClaimType = "Permission",
+                            ClaimValue = "Roles.View",
+                            RoleId = "e24e99e7-00e4-4007-a042-565eac12d96d"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            ClaimType = "Permission",
+                            ClaimValue = "Roles.Create",
+                            RoleId = "e24e99e7-00e4-4007-a042-565eac12d96d"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            ClaimType = "Permission",
+                            ClaimValue = "Roles.Edit",
+                            RoleId = "e24e99e7-00e4-4007-a042-565eac12d96d"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            ClaimType = "Permission",
+                            ClaimValue = "Roles.Delete",
+                            RoleId = "e24e99e7-00e4-4007-a042-565eac12d96d"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            ClaimType = "Permission",
+                            ClaimValue = "Roles.AssignPermission",
+                            RoleId = "e24e99e7-00e4-4007-a042-565eac12d96d"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            ClaimType = "Permission",
+                            ClaimValue = "Roles.WithdrawPermission",
+                            RoleId = "e24e99e7-00e4-4007-a042-565eac12d96d"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            ClaimType = "Permission",
+                            ClaimValue = "Coupons.View",
+                            RoleId = "e24e99e7-00e4-4007-a042-565eac12d96d"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            ClaimType = "Permission",
+                            ClaimValue = "Coupons.Create",
+                            RoleId = "e24e99e7-00e4-4007-a042-565eac12d96d"
+                        },
+                        new
+                        {
+                            Id = 13,
+                            ClaimType = "Permission",
+                            ClaimValue = "Coupons.Edit",
+                            RoleId = "e24e99e7-00e4-4007-a042-565eac12d96d"
+                        },
+                        new
+                        {
+                            Id = 14,
+                            ClaimType = "Permission",
+                            ClaimValue = "Coupons.Delete",
+                            RoleId = "e24e99e7-00e4-4007-a042-565eac12d96d"
                         });
                 });
 
@@ -330,8 +358,8 @@ namespace AppyNox.Services.Authentication.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = "3152a4bf-e990-44af-87d7-daba6f065834",
-                            RoleId = "81b3d8ea-626e-457c-9e90-a2f2392fc811"
+                            UserId = "a8bfc75b-2ac3-47e2-b013-8b8a1efba45d",
+                            RoleId = "e24e99e7-00e4-4007-a042-565eac12d96d"
                         });
                 });
 
@@ -354,6 +382,17 @@ namespace AppyNox.Services.Authentication.Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("AppyNox.Services.Authentication.Domain.Entities.ApplicationUser", b =>
+                {
+                    b.HasOne("AppyNox.Services.Authentication.Domain.Entities.CompanyEntity", "Company")
+                        .WithMany("Users")
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Company");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -365,7 +404,7 @@ namespace AppyNox.Services.Authentication.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("AppyNox.Services.Authentication.Domain.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -374,7 +413,7 @@ namespace AppyNox.Services.Authentication.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("AppyNox.Services.Authentication.Domain.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -389,7 +428,7 @@ namespace AppyNox.Services.Authentication.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("AppyNox.Services.Authentication.Domain.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -398,11 +437,16 @@ namespace AppyNox.Services.Authentication.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("AppyNox.Services.Authentication.Domain.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("AppyNox.Services.Authentication.Domain.Entities.CompanyEntity", b =>
+                {
+                    b.Navigation("Users");
                 });
 #pragma warning restore 612, 618
         }

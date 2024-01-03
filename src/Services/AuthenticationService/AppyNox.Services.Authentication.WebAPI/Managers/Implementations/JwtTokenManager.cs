@@ -1,4 +1,5 @@
-﻿using AppyNox.Services.Authentication.WebAPI.Configuration;
+﻿using AppyNox.Services.Authentication.Domain.Entities;
+using AppyNox.Services.Authentication.WebAPI.Configuration;
 using AppyNox.Services.Authentication.WebAPI.ExceptionExtensions.Base;
 using AppyNox.Services.Authentication.WebAPI.Managers.Interfaces;
 using AutoWrapper.Wrappers;
@@ -14,12 +15,12 @@ namespace AppyNox.Services.Authentication.WebAPI.Managers.Implementations
     /// <summary>
     /// Manages the creation and validation of JWT tokens.
     /// </summary>
-    public class JwtTokenManager(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager,
+    public class JwtTokenManager(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager,
         JwtConfiguration jwtConfiguration, IConfiguration configuration) : ICustomTokenManager
     {
         #region [ Fields ]
 
-        private readonly UserManager<IdentityUser> _userManager = userManager;
+        private readonly UserManager<ApplicationUser> _userManager = userManager;
 
         private readonly RoleManager<IdentityRole> _roleManager = roleManager;
 

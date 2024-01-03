@@ -32,33 +32,22 @@ namespace AppyNox.Services.Coupon.Infrastructure.Data
 
         #region [ Protected Methods ]
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-                // Get environment
-                string? environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-
-                // Build config
-                IConfiguration config = new ConfigurationBuilder()
-                    .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "../AppyNox.Services.Coupon.WebAPI"))
-                    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                    .AddJsonFile($"appsettings.{environment}.json", optional: true)
-                    .AddEnvironmentVariables()
-                    .Build();
-                var connectionString = config.GetConnectionString("DefaultConnection");
-                optionsBuilder.UseNpgsql(connectionString);
-            }
-        }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
+            #region [ Common Ids ]
+
+            Guid couponDetailId = Guid.Parse("ec80532f-58f0-4690-b40c-2133b067d5f2");
+            Guid couponId1 = Guid.Parse("594cf045-3a2b-46f5-99c9-1eb59f035db2");
+            Guid couponId2 = Guid.Parse("c386aec2-dfd2-4ea5-b878-8fe5632e2e40");
+
+            #endregion
+
             #region [ Entity Configurations ]
 
-            modelBuilder.ApplyConfiguration(new CouponConfiguration());
-            modelBuilder.ApplyConfiguration(new CouponDetailConfiguration());
+            modelBuilder.ApplyConfiguration(new CouponConfiguration(couponId1, couponId2, couponDetailId));
+            modelBuilder.ApplyConfiguration(new CouponDetailConfiguration(couponDetailId));
 
             #endregion
         }
