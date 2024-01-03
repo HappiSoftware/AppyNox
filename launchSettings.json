@@ -6,7 +6,8 @@
       "serviceActions": {
         "appynox-services-authentication-webapi": "StartDebugging",
         "appynox-services-coupon-webapi": "StartDebugging",
-        "appynox-gateway-ocelotgateway": "StartDebugging"
+        "appynox-gateway-ocelotgateway": "StartDebugging",
+        "appynox.services.license.webapi": "StartDebugging"
       }
     }
   }

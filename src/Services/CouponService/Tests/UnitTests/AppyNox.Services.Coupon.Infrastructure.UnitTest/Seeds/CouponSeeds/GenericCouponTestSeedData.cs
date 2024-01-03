@@ -1,45 +1,28 @@
 ﻿using AppyNox.Services.Coupon.Domain.Entities;
 using AppyNox.Services.Coupon.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Principal;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Serialization;
 
 namespace AppyNox.Services.Coupon.Infrastructure.UnitTest.Seeds.CouponSeeds
 {
-    internal class GenericCouponTestSeedData
+    internal static class GenericCouponTestSeedData
     {
-        #region Properties
+        #region [ Properties ]
 
-        private static double _discountAmount { get; set; } = 10.0;
+        private static double DiscountAmount { get; set; } = 10.0;
 
-        private static int _minAmount { get; set; } = 100;
+        private static int MinAmount { get; set; } = 100;
 
-        private static int _codeIdentifier { get; set; } = 10;
-
-        #endregion
-
-        #region Internal Methods
-
-        internal static CouponEntity SeedOneCoupon(CouponDbContext context)
-        {
-            return CreateCoupons(context, 1, 1).First();
-        }
-
-        internal static IEnumerable<CouponEntity> SeedMultipleCoupons(CouponDbContext context, int couponSize, int couponDetailSize)
-        {
-            return CreateCoupons(context, couponSize, couponDetailSize);
-        }
+        private static int CodeIdentifier { get; set; } = 10;
 
         #endregion
 
-        #region Protected Methods
+        #region [ Protected Methods ]
 
-        protected static IEnumerable<CouponEntity> CreateCoupons(CouponDbContext context, int couponSize, int couponDetailSize)
+        internal static CouponEntity SeedOneCoupon(this CouponDbContext context)
+        {
+            return SeedMultipleCoupons(context, 1, 1).First();
+        }
+
+        internal static IEnumerable<CouponEntity> SeedMultipleCoupons(this CouponDbContext context, int couponSize, int couponDetailSize)
         {
             if (couponSize <= 0)
             {
@@ -56,7 +39,7 @@ namespace AppyNox.Services.Coupon.Infrastructure.UnitTest.Seeds.CouponSeeds
 
             #region [ CouponDetails ]
 
-            var codeIdentifier = _codeIdentifier;
+            var codeIdentifier = CodeIdentifier;
 
             for (int i = 0; i < couponDetailSize; i++)
             {
@@ -75,9 +58,9 @@ namespace AppyNox.Services.Coupon.Infrastructure.UnitTest.Seeds.CouponSeeds
 
             #region [ Coupons ]
 
-            var discountAmount = _discountAmount;
-            var minAmount = _minAmount;
-            codeIdentifier = _codeIdentifier;
+            var discountAmount = DiscountAmount;
+            var minAmount = MinAmount;
+            codeIdentifier = CodeIdentifier;
 
             for (int i = 0; i < couponSize; i++)
             {
@@ -99,30 +82,6 @@ namespace AppyNox.Services.Coupon.Infrastructure.UnitTest.Seeds.CouponSeeds
             #endregion
 
             return coupons;
-        }
-
-        #endregion
-
-        #region Public Methods
-
-        public static CouponEntity CreateCoupon()
-        {
-            var couponDetail = new CouponDetailEntity
-            {
-                Id = Guid.NewGuid(),
-                Code = $"EXE10",
-                Detail = $"DescriptionCouponDetail"
-            };
-
-            return new CouponEntity
-            {
-                Id = Guid.NewGuid(),
-                Code = $"EXT10",
-                Description = $"DescriptionCoupon",
-                DiscountAmount = 10.5,
-                MinAmount = 100,
-                CouponDetailEntityId = couponDetail.Id
-            };
         }
 
         #endregion

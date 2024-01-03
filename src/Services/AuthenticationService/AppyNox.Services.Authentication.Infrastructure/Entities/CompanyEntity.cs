@@ -1,4 +1,4 @@
-﻿namespace AppyNox.Services.Authentication.Domain.Entities
+﻿namespace AppyNox.Services.Authentication.Infrastructure.Entities
 {
     public class CompanyEntity
     {

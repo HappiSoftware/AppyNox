@@ -60,8 +60,6 @@ services:
       POSTGRES_PASSWORD: coupon_password
     volumes:
       - app_data:/var/lib/coupondb/data
-    ports:
-      - "5434:5432"
 
   appynox-services-coupon-webapi:
     image: ${DOCKER_REGISTRY-}appynoxservicescouponwebapi
@@ -72,6 +70,31 @@ services:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://+:7002
       - WAIT_HOSTS=appynox-coupon-db:5432
+      - WAIT_TIMEOUT=300
+      - WAIT_SLEEP_INTERVAL=30
+      - WAIT_HOST_CONNECT_TIMEOUT=30
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+
+  appynox-license-db:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: AppyNox_License
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: license_password
+    volumes:
+      - app_data:/var/lib/licensedb/data
+
+  appynox-services-license-webapi:
+    image: ${DOCKER_REGISTRY-}appynoxserviceslicensewebapi
+    depends_on:
+      - appynox-consul
+      - appynox-license-db
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:7003
+      - WAIT_HOSTS=appynox-license-db:5432
       - WAIT_TIMEOUT=300
       - WAIT_SLEEP_INTERVAL=30
       - WAIT_HOST_CONNECT_TIMEOUT=30

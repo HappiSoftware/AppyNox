@@ -10,8 +10,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Winton.Extensions.Configuration.Consul;
-using AppyNox.Services.Base.Infrastructure.Helpers;
 
 namespace AppyNox.Services.Coupon.Infrastructure
 {

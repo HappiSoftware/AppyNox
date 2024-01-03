@@ -38,6 +38,21 @@ services:
       timeout: 5s
       retries: 20
 
+  appynox-license-db:
+    environment:
+      POSTGRES_DB: AppyNox_License_Test
+      POSTGRES_PASSWORD: license_password
+    restart: always
+    ports:
+      - "5436:5432" # allow external access to be able to set the DbContext to assert tests
+    networks:
+      - integration-test
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
   appynox-consul:
     networks:
       - integration-test
@@ -57,12 +72,12 @@ services:
       - ./ssl:/https2
     networks:
       - integration-test
+    restart: always
     healthcheck:
       test: ["CMD-SHELL", "curl --fail https://appynox-gateway-ocelotgateway:7000/health || exit 1"]
       interval: 5s
       timeout: 5s
       retries: 20
-    restart: always
 
   appynox-services-coupon-webapi:
     environment:
@@ -70,7 +85,7 @@ services:
     networks:
       - integration-test
     healthcheck:
-      test: ["CMD-SHELL", "curl --fail http://appynox-services-coupon-webapi:7002/api/health || exit 1"]
+      test: ["CMD-SHELL", "curl --fail https://appynox-gateway-coupon:7002/health || exit 1"]
       interval: 5s
       timeout: 5s
       retries: 20
@@ -80,3 +95,19 @@ services:
       - ASPNETCORE_ENVIRONMENT=Staging
     networks:
       - integration-test
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail https://appynox-gateway-authentication:7001/health || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  appynox-services-license-webapi:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Staging
+    networks:
+      - integration-test
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail https://appynox-gateway-license:7003/health || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 20 

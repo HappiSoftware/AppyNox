@@ -1,15 +1,10 @@
 ﻿using AppyNox.Services.Coupon.Application.Dtos.DtoUtilities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AppyNox.Services.Coupon.Application.UnitTest.DtoTests.Fixtures
 {
     public class DtoMappingRegistryFixture : IDisposable
     {
-        #region Public Constructors
+        #region [ Public Constructors ]
 
         public DtoMappingRegistryFixture()
         {
@@ -18,13 +13,13 @@ namespace AppyNox.Services.Coupon.Application.UnitTest.DtoTests.Fixtures
 
         #endregion
 
-        #region Properties
+        #region [ Properties ]
 
         public DtoMappingRegistry Registry { get; }
 
         #endregion
 
-        #region Public Methods
+        #region [ Public Methods ]
 
         public void Dispose()
         {

@@ -1,5 +1,15 @@
-﻿using Ductus.FluentDocker.Services;
+﻿using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
+using AppyNox.Services.Base.IntegrationTests.Helpers;
+using AppyNox.Services.Base.IntegrationTests.URIs;
+using AutoWrapper.Server;
+using AutoWrapper.Wrappers;
+using Ductus.FluentDocker.Services;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Serilog;
+using System.Net.Http.Headers;
+using System.Text;
+using System.Text.Json;
 
 namespace AppyNox.Services.Base.IntegrationTests.Ductus
 {
@@ -10,16 +20,25 @@ namespace AppyNox.Services.Base.IntegrationTests.Ductus
     {
         #region [ Fields ]
 
+        public readonly JsonSerializerOptions JsonSerializerOptions;
+
         protected ICompositeService? CompositeService;
 
         protected IHostService? DockerHost;
 
-        private static readonly ILogger _logger = LoggerFactory.Create(builder =>
-        {
-            builder.AddConsole();
-        }).CreateLogger<DockerComposeTestBase>();
-
         private bool _disposed;
+
+        #endregion
+
+        #region [ Properties ]
+
+        public HttpClient Client { get; private set; }
+
+        public string BearerToken { get; private set; } = string.Empty;
+
+        public ServiceURIs ServiceURIs { get; private set; }
+
+        protected NoxLogger Logger { get; private set; }
 
         #endregion
 
@@ -30,12 +49,29 @@ namespace AppyNox.Services.Base.IntegrationTests.Ductus
         /// </summary>
         protected DockerComposeTestBase()
         {
+            var loggerFactory = LoggerFactory.Create(builder =>
+            {
+                builder.AddSerilog();
+            });
+            var logger = loggerFactory.CreateLogger<INoxLogger>();
+            Logger = new NoxLogger(logger, "DockerComposeTestBase");
+
+            ServiceURIs = IntegrationTestHelpers.GetConfiguration("serviceuris").GetSection("ServiceUris").Get<ServiceURIs>()
+                          ?? throw new InvalidOperationException("Service URIs configuration section is missing or invalid.");
+
+            Client = new HttpClient { BaseAddress = new(ServiceURIs.GatewayURI) };
+
+            JsonSerializerOptions = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+
             EnsureDockerHost();
         }
 
         #endregion
 
-        #region Public Methods
+        #region [ Public Methods ]
 
         /// <summary>
         /// Disposes resources used by the test, handling container teardown.
@@ -66,9 +102,24 @@ namespace AppyNox.Services.Base.IntegrationTests.Ductus
         /// <summary>
         /// Initializes the Docker Compose environment for testing.
         /// </summary>
-        protected void Initialize()
+        protected void Initialize(IConfigurationRoot configurationRoot)
         {
-            _logger.LogInformation("{Message}", "Initializing Docker Compose Test Base");
+            #region [ Logger ]
+
+            Log.Logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(configurationRoot)
+                .CreateLogger();
+
+            var loggerFactory = LoggerFactory.Create(builder =>
+            {
+                builder.AddSerilog();
+            });
+            var logger = loggerFactory.CreateLogger<INoxLogger>();
+            Logger = new NoxLogger(logger, "CouponIntegrationTestHost");
+
+            #endregion
+
+            Logger.LogInformation("Initializing Docker Compose Test Base");
             CompositeService = Build();
             try
             {
@@ -76,7 +127,7 @@ namespace AppyNox.Services.Base.IntegrationTests.Ductus
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error starting docker compose");
+                Logger.LogError(ex, "Error starting docker compose");
 
                 CompositeService.Dispose();
                 throw;
@@ -101,6 +152,64 @@ namespace AppyNox.Services.Base.IntegrationTests.Ductus
                 DockerHost?.Dispose();
             }
             _disposed = true;
+        }
+
+        protected async Task WaitForServicesHealth(string healthUri, int maxAttempts = 10)
+        {
+            int attempts = 0;
+            while (attempts < maxAttempts)
+            {
+                try
+                {
+                    Logger.LogInformation($"Checking service health at '{healthUri}'");
+                    var response = await Client.GetAsync(healthUri);
+                    var responseContent = await response.Content.ReadAsStringAsync();
+                    Logger.LogInformation($"Response: {responseContent}");
+                    if (response.IsSuccessStatusCode)
+                    {
+                        return; // Service is healthy, exit the loop
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Logger.LogError(ex, "Error while checking service health");
+                }
+
+                await Task.Delay(TimeSpan.FromSeconds(10));
+                attempts++;
+            }
+
+            Logger.LogWarning($"Service did not become healthy in time '{healthUri}'");
+            throw new Exception($"Service did not become healthy in time '{healthUri}'");
+        }
+
+        protected async Task AuthenticateAndGetToken()
+        {
+            var authUri = ServiceURIs.AuthenticationServiceURI + "/authentication/connect/token";
+            var content = new StringContent(
+                JsonSerializer.Serialize(new { userName = "admin", password = "Admin@123" }),
+                Encoding.UTF8,
+                "application/json"
+            );
+
+            var response = await Client.PostAsync(authUri, content);
+            response.EnsureSuccessStatusCode();
+
+            var responseString = await response.Content.ReadAsStringAsync();
+            var apiResponse = Unwrapper.Unwrap<ApiResponse>(responseString);
+
+            if (apiResponse?.Result is JsonElement resultElement &&
+                resultElement.TryGetProperty("token", out JsonElement tokenElement))
+            {
+                BearerToken = tokenElement.GetString() ?? throw new Exception("Token was null");
+            }
+            else
+            {
+                throw new Exception("Authentication failed or token was not found in the response.");
+            }
+
+            Client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", BearerToken);
         }
 
         #endregion

@@ -1,9 +1,6 @@
-﻿using AppyNox.Services.Base.Infrastructure.Services;
-using AppyNox.Services.Coupon.Domain.Entities;
+﻿using AppyNox.Services.Coupon.Domain.Entities;
 using AppyNox.Services.Coupon.Infrastructure.Data.Configurations;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using System.Reflection.Emit;
 
 namespace AppyNox.Services.Coupon.Infrastructure.Data
 {
