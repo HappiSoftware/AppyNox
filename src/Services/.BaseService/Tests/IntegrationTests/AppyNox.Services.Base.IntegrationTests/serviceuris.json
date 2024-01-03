@@ -4,6 +4,8 @@
     "CouponServiceURI": "coupon-service",
     "CouponServiceHealthURI": "coupon-service/health",
     "AuthenticationServiceURI": "authentication-service",
-    "AuthenticationServiceHealthURI": "authentication-service/health"
+    "AuthenticationServiceHealthURI": "authentication-service/health",
+    "LicenseServiceURI": "license-service",
+    "LicenseServiceHealthURI": "license-service/health"
   }
 }

@@ -22,7 +22,7 @@ namespace AppyNox.Services.Authentication.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("AppyNox.Services.Authentication.Domain.Entities.ApplicationUser", b =>
+            modelBuilder.Entity("AppyNox.Services.Authentication.Infrastructure.Entities.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("text");
@@ -96,21 +96,21 @@ namespace AppyNox.Services.Authentication.Infrastructure.Migrations
                             Id = "a8bfc75b-2ac3-47e2-b013-8b8a1efba45d",
                             AccessFailedCount = 0,
                             CompanyId = new Guid("221e8b2c-59d5-4e5b-b010-86c239b66738"),
-                            ConcurrencyStamp = "468c8d69-45fe-4ec7-a01b-f8d45ebc95c8",
+                            ConcurrencyStamp = "dd18ed19-3270-4a56-912d-14ed510d1241",
                             Email = "admin@email.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@EMAIL.COM",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEL7Gq3iAfQONsdMxy9S61TFzNLFzZrvKGpDNN0797cq/oGYclbYydXc0nHxZVvvVww==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEItvSgepnZq435JezINsA1qbaO7HGt4cAGo1BGcBzFiNHkkvNBT+FZMzpNXsje89cg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "2422d31d-716c-4968-9108-a2b3f9602721",
+                            SecurityStamp = "bf6452e2-04be-4bbe-9292-4baae1cf7d36",
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         });
                 });
 
-            modelBuilder.Entity("AppyNox.Services.Authentication.Domain.Entities.CompanyEntity", b =>
+            modelBuilder.Entity("AppyNox.Services.Authentication.Infrastructure.Entities.CompanyEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -288,6 +288,34 @@ namespace AppyNox.Services.Authentication.Infrastructure.Migrations
                             ClaimType = "Permission",
                             ClaimValue = "Coupons.Delete",
                             RoleId = "e24e99e7-00e4-4007-a042-565eac12d96d"
+                        },
+                        new
+                        {
+                            Id = 15,
+                            ClaimType = "Permission",
+                            ClaimValue = "Licenses.View",
+                            RoleId = "e24e99e7-00e4-4007-a042-565eac12d96d"
+                        },
+                        new
+                        {
+                            Id = 16,
+                            ClaimType = "Permission",
+                            ClaimValue = "Licenses.Create",
+                            RoleId = "e24e99e7-00e4-4007-a042-565eac12d96d"
+                        },
+                        new
+                        {
+                            Id = 17,
+                            ClaimType = "Permission",
+                            ClaimValue = "Licenses.Edit",
+                            RoleId = "e24e99e7-00e4-4007-a042-565eac12d96d"
+                        },
+                        new
+                        {
+                            Id = 18,
+                            ClaimType = "Permission",
+                            ClaimValue = "Licenses.Delete",
+                            RoleId = "e24e99e7-00e4-4007-a042-565eac12d96d"
                         });
                 });
 
@@ -379,9 +407,9 @@ namespace AppyNox.Services.Authentication.Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("AppyNox.Services.Authentication.Domain.Entities.ApplicationUser", b =>
+            modelBuilder.Entity("AppyNox.Services.Authentication.Infrastructure.Entities.ApplicationUser", b =>
                 {
-                    b.HasOne("AppyNox.Services.Authentication.Domain.Entities.CompanyEntity", "Company")
+                    b.HasOne("AppyNox.Services.Authentication.Infrastructure.Entities.CompanyEntity", "Company")
                         .WithMany("Users")
                         .HasForeignKey("CompanyId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -401,7 +429,7 @@ namespace AppyNox.Services.Authentication.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("AppyNox.Services.Authentication.Domain.Entities.ApplicationUser", null)
+                    b.HasOne("AppyNox.Services.Authentication.Infrastructure.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -410,7 +438,7 @@ namespace AppyNox.Services.Authentication.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("AppyNox.Services.Authentication.Domain.Entities.ApplicationUser", null)
+                    b.HasOne("AppyNox.Services.Authentication.Infrastructure.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -425,7 +453,7 @@ namespace AppyNox.Services.Authentication.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("AppyNox.Services.Authentication.Domain.Entities.ApplicationUser", null)
+                    b.HasOne("AppyNox.Services.Authentication.Infrastructure.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -434,14 +462,14 @@ namespace AppyNox.Services.Authentication.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("AppyNox.Services.Authentication.Domain.Entities.ApplicationUser", null)
+                    b.HasOne("AppyNox.Services.Authentication.Infrastructure.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("AppyNox.Services.Authentication.Domain.Entities.CompanyEntity", b =>
+            modelBuilder.Entity("AppyNox.Services.Authentication.Infrastructure.Entities.CompanyEntity", b =>
                 {
                     b.Navigation("Users");
                 });

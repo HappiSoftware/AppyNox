@@ -17,6 +17,10 @@
 
         public string AuthenticationServiceHealthURI { get; set; } = string.Empty;
 
+        public string LicenseServiceURI { get; set; } = string.Empty;
+
+        public string LicenseServiceHealthURI { get; set; } = string.Empty;
+
         #endregion
     }
 }

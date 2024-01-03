@@ -1,36 +1,26 @@
 ﻿using AppyNox.Services.Base.Application.Helpers;
+using AppyNox.Services.Base.Application.UnitTests.ServiceTests;
 using AppyNox.Services.Base.Domain.Common;
 using AppyNox.Services.Base.Infrastructure.Repositories.Common;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.DetailLevel;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
-using AppyNox.Services.Coupon.Application.Services.Implementations;
-using AppyNox.Services.Coupon.Application.UnitTest.ServiceTests.Fixtures;
 using AppyNox.Services.Coupon.Domain.Entities;
 using FluentValidation;
 using FluentValidation.Results;
-using Microsoft.Win32;
 using Moq;
-using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
 using System.Text.Json;
-using System.Text.Json.Nodes;
-using System.Threading.Tasks;
 
 namespace AppyNox.Services.Coupon.Application.UnitTest.ServiceTests.Services
 {
     public class GenericServiceUnitTests : IClassFixture<ServiceFixture<CouponEntity>>
     {
-        #region Fields
+        #region [ Fields ]
 
         private readonly ServiceFixture<CouponEntity> _fixture;
 
         #endregion
 
-        #region Public Constructors
+        #region [ Public Constructors ]
 
         public GenericServiceUnitTests(ServiceFixture<CouponEntity> fixture)
         {
@@ -41,7 +31,7 @@ namespace AppyNox.Services.Coupon.Application.UnitTest.ServiceTests.Services
             _fixture.MockDtoMappingRegistry.Setup(registry => registry.GetDtoType(DtoLevelMappingTypes.Create, typeof(CouponEntity), CouponCreateDetailLevel.Simple.GetDisplayName()))
                 .Returns(typeof(CouponSimpleCreateDto));
 
-            _fixture.MockDtoMappingRegistry.Setup(registry => registry.GetDtoType(DtoLevelMappingTypes.Update, typeof(CouponEntity), CouponCreateDetailLevel.Simple.GetDisplayName()))
+            _fixture.MockDtoMappingRegistry.Setup(registry => registry.GetDtoType(DtoLevelMappingTypes.Update, typeof(CouponEntity), CouponUpdateDetailLevel.Simple.GetDisplayName()))
                 .Returns(typeof(CouponSimpleUpdateDto));
 
             var validatorMock = new Mock<IValidator<CouponSimpleCreateDto>>();
@@ -61,7 +51,7 @@ namespace AppyNox.Services.Coupon.Application.UnitTest.ServiceTests.Services
 
         #endregion
 
-        #region Public Methods
+        #region [ Public Methods ]
 
         [Fact]
         public async void GetAllAsync_ShouldReturnData()

@@ -1,5 +1,5 @@
 using AppyNox.Services.Authentication.Application;
-using AppyNox.Services.Authentication.Domain.Entities;
+using AppyNox.Services.Authentication.Infrastructure.Entities;
 using AppyNox.Services.Authentication.Infrastructure;
 using AppyNox.Services.Authentication.Infrastructure.Data;
 using AppyNox.Services.Authentication.WebAPI.Configuration;

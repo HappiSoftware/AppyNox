@@ -422,6 +422,25 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
           "PeriodTimespan": 3,
           "Limit": 5
         }
+      },
+      {
+        "UseServiceDiscovery": true,
+        "ServiceName": "LicenseService",
+
+        "DownstreamPathTemplate": "/api/{everything}",
+        "DownstreamScheme": "http",
+
+        "UpstreamPathTemplate": "/license-service/{everything}",
+        "UpstreamHttpMethod": ["Get", "Post", "Delete", "Put"],
+        "UpstreamScheme": "https",
+
+        "RateLimitOptions": {
+          "ClientWhitelist": [],
+          "EnableRateLimiting": true,
+          "Period": "3s",
+          "PeriodTimespan": 3,
+          "Limit": 5
+        }
       }
     ]
   }
@@ -500,6 +519,25 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
           "PeriodTimespan": 3,
           "Limit": 5
         }
+      },
+      {
+        "UseServiceDiscovery": true,
+        "ServiceName": "LicenseService",
+
+        "DownstreamPathTemplate": "/api/{everything}",
+        "DownstreamScheme": "http",
+
+        "UpstreamPathTemplate": "/license-service/{everything}",
+        "UpstreamHttpMethod": ["Get", "Post", "Delete", "Put"],
+        "UpstreamScheme": "https",
+
+        "RateLimitOptions": {
+          "ClientWhitelist": [],
+          "EnableRateLimiting": true,
+          "Period": "3s",
+          "PeriodTimespan": 3,
+          "Limit": 5
+        }
       }
     ]
   }
@@ -529,7 +567,6 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
     },
     "Routes": [
       {
-        // Special route for /health to bypass Ocelot
         "DownstreamPathTemplate": "/health",
         "UpstreamPathTemplate": "/health",
         "UpstreamHttpMethod": ["Get"],
@@ -540,7 +577,7 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
             "Port": 443
           }
         ],
-        "Priority": 1 // High priority to ensure it takes precedence
+        "Priority": 1
       },
       {
         "UseServiceDiscovery": true,
@@ -569,6 +606,25 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
         "DownstreamScheme": "http",
 
         "UpstreamPathTemplate": "/coupon-service/{everything}",
+        "UpstreamHttpMethod": ["Get", "Post", "Delete", "Put"],
+        "UpstreamScheme": "https",
+
+        "RateLimitOptions": {
+          "ClientWhitelist": [],
+          "EnableRateLimiting": true,
+          "Period": "3s",
+          "PeriodTimespan": 3,
+          "Limit": 5
+        }
+      },
+      {
+        "UseServiceDiscovery": true,
+        "ServiceName": "LicenseService",
+
+        "DownstreamPathTemplate": "/api/{everything}",
+        "DownstreamScheme": "http",
+
+        "UpstreamPathTemplate": "/license-service/{everything}",
         "UpstreamHttpMethod": ["Get", "Post", "Delete", "Put"],
         "UpstreamScheme": "https",
 
@@ -687,6 +743,179 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
   },
   "ConsulConfig": {
     "Address": "http://appynox-consul:8500"
+  }
+}
+```
+
+</details>
+
+</details>
+
+<br>
+<!--Below is License Service-->
+
+<details>
+    <summary>License Service</summary>
+
+<details>
+    <summary>appsettings.Development.json Example</summary>
+
+```json
+{
+  "Serilog": {
+    "Using": ["Serilog.Sinks.Console", "Serilog.Sinks.Debug"],
+    "MinimumLevel": {
+      "Default": "Debug",
+      "Override": {
+        "Microsoft": "Information",
+        "System": "Information"
+      }
+    },
+    "WriteTo": [
+      {
+        "Name": "Console",
+        "Args": {
+          "outputTemplate": "[{Timestamp:dd-MM-yyyy HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}"
+        }
+      },
+      {
+        "Name": "Debug",
+        "Args": { "restrictedToMinimumLevel": "Debug" }
+      }
+    ],
+    "Enrich": ["FromLogContext"]
+  },
+  "ConnectionStrings": {
+    "DevelopmentConnection": "User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_License;Pooling=true",
+    "DefaultConnection": "User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_License;Pooling=true"
+  },
+  "JwtSettings": {
+    "SecretKey": "vA+A/of8yadsbwe/CmS6PD0Kp837BozrQFMDuQ2Kwwg=",
+    "Issuer": "AuthServerV1",
+    "Audience": "AppyNoxBasic"
+  },
+  "ConsulConfig": {
+    "Address": "http://localhost:8500"
+  },
+  "Consul": {
+    "ServiceId": "LicenseService",
+    "ServiceName": "LicenseService",
+    "Scheme": "http",
+    "ServiceHost": "localhost",
+    "ServicePort": "7003",
+    "Tags": ["License", "Licensing"],
+    "HealthCheckUrl": "health",
+    "HealthCheckIntervalSeconds": 30,
+    "HealthCheckTimeoutSeconds": 5
+  }
+}
+```
+
+</details>
+
+<details>
+    <summary>appsettings.Staging.json Example</summary>
+
+```json
+{
+  "Serilog": {
+    "Using": ["Serilog.Sinks.Console", "Serilog.Sinks.File"],
+    "MinimumLevel": {
+      "Default": "Information",
+      "Override": {
+        "Microsoft": "Warning",
+        "System": "Error"
+      }
+    },
+    "WriteTo": [
+      { "Name": "Console" },
+      {
+        "Name": "File",
+        "Args": {
+          "path": "Logs/staging-log-.txt",
+          "rollingInterval": "Day"
+        }
+      }
+    ],
+    "Enrich": ["FromLogContext"]
+  },
+  "ConnectionStrings": {
+    "StagingConnection": "User ID=postgres;Password=license_password;Server=appynox-license-db;Port=5432;Database=AppyNox_License_Test",
+    "DefaultConnection": "User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_License_Test",
+    "TestConnection": "User ID=postgres;Password=license_password;Server=localhost;Port=5436;Database=AppyNox_License_Test"
+  },
+  "JwtSettings": {
+    "SecretKey": "vA+A/of8yadsbwe/CmS6PD0Kp837BozrQFMDuQ2Kwwg=",
+    "Issuer": "AuthServerV1",
+    "Audience": "AppyNoxBasic"
+  },
+  "ConsulConfig": {
+    "Address": "http://appynox-consul:8500"
+  },
+  "Consul": {
+    "ServiceId": "LicenseService",
+    "ServiceName": "LicenseService",
+    "Scheme": "http",
+    "ServiceHost": "appynox-services-license-webapi",
+    "ServicePort": "7003",
+    "Tags": ["License", "Licensing"],
+    "HealthCheckUrl": "health",
+    "HealthCheckIntervalSeconds": 30,
+    "HealthCheckTimeoutSeconds": 5
+  }
+}
+```
+
+</details>
+
+<details>
+    <summary>appsettings.Production.json Example</summary>
+
+```json
+{
+  "Serilog": {
+    "Using": ["Serilog.Sinks.Console", "Serilog.Sinks.File"],
+    "MinimumLevel": {
+      "Default": "Warning",
+      "Override": {
+        "Microsoft": "Error",
+        "System": "Error"
+      }
+    },
+    "WriteTo": [
+      { "Name": "Console" },
+      {
+        "Name": "File",
+        "Args": {
+          "path": "Logs/production-log-.txt",
+          "rollingInterval": "Day"
+        }
+      }
+    ],
+    "Enrich": ["FromLogContext"]
+  },
+  "ConnectionStrings": {
+    "ProductionConnection": "User ID=postgres;Password=license_password;Server=appynox-license-db;Port=5432;Database=AppyNox_License",
+    "DefaultConnection": "User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_License;Pooling=true"
+  },
+  "JwtSettings": {
+    "SecretKey": "vA+A/of8yadsbwe/CmS6PD0Kp837BozrQFMDuQ2Kwwg=",
+    "Issuer": "AuthServerV1",
+    "Audience": "AppyNoxBasic"
+  },
+  "ConsulConfig": {
+    "Address": "http://appynox-consul:8500"
+  },
+  "Consul": {
+    "ServiceId": "LicenseService",
+    "ServiceName": "LicenseService",
+    "Scheme": "http",
+    "ServiceHost": "appynox-services-license-webapi",
+    "ServicePort": "7003",
+    "Tags": ["License", "Licensing"],
+    "HealthCheckUrl": "health",
+    "HealthCheckIntervalSeconds": 30,
+    "HealthCheckTimeoutSeconds": 5
   }
 }
 ```

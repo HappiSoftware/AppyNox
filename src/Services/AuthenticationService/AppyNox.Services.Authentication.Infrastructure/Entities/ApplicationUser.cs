@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AppyNox.Services.Authentication.Domain.Entities
+namespace AppyNox.Services.Authentication.Infrastructure.Entities
 {
     public class ApplicationUser : IdentityUser
     {

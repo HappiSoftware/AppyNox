@@ -1,23 +1,35 @@
 ﻿using AppyNox.Services.Base.Infrastructure.ExceptionExtensions;
 using AppyNox.Services.Base.Infrastructure.Repositories;
 using AppyNox.Services.Base.Infrastructure.Repositories.Common;
+using AppyNox.Services.Base.Infrastructure.UnitTests.Fixtures;
+using AppyNox.Services.Base.Infrastructure.UnitTests.Stubs;
 using AppyNox.Services.Coupon.Domain.Entities;
+using AppyNox.Services.Coupon.Infrastructure.Data;
 using AppyNox.Services.Coupon.Infrastructure.Repositories;
-using Xunit.Extensions.Ordering;
+using AppyNox.Services.Coupon.Infrastructure.UnitTest.Seeds.CouponSeeds;
 
 namespace AppyNox.Services.Coupon.Infrastructure.UnitTest.RepositoryTests
 {
-    public class GenericRepositoryTests : InfrastructureTestBase, IDisposable
+    public class GenericRepositoryTests(RepositoryFixture fixture) : IClassFixture<RepositoryFixture>
     {
+        #region [ Fields ]
+
+        private readonly RepositoryFixture _fixture = fixture;
+
+        private readonly NoxInfrastructureLoggerStub _noxLoggerStub = fixture.NoxLoggerStub;
+
+        #endregion
+
         #region [ CRUD Methods ]
 
         #region [ Read ]
 
-        [Fact, Order(1)]
+        [Fact]
         public async Task GetAllAsync_ShouldReturnEntity()
         {
-            RaiseSeedOneCoupon(_context);
-            var repository = new GenericRepository<CouponEntity>(_context, _noxLoggerStub);
+            CouponDbContext context = _fixture.CreateDatabaseContext<CouponDbContext>();
+            context.SeedOneCoupon();
+            var repository = new GenericRepository<CouponEntity>(context, _noxLoggerStub);
             QueryParameters queryParameters = new()
             {
                 Access = string.Empty,
@@ -33,11 +45,12 @@ namespace AppyNox.Services.Coupon.Infrastructure.UnitTest.RepositoryTests
             Assert.Single(result);
         }
 
-        [Fact, Order(2)]
+        [Fact]
         public async Task GetAllAsync_ShouldPaginationReturnTwo()
         {
-            RaiseSeedMultipleCoupons(_context, 2, 1);
-            var repository = new GenericRepository<CouponEntity>(_context, _noxLoggerStub);
+            CouponDbContext context = _fixture.CreateDatabaseContext<CouponDbContext>();
+            context.SeedMultipleCoupons(2, 1);
+            var repository = new GenericRepository<CouponEntity>(context, _noxLoggerStub);
             QueryParameters queryParameters = new()
             {
                 Access = string.Empty,
@@ -53,13 +66,14 @@ namespace AppyNox.Services.Coupon.Infrastructure.UnitTest.RepositoryTests
             Assert.Equal(2, result.Count());
         }
 
-        [Fact, Order(3)]
+        [Fact]
         public async Task GetAllAsync_ShouldPaginationReturnCorrectEntity()
         {
-            var coupons = RaiseSeedMultipleCoupons(_context, 2, 1);
+            CouponDbContext context = _fixture.CreateDatabaseContext<CouponDbContext>();
+            var coupons = context.SeedMultipleCoupons(2, 1);
             Assert.NotNull(coupons);
 
-            var repository = new GenericRepository<CouponEntity>(_context, _noxLoggerStub);
+            var repository = new GenericRepository<CouponEntity>(context, _noxLoggerStub);
             QueryParameters queryParameters = new()
             {
                 Access = string.Empty,
@@ -71,17 +85,20 @@ namespace AppyNox.Services.Coupon.Infrastructure.UnitTest.RepositoryTests
             var projection = repository.CreateProjection(propertyNames);
             var result = await repository.GetAllAsync(queryParameters, projection);
 
+            var test = context.Coupons.ToList();
+
             Assert.NotNull(result);
             Assert.Single(result);
             Assert.Equal(coupons.Last().Id, ((CouponEntity)result.First()).Id);
             Assert.Equal(coupons.Last().Code, ((CouponEntity)result.First()).Code);
         }
 
-        [Fact, Order(4)]
+        [Fact]
         public async Task GetAllAsync_ShouldPaginationReturnFifty()
         {
-            RaiseSeedMultipleCoupons(_context, 50, 5);
-            var repository = new GenericRepository<CouponEntity>(_context, _noxLoggerStub);
+            CouponDbContext context = _fixture.CreateDatabaseContext<CouponDbContext>();
+            context.SeedMultipleCoupons(50, 5);
+            var repository = new GenericRepository<CouponEntity>(context, _noxLoggerStub);
             QueryParameters queryParameters = new()
             {
                 Access = string.Empty,
@@ -97,13 +114,14 @@ namespace AppyNox.Services.Coupon.Infrastructure.UnitTest.RepositoryTests
             Assert.Equal(50, result.Count());
         }
 
-        [Fact, Order(5)]
+        [Fact]
         public async Task GetAllAsync_ShouldPaginationReturnFiftyAndCorrectEntities()
         {
-            var coupons = RaiseSeedMultipleCoupons(_context, 50, 5);
+            CouponDbContext context = _fixture.CreateDatabaseContext<CouponDbContext>();
+            var coupons = context.SeedMultipleCoupons(50, 5);
             Assert.NotNull(coupons);
 
-            var repository = new GenericRepository<CouponEntity>(_context, _noxLoggerStub);
+            var repository = new GenericRepository<CouponEntity>(context, _noxLoggerStub);
             QueryParameters queryParameters = new()
             {
                 Access = string.Empty,
@@ -128,13 +146,14 @@ namespace AppyNox.Services.Coupon.Infrastructure.UnitTest.RepositoryTests
             }
         }
 
-        [Fact, Order(6)]
+        [Fact]
         public async Task GetByIdAsync_ShouldReturnEntity()
         {
-            var existingCoupon = RaiseSeedOneCoupon(_context);
+            CouponDbContext context = _fixture.CreateDatabaseContext<CouponDbContext>();
+            var existingCoupon = context.SeedOneCoupon();
             Assert.NotNull(existingCoupon);
 
-            var repository = new GenericRepository<CouponEntity>(_context, _noxLoggerStub);
+            var repository = new GenericRepository<CouponEntity>(context, _noxLoggerStub);
             var propertyNames = typeof(CouponEntity).GetProperties().Select(p => p.Name).ToList();
             var projection = repository.CreateProjection(propertyNames);
             var result = await repository.GetByIdAsync(existingCoupon.Id, projection);
@@ -142,13 +161,14 @@ namespace AppyNox.Services.Coupon.Infrastructure.UnitTest.RepositoryTests
             Assert.NotNull(result);
         }
 
-        [Fact, Order(7)]
+        [Fact]
         public async Task GetByIdAsync_ShouldValuesBeCorrect()
         {
-            var existingCoupon = RaiseSeedOneCoupon(_context);
+            CouponDbContext context = _fixture.CreateDatabaseContext<CouponDbContext>();
+            var existingCoupon = context.SeedOneCoupon();
             Assert.NotNull(existingCoupon);
 
-            var repository = new GenericRepository<CouponEntity>(_context, _noxLoggerStub);
+            var repository = new GenericRepository<CouponEntity>(context, _noxLoggerStub);
             var propertyNames = typeof(CouponEntity).GetProperties().Select(p => p.Name).ToList();
             var projection = repository.CreateProjection(propertyNames);
             var result = await repository.GetByIdAsync(existingCoupon.Id, projection);
@@ -165,13 +185,14 @@ namespace AppyNox.Services.Coupon.Infrastructure.UnitTest.RepositoryTests
 
         #region [ Create ]
 
-        [Fact, Order(8)]
+        [Fact]
         public async Task AddAsync_ShouldAddEntity()
         {
-            var unitOfWork = new UnitOfWorkBase(_context, _noxLoggerStub);
-            var repository = new GenericRepository<CouponEntity>(_context, _noxLoggerStub);
+            CouponDbContext context = _fixture.CreateDatabaseContext<CouponDbContext>();
+            var unitOfWork = new UnitOfWorkBase(context, _noxLoggerStub);
+            var repository = new GenericRepository<CouponEntity>(context, _noxLoggerStub);
 
-            var existingCoupon = RaiseSeedOneCoupon(_context); // To Seed CouponDetail
+            var existingCoupon = context.SeedOneCoupon(); // To Seed CouponDetail
             Assert.NotNull(existingCoupon);
 
             CouponEntity coupon = new()
@@ -203,16 +224,17 @@ namespace AppyNox.Services.Coupon.Infrastructure.UnitTest.RepositoryTests
 
         #region [ Update ]
 
-        [Fact, Order(9)]
+        [Fact]
         public async Task UpdateAsync_ShouldUpdateEntity()
         {
-            var existingCoupon = RaiseSeedOneCoupon(_context);
-            var existingCoupon2 = RaiseSeedOneCoupon(_context); // For getting a second CouponDetailEntityId
+            CouponDbContext context = _fixture.CreateDatabaseContext<CouponDbContext>();
+            var existingCoupon = context.SeedOneCoupon();
+            var existingCoupon2 = context.SeedOneCoupon(); // For getting a second CouponDetailEntityId
             Assert.NotNull(existingCoupon);
             Assert.NotNull(existingCoupon2);
 
-            var unitOfWork = new UnitOfWorkBase(_context, _noxLoggerStub);
-            var repository = new GenericRepository<CouponEntity>(_context, _noxLoggerStub);
+            var unitOfWork = new UnitOfWorkBase(context, _noxLoggerStub);
+            var repository = new GenericRepository<CouponEntity>(context, _noxLoggerStub);
 
             existingCoupon.Code = "TEE20";
             existingCoupon.Description = "DescriptionCouponUpdated";
@@ -241,14 +263,15 @@ namespace AppyNox.Services.Coupon.Infrastructure.UnitTest.RepositoryTests
 
         #region [ Delete ]
 
-        [Fact, Order(10)]
+        [Fact]
         public async Task DeleteAsync_ShouldDeleteEntity()
         {
-            var existingCoupon = RaiseSeedOneCoupon(_context);
+            CouponDbContext context = _fixture.CreateDatabaseContext<CouponDbContext>();
+            var existingCoupon = context.SeedOneCoupon();
             Assert.NotNull(existingCoupon);
 
-            var unitOfWork = new UnitOfWorkBase(_context, _noxLoggerStub);
-            var repository = new GenericRepository<CouponEntity>(_context, _noxLoggerStub);
+            var unitOfWork = new UnitOfWorkBase(context, _noxLoggerStub);
+            var repository = new GenericRepository<CouponEntity>(context, _noxLoggerStub);
 
             repository.Remove(existingCoupon);
             await unitOfWork.SaveChangesAsync();

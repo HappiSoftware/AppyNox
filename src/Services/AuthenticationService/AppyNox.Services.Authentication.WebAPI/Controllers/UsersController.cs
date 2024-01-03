@@ -2,7 +2,7 @@
 using AppyNox.Services.Authentication.Application.Dtos.IdentityUserDtos.Models.Base;
 using AppyNox.Services.Authentication.Application.Dtos.IdentityUserDtos.Models.Extended;
 using AppyNox.Services.Authentication.Application.Validators.IdentityUser;
-using AppyNox.Services.Authentication.Domain.Entities;
+using AppyNox.Services.Authentication.Infrastructure.Entities;
 using AppyNox.Services.Authentication.WebAPI.ControllerDependencies;
 using AppyNox.Services.Authentication.WebAPI.ExceptionExtensions.Base;
 using AppyNox.Services.Authentication.WebAPI.Filters;

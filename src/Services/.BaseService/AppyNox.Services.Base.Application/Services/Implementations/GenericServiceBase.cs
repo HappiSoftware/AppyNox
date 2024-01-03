@@ -80,7 +80,7 @@ namespace AppyNox.Services.Base.Application.Services.Implementations
                 List<object> resultList = MapEntitiesToDto(entities, dtoType, queryParameters);
                 return resultList;
             }
-            catch (NoxInfrastructureException)
+            catch (Exception ex) when (ex is NoxInfrastructureException || ex is NoxApplicationException)
             {
                 throw;
             }
@@ -107,7 +107,7 @@ namespace AppyNox.Services.Base.Application.Services.Implementations
                 TEntity entity = await _repository.GetByIdAsync(id, expression);
                 return MapEntityToDtoSingle(entity, dtoType);
             }
-            catch (NoxInfrastructureException)
+            catch (Exception ex) when (ex is NoxInfrastructureException || ex is NoxApplicationException)
             {
                 throw;
             }
@@ -152,7 +152,7 @@ namespace AppyNox.Services.Base.Application.Services.Implementations
                 dynamic createdObject = _mapper.Map(mappedEntity, returnDtoType, returnDtoType);
                 return (guid: mappedEntity.Id, basicDto: createdObject);
             }
-            catch (NoxInfrastructureException)
+            catch (Exception ex) when (ex is NoxInfrastructureException || ex is NoxApplicationException)
             {
                 throw;
             }
@@ -194,6 +194,10 @@ namespace AppyNox.Services.Base.Application.Services.Implementations
                 _repository.Update(mappedEntity, propertyList);
                 await _unitOfWork.SaveChangesAsync();
             }
+            catch (Exception ex) when (ex is NoxInfrastructureException || ex is NoxApplicationException)
+            {
+                throw;
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error updating entity of type '{typeof(TEntity).Name}' with ID: {id}.");
@@ -215,6 +219,10 @@ namespace AppyNox.Services.Base.Application.Services.Implementations
                 newEntity.Id = id;
                 _repository.Remove(newEntity);
                 await _unitOfWork.SaveChangesAsync();
+            }
+            catch (Exception ex) when (ex is NoxInfrastructureException || ex is NoxApplicationException)
+            {
+                throw;
             }
             catch (Exception ex)
             {

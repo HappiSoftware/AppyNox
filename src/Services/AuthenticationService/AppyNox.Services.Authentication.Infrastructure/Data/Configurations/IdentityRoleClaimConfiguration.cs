@@ -45,7 +45,12 @@ namespace AppyNox.Services.Authentication.Infrastructure.Data.Configurations
                 new IdentityRoleClaim<string> { Id = 11, RoleId = _adminRoleId, ClaimType = "Permission", ClaimValue = "Coupons.View" },
                 new IdentityRoleClaim<string> { Id = 12, RoleId = _adminRoleId, ClaimType = "Permission", ClaimValue = "Coupons.Create" },
                 new IdentityRoleClaim<string> { Id = 13, RoleId = _adminRoleId, ClaimType = "Permission", ClaimValue = "Coupons.Edit" },
-                new IdentityRoleClaim<string> { Id = 14, RoleId = _adminRoleId, ClaimType = "Permission", ClaimValue = "Coupons.Delete" }
+                new IdentityRoleClaim<string> { Id = 14, RoleId = _adminRoleId, ClaimType = "Permission", ClaimValue = "Coupons.Delete" },
+
+                new IdentityRoleClaim<string> { Id = 15, RoleId = _adminRoleId, ClaimType = "Permission", ClaimValue = "Licenses.View" },
+                new IdentityRoleClaim<string> { Id = 16, RoleId = _adminRoleId, ClaimType = "Permission", ClaimValue = "Licenses.Create" },
+                new IdentityRoleClaim<string> { Id = 17, RoleId = _adminRoleId, ClaimType = "Permission", ClaimValue = "Licenses.Edit" },
+                new IdentityRoleClaim<string> { Id = 18, RoleId = _adminRoleId, ClaimType = "Permission", ClaimValue = "Licenses.Delete" }
             );
 
             #endregion

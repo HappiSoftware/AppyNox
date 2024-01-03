@@ -12,12 +12,13 @@ namespace AppyNox.Services.Base.IntegrationTests.Helpers
         /// <summary>
         /// Retrieves the configuration settings for integration tests.
         /// </summary>
+        /// <param name="configurationFileName"></param>
         /// <returns>The configuration root containing test settings.</returns>
-        public static IConfigurationRoot GetConfiguration()
+        public static IConfigurationRoot GetConfiguration(string configurationFileName)
         {
             return new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("serviceuris.json", optional: false, reloadOnChange: true)
+                .AddJsonFile($"{configurationFileName}.json", optional: false, reloadOnChange: true)
                 .Build();
         }
 
