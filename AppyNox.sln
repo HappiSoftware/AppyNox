@@ -59,7 +59,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IntegrationTests", "Integra
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppyNox.Services.Base.IntegrationTests", "src\Services\.BaseService\Tests\IntegrationTests\AppyNox.Services.Base.IntegrationTests\AppyNox.Services.Base.IntegrationTests.csproj", "{120B7821-549C-4C48-B381-B8BD0A705AAD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppyNox.Services.Coupon.WebAPI.IntegrationTests", "src\Services\CouponService\Tests\IntegrationTests\AppyNox.Services.Coupon.WebAPI.IntegrationTests\AppyNox.Services.Coupon.WebAPI.IntegrationTests.csproj", "{A9D74765-C06D-4A6A-B123-2FC9DCCE9855}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppyNox.Services.Coupon.WebAPI.IntegrationTest", "src\Services\CouponService\Tests\IntegrationTests\AppyNox.Services.Coupon.WebAPI.IntegrationTests\AppyNox.Services.Coupon.WebAPI.IntegrationTest.csproj", "{A9D74765-C06D-4A6A-B123-2FC9DCCE9855}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppyNox.Services.Base.Infrastructure.UnitTests", "src\Services\.BaseService\Tests\UnitTests\AppyNox.Services.Base.Infrastructure.UnitTests\AppyNox.Services.Base.Infrastructure.UnitTests.csproj", "{2A9714FE-3DF3-42C8-9D76-800A47804AAD}"
 EndProject
@@ -79,13 +79,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{5D51621B
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{55668641-B055-4BC1-93E7-C26ECE90FFF5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppyNox.Services.License.Infrastructure.UnitTest", "src\Services\LicenseService\Tests\UnitTests\AppyNox.Services.License.Infrastructure.UnitTest\AppyNox.Services.License.Infrastructure.UnitTest.csproj", "{83F010C0-0973-4CCC-8F5D-AB478408CEB1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppyNox.Services.License.Infrastructure.UnitTest", "src\Services\LicenseService\Tests\UnitTests\AppyNox.Services.License.Infrastructure.UnitTest\AppyNox.Services.License.Infrastructure.UnitTest.csproj", "{83F010C0-0973-4CCC-8F5D-AB478408CEB1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppyNox.Services.License.Application.UnitTest", "src\Services\LicenseService\Tests\UnitTests\AppyNox.Services.License.Application.UnitTest\AppyNox.Services.License.Application.UnitTest.csproj", "{B5EA5D7E-6025-465C-A316-B8E0CCB642E2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppyNox.Services.License.Application.UnitTest", "src\Services\LicenseService\Tests\UnitTests\AppyNox.Services.License.Application.UnitTest\AppyNox.Services.License.Application.UnitTest.csproj", "{B5EA5D7E-6025-465C-A316-B8E0CCB642E2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IntegrationTests", "IntegrationTests", "{3918B21B-EEBD-45CF-BD3C-CF80E83772BF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppyNox.Services.License.WebAPI.IntegrationTest", "src\Services\LicenseService\Tests\IntegrationTests\AppyNox.Services.License.WebAPI.IntegrationTest\AppyNox.Services.License.WebAPI.IntegrationTest.csproj", "{E9769402-62F5-4737-A787-905308BE0686}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppyNox.Services.License.WebAPI.IntegrationTest", "src\Services\LicenseService\Tests\IntegrationTests\AppyNox.Services.License.WebAPI.IntegrationTest\AppyNox.Services.License.WebAPI.IntegrationTest.csproj", "{E9769402-62F5-4737-A787-905308BE0686}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
