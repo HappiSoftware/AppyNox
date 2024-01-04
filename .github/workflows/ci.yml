@@ -7,8 +7,11 @@ on:
     branches: [master]
   workflow_dispatch:
 
+env:
+  DOTNET_VERSION: '8.0.x'
+
 jobs:
-  build-and-test:
+  build:
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.merged == true) || (github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
 
@@ -30,16 +33,19 @@ jobs:
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: "8.0.x"
+          dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Setup SSL Certificates for Services
         run: |
           mkdir -p ./src/Gateways/AppyNox.Gateway.OcelotGateway/ssl
-          mkdir -p ./src/Services/CouponService/Tests/IntegrationTests/AppyNox.Services.Coupon.WebAPI.IntegrationTests/ssl
+          mkdir -p ./src/Services/CouponService/Tests/IntegrationTests/AppyNox.Services.Coupon.WebAPI.IntegrationTest/ssl
+          mkdir -p ./src/Services/LicenseService/Tests/IntegrationTests/AppyNox.Services.License.WebAPI.IntegrationTest/ssl
           echo '${{ secrets.PFX_CERTIFICATE }}' | base64 --decode > ./src/Gateways/AppyNox.Gateway.OcelotGateway/ssl/appynox.pfx
-          echo '${{ secrets.PFX_CERTIFICATE }}' | base64 --decode > ./src/Services/CouponService/Tests/IntegrationTests/AppyNox.Services.Coupon.WebAPI.IntegrationTests/ssl/appynox.pfx
+          echo '${{ secrets.PFX_CERTIFICATE }}' | base64 --decode > ./src/Services/CouponService/Tests/IntegrationTests/AppyNox.Services.Coupon.WebAPI.IntegrationTest/ssl/appynox.pfx
+          echo '${{ secrets.PFX_CERTIFICATE }}' | base64 --decode > ./src/Services/LicenseService/Tests/IntegrationTests/AppyNox.Services.License.WebAPI.IntegrationTest/ssl/appynox.pfx
           sudo chmod 644 ./src/Gateways/AppyNox.Gateway.OcelotGateway/ssl/appynox.pfx
-          sudo chmod 644 ./src/Services/CouponService/Tests/IntegrationTests/AppyNox.Services.Coupon.WebAPI.IntegrationTests/ssl/appynox.pfx
+          sudo chmod 644 ./src/Services/CouponService/Tests/IntegrationTests/AppyNox.Services.Coupon.WebAPI.IntegrationTest/ssl/appynox.pfx
+          sudo chmod 644 ./src/Services/LicenseService/Tests/IntegrationTests/AppyNox.Services.License.WebAPI.IntegrationTest/ssl/appynox.pfx
 
       - name: Create Ocelot Settings for Gateway
         run: |
@@ -56,7 +62,7 @@ jobs:
       - name: Create Coupon Service appsettings
         run: |
           echo '${{ secrets.COUPON_APPSETTINGS_STAGING }}' > ./src/Services/CouponService/AppyNox.Services.Coupon.WebAPI/appsettings.Staging.json
-          echo '${{ secrets.COUPON_APPSETTINGS_STAGING }}' > ./src/Services/CouponService/Tests/IntegrationTests/AppyNox.Services.Coupon.WebAPI.IntegrationTests/appsettings.Staging.json
+          echo '${{ secrets.COUPON_APPSETTINGS_STAGING }}' > ./src/Services/CouponService/Tests/IntegrationTests/AppyNox.Services.Coupon.WebAPI.IntegrationTest/appsettings.Staging.json
           echo '${{ secrets.COUPON_APPSETTINGS_PRODUCTION }}' > ./src/Services/CouponService/AppyNox.Services.Coupon.WebAPI/appsettings.Production.json
 
       - name: Create License Service appsettings
@@ -67,14 +73,83 @@ jobs:
 
       - name: Copy Docker Compose file
         run: |
-          cp ./docker-compose.yml ./src/Services/CouponService/Tests/IntegrationTests/AppyNox.Services.Coupon.WebAPI.IntegrationTests/docker-compose.yml
-          cp ./docker-compose.Staging.yml ./src/Services/CouponService/Tests/IntegrationTests/AppyNox.Services.Coupon.WebAPI.IntegrationTests/docker-compose.Staging.yml
+          cp ./docker-compose.yml ./src/Services/CouponService/Tests/IntegrationTests/AppyNox.Services.Coupon.WebAPI.IntegrationTest/docker-compose.yml
+          cp ./docker-compose.Staging.yml ./src/Services/CouponService/Tests/IntegrationTests/AppyNox.Services.Coupon.WebAPI.IntegrationTest/docker-compose.Staging.yml
 
       - name: Restore dependencies
         run: dotnet restore ./AppyNox.sln
 
       - name: Build .NET Solution
         run: dotnet build ./AppyNox.sln --configuration Release --no-restore
+
+      - name: Publish Build Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: build-artifacts
+          path: |
+            src/**/bin
+            src/**/obj
+            src/**/appsettings*.json
+            src/**/ocelot*.json
+            src/**/ssl/appynox.pfx
+
+  unit-tests:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: build-artifacts
+          path: src/
+
+      - name: Restore NuGet packages
+        run: dotnet restore ./AppyNox.sln
+
+      - name: Run Unit Tests (BaseService - Infrastructure)
+        run: dotnet test ./src/Services/.BaseService/Tests/UnitTests/AppyNox.Services.Base.Infrastructure.UnitTest/ --no-restore
+
+      - name: Run Unit Tests (CouponService - Infrastructure)
+        run: dotnet test ./src/Services/CouponService/Tests/UnitTests/AppyNox.Services.Coupon.Infrastructure.UnitTest/ --no-restore
+
+      - name: Run Unit Tests (CouponService - Application)
+        run: dotnet test ./src/Services/CouponService/Tests/UnitTests/AppyNox.Services.Coupon.Application.UnitTest/ --no-restore
+
+      - name: Run Unit Tests (LicenseService - Infrastructure)
+        run: dotnet test ./src/Services/LicenseService/Tests/UnitTests/AppyNox.Services.License.Infrastructure.UnitTest/ --no-restore
+
+      - name: Run Unit Tests (LicenseService - Application)
+        run: dotnet test ./src/Services/LicenseService/Tests/UnitTests/AppyNox.Services.License.Application.UnitTest/ --no-restore
+    
+
+  integration-tests:
+    needs: unit-tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: build-artifacts
+          path: src/
+
+      - name: Restore NuGet packages
+        run: dotnet restore ./AppyNox.sln
 
       - name: Trust self-signed certificate
         run: |
@@ -85,16 +160,11 @@ jobs:
           sudo cp appynox_staging.crt /usr/local/share/ca-certificates/
           sudo update-ca-certificates
 
-      - name: Run Unit Tests
-        run: |
-          dotnet test ./src/Services/CouponService/Tests/UnitTests/AppyNox.Services.Coupon.Infrastructure.UnitTest/ --no-restore
-          dotnet test ./src/Services/CouponService/Tests/UnitTests/AppyNox.Services.Coupon.Application.UnitTest/ --no-restore
-          dotnet test ./src/Services/.BaseService/Tests/UnitTests/AppyNox.Services.Base.Infrastructure.UnitTest/ --no-restore
-
       - name: Build Docker Images
         run: docker-compose -f docker-compose.yml -f docker-compose.Development.yml build
 
-      - name: Run Integration Tests
-        run: |
-          dotnet test ./src/Services/CouponService/Tests/IntegrationTests/AppyNox.Services.Coupon.WebAPI.IntegrationTests --no-restore
-          dotnet test ./src/Services/LicenseServþce/Tests/IntegrationTests/AppyNox.Services.License.WebAPI.IntegrationTests --no-restore
+      - name: Run Integration Tests (CouponService)
+        run: dotnet test ./src/Services/CouponService/Tests/IntegrationTests/AppyNox.Services.Coupon.WebAPI.IntegrationTest --no-restore
+
+      - name: Run Integration Tests (LicenseService)
+        run: dotnet test ./src/Services/LicenseService/Tests/IntegrationTests/AppyNox.Services.License.WebAPI.IntegrationTest --no-restore          

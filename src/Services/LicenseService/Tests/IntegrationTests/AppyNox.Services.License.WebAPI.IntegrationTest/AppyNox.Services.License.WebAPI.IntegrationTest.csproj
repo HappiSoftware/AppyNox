@@ -7,11 +7,12 @@
 
 		<IsPackable>false</IsPackable>
 		<IsTestProject>true</IsTestProject>
+		<PreserveCompilationContext>true</PreserveCompilationContext>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<Content Include="..\..\..\..\.BaseService\Tests\IntegrationTests\AppyNox.Services.Base.IntegrationTests\serviceuris.json" Link="serviceuris.json" />
-		<Content Include="..\..\..\AppyNox.Services.License.WebApi\appsettings.Staging.json" Link="appsettings.Staging.json">
+		<Content Include="..\..\..\AppyNox.Services.License.WebAPI\appsettings.Staging.json" Link="appsettings.Staging.json">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 	</ItemGroup>
@@ -30,9 +31,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.0" />
-		<PackageReference Include="xunit" Version="2.4.2" />
-		<PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+		<PackageReference Include="xunit" Version="2.6.4" />
+		<PackageReference Include="xunit.runner.visualstudio" Version="2.5.6">
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 			<PrivateAssets>all</PrivateAssets>
 		</PackageReference>
@@ -40,15 +41,16 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 			<PrivateAssets>all</PrivateAssets>
 		</PackageReference>
-		<PackageReference Include="AutoWrapper.Server" Version="2.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="ssl\" />
+		<None Update="ssl\appynox.pfx">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
 	</ItemGroup>
 
 	<ItemGroup>
 	  <ProjectReference Include="..\..\..\..\.BaseService\Tests\IntegrationTests\AppyNox.Services.Base.IntegrationTests\AppyNox.Services.Base.IntegrationTests.csproj" />
-	  <ProjectReference Include="..\..\..\AppyNox.Services.License.WebApi\AppyNox.Services.License.WebApi.csproj" />
+	  <ProjectReference Include="..\..\..\AppyNox.Services.License.WebAPI\AppyNox.Services.License.WebAPI.csproj" />
 	</ItemGroup>
 </Project>

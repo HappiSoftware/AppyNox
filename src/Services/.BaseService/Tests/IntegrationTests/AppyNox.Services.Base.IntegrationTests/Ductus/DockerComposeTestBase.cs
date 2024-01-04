@@ -102,7 +102,7 @@ namespace AppyNox.Services.Base.IntegrationTests.Ductus
         /// <summary>
         /// Initializes the Docker Compose environment for testing.
         /// </summary>
-        protected void Initialize(IConfigurationRoot configurationRoot)
+        protected void Initialize(IConfigurationRoot configurationRoot, string layerName)
         {
             #region [ Logger ]
 
@@ -115,7 +115,7 @@ namespace AppyNox.Services.Base.IntegrationTests.Ductus
                 builder.AddSerilog();
             });
             var logger = loggerFactory.CreateLogger<INoxLogger>();
-            Logger = new NoxLogger(logger, "CouponIntegrationTestHost");
+            Logger = new NoxLogger(logger, layerName);
 
             #endregion
 
