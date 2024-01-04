@@ -89,6 +89,9 @@ jobs:
           path: |
             src/**/bin
             src/**/obj
+            src/**/appsettings*.json
+            src/**/ocelot*.json
+            src/**/ssl/appynox.pfx
 
   unit-tests:
     needs: build
