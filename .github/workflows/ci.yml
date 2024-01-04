@@ -99,5 +99,5 @@ jobs:
 
       - name: Run Integration Tests
         run: |
-          dotnet test ./src/Services/CouponService/Tests/IntegrationTests/AppyNox.Services.Coupon.WebAPI.IntegrationTest --no-restore
-          dotnet test ./src/Services/LicenseService/Tests/IntegrationTests/AppyNox.Services.License.WebAPI.IntegrationTest --no-restore
+          dotnet test ./src/Services/CouponService/Tests/IntegrationTests/AppyNox.Services.Coupon.WebAPI.IntegrationTests --no-restore
+          dotnet test ./src/Services/LicenseService/Tests/IntegrationTests/AppyNox.Services.License.WebAPI.IntegrationTests --no-restore
