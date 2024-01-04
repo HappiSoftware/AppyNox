@@ -24,7 +24,7 @@ namespace AppyNox.Services.License.WebAPI.IntegrationTest.Fixtures
         {
             IConfigurationRoot appsettings = IntegrationTestHelpers.GetConfiguration("appsettings.Staging");
 
-            Initialize(appsettings);
+            Initialize(appsettings, "LicenseIntegrationTestHost");
 
             Task.WhenAll(
                 WaitForServicesHealth(ServiceURIs.AuthenticationServiceHealthURI),

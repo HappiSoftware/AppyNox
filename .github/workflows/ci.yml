@@ -7,8 +7,11 @@ on:
     branches: [master]
   workflow_dispatch:
 
+env:
+  DOTNET_VERSION: '8.0.x'
+
 jobs:
-  build-and-test:
+  build:
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.merged == true) || (github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
 
@@ -30,7 +33,7 @@ jobs:
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: "8.0.x"
+          dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Setup SSL Certificates for Services
         run: |
@@ -88,16 +91,51 @@ jobs:
           sudo cp appynox_staging.crt /usr/local/share/ca-certificates/
           sudo update-ca-certificates
 
-      - name: Run Unit Tests
-        run: |
-          dotnet test ./src/Services/CouponService/Tests/UnitTests/AppyNox.Services.Coupon.Infrastructure.UnitTest/ --no-restore
-          dotnet test ./src/Services/CouponService/Tests/UnitTests/AppyNox.Services.Coupon.Application.UnitTest/ --no-restore
-          dotnet test ./src/Services/.BaseService/Tests/UnitTests/AppyNox.Services.Base.Infrastructure.UnitTest/ --no-restore
+  unit-tests:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Run Unit Tests (BaseService - Infrastructure)
+        run: dotnet test ./src/Services/.BaseService/Tests/UnitTests/AppyNox.Services.Base.Infrastructure.UnitTest/ --no-restore
+
+      - name: Run Unit Tests (CouponService - Infrastructure)
+        run: dotnet test ./src/Services/CouponService/Tests/UnitTests/AppyNox.Services.Coupon.Infrastructure.UnitTest/ --no-restore
+
+      - name: Run Unit Tests (CouponService - Application)
+        run: dotnet test ./src/Services/CouponService/Tests/UnitTests/AppyNox.Services.Coupon.Application.UnitTest/ --no-restore
+
+      - name: Run Unit Tests (LicenseService - Infrastructure)
+        run: dotnet test ./src/Services/LicenseService/Tests/UnitTests/AppyNox.Services.License.Infrastructure.UnitTest/ --no-restore
+
+      - name: Run Unit Tests (LicenseService - Application)
+        run: dotnet test ./src/Services/LicenseService/Tests/UnitTests/AppyNox.Services.License.Application.UnitTest/ --no-restore
+    
+
+  integration-tests:
+    needs: unit-tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Build Docker Images
         run: docker-compose -f docker-compose.yml -f docker-compose.Development.yml build
 
-      - name: Run Integration Tests
-        run: |
-          dotnet test ./src/Services/CouponService/Tests/IntegrationTests/AppyNox.Services.Coupon.WebAPI.IntegrationTest --no-restore
-          dotnet test ./src/Services/LicenseService/Tests/IntegrationTests/AppyNox.Services.License.WebAPI.IntegrationTest --no-restore
+      - name: Run Integration Tests (CouponService)
+        run: dotnet test ./src/Services/CouponService/Tests/IntegrationTests/AppyNox.Services.Coupon.WebAPI.IntegrationTest --no-restore
+
+      - name: Run Integration Tests (LicenseService)
+        run: dotnet test ./src/Services/LicenseService/Tests/IntegrationTests/AppyNox.Services.License.WebAPI.IntegrationTest --no-restore          

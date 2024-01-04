@@ -24,7 +24,7 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTests.Fixtures
         {
             IConfigurationRoot appsettings = IntegrationTestHelpers.GetConfiguration("appsettings.Staging");
 
-            Initialize(appsettings);
+            Initialize(appsettings, "CouponIntegrationTestHost");
 
             Task.WhenAll(
                 WaitForServicesHealth(ServiceURIs.CouponServiceHealthURI),
