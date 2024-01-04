@@ -51,8 +51,6 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\..\..\..\.BaseService\Tests\IntegrationTests\AppyNox.Services.Base.IntegrationTests\AppyNox.Services.Base.IntegrationTests.csproj" />
-	  <ProjectReference Include="..\..\..\AppyNox.Services.License.Application\AppyNox.Services.License.Application.csproj" />
-	  <ProjectReference Include="..\..\..\AppyNox.Services.License.Infrastructure\AppyNox.Services.License.Infrastructure.csproj" />
 	  <ProjectReference Include="..\..\..\AppyNox.Services.License.WebAPI\AppyNox.Services.License.WebAPI.csproj" />
 	</ItemGroup>
 </Project>
