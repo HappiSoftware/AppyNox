@@ -12,7 +12,7 @@
 
 	<ItemGroup>
 		<Content Include="..\..\..\..\.BaseService\Tests\IntegrationTests\AppyNox.Services.Base.IntegrationTests\serviceuris.json" Link="serviceuris.json" />
-		<Content Include="..\..\..\AppyNox.Services.License.WebApi\appsettings.Staging.json" Link="appsettings.Staging.json">
+		<Content Include="..\..\..\AppyNox.Services.License.WebAPI\appsettings.Staging.json" Link="appsettings.Staging.json">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 	</ItemGroup>
@@ -53,6 +53,6 @@
 	  <ProjectReference Include="..\..\..\..\.BaseService\Tests\IntegrationTests\AppyNox.Services.Base.IntegrationTests\AppyNox.Services.Base.IntegrationTests.csproj" />
 	  <ProjectReference Include="..\..\..\AppyNox.Services.License.Application\AppyNox.Services.License.Application.csproj" />
 	  <ProjectReference Include="..\..\..\AppyNox.Services.License.Infrastructure\AppyNox.Services.License.Infrastructure.csproj" />
-	  <ProjectReference Include="..\..\..\AppyNox.Services.License.WebApi\AppyNox.Services.License.WebApi.csproj" />
+	  <ProjectReference Include="..\..\..\AppyNox.Services.License.WebAPI\AppyNox.Services.License.WebAPI.csproj" />
 	</ItemGroup>
 </Project>

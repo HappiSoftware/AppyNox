@@ -106,7 +106,7 @@ services:
   appynox-services-license-webapi:
     build:
       context: .
-      dockerfile: src/Services/LicenseService/AppyNox.Services.License.WebApi/Dockerfile
+      dockerfile: src/Services/LicenseService/AppyNox.Services.License.WebAPI/Dockerfile
     networks:
       - nox_network
     healthcheck:

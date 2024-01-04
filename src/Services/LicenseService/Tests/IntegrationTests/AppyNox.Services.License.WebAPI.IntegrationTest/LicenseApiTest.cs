@@ -1,7 +1,7 @@
 ﻿using AppyNox.Services.Base.IntegrationTests.Helpers;
 using AppyNox.Services.Base.IntegrationTests.URIs;
 using AppyNox.Services.License.Application.Dtos.LicenseDtos.Models.Base;
-using AppyNox.Services.License.WebApi.IntegrationTest.Fixtures;
+using AppyNox.Services.License.WebAPI.IntegrationTest.Fixtures;
 using AutoWrapper.Server;
 using AutoWrapper.Wrappers;
 using System.Net;
