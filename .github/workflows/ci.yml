@@ -82,14 +82,13 @@ jobs:
       - name: Build .NET Solution
         run: dotnet build ./AppyNox.sln --configuration Release --no-restore
 
-      - name: Trust self-signed certificate
-        run: |
-          echo "${{ secrets.PFX_CERTIFICATE }}" | base64 --decode > appynox_staging.pfx
-          # Extract the certificate from the .pfx file
-          openssl pkcs12 -in appynox_staging.pfx -clcerts -nokeys -out appynox_staging.crt -password pass:${{ secrets.PFX_PASSWORD }}
-          # Trust the certificate
-          sudo cp appynox_staging.crt /usr/local/share/ca-certificates/
-          sudo update-ca-certificates
+      - name: Publish Build Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: build-artifacts
+          path: |
+            src/**/bin
+            src/**/obj
 
   unit-tests:
     needs: build
@@ -102,6 +101,12 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: build-artifacts
+          path: src/
 
       - name: Run Unit Tests (BaseService - Infrastructure)
         run: dotnet test ./src/Services/.BaseService/Tests/UnitTests/AppyNox.Services.Base.Infrastructure.UnitTest/ --no-restore
@@ -130,6 +135,21 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: build-artifacts
+          path: src/
+
+      - name: Trust self-signed certificate
+        run: |
+          echo "${{ secrets.PFX_CERTIFICATE }}" | base64 --decode > appynox_staging.pfx
+          # Extract the certificate from the .pfx file
+          openssl pkcs12 -in appynox_staging.pfx -clcerts -nokeys -out appynox_staging.crt -password pass:${{ secrets.PFX_PASSWORD }}
+          # Trust the certificate
+          sudo cp appynox_staging.crt /usr/local/share/ca-certificates/
+          sudo update-ca-certificates
 
       - name: Build Docker Images
         run: docker-compose -f docker-compose.yml -f docker-compose.Development.yml build
