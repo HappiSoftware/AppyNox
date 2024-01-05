@@ -1,7 +1,5 @@
 ﻿using Consul;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Text;
 using System.Text.Json;
@@ -9,29 +7,9 @@ using Winton.Extensions.Configuration.Consul;
 
 namespace AppyNox.Services.Base.Infrastructure.Helpers
 {
-    /// <summary>
-    /// Provides helper methods for dependency injection and service configuration.
-    /// </summary>
-    public static class DependencyInjectionHelper
+    public static class ApplicationBuilderExtensions
     {
         #region [ Public Methods ]
-
-        /// <summary>
-        /// Applies any pending database migrations for a given DbContext.
-        /// </summary>
-        /// <typeparam name="TDbContext">The type of the DbContext.</typeparam>
-        /// <param name="serviceProvider">The service provider instance.</param>
-        public static void ApplyMigrations<TDbContext>(this IServiceProvider serviceProvider)
-            where TDbContext : DbContext
-        {
-            using var scope = serviceProvider.CreateScope();
-            var _db = scope.ServiceProvider.GetRequiredService<TDbContext>();
-
-            if (_db.Database.GetPendingMigrations().Any())
-            {
-                _db.Database.Migrate();
-            }
-        }
 
         /// <summary>
         /// Adds and loads configuration settings from Consul for a specified microservice. This method initializes a Consul

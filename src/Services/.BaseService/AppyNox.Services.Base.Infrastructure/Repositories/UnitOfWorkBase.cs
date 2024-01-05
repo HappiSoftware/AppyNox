@@ -10,7 +10,7 @@ namespace AppyNox.Services.Base.Infrastructure.Repositories
     /// Provides an implementation of the Unit of Work pattern.
     /// This class manages transactions and changes to the database context in a cohesive manner.
     /// </summary>
-    public class UnitOfWorkBase(DbContext dbContext, INoxInfrastructureLogger logger) : IUnitOfWorkBase
+    public abstract class UnitOfWorkBase(DbContext dbContext, INoxInfrastructureLogger logger) : IUnitOfWorkBase
     {
         #region [ Fields ]
 

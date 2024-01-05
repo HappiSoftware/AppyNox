@@ -1,11 +1,12 @@
-﻿using AppyNox.Services.Base.Infrastructure.Logger;
+﻿using AppyNox.Services.Base.Application.Logger;
+using AppyNox.Services.Base.Infrastructure.Logger;
 
-namespace AppyNox.Services.Base.Infrastructure.UnitTests.Stubs
+namespace AppyNox.Services.Base.Application.UnitTests.Stubs
 {
     /// <summary>
-    /// A stub implementation of <see cref="INoxInfrastructureLogger"/> for unit testing, simulating logging behavior.
+    /// A stub implementation of <see cref="INoxApplicationLogger"/> for unit testing, simulating logging behavior.
     /// </summary>
-    public class NoxInfrastructureLoggerStub : INoxInfrastructureLogger
+    public class NoxApplicationLoggerStub : INoxApplicationLogger
     {
         #region [ Public Methods ]
 

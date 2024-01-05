@@ -1,5 +1,7 @@
 ﻿using AppyNox.Services.Base.Application.Helpers;
-using AppyNox.Services.Base.Application.UnitTests.ServiceTests;
+using AppyNox.Services.Base.Application.MediatR.Commands;
+using AppyNox.Services.Base.Application.MediatR.Queries;
+using AppyNox.Services.Base.Application.UnitTests.CQRSTests;
 using AppyNox.Services.Base.Domain.Common;
 using AppyNox.Services.Base.Infrastructure.Repositories.Common;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.DetailLevel;
@@ -10,19 +12,19 @@ using FluentValidation.Results;
 using Moq;
 using System.Text.Json;
 
-namespace AppyNox.Services.Coupon.Application.UnitTest.ServiceTests.Services
+namespace AppyNox.Services.Coupon.Application.UnitTest.ServiceTests
 {
-    public class GenericServiceUnitTests : IClassFixture<ServiceFixture<CouponEntity>>
+    public class GenericCQRSUnitTest : IClassFixture<GenericCQRSFixture<CouponEntity>>
     {
         #region [ Fields ]
 
-        private readonly ServiceFixture<CouponEntity> _fixture;
+        private readonly GenericCQRSFixture<CouponEntity> _fixture;
 
         #endregion
 
         #region [ Public Constructors ]
 
-        public GenericServiceUnitTests(ServiceFixture<CouponEntity> fixture)
+        public GenericCQRSUnitTest(GenericCQRSFixture<CouponEntity> fixture)
         {
             _fixture = fixture;
             _fixture.MockDtoMappingRegistry.Setup(registry => registry.GetDtoType(DtoLevelMappingTypes.DataAccess, typeof(CouponEntity), CommonDtoLevelEnums.Simple.GetDisplayName()))
@@ -54,10 +56,10 @@ namespace AppyNox.Services.Coupon.Application.UnitTest.ServiceTests.Services
         #region [ Public Methods ]
 
         [Fact]
-        public async void GetAllAsync_ShouldReturnData()
+        public async Task GetAllEntitiesQuery_ShouldSuccess()
         {
             // Act
-            var result = await _fixture.GenericServiceBase.GetAllAsync(new QueryParameters());
+            var result = await _fixture.MockMediator.Object.Send(new GetAllEntitiesQuery<CouponEntity>(new QueryParameters()));
 
             // Assert
             Assert.NotNull(result);
@@ -65,10 +67,10 @@ namespace AppyNox.Services.Coupon.Application.UnitTest.ServiceTests.Services
         }
 
         [Fact]
-        public async void GetByIdAsync_ShouldReturnData()
+        public async void GetEntityByIdQuery_ShouldSuccess()
         {
             // Act
-            var result = await _fixture.GenericServiceBase.GetByIdAsync(It.IsAny<Guid>(), new QueryParameters());
+            var result = await _fixture.MockMediator.Object.Send(new GetEntityByIdQuery<CouponEntity>(It.IsAny<Guid>(), new QueryParameters()));
 
             // Assert
             Assert.NotNull(result);
@@ -76,7 +78,7 @@ namespace AppyNox.Services.Coupon.Application.UnitTest.ServiceTests.Services
         }
 
         [Fact]
-        public async void AddAsync_ShouldReturnData()
+        public async void CreateEntityCommand_ShouldSuccess()
         {
             // Prepare
             string jsonData = @"{
@@ -90,7 +92,8 @@ namespace AppyNox.Services.Coupon.Application.UnitTest.ServiceTests.Services
             JsonElement root = jsonDocument.RootElement;
 
             // Act
-            var result = await _fixture.GenericServiceBase.AddAsync(root, CouponCreateDetailLevel.Simple.GetDisplayName());
+            var result = await _fixture.MockMediator.Object
+                .Send(new CreateEntityCommand<CouponEntity>(root, CouponCreateDetailLevel.Simple.GetDisplayName()));
 
             // Assert
             Assert.NotNull(result.basicDto);
@@ -98,22 +101,18 @@ namespace AppyNox.Services.Coupon.Application.UnitTest.ServiceTests.Services
         }
 
         [Fact]
-        public void UpdateAsync_ShouldBeSuccessful()
+        public void UpdateEntityCommand_ShouldSuccess()
         {
             // Prepare
             string jsonData = @"{
-                ""id"":""934753af-ef04-47d5-b44e-debdb0a05658"",
-                ""code"": ""fffff2"",
-                ""discountAmount"": 2,
-                ""minAmount"": 12,
-                ""description"": ""string"",
-                ""couponDetailEntityId"": ""c2feaca4-d82a-4d2e-ba5a-667b685212b4""
             }";
             JsonDocument jsonDocument = JsonDocument.Parse(jsonData);
             JsonElement root = jsonDocument.RootElement;
+            Guid id = Guid.NewGuid();
 
             // Act
-            var result = _fixture.GenericServiceBase.UpdateAsync(root, CouponUpdateDetailLevel.Simple.GetDisplayName());
+            var result = _fixture.MockMediator.Object
+                .Send(new UpdateEntityCommand<CouponEntity>(id, root, CouponCreateDetailLevel.Simple.GetDisplayName()));
 
             // Assert
             Assert.NotNull(result);
@@ -121,10 +120,11 @@ namespace AppyNox.Services.Coupon.Application.UnitTest.ServiceTests.Services
         }
 
         [Fact]
-        public void DeleteAsync_ShouldBeSuccessful()
+        public void DeleteEntityCommand_ShouldSuccess()
         {
             // Act
-            var result = _fixture.GenericServiceBase.DeleteAsync(Guid.NewGuid());
+            var result = _fixture.MockMediator.Object
+                .Send(new DeleteEntityCommand<CouponEntity>(It.IsAny<Guid>()));
 
             // Assert
             Assert.NotNull(result);
