@@ -10,10 +10,6 @@ namespace AppyNox.Services.Coupon.Application.Validators.Coupon.Create
 
         public CouponSimpleCreateValidator()
         {
-            RuleFor(coupon => coupon.Code)
-                .NotNull().NotEmpty().WithMessage("Code cannot be null")
-                .MaximumLength(5).WithMessage("Code cannot be longer than 5 characters");
-
             RuleFor(coupon => coupon.DiscountAmount)
                 .NotNull().WithMessage("Discount Amount cannot be null")
                 .NotEqual(0).WithMessage("Discount Amount cannot be equal to 0.");

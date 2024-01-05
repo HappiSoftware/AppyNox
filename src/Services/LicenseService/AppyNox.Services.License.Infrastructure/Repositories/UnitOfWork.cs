@@ -4,7 +4,7 @@ using AppyNox.Services.License.Infrastructure.Data;
 
 namespace AppyNox.Services.License.Infrastructure.Repositories
 {
-    internal class UnitOfWork(LicenseDatabaseContext dbContext, INoxInfrastructureLogger logger)
+    public class UnitOfWork(LicenseDatabaseContext dbContext, INoxInfrastructureLogger logger)
         : UnitOfWorkBase(dbContext, logger)
     {
     }

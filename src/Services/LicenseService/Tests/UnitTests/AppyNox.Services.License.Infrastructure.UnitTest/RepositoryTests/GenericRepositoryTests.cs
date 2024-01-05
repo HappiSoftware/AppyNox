@@ -1,5 +1,4 @@
 ﻿using AppyNox.Services.Base.Infrastructure.ExceptionExtensions;
-using AppyNox.Services.Base.Infrastructure.Repositories;
 using AppyNox.Services.Base.Infrastructure.Repositories.Common;
 using AppyNox.Services.Base.Infrastructure.UnitTests.Fixtures;
 using AppyNox.Services.Base.Infrastructure.UnitTests.Stubs;
@@ -187,7 +186,7 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
         public async Task AddAsync_ShouldAddEntity()
         {
             LicenseDatabaseContext context = _fixture.CreateDatabaseContext<LicenseDatabaseContext>();
-            var unitOfWork = new UnitOfWorkBase(context, _noxLoggerStub);
+            var unitOfWork = new UnitOfWork(context, _noxLoggerStub);
             var repository = new GenericRepository<LicenseEntity>(context, _noxLoggerStub);
 
             LicenseEntity license = new()
@@ -226,7 +225,7 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
             var existingLicense = context.SeedOneLicense();
             Assert.NotNull(existingLicense);
 
-            var unitOfWork = new UnitOfWorkBase(context, _noxLoggerStub);
+            var unitOfWork = new UnitOfWork(context, _noxLoggerStub);
             var repository = new GenericRepository<LicenseEntity>(context, _noxLoggerStub);
 
             existingLicense.Code = "LK000";
@@ -263,7 +262,7 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
             var existingLicense = context.SeedOneLicense();
             Assert.NotNull(existingLicense);
 
-            var unitOfWork = new UnitOfWorkBase(context, _noxLoggerStub);
+            var unitOfWork = new UnitOfWork(context, _noxLoggerStub);
             var repository = new GenericRepository<LicenseEntity>(context, _noxLoggerStub);
 
             repository.Remove(existingLicense);

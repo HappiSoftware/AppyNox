@@ -1,8 +1,8 @@
 ﻿using AppyNox.Services.Base.Application.DtoUtilities;
+using AppyNox.Services.Base.Application.Helpers;
 using AppyNox.Services.Base.Application.Logger;
 using AppyNox.Services.License.Application.Dtos.DtoUtilities;
-using AppyNox.Services.License.Application.Services.Implementations;
-using AppyNox.Services.License.Application.Services.Interfaces;
+using AppyNox.Services.License.Domain.Entities;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
@@ -15,10 +15,20 @@ namespace AppyNox.Services.License.Application
 
         public static void AddLicenseApplication(this IServiceCollection services)
         {
-            services.AddAutoMapper(Assembly.Load("AppyNox.Services.License.Application"));
-            services.AddValidatorsFromAssembly(Assembly.Load("AppyNox.Services.License.Application"));
+            Assembly applicationAssembly = Assembly.Load("AppyNox.Services.License.Application");
+            services.AddAutoMapper(applicationAssembly);
+            services.AddValidatorsFromAssembly(applicationAssembly);
 
-            services.AddScoped(typeof(IGenericService<>), typeof(GenericService<>));
+            #region [ CQRS ]
+
+            services.AddMediatR(cfg =>
+            {
+                cfg.RegisterServicesFromAssembly(applicationAssembly);
+            });
+            services.AddGenericEntityCommandHandlers(typeof(LicenseEntity));
+
+            #endregion
+
             services.AddSingleton(typeof(IDtoMappingRegistryBase), typeof(DtoMappingRegistry));
             services.AddSingleton<INoxApplicationLogger, NoxApplicationLogger>();
         }

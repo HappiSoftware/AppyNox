@@ -1,5 +1,4 @@
 ﻿using AppyNox.Services.Base.Infrastructure.ExceptionExtensions;
-using AppyNox.Services.Base.Infrastructure.Repositories;
 using AppyNox.Services.Base.Infrastructure.Repositories.Common;
 using AppyNox.Services.Base.Infrastructure.UnitTests.Fixtures;
 using AppyNox.Services.Base.Infrastructure.UnitTests.Stubs;
@@ -189,7 +188,7 @@ namespace AppyNox.Services.Coupon.Infrastructure.UnitTest.RepositoryTests
         public async Task AddAsync_ShouldAddEntity()
         {
             CouponDbContext context = _fixture.CreateDatabaseContext<CouponDbContext>();
-            var unitOfWork = new UnitOfWorkBase(context, _noxLoggerStub);
+            var unitOfWork = new UnitOfWork(context, _noxLoggerStub);
             var repository = new GenericRepository<CouponEntity>(context, _noxLoggerStub);
 
             var existingCoupon = context.SeedOneCoupon(); // To Seed CouponDetail
@@ -233,7 +232,7 @@ namespace AppyNox.Services.Coupon.Infrastructure.UnitTest.RepositoryTests
             Assert.NotNull(existingCoupon);
             Assert.NotNull(existingCoupon2);
 
-            var unitOfWork = new UnitOfWorkBase(context, _noxLoggerStub);
+            var unitOfWork = new UnitOfWork(context, _noxLoggerStub);
             var repository = new GenericRepository<CouponEntity>(context, _noxLoggerStub);
 
             existingCoupon.Code = "TEE20";
@@ -270,7 +269,7 @@ namespace AppyNox.Services.Coupon.Infrastructure.UnitTest.RepositoryTests
             var existingCoupon = context.SeedOneCoupon();
             Assert.NotNull(existingCoupon);
 
-            var unitOfWork = new UnitOfWorkBase(context, _noxLoggerStub);
+            var unitOfWork = new UnitOfWork(context, _noxLoggerStub);
             var repository = new GenericRepository<CouponEntity>(context, _noxLoggerStub);
 
             repository.Remove(existingCoupon);
