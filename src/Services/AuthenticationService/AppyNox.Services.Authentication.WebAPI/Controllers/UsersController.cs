@@ -2,20 +2,24 @@
 using AppyNox.Services.Authentication.Application.Dtos.IdentityUserDtos.Models.Base;
 using AppyNox.Services.Authentication.Application.Dtos.IdentityUserDtos.Models.Extended;
 using AppyNox.Services.Authentication.Application.Validators.IdentityUser;
-using AppyNox.Services.Authentication.Infrastructure.Entities;
+using AppyNox.Services.Authentication.Domain.Entities;
+using AppyNox.Services.Authentication.SharedEvents.Events;
 using AppyNox.Services.Authentication.WebAPI.ControllerDependencies;
 using AppyNox.Services.Authentication.WebAPI.ExceptionExtensions.Base;
 using AppyNox.Services.Authentication.WebAPI.Filters;
 using AppyNox.Services.Authentication.WebAPI.Utilities;
 using AppyNox.Services.Base.Application.ExceptionExtensions;
+using AppyNox.Services.Base.Infrastructure.Helpers;
 using Asp.Versioning;
 using AutoWrapper.Wrappers;
 using FluentValidation.Results;
+using MassTransit;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
+using ValidationResult = FluentValidation.Results.ValidationResult;
 
 namespace AppyNox.Services.Authentication.WebAPI.Controllers
 {
@@ -31,15 +35,18 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
 
         private readonly UsersControllerBaseDependencies _baseDependencies;
 
+        private readonly IPublishEndpoint _publishEndpoint;
+
         #endregion
 
         #region [ Public Constructors ]
 
         public UsersController(UsersControllerBaseDependencies usersControllerBaseDependencies,
-            IdentityUserCreateDtoValidator identityUserCreateDtoValidator)
+            IdentityUserCreateDtoValidator identityUserCreateDtoValidator, IPublishEndpoint publishEndpoint)
         {
             _baseDependencies = usersControllerBaseDependencies;
             _identityUserCreateDtoValidator = identityUserCreateDtoValidator;
+            _publishEndpoint = publishEndpoint;
         }
 
         #endregion
@@ -138,48 +145,18 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
         [Authorize(Permissions.Users.Create)]
         public async Task<ApiResponse> Post(IdentityUserCreateDto registerDto)
         {
-            var dtoValidationResult = await _identityUserCreateDtoValidator.ValidateAsync(registerDto);
-            if (!dtoValidationResult.IsValid)
+            var startUserCreationEvent = new StartUserCreation
             {
-                throw new FluentValidationException(typeof(IdentityUser), dtoValidationResult);
-            }
-
-            var userEntity = _baseDependencies.Mapper.Map<ApplicationUser>(registerDto);
-            var result = await _baseDependencies.UserValidator.ValidateAsync(_baseDependencies.UserManager, userEntity);
-            if (!result.Succeeded)
-            {
-                ValidationResult validationResult = new();
-                foreach (var error in result.Errors)
-                {
-                    ValidationFailure validationFailure = new(error.Code, error.Description);
-                    validationResult.Errors.Add(validationFailure);
-                }
-                throw new FluentValidationException(typeof(ApplicationUser), validationResult);
-            }
-
-            var passwordResult = await _baseDependencies.PasswordValidator.ValidateAsync(_baseDependencies.UserManager, userEntity, registerDto.Password);
-
-            if (!passwordResult.Succeeded)
-            {
-                ValidationResult validationResult = new();
-                foreach (var error in passwordResult.Errors)
-                {
-                    ValidationFailure validationFailure = new(error.Code, error.Description);
-                    validationResult.Errors.Add(validationFailure);
-                }
-                throw new FluentValidationException(typeof(ApplicationUser), validationResult);
-            }
-
-            userEntity.PasswordHash = _baseDependencies.PasswordHasher.HashPassword(userEntity, registerDto.Password);
-            await _baseDependencies.UserManager.CreateAsync(userEntity);
-
-            object response = new
-            {
-                id = userEntity.Id,
-                value = registerDto
+                CorrelationId = CorrelationContext.CorrelationId,
+                LicenseKey = registerDto.LicenseKey,
+                UserName = registerDto.UserName,
+                Email = registerDto.Email,
+                Password = registerDto.Password,
+                ConfirmPassword = registerDto.ConfirmPassword
             };
+            await _publishEndpoint.Publish(startUserCreationEvent);
 
-            return new ApiResponse("New record has been created in the database.", response, 201);
+            return new ApiResponse("Process queued successfully", 201);
         }
 
         [HttpDelete("{id}")]

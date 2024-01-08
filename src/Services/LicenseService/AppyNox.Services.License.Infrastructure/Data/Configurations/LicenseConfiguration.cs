@@ -23,6 +23,12 @@ namespace AppyNox.Services.License.Infrastructure.Data.Configurations
             builder.Property(c => c.Id)
                 .ValueGeneratedOnAdd();
 
+            builder.HasMany(l => l.ApplicationUserLicenses)
+                .WithOne(aul => aul.License)
+                .HasForeignKey(aul => aul.LicenseId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Cascade);
+
             builder.Property(x => x.Code).IsRequired().HasMaxLength(5);
             builder.Property(x => x.Description).HasMaxLength(60).IsUnicode().IsRequired();
             builder.Property(x => x.LicenseKey).IsRequired();

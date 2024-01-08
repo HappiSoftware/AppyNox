@@ -1,5 +1,5 @@
 ﻿using AppyNox.Services.Base.API.ExceptionExtensions;
-using AppyNox.Services.Base.API.Logger;
+using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Infrastructure.Helpers;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -31,27 +31,29 @@ namespace AppyNox.Services.Base.API.Middleware
         /// <param name="context">The HTTP context for the current request.</param>
         public async Task Invoke(HttpContext context)
         {
-            if (_env.IsDevelopment()) // Check if in development environment
+            //if (_env.IsDevelopment()) // Check if in development environment
+            //{
+            //    // In development, you may choose to skip correlation ID validation
+            //    CorrelationContext.CorrelationId = Guid.NewGuid();
+            //    context.Response.Headers["X-Correlation-ID"] = CorrelationContext.CorrelationId.ToString();
+            //    _logger.LogInformation($"Endpoint invoked in Development mode. Generated correlation-id: {CorrelationContext.CorrelationId}");
+            //}
+            //else
+            //{
+            string? correlationId = context.Request.Headers["X-Correlation-ID"].FirstOrDefault();
+            if (string.IsNullOrEmpty(correlationId))
             {
-                // In development, you may choose to skip correlation ID validation
-                CorrelationContext.CorrelationId = "DevelopmentCorrelationId";
-                context.Response.Headers["X-Correlation-ID"] = "DevelopmentCorrelationId";
+                _logger.LogCritical(new MissingCorrelationIdException("Correlation ID is required"), "A request with no correlation ID received.");
+                context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                context.Response.ContentType = "text/plain";
+                await context.Response.WriteAsync("Correlation ID is required");
+                return;
             }
-            else
-            {
-                string? correlationId = context.Request.Headers["X-Correlation-ID"].FirstOrDefault();
-                if (string.IsNullOrEmpty(correlationId))
-                {
-                    _logger.LogCritical(new MissingCorrelationIdException("Correlation ID is required"), "A request with no correlation ID received.");
-                    context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                    context.Response.ContentType = "text/plain";
-                    await context.Response.WriteAsync("Correlation ID is required");
-                    return;
-                }
 
-                CorrelationContext.CorrelationId = correlationId;
-                context.Response.Headers["X-Correlation-ID"] = correlationId;
-            }
+            CorrelationContext.CorrelationId = Guid.Parse(correlationId);
+            context.Response.Headers["X-Correlation-ID"] = correlationId;
+
+            //}
 
             await _next(context);
         }

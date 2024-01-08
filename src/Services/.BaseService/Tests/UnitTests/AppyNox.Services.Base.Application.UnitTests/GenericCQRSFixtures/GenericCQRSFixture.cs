@@ -1,17 +1,16 @@
 ﻿using AppyNox.Services.Base.Application.DtoUtilities;
+using AppyNox.Services.Base.Application.Interfaces.Repositories;
 using AppyNox.Services.Base.Application.MediatR.Commands;
 using AppyNox.Services.Base.Application.MediatR.Handlers;
 using AppyNox.Services.Base.Application.MediatR.Queries;
 using AppyNox.Services.Base.Application.UnitTests.Stubs;
 using AppyNox.Services.Base.Domain.Interfaces;
-using AppyNox.Services.Base.Infrastructure.Interfaces;
-using AppyNox.Services.Base.Infrastructure.Repositories.Common;
 using AutoMapper;
 using MediatR;
 using Moq;
 using System.Linq.Expressions;
 
-namespace AppyNox.Services.Base.Application.UnitTests.CQRSTests
+namespace AppyNox.Services.Base.Application.UnitTests.GenericCQRSFixtures
 {
     public class GenericCQRSFixture<TEntity> : IDisposable
         where TEntity : class, IEntityWithGuid
@@ -62,7 +61,7 @@ namespace AppyNox.Services.Base.Application.UnitTests.CQRSTests
 
             #region [ Repository Mocks ]
 
-            _mockRepository.Setup(repo => repo.GetAllAsync(It.IsAny<QueryParametersBase>(), It.IsAny<Expression<Func<TEntity, dynamic>>>()))
+            _mockRepository.Setup(repo => repo.GetAllAsync(It.IsAny<IQueryParameters>(), It.IsAny<Expression<Func<TEntity, dynamic>>>()))
                 .ReturnsAsync(new Mock<List<dynamic>>().Object);
 
             _mockRepository.Setup(repo => repo.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<Expression<Func<TEntity, dynamic>>>()))

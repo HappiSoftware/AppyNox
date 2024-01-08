@@ -1,4 +1,4 @@
-﻿using AppyNox.Services.Authentication.Infrastructure.Entities;
+﻿using AppyNox.Services.Authentication.Domain.Entities;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 

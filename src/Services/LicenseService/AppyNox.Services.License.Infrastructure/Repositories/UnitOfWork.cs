@@ -1,4 +1,4 @@
-﻿using AppyNox.Services.Base.Infrastructure.Logger;
+﻿using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Infrastructure.Repositories;
 using AppyNox.Services.License.Infrastructure.Data;
 

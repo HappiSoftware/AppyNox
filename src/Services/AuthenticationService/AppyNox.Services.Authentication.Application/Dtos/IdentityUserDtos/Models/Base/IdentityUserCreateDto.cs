@@ -18,6 +18,8 @@ namespace AppyNox.Services.Authentication.Application.Dtos.IdentityUserDtos.Mode
 
         public string ConfirmPassword { get; set; } = string.Empty;
 
+        public string LicenseKey { get; set; } = string.Empty;
+
         #endregion
     }
 }

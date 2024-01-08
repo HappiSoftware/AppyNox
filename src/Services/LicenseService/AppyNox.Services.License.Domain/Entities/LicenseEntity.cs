@@ -24,6 +24,8 @@ namespace AppyNox.Services.License.Domain.Entities
 
         public Guid? CompanyId { get; set; }
 
+        public virtual ICollection<ApplicationUserLicenses>? ApplicationUserLicenses { get; set; }
+
         #endregion
     }
 }

@@ -1,9 +1,9 @@
-﻿using AppyNox.Services.Base.Domain.Common;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Configuration;
+﻿using AppyNox.Services.Base.Application.Interfaces.Loggers;
+using AppyNox.Services.Base.Domain.Common;
 using AppyNox.Services.Base.Infrastructure.ExceptionExtensions.Base;
 using Consul;
-using AppyNox.Services.Base.Infrastructure.Logger;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using System.Net;
 
 namespace AppyNox.Services.Base.Infrastructure.HostedServices;

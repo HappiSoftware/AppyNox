@@ -19,8 +19,6 @@ namespace AppyNox.Services.Authentication.Application
         /// <param name="configuration">The IConfiguration instance to access application settings.</param>
         public static void AddAuthenticationApplication(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddAutoMapper(Assembly.Load("AppyNox.Services.Authentication.Application"));
-            services.AddValidatorsFromAssembly(Assembly.Load("AppyNox.Services.Authentication.Application"));
         }
 
         #endregion

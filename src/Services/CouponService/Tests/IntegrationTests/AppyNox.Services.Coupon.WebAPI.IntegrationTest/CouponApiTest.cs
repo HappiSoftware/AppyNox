@@ -5,10 +5,10 @@ using AutoWrapper.Server;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
 using AppyNox.Services.Base.IntegrationTests.Helpers;
 using System.Text;
-using AppyNox.Services.Coupon.WebAPI.IntegrationTests.Fixtures;
 using AppyNox.Services.Base.IntegrationTests.URIs;
+using AppyNox.Services.Coupon.WebAPI.IntegrationTest.Fixtures;
 
-namespace AppyNox.Services.Coupon.WebAPI.IntegrationTests
+namespace AppyNox.Services.Coupon.WebAPI.IntegrationTest
 {
     public class CouponApiTest(CouponApiTestFixture couponApiTestFixture) : IClassFixture<CouponApiTestFixture>
     {

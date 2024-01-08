@@ -1,7 +1,7 @@
-﻿using AppyNox.Services.Base.Domain.Common;
+﻿using AppyNox.Services.Base.Application.Interfaces.Loggers;
+using AppyNox.Services.Base.Application.Interfaces.Repositories;
+using AppyNox.Services.Base.Domain.Common;
 using AppyNox.Services.Base.Infrastructure.HostedServices;
-using AppyNox.Services.Base.Infrastructure.Interfaces;
-using AppyNox.Services.Base.Infrastructure.Logger;
 using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
 using AppyNox.Services.Coupon.Infrastructure.Data;
 using AppyNox.Services.Coupon.Infrastructure.Repositories;
@@ -31,6 +31,7 @@ namespace AppyNox.Services.Coupon.Infrastructure
             string environmentName = builder.Environment.EnvironmentName;
 
             services.AddSingleton<INoxInfrastructureLogger, NoxInfrastructureLogger>();
+            services.AddSingleton<INoxApplicationLogger, NoxApplicationLogger>();
 
             #region [ Database Configuration ]
 

@@ -1,9 +1,9 @@
 ﻿using AppyNox.Services.Base.Application.Helpers;
+using AppyNox.Services.Base.Application.Interfaces.Repositories;
 using AppyNox.Services.Base.Application.MediatR.Commands;
 using AppyNox.Services.Base.Application.MediatR.Queries;
-using AppyNox.Services.Base.Application.UnitTests.CQRSTests;
+using AppyNox.Services.Base.Application.UnitTests.GenericCQRSFixtures;
 using AppyNox.Services.Base.Domain.Common;
-using AppyNox.Services.Base.Infrastructure.Repositories.Common;
 using AppyNox.Services.License.Application.Dtos.LicenseDtos.DetailLevel;
 using AppyNox.Services.License.Application.Dtos.LicenseDtos.Models.Base;
 using AppyNox.Services.License.Domain.Entities;
@@ -59,7 +59,7 @@ namespace AppyNox.Services.License.Application.UnitTest.CQRSTests
         public async void GetAllEntitiesQuery_ShouldSuccess()
         {
             // Act
-            var result = await _fixture.MockMediator.Object.Send(new GetAllEntitiesQuery<LicenseEntity>(new QueryParameters()));
+            var result = await _fixture.MockMediator.Object.Send(new GetAllEntitiesQuery<LicenseEntity>(It.IsAny<IQueryParameters>()));
 
             // Assert
             Assert.NotNull(result);
@@ -70,7 +70,7 @@ namespace AppyNox.Services.License.Application.UnitTest.CQRSTests
         public async void GetEntityByIdQuery_ShouldSuccess()
         {
             // Act
-            var result = await _fixture.MockMediator.Object.Send(new GetEntityByIdQuery<LicenseEntity>(It.IsAny<Guid>(), new QueryParameters()));
+            var result = await _fixture.MockMediator.Object.Send(new GetEntityByIdQuery<LicenseEntity>(It.IsAny<Guid>(), It.IsAny<IQueryParameters>()));
 
             // Assert
             Assert.NotNull(result);

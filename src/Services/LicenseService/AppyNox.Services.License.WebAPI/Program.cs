@@ -1,6 +1,4 @@
-using AppyNox.Services.Base.API.Logger;
 using AppyNox.Services.Base.Infrastructure.Helpers;
-using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
 using AppyNox.Services.License.Infrastructure;
 using AppyNox.Services.Base.API.Helpers;
 using Serilog;
@@ -15,6 +13,10 @@ using AppyNox.Services.Base.Infrastructure.HostedServices;
 using AppyNox.Services.License.Infrastructure.Data;
 using AppyNox.Services.License.Application;
 using AppyNox.Services.License.WebAPI.Helpers.Permissions;
+using MassTransit;
+using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
+using AppyNox.Services.Base.Application.Interfaces.Loggers;
+using AppyNox.Services.License.Infrastructure.MassTransit.Consumers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -66,8 +68,9 @@ builder.Services.AddHealthChecks();
 #region [ Dependency Injection For Layers ]
 
 noxLogger.LogInformation("Registering DI's for layers.");
+
+//builder.Services.AddLicenseApplication();
 builder.Services.AddLicenseInfrastructure(builder, builder.Environment.GetEnvironment(), noxLogger);
-builder.Services.AddLicenseApplication();
 noxLogger.LogInformation("Registering DI's for layers completed.");
 
 #endregion
@@ -97,24 +100,24 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-if (!builder.Environment.IsDevelopment())
+//if (!builder.Environment.IsDevelopment())
+//{
+noxLogger.LogInformation("Adjusting swagger endpoints.");
+builder.Services.AddSwaggerGen(opt =>
 {
-    noxLogger.LogInformation("Adjusting swagger endpoints.");
-    builder.Services.AddSwaggerGen(opt =>
+    opt.SwaggerDoc("v1", new OpenApiInfo { Title = "Coupons Service", Version = "v1" });
+    opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
-        opt.SwaggerDoc("v1", new OpenApiInfo { Title = "Coupons Service", Version = "v1" });
-        opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-        {
-            In = ParameterLocation.Header,
-            Description = "Please enter token",
-            Name = "Authorization",
-            Type = SecuritySchemeType.Http,
-            BearerFormat = "JWT",
-            Scheme = "bearer"
-        });
+        In = ParameterLocation.Header,
+        Description = "Please enter token",
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        BearerFormat = "JWT",
+        Scheme = "bearer"
+    });
 
-        opt.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
+    opt.AddSecurityRequirement(new OpenApiSecurityRequirement
+{
         {
             new OpenApiSecurityScheme
             {
@@ -126,10 +129,11 @@ if (!builder.Environment.IsDevelopment())
             },
             Array.Empty<string>()
         }
-    });
-    });
-    noxLogger.LogInformation("Adjusting swagger endpoints completed.");
-}
+});
+});
+noxLogger.LogInformation("Adjusting swagger endpoints completed.");
+
+//}
 
 // Add Policy-based Authorization
 builder.Services.AddAuthorization(options =>
@@ -150,15 +154,41 @@ noxLogger.LogInformation("Registering JWT Configuration completed.");
 
 #endregion
 
+#region [ MassTransit ]
+
+builder.Services.AddMassTransit(busConfigurator =>
+{
+    busConfigurator.AddConsumer<LicenseValidationRequestedConsumer>();
+
+    busConfigurator.UsingRabbitMq((context, configurator) =>
+    {
+        configurator.Host(new Uri(builder.Configuration["MessageBroker:Host"]!), h =>
+        {
+            h.Username(builder.Configuration["MessageBroker:Username"]!);
+            h.Password(builder.Configuration["MessageBroker:Password"]!);
+        });
+
+        configurator.ReceiveEndpoint("validate-license", e =>
+        {
+            e.ConfigureConsumer<LicenseValidationRequestedConsumer>(context);
+        });
+
+        configurator.ConfigureEndpoints(context);
+    });
+});
+
+#endregion
+
 var app = builder.Build();
 
 #region [ Pipeline ]
 
-if (!app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+//if (!app.Environment.IsDevelopment())
+//{
+app.UseSwagger();
+app.UseSwaggerUI();
+
+//}
 
 app.UseMiddleware<CorrelationIdMiddleware>(app.Environment);
 

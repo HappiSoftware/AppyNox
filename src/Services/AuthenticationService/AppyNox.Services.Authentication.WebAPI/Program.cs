@@ -1,20 +1,23 @@
 using AppyNox.Services.Authentication.Application;
-using AppyNox.Services.Authentication.Infrastructure.Entities;
+using AppyNox.Services.Authentication.Domain.Entities;
 using AppyNox.Services.Authentication.Infrastructure;
 using AppyNox.Services.Authentication.Infrastructure.Data;
+using AppyNox.Services.Authentication.Infrastructure.MassTransit.Consumers;
+using AppyNox.Services.Authentication.Infrastructure.MassTransit.Sagas;
 using AppyNox.Services.Authentication.WebAPI.Configuration;
 using AppyNox.Services.Authentication.WebAPI.ControllerDependencies;
 using AppyNox.Services.Authentication.WebAPI.Managers.Implementations;
 using AppyNox.Services.Authentication.WebAPI.Managers.Interfaces;
 using AppyNox.Services.Authentication.WebAPI.Utilities;
 using AppyNox.Services.Base.API.Helpers;
-using AppyNox.Services.Base.API.Logger;
 using AppyNox.Services.Base.API.Middleware;
+using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Infrastructure.Helpers;
 using AppyNox.Services.Base.Infrastructure.HostedServices;
 using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
 using Asp.Versioning;
 using AutoWrapper;
+using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -160,6 +163,36 @@ builder.Services.AddAuthorization(options =>
 
 builder.Services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
 noxLogger.LogInformation("Registering JWT Configuration completed.");
+
+#endregion
+
+#region [ MassTransit ]
+
+builder.Services.AddMassTransit(busConfigurator =>
+{
+    busConfigurator.AddConsumer<ApplicationUserCreateRequestedConsumer>();
+
+    //busConfigurator.AddConsumer<TemporaryLicenseValidationCompletedConsumer>();
+
+    busConfigurator.AddSagaStateMachine<UserCreationSaga, UserCreationSagaState>()
+      .InMemoryRepository();
+
+    busConfigurator.UsingRabbitMq((context, configurator) =>
+    {
+        configurator.Host(new Uri(builder.Configuration["MessageBroker:Host"]!), h =>
+        {
+            h.Username(builder.Configuration["MessageBroker:Username"]!);
+            h.Password(builder.Configuration["MessageBroker:Password"]!);
+        });
+
+        configurator.ReceiveEndpoint("create-user", e =>
+        {
+            e.ConfigureConsumer<ApplicationUserCreateRequestedConsumer>(context);
+        });
+
+        configurator.ConfigureEndpoints(context);
+    });
+});
 
 #endregion
 

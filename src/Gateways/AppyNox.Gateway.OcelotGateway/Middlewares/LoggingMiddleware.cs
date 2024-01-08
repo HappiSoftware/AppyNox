@@ -1,5 +1,5 @@
-﻿using AppyNox.Services.Base.API.Logger;
-using AppyNox.Services.Base.Application.Helpers;
+﻿using AppyNox.Services.Base.Application.Helpers;
+using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Domain.Common;
 using Newtonsoft.Json;
 

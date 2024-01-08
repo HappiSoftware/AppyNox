@@ -13,6 +13,10 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\..\.BaseService\AppyNox.Services.Base.Infrastructure\AppyNox.Services.Base.Infrastructure.csproj" />
+	  <ProjectReference Include="..\..\LicenseService\AppyNox.Services.License.Application\AppyNox.Services.License.Application.csproj" />
+	  <ProjectReference Include="..\..\LicenseService\AppyNox.Services.License.SharedEvents\AppyNox.Services.License.SharedEvents.csproj" />
+	  <ProjectReference Include="..\AppyNox.Services.Authentication.Application\AppyNox.Services.Authentication.Application.csproj" />
+	  <ProjectReference Include="..\AppyNox.Services.Authentication.SharedEvents\AppyNox.Services.Authentication.SharedEvents.csproj" />
 	</ItemGroup>
 
 </Project>

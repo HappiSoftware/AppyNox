@@ -23,6 +23,8 @@ namespace AppyNox.Services.License.Infrastructure.Data
 
         public DbSet<LicenseEntity> Licenses { get; set; }
 
+        public DbSet<ApplicationUserLicenses> ApplicationUserLicenses { get; set; }
+
         #endregion
 
         #region [ Protected Methods ]

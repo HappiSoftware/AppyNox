@@ -1,4 +1,4 @@
-﻿using AppyNox.Services.Base.Infrastructure.Logger;
+﻿using AppyNox.Services.Base.Application.Interfaces.Loggers;
 
 namespace AppyNox.Services.Base.Infrastructure.UnitTests.Stubs
 {

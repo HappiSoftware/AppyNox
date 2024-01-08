@@ -1,4 +1,5 @@
-﻿using AppyNox.Services.Base.Domain.ExceptionExtensions.Base;
+﻿using AppyNox.Services.Base.Application.Interfaces.Exceptions;
+using AppyNox.Services.Base.Domain.ExceptionExtensions.Base;
 using AppyNox.Services.Base.Domain.ExceptionExtensions.Enums;
 
 namespace AppyNox.Services.Base.Infrastructure.ExceptionExtensions.Base
@@ -6,7 +7,7 @@ namespace AppyNox.Services.Base.Infrastructure.ExceptionExtensions.Base
     /// <summary>
     /// Represents exceptions specific to the infrastructure layer of the application.
     /// </summary>
-    public class NoxInfrastructureException : NoxException
+    public class NoxInfrastructureException : NoxException, INoxInfrastructureException
     {
         #region [ Public Constructors ]
 

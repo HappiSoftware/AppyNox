@@ -8,7 +8,7 @@ using Ductus.FluentDocker.Services.Impl;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
-namespace AppyNox.Services.Coupon.WebAPI.IntegrationTests.Fixtures
+namespace AppyNox.Services.Coupon.WebAPI.IntegrationTest.Fixtures
 {
     public class CouponApiTestFixture : DockerComposeTestBase
     {

@@ -1,5 +1,5 @@
 using AppyNox.Gateway.OcelotGateway.Middlewares;
-using AppyNox.Services.Base.API.Logger;
+using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Infrastructure.Helpers;
 using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
 using Ocelot.DependencyInjection;
@@ -84,6 +84,8 @@ var app = builder.Build();
 #region [ Pipeline ]
 
 app.UseMiddleware<LoggingMiddleware>();
+
+app.UseMiddleware<OcelotCorrelationIdMiddleware>();
 
 app.MapHealthChecks("/health");
 

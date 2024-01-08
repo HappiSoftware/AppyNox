@@ -28,7 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\AppyNox.Services.Base.Application\AppyNox.Services.Base.Application.csproj" />
+    <ProjectReference Include="..\..\..\AppyNox.Services.Base.Infrastructure\AppyNox.Services.Base.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

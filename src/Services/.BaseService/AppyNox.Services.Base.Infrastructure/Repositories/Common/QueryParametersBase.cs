@@ -1,4 +1,5 @@
-﻿using AppyNox.Services.Base.Domain.Common;
+﻿using AppyNox.Services.Base.Application.Interfaces.Repositories;
+using AppyNox.Services.Base.Domain.Common;
 using System.ComponentModel.DataAnnotations;
 
 namespace AppyNox.Services.Base.Infrastructure.Repositories.Common

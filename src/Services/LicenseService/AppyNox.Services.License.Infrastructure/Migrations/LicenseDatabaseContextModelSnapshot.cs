@@ -22,6 +22,29 @@ namespace AppyNox.Services.License.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("AppyNox.Services.License.Domain.Entities.ApplicationUserLicenses", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("LicenseId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("MacAddress")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LicenseId");
+
+                    b.ToTable("ApplicationUserLicenses");
+                });
+
             modelBuilder.Entity("AppyNox.Services.License.Domain.Entities.LicenseEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -63,10 +86,26 @@ namespace AppyNox.Services.License.Infrastructure.Migrations
                             Code = "LK001",
                             CompanyId = new Guid("221e8b2c-59d5-4e5b-b010-86c239b66738"),
                             Description = "License Description",
-                            ExpirationDate = new DateTime(2025, 1, 2, 21, 33, 34, 534, DateTimeKind.Utc).AddTicks(4202),
+                            ExpirationDate = new DateTime(2025, 1, 6, 19, 43, 59, 466, DateTimeKind.Utc).AddTicks(7483),
                             LicenseKey = "7f033381-fbf7-4929-b5f7-c64261b20bf3",
                             MaxUsers = 3
                         });
+                });
+
+            modelBuilder.Entity("AppyNox.Services.License.Domain.Entities.ApplicationUserLicenses", b =>
+                {
+                    b.HasOne("AppyNox.Services.License.Domain.Entities.LicenseEntity", "License")
+                        .WithMany("ApplicationUserLicenses")
+                        .HasForeignKey("LicenseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("License");
+                });
+
+            modelBuilder.Entity("AppyNox.Services.License.Domain.Entities.LicenseEntity", b =>
+                {
+                    b.Navigation("ApplicationUserLicenses");
                 });
 #pragma warning restore 612, 618
         }

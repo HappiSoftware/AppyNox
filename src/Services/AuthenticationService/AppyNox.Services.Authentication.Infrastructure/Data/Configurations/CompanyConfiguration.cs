@@ -1,11 +1,6 @@
-﻿using AppyNox.Services.Authentication.Infrastructure.Entities;
+﻿using AppyNox.Services.Authentication.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AppyNox.Services.Authentication.Infrastructure.Data.Configurations
 {

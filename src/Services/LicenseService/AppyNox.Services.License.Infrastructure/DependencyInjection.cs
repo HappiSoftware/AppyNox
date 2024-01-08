@@ -1,8 +1,9 @@
-﻿using AppyNox.Services.Base.Domain.Common;
+﻿using AppyNox.Services.Base.Application.Interfaces.Loggers;
+using AppyNox.Services.Base.Application.Interfaces.Repositories;
+using AppyNox.Services.Base.Domain.Common;
 using AppyNox.Services.Base.Infrastructure.HostedServices;
-using AppyNox.Services.Base.Infrastructure.Interfaces;
-using AppyNox.Services.Base.Infrastructure.Logger;
 using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
+using AppyNox.Services.License.Domain.Entities;
 using AppyNox.Services.License.Infrastructure.Data;
 using AppyNox.Services.License.Infrastructure.Repositories;
 using Consul;
@@ -10,6 +11,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using AppyNox.Services.License.Application.Interfaces;
+using System.Reflection;
+using FluentValidation;
+using AppyNox.Services.Base.Application.DtoUtilities;
+using AppyNox.Services.License.Application.Dtos.DtoUtilities;
+using AppyNox.Services.Base.Application.Helpers;
 
 namespace AppyNox.Services.License.Infrastructure
 {
@@ -31,6 +38,7 @@ namespace AppyNox.Services.License.Infrastructure
             string environmentName = builder.Environment.EnvironmentName;
 
             services.AddSingleton<INoxInfrastructureLogger, NoxInfrastructureLogger>();
+            services.AddSingleton<INoxApplicationLogger, NoxApplicationLogger>();
 
             #region [ Database Configuration ]
 
@@ -63,7 +71,28 @@ namespace AppyNox.Services.License.Infrastructure
             #endregion
 
             services.AddScoped(typeof(IGenericRepositoryBase<>), typeof(GenericRepository<>));
+            services.AddScoped<ILicenseRepository, LicenseRepository<LicenseEntity>>();
             services.AddScoped<IUnitOfWorkBase, UnitOfWork>();
+
+            #region [ Application ]
+
+            Assembly applicationAssembly = Assembly.Load("AppyNox.Services.License.Application");
+            services.AddAutoMapper(applicationAssembly);
+            services.AddValidatorsFromAssembly(applicationAssembly);
+
+            #region [ CQRS ]
+
+            services.AddMediatR(cfg =>
+            {
+                cfg.RegisterServicesFromAssembly(applicationAssembly);
+            });
+            services.AddGenericEntityCommandHandlers(typeof(LicenseEntity));
+
+            #endregion
+
+            services.AddSingleton(typeof(IDtoMappingRegistryBase), typeof(DtoMappingRegistry));
+
+            #endregion
 
             return services;
         }

@@ -1,12 +1,19 @@
-﻿using AppyNox.Services.Authentication.Infrastructure.Data;
+﻿using AppyNox.Services.Authentication.Application.Validators.SharedRules;
+using AppyNox.Services.Authentication.Infrastructure.Data;
+using AppyNox.Services.Authentication.Infrastructure.Services;
+using AppyNox.Services.Base.Application.DtoUtilities;
+using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Domain.Common;
 using AppyNox.Services.Base.Infrastructure.HostedServices;
-using AppyNox.Services.Base.Infrastructure.Logger;
+using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
+using AppyNox.Services.License.Application.Dtos.DtoUtilities;
 using Consul;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System.Reflection;
 
 namespace AppyNox.Services.Authentication.Infrastructure
 {
@@ -54,6 +61,27 @@ namespace AppyNox.Services.Authentication.Infrastructure
             services.Configure<ConsulConfig>(configuration.GetSection("consul"));
 
             #endregion
+
+            #region [ Application ]
+
+            Assembly applicationAssembly = Assembly.Load("AppyNox.Services.Authentication.Application");
+            services.AddAutoMapper(applicationAssembly);
+            services.AddValidatorsFromAssembly(applicationAssembly);
+
+            #region [ CQRS ]
+
+            services.AddMediatR(cfg =>
+            {
+                cfg.RegisterServicesFromAssembly(applicationAssembly);
+            });
+
+            #endregion
+
+            services.AddSingleton(typeof(IDtoMappingRegistryBase), typeof(DtoMappingRegistry));
+
+            #endregion
+
+            services.AddScoped<IDatabaseChecks, ValidatorDatabaseChecker>();
         }
 
         #endregion

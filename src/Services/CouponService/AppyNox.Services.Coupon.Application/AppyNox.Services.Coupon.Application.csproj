@@ -11,7 +11,6 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\.BaseService\AppyNox.Services.Base.Application\AppyNox.Services.Base.Application.csproj" />
 		<ProjectReference Include="..\AppyNox.Services.Coupon.Domain\AppyNox.Services.Coupon.Domain.csproj" />
-		<ProjectReference Include="..\AppyNox.Services.Coupon.Infrastructure\AppyNox.Services.Coupon.Infrastructure.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
