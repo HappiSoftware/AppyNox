@@ -6,7 +6,7 @@ using MediatR;
 
 namespace AppyNox.Services.Authentication.Infrastructure.MassTransit.Consumers
 {
-    public class ApplicationUserCreateRequestedConsumer(IMediator mediator) : IConsumer<ApplicationUserCreateRequested>
+    public class CreateApplicationUserMessageConsumer(IMediator mediator) : IConsumer<CreateApplicationUserMessage>
     {
         #region Fields
 
@@ -16,7 +16,7 @@ namespace AppyNox.Services.Authentication.Infrastructure.MassTransit.Consumers
 
         #region Public Methods
 
-        public async Task Consume(ConsumeContext<ApplicationUserCreateRequested> context)
+        public async Task Consume(ConsumeContext<CreateApplicationUserMessage> context)
         {
             IdentityUserCreateDto dto = new()
             {
@@ -27,7 +27,7 @@ namespace AppyNox.Services.Authentication.Infrastructure.MassTransit.Consumers
             };
             var response = await _mediator.Send(new CreateUserCommand(dto));
 
-            await context.Publish<ApplicationUserCreateCompleted>(new
+            await context.Publish<ApplicationUserCreatedEvent>(new
             {
                 context.Message.CorrelationId,
                 response.id

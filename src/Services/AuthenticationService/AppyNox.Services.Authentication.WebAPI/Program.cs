@@ -170,7 +170,7 @@ noxLogger.LogInformation("Registering JWT Configuration completed.");
 
 builder.Services.AddMassTransit(busConfigurator =>
 {
-    busConfigurator.AddConsumer<ApplicationUserCreateRequestedConsumer>();
+    busConfigurator.AddConsumer<CreateApplicationUserMessageConsumer>();
 
     //busConfigurator.AddConsumer<TemporaryLicenseValidationCompletedConsumer>();
 
@@ -187,7 +187,7 @@ builder.Services.AddMassTransit(busConfigurator =>
 
         configurator.ReceiveEndpoint("create-user", e =>
         {
-            e.ConfigureConsumer<ApplicationUserCreateRequestedConsumer>(context);
+            e.ConfigureConsumer<CreateApplicationUserMessageConsumer>(context);
         });
 
         configurator.ConfigureEndpoints(context);

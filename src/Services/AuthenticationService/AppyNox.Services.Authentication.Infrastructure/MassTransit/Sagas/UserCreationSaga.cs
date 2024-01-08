@@ -12,47 +12,47 @@ namespace AppyNox.Services.Authentication.Infrastructure.MassTransit.Sagas
         {
             InstanceState(x => x.CurrentState);
 
-            Event(() => StartUserCreation, x => x.CorrelateById(context => context.Message.CorrelationId));
-            Event(() => LicenseValidationCompleted, x => x.CorrelateById(context => context.Message.CorrelationId));
-            Event(() => UserCreationCompleted, x => x.CorrelateById(context => context.Message.CorrelationId));
+            Event(() => StartUserCreationMessage, x => x.CorrelateById(context => context.Message.CorrelationId));
+            Event(() => LicenseValidatedEvent, x => x.CorrelateById(context => context.Message.CorrelationId));
+            Event(() => ApplicationUserCreatedEvent, x => x.CorrelateById(context => context.Message.CorrelationId));
 
             Initially(
-                When(StartUserCreation)
+                When(StartUserCreationMessage)
                     .Then(context =>
                     {
                         context.Saga.LicenseKey = context.Message.LicenseKey;
                     })
-                    .Send(new Uri("queue:validate-license"), context => new LicenseValidationRequested
-                    {
-                        CorrelationId = context.Saga.CorrelationId,
-                        LicenseKey = context.Saga.LicenseKey
-                    })
+                    .Send(new Uri("queue:validate-license"), context => new ValidateLicenseMessage
+                    (
+                        context.Saga.CorrelationId,
+                        context.Saga.LicenseKey
+                    ))
                     .TransitionTo(ValidatingLicense));
 
             During(ValidatingLicense,
-                When(LicenseValidationCompleted)
-                    .Send(new Uri("queue:create-user"), context => new ApplicationUserCreateRequested
-                    {
-                        CorrelationId = context.Saga.CorrelationId,
-                        UserName = context.Saga.UserName,
-                        Password = context.Saga.Password,
-                        ConfirmPassword = context.Saga.ConfirmPassword,
-                        Email = context.Saga.Email
-                    })
+                When(LicenseValidatedEvent)
+                    .Send(new Uri("queue:create-user"), context => new CreateApplicationUserMessage
+                    (
+                        context.Saga.CorrelationId,
+                        context.Saga.UserName,
+                        context.Saga.Email,
+                        context.Saga.Password,
+                        context.Saga.ConfirmPassword
+                    ))
                     .TransitionTo(CreatingUser));
 
             During(CreatingUser,
-                When(UserCreationCompleted)
+                When(ApplicationUserCreatedEvent)
                     .Then(context =>
                     {
                         context.Saga.UserId = context.Message.UserId;
                     })
-                    .Send(new Uri("queue:assign-license-to-user"), context => new AssignLicenseToUser
-                    {
-                        CorrelationId = context.Saga.CorrelationId,
-                        UserId = context.Saga.UserId,
-                        LicenseKey = context.Saga.LicenseKey
-                    })
+                    .Send(new Uri("queue:assign-license-to-user"), context => new AssignLicenseToUserMessage
+                    (
+                        context.Saga.CorrelationId,
+                        context.Saga.UserId,
+                        context.Saga.LicenseKey
+                    ))
                     .Finalize());
         }
 
@@ -66,11 +66,11 @@ namespace AppyNox.Services.Authentication.Infrastructure.MassTransit.Sagas
         public State CreatingUser { get; private set; } = default!;
 
         // Define events
-        public Event<StartUserCreation> StartUserCreation { get; private set; } = default!;
+        public Event<StartUserCreationMessage> StartUserCreationMessage { get; private set; } = default!;
 
-        public Event<LicenseValidationCompleted> LicenseValidationCompleted { get; private set; } = default!;
+        public Event<LicenseValidatedEvent> LicenseValidatedEvent { get; private set; } = default!;
 
-        public Event<ApplicationUserCreateCompleted> UserCreationCompleted { get; private set; } = default!;
+        public Event<ApplicationUserCreatedEvent> ApplicationUserCreatedEvent { get; private set; } = default!;
 
         #endregion
     }

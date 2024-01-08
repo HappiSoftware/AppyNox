@@ -145,15 +145,15 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
         [Authorize(Permissions.Users.Create)]
         public async Task<ApiResponse> Post(IdentityUserCreateDto registerDto)
         {
-            var startUserCreationEvent = new StartUserCreation
-            {
-                CorrelationId = CorrelationContext.CorrelationId,
-                LicenseKey = registerDto.LicenseKey,
-                UserName = registerDto.UserName,
-                Email = registerDto.Email,
-                Password = registerDto.Password,
-                ConfirmPassword = registerDto.ConfirmPassword
-            };
+            var startUserCreationEvent = new StartUserCreationMessage
+            (
+                CorrelationContext.CorrelationId,
+                registerDto.LicenseKey,
+                registerDto.UserName,
+                registerDto.Email,
+                registerDto.Password,
+                registerDto.ConfirmPassword
+            );
             await _publishEndpoint.Publish(startUserCreationEvent);
 
             return new ApiResponse("Process queued successfully", 201);

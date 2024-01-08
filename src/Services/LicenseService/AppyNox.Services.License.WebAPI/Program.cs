@@ -158,7 +158,7 @@ noxLogger.LogInformation("Registering JWT Configuration completed.");
 
 builder.Services.AddMassTransit(busConfigurator =>
 {
-    busConfigurator.AddConsumer<LicenseValidationRequestedConsumer>();
+    busConfigurator.AddConsumer<ValidateLicenseMessageConsumer>();
 
     busConfigurator.UsingRabbitMq((context, configurator) =>
     {
@@ -170,7 +170,7 @@ builder.Services.AddMassTransit(busConfigurator =>
 
         configurator.ReceiveEndpoint("validate-license", e =>
         {
-            e.ConfigureConsumer<LicenseValidationRequestedConsumer>(context);
+            e.ConfigureConsumer<ValidateLicenseMessageConsumer>(context);
         });
 
         configurator.ConfigureEndpoints(context);

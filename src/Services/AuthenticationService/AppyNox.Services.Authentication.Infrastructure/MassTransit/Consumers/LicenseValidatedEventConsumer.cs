@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace AppyNox.Services.Authentication.Infrastructure.MassTransit.Consumers
 {
-    public class TemporaryLicenseValidationCompletedConsumer : IConsumer<LicenseValidationCompleted>
+    public class LicenseValidatedEventConsumer : IConsumer<LicenseValidatedEvent>
     {
         #region Public Methods
 
-        public Task Consume(ConsumeContext<LicenseValidationCompleted> context)
+        public Task Consume(ConsumeContext<LicenseValidatedEvent> context)
         {
             Console.WriteLine("test");
             return Task.CompletedTask;
