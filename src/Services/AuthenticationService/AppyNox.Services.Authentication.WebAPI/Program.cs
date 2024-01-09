@@ -21,6 +21,7 @@ using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 
@@ -175,7 +176,15 @@ builder.Services.AddMassTransit(busConfigurator =>
     //busConfigurator.AddConsumer<TemporaryLicenseValidationCompletedConsumer>();
 
     busConfigurator.AddSagaStateMachine<UserCreationSaga, UserCreationSagaState>()
-      .InMemoryRepository();
+      .EntityFrameworkRepository(r =>
+      {
+          r.ConcurrencyMode = ConcurrencyMode.Pessimistic;
+          r.AddDbContext<DbContext, IdentitySagaDbContext>((provider, builder) =>
+          {
+              builder.UseNpgsql(configuration.GetConnectionString("SagaConnection"));
+          });
+          r.UsePostgres();
+      });
 
     busConfigurator.UsingRabbitMq((context, configurator) =>
     {
