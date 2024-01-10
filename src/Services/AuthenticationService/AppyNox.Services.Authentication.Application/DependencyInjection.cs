@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using AppyNox.Services.Base.Application.DtoUtilities;
+using FluentValidation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
@@ -19,6 +20,18 @@ namespace AppyNox.Services.Authentication.Application
         /// <param name="configuration">The IConfiguration instance to access application settings.</param>
         public static void AddAuthenticationApplication(this IServiceCollection services, IConfiguration configuration)
         {
+            Assembly applicationAssembly = Assembly.Load("AppyNox.Services.Authentication.Application");
+            services.AddAutoMapper(applicationAssembly);
+            services.AddValidatorsFromAssembly(applicationAssembly);
+
+            #region [ CQRS ]
+
+            services.AddMediatR(cfg =>
+            {
+                cfg.RegisterServicesFromAssembly(applicationAssembly);
+            });
+
+            #endregion
         }
 
         #endregion

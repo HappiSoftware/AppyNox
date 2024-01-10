@@ -8,15 +8,15 @@
 
         public Guid UserId { get; set; }
 
-        public string MacAddress { get; set; } = string.Empty!;
-
         #endregion
 
         #region [ Relations ]
 
         public Guid LicenseId { get; set; }
 
-        public virtual LicenseEntity License { get; set; } = null!;
+        public virtual LicenseEntity License { get; set; } = default!;
+
+        public virtual ICollection<ApplicationUserLicenseMacAddress>? MacAddresses { get; set; }
 
         #endregion
     }

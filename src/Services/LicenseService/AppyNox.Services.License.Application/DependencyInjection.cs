@@ -15,6 +15,21 @@ namespace AppyNox.Services.License.Application
 
         public static void AddLicenseApplication(this IServiceCollection services)
         {
+            Assembly applicationAssembly = Assembly.Load("AppyNox.Services.License.Application");
+            services.AddAutoMapper(applicationAssembly);
+            services.AddValidatorsFromAssembly(applicationAssembly);
+
+            #region [ CQRS ]
+
+            services.AddMediatR(cfg =>
+            {
+                cfg.RegisterServicesFromAssembly(applicationAssembly);
+            });
+            services.AddGenericEntityCommandHandlers(typeof(LicenseEntity));
+
+            #endregion
+
+            services.AddSingleton(typeof(IDtoMappingRegistryBase), typeof(DtoMappingRegistry));
         }
 
         #endregion

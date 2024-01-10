@@ -53,7 +53,6 @@ namespace AppyNox.Services.Base.Infrastructure.Repositories
             try
             {
                 _logger.LogInformation("Attempting to commit the current transaction.");
-                _dbContext.SaveChanges();
                 _transaction!.Commit();
                 _logger.LogInformation("Transaction committed successfully.");
             }

@@ -9,10 +9,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace AppyNox.Services.Authentication.Infrastructure.Migrations.IdentitySagaDb
+namespace AppyNox.Services.Authentication.Infrastructure.Migrations.IdentitySagaDatabase
 {
-    [DbContext(typeof(IdentitySagaDbContext))]
-    [Migration("20240108235056_InitDb")]
+    [DbContext(typeof(IdentitySagaDatabaseContext))]
+    [Migration("20240109191855_InitDb")]
     partial class InitDb
     {
         /// <inheritdoc />
@@ -66,9 +66,6 @@ namespace AppyNox.Services.Authentication.Infrastructure.Migrations.IdentitySaga
                         .HasColumnName("UserName");
 
                     b.HasKey("CorrelationId");
-
-                    b.HasIndex("UserName")
-                        .IsUnique();
 
                     b.ToTable("UserCreationSagaState", (string)null);
                 });

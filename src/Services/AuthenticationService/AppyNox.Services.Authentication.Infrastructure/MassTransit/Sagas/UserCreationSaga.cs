@@ -1,4 +1,7 @@
-﻿using AppyNox.Services.Authentication.SharedEvents.Events;
+﻿using AppyNox.Services.Authentication.Infrastructure.ExceptionExtensions.Base;
+using AppyNox.Services.Authentication.SharedEvents.Events;
+using AppyNox.Services.Base.Infrastructure.ExceptionExtensions.Base;
+using AppyNox.Services.Base.Infrastructure.Helpers;
 using AppyNox.Services.License.SharedEvents.Events;
 using MassTransit;
 
@@ -6,7 +9,7 @@ namespace AppyNox.Services.Authentication.Infrastructure.MassTransit.Sagas
 {
     public class UserCreationSaga : MassTransitStateMachine<UserCreationSagaState>
     {
-        #region Public Constructors
+        #region [ Public Constructors ]
 
         public UserCreationSaga()
         {
@@ -20,7 +23,14 @@ namespace AppyNox.Services.Authentication.Infrastructure.MassTransit.Sagas
                 When(StartUserCreationMessage)
                     .Then(context =>
                     {
+                        context.Saga.CorrelationId = context.CorrelationId
+                            ?? throw new NoxAuthenticationInfrastructureException("CorrelationId can not be null in UserCreationSaga in Initialization.");
+
                         context.Saga.LicenseKey = context.Message.LicenseKey;
+                        context.Saga.UserName = context.Message.UserName;
+                        context.Saga.Email = context.Message.Email;
+                        context.Saga.Password = context.Message.Password;
+                        context.Saga.ConfirmPassword = context.Message.ConfirmPassword;
                     })
                     .Send(new Uri("queue:validate-license"), context => new ValidateLicenseMessage
                     (
@@ -31,15 +41,24 @@ namespace AppyNox.Services.Authentication.Infrastructure.MassTransit.Sagas
 
             During(ValidatingLicense,
                 When(LicenseValidatedEvent)
-                    .Send(new Uri("queue:create-user"), context => new CreateApplicationUserMessage
-                    (
-                        context.Saga.CorrelationId,
-                        context.Saga.UserName,
-                        context.Saga.Email,
-                        context.Saga.Password,
-                        context.Saga.ConfirmPassword
-                    ))
-                    .TransitionTo(CreatingUser));
+                    .If(context => context.Message.IsValid, x => x
+                        .Then(context =>
+                        {
+                            context.Saga.LicenseId = context.Message.LicenseId
+                            ?? throw new NoxAuthenticationInfrastructureException("LicenseId can not be null in LicenseValidatedEvent if IsValid is true");
+                        })
+                        .Send(new Uri("queue:create-user"), context => new CreateApplicationUserMessage
+                            (
+                                context.Saga.CorrelationId,
+                                context.Saga.UserName,
+                                context.Saga.Email,
+                                context.Saga.Password,
+                                context.Saga.ConfirmPassword,
+                                context.Message.CompanyId
+                                    ?? throw new NoxAuthenticationInfrastructureException("CompanyId can not be null for CreateApplicationUserMessage")
+                            ))
+                        .TransitionTo(CreatingUser)
+                    ));
 
             During(CreatingUser,
                 When(ApplicationUserCreatedEvent)
@@ -51,14 +70,14 @@ namespace AppyNox.Services.Authentication.Infrastructure.MassTransit.Sagas
                     (
                         context.Saga.CorrelationId,
                         context.Saga.UserId,
-                        context.Saga.LicenseKey
+                        context.Saga.LicenseId
                     ))
                     .Finalize());
         }
 
         #endregion
 
-        #region Properties
+        #region [ Properties ]
 
         // Define states
         public State ValidatingLicense { get; private set; } = default!;
@@ -77,7 +96,7 @@ namespace AppyNox.Services.Authentication.Infrastructure.MassTransit.Sagas
 
     public class UserCreationSagaState : SagaStateMachineInstance
     {
-        #region Properties
+        #region [ Properties ]
 
         public Guid CorrelationId { get; set; }
 
@@ -94,6 +113,8 @@ namespace AppyNox.Services.Authentication.Infrastructure.MassTransit.Sagas
         public string ConfirmPassword { get; set; } = string.Empty;
 
         public Guid UserId { get; set; }
+
+        public Guid LicenseId { get; set; }
 
         #endregion
     }

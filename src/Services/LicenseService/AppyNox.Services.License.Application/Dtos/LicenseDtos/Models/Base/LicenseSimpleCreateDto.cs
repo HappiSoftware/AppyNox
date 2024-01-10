@@ -16,6 +16,8 @@ namespace AppyNox.Services.License.Application.Dtos.LicenseDtos.Models.Base
 
         public int MaxUsers { get; set; }
 
+        public int MaxMacAddresses { get; set; }
+
         #endregion
     }
 }

@@ -34,6 +34,7 @@ namespace AppyNox.Services.License.Infrastructure.Data.Configurations
             builder.Property(x => x.LicenseKey).IsRequired();
             builder.Property(x => x.ExpirationDate).IsRequired();
             builder.Property(x => x.MaxUsers).IsRequired();
+            builder.Property(x => x.MaxMacAddresses).IsRequired();
 
             #endregion
 
@@ -48,7 +49,8 @@ namespace AppyNox.Services.License.Infrastructure.Data.Configurations
                     LicenseKey = "7f033381-fbf7-4929-b5f7-c64261b20bf3",
                     CompanyId = Guid.Parse("221e8b2c-59d5-4e5b-b010-86c239b66738"),
                     ExpirationDate = DateTime.UtcNow.AddDays(365),
-                    MaxUsers = 3
+                    MaxUsers = 3,
+                    MaxMacAddresses = 1
                 });
 
             #endregion

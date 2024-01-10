@@ -33,7 +33,7 @@ namespace AppyNox.Services.Base.Application.MediatR.Handlers
                 List<object> resultList = MapEntitiesToDto(entities, dtoType, request.QueryParameters);
                 return resultList;
             }
-            catch (Exception ex) when (ex is INoxInfrastructureException || ex is NoxApplicationException)
+            catch (Exception ex) when (ex is INoxInfrastructureException || ex is INoxApplicationException)
             {
                 throw;
             }

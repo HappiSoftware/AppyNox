@@ -25,6 +25,8 @@ namespace AppyNox.Services.License.Infrastructure.Data
 
         public DbSet<ApplicationUserLicenses> ApplicationUserLicenses { get; set; }
 
+        public DbSet<ApplicationUserLicenseMacAddress> ApplicationUserLicenseMacAddresses { get; set; }
+
         #endregion
 
         #region [ Protected Methods ]
@@ -42,6 +44,8 @@ namespace AppyNox.Services.License.Infrastructure.Data
             #region [ Entity Configurations ]
 
             modelBuilder.ApplyConfiguration(new LicenseConfiguration(licenseId));
+            modelBuilder.ApplyConfiguration(new ApplicationUserLicensesConfiguration());
+            modelBuilder.ApplyConfiguration(new ApplicationUserLicenseMacAddressConfiguration());
 
             #endregion
         }

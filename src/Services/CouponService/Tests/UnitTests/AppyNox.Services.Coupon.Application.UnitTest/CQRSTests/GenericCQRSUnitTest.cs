@@ -59,7 +59,7 @@ namespace AppyNox.Services.Coupon.Application.UnitTest.CQRSTests
         public async Task GetAllEntitiesQuery_ShouldSuccess()
         {
             // Act
-            var result = await _fixture.MockMediator.Object.Send(new GetAllEntitiesQuery<CouponEntity>(It.IsAny<IQueryParameters>()));
+            var result = await _fixture.MockMediator.Object.Send(new GetAllEntitiesQuery<CouponEntity>(_fixture.MockQueryParameters.Object));
 
             // Assert
             Assert.NotNull(result);
@@ -70,7 +70,7 @@ namespace AppyNox.Services.Coupon.Application.UnitTest.CQRSTests
         public async void GetEntityByIdQuery_ShouldSuccess()
         {
             // Act
-            var result = await _fixture.MockMediator.Object.Send(new GetEntityByIdQuery<CouponEntity>(It.IsAny<Guid>(), It.IsAny<IQueryParameters>()));
+            var result = await _fixture.MockMediator.Object.Send(new GetEntityByIdQuery<CouponEntity>(It.IsAny<Guid>(), _fixture.MockQueryParameters.Object));
 
             // Assert
             Assert.NotNull(result);

@@ -6,15 +6,15 @@ using MediatR;
 
 namespace AppyNox.Services.Authentication.Infrastructure.MassTransit.Consumers
 {
-    public class CreateApplicationUserMessageConsumer(IMediator mediator) : IConsumer<CreateApplicationUserMessage>
+    internal sealed class CreateApplicationUserMessageConsumer(IMediator mediator) : IConsumer<CreateApplicationUserMessage>
     {
-        #region Fields
+        #region [ Fields ]
 
         private readonly IMediator _mediator = mediator;
 
         #endregion
 
-        #region Public Methods
+        #region [ Public Methods ]
 
         public async Task Consume(ConsumeContext<CreateApplicationUserMessage> context)
         {
@@ -24,14 +24,15 @@ namespace AppyNox.Services.Authentication.Infrastructure.MassTransit.Consumers
                 Password = context.Message.Password,
                 ConfirmPassword = context.Message.ConfirmPassword,
                 Email = context.Message.Email,
+                CompanyId = context.Message.CompanyId
             };
             var response = await _mediator.Send(new CreateUserCommand(dto));
 
-            await context.Publish<ApplicationUserCreatedEvent>(new
-            {
+            await context.Publish(new ApplicationUserCreatedEvent(
+
                 context.Message.CorrelationId,
                 response.id
-            });
+            ));
         }
 
         #endregion

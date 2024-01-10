@@ -18,6 +18,8 @@ namespace AppyNox.Services.License.Domain.Entities
 
         public int MaxUsers { get; set; }
 
+        public int MaxMacAddresses { get; set; }
+
         #endregion
 
         #region [ Relations ]

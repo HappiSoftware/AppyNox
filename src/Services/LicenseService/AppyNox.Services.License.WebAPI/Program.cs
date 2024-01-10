@@ -68,9 +68,8 @@ builder.Services.AddHealthChecks();
 #region [ Dependency Injection For Layers ]
 
 noxLogger.LogInformation("Registering DI's for layers.");
-
-//builder.Services.AddLicenseApplication();
 builder.Services.AddLicenseInfrastructure(builder, builder.Environment.GetEnvironment(), noxLogger);
+builder.Services.AddLicenseApplication();
 noxLogger.LogInformation("Registering DI's for layers completed.");
 
 #endregion
@@ -154,31 +153,6 @@ noxLogger.LogInformation("Registering JWT Configuration completed.");
 
 #endregion
 
-#region [ MassTransit ]
-
-builder.Services.AddMassTransit(busConfigurator =>
-{
-    busConfigurator.AddConsumer<ValidateLicenseMessageConsumer>();
-
-    busConfigurator.UsingRabbitMq((context, configurator) =>
-    {
-        configurator.Host(new Uri(builder.Configuration["MessageBroker:Host"]!), h =>
-        {
-            h.Username(builder.Configuration["MessageBroker:Username"]!);
-            h.Password(builder.Configuration["MessageBroker:Password"]!);
-        });
-
-        configurator.ReceiveEndpoint("validate-license", e =>
-        {
-            e.ConfigureConsumer<ValidateLicenseMessageConsumer>(context);
-        });
-
-        configurator.ConfigureEndpoints(context);
-    });
-});
-
-#endregion
-
 var app = builder.Build();
 
 #region [ Pipeline ]
@@ -224,6 +198,10 @@ consulHostedService.OnConsulConnectionFailed += (Exception ex) =>
 
 #endregion
 
+#region [ Migrations ]
+
 app.Services.ApplyMigrations<LicenseDatabaseContext>();
+
+#endregion
 
 app.Run();

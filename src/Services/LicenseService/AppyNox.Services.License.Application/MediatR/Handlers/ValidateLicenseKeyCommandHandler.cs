@@ -4,7 +4,8 @@ using MediatR;
 
 namespace AppyNox.Services.License.Application.MediatR.Handlers
 {
-    public class ValidateLicenseKeyCommandHandler(ILicenseRepository repository) : IRequestHandler<ValidateLicenseKeyCommand, bool>
+    public class ValidateLicenseKeyCommandHandler(ILicenseRepository repository)
+        : IRequestHandler<ValidateLicenseKeyCommand, (bool isValid, Guid? CompanyId, Guid? LicenseId)>
     {
         #region [ Fields ]
 
@@ -14,16 +15,16 @@ namespace AppyNox.Services.License.Application.MediatR.Handlers
 
         #region [ Public Methods ]
 
-        public async Task<bool> Handle(ValidateLicenseKeyCommand request, CancellationToken cancellationToken)
+        public async Task<(bool isValid, Guid? CompanyId, Guid? LicenseId)> Handle(ValidateLicenseKeyCommand request, CancellationToken cancellationToken)
         {
             var license = await _repository.FindLicenseByKey(request.LicenseKey, cancellationToken);
 
-            if (license == null) return false;
+            if (license == null) return (false, null, null);
 
             // Check MaxUsers constraint
             var userCount = await _repository.GetUserCountForLicenseKey(license.Id, cancellationToken);
 
-            return userCount < license.MaxUsers;
+            return (userCount < license.MaxUsers, license.CompanyId, license.Id);
         }
 
         #endregion

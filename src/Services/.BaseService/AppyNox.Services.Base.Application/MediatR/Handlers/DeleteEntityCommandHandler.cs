@@ -33,7 +33,7 @@ namespace AppyNox.Services.Base.Application.MediatR.Handlers
                 Repository.Remove(newEntity);
                 await UnitOfWork.SaveChangesAsync();
             }
-            catch (Exception ex) when (ex is INoxInfrastructureException || ex is NoxApplicationException)
+            catch (Exception ex) when (ex is INoxInfrastructureException || ex is INoxApplicationException)
             {
                 throw;
             }

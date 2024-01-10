@@ -6,8 +6,8 @@ namespace AppyNox.Services.Base.API.ExceptionExtensions.Base
     /// <summary>
     /// Represents exceptions specific to the API layer of the application.
     /// </summary>
-    internal class NoxApiException(string message, int statusCode)
-        : NoxException(ExceptionThrownLayer.ApiBase, message, statusCode)
+    public class NoxApiException(string message, int statusCode, string service = "Base")
+        : NoxException(ExceptionThrownLayer.Api, service, message, statusCode)
     {
     }
 }

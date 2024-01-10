@@ -32,7 +32,7 @@ namespace AppyNox.Services.Base.Application.MediatR.Handlers
                 TEntity entity = await Repository.GetByIdAsync(request.Id, expression);
                 return MapEntityToDtoSingle(entity, dtoType);
             }
-            catch (Exception ex) when (ex is INoxInfrastructureException || ex is NoxApplicationException)
+            catch (Exception ex) when (ex is INoxInfrastructureException || ex is INoxApplicationException)
             {
                 throw;
             }

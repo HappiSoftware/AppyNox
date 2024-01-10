@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace AppyNox.Services.Authentication.Infrastructure.Migrations.IdentitySagaDb
+namespace AppyNox.Services.Authentication.Infrastructure.Migrations.IdentitySagaDatabase
 {
     /// <inheritdoc />
     public partial class InitDb : Migration
@@ -28,12 +28,6 @@ namespace AppyNox.Services.Authentication.Infrastructure.Migrations.IdentitySaga
                 {
                     table.PrimaryKey("PK_UserCreationSagaState", x => x.CorrelationId);
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserCreationSagaState_UserName",
-                table: "UserCreationSagaState",
-                column: "UserName",
-                unique: true);
         }
 
         /// <inheritdoc />

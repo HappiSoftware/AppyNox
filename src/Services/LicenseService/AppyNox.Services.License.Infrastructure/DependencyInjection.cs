@@ -17,6 +17,9 @@ using FluentValidation;
 using AppyNox.Services.Base.Application.DtoUtilities;
 using AppyNox.Services.License.Application.Dtos.DtoUtilities;
 using AppyNox.Services.Base.Application.Helpers;
+using MassTransit;
+using AppyNox.Services.License.Infrastructure.MassTransit.Consumers;
+using AppyNox.Services.License.SharedEvents.Events;
 
 namespace AppyNox.Services.License.Infrastructure
 {
@@ -70,29 +73,40 @@ namespace AppyNox.Services.License.Infrastructure
 
             #endregion
 
-            services.AddScoped(typeof(IGenericRepositoryBase<>), typeof(GenericRepository<>));
-            services.AddScoped<ILicenseRepository, LicenseRepository<LicenseEntity>>();
-            services.AddScoped<IUnitOfWorkBase, UnitOfWork>();
+            #region [ MassTransit ]
 
-            #region [ Application ]
-
-            Assembly applicationAssembly = Assembly.Load("AppyNox.Services.License.Application");
-            services.AddAutoMapper(applicationAssembly);
-            services.AddValidatorsFromAssembly(applicationAssembly);
-
-            #region [ CQRS ]
-
-            services.AddMediatR(cfg =>
+            builder.Services.AddMassTransit(busConfigurator =>
             {
-                cfg.RegisterServicesFromAssembly(applicationAssembly);
+                busConfigurator.AddConsumer<ValidateLicenseMessageConsumer>();
+                busConfigurator.AddConsumer<AssignLicenseToUserMessageConsumer>();
+
+                busConfigurator.UsingRabbitMq((context, configurator) =>
+                {
+                    configurator.Host(new Uri(builder.Configuration["MessageBroker:Host"]!), h =>
+                    {
+                        h.Username(builder.Configuration["MessageBroker:Username"]!);
+                        h.Password(builder.Configuration["MessageBroker:Password"]!);
+                    });
+
+                    configurator.ReceiveEndpoint("validate-license", e =>
+                    {
+                        e.ConfigureConsumer<ValidateLicenseMessageConsumer>(context);
+                    });
+
+                    configurator.ReceiveEndpoint("assign-license-to-user", e =>
+                    {
+                        e.ConfigureConsumer<AssignLicenseToUserMessageConsumer>(context);
+                    });
+
+                    configurator.ConfigureEndpoints(context);
+                });
             });
-            services.AddGenericEntityCommandHandlers(typeof(LicenseEntity));
 
             #endregion
 
-            services.AddSingleton(typeof(IDtoMappingRegistryBase), typeof(DtoMappingRegistry));
-
-            #endregion
+            services.AddScoped(typeof(IGenericRepositoryBase<>), typeof(GenericRepository<>));
+            services.AddScoped<ILicenseRepository, LicenseRepository>();
+            services.AddScoped<IUnitOfWorkBase, UnitOfWork>();
 
             return services;
         }

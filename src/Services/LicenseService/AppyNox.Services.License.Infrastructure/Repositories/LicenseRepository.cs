@@ -1,4 +1,5 @@
 ﻿using AppyNox.Services.Base.Application.Interfaces.Loggers;
+using AppyNox.Services.Base.Application.Interfaces.Repositories;
 using AppyNox.Services.Base.Domain.Interfaces;
 using AppyNox.Services.Base.Infrastructure.Repositories;
 using AppyNox.Services.License.Application.Interfaces;
@@ -8,12 +9,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AppyNox.Services.License.Infrastructure.Repositories
 {
-    internal class LicenseRepository<TEntity>(LicenseDatabaseContext context, INoxInfrastructureLogger noxInfrastructureLogger)
-        : GenericRepositoryBase<TEntity>(context, noxInfrastructureLogger), ILicenseRepository where TEntity : class, IEntityWithGuid
+    internal class LicenseRepository(LicenseDatabaseContext context, INoxInfrastructureLogger noxInfrastructureLogger, IUnitOfWorkBase unitOfWork)
+        : GenericRepositoryBase<LicenseEntity>(context, noxInfrastructureLogger), ILicenseRepository
     {
         #region [ Fields ]
 
         private readonly LicenseDatabaseContext _context = context;
+
+        private readonly IUnitOfWorkBase _unitOfWork = unitOfWork;
 
         #endregion
 
@@ -29,6 +32,31 @@ namespace AppyNox.Services.License.Infrastructure.Repositories
         {
             return await _context.ApplicationUserLicenses
                                           .CountAsync(ul => ul.LicenseId == licenseId, cancellationToken);
+        }
+
+        public async Task AssignLicenseToApplicationUser(Guid licenseId, Guid applicationUserId)
+        {
+            try
+            {
+                ApplicationUserLicenses entity = new()
+                {
+                    LicenseId = licenseId,
+                    UserId = applicationUserId
+                };
+                _unitOfWork.BeginTransaction();
+
+                var tt = _context.ApplicationUserLicenses.ToList();
+                _context.ApplicationUserLicenses.Add(entity);
+                _unitOfWork.Commit();
+                await _unitOfWork.SaveChangesAsync();
+                tt = _context.ApplicationUserLicenses.ToList();
+                int a = 2;
+            }
+            catch (Exception e)
+            {
+                int a = 1;
+                throw;
+            }
         }
 
         #endregion

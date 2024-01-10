@@ -65,15 +65,6 @@ namespace AppyNox.Services.Base.Infrastructure.Services.LoggerService
             }
         }
 
-        protected virtual string FormatMessage(string message, LogLevel logLevel, string layer)
-        {
-            var timeStamp = DateTime.UtcNow;
-            return $"--------------- Nox{layer} ({logLevel}) ---------------\n" +
-                   $"|-- {timeStamp:yyyy-MM-dd HH:mm:ss} --|\n" +
-                   $"{message}\n" +
-                   $"------------------------------\n";
-        }
-
         protected virtual object CreateLogData(string message, LogLevel logLevel)
         {
             var timeStamp = DateTime.UtcNow;

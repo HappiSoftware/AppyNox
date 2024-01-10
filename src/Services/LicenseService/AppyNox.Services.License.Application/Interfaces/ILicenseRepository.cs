@@ -5,6 +5,7 @@ namespace AppyNox.Services.License.Application.Interfaces
 {
     public interface ILicenseRepository
     {
+        Task AssignLicenseToApplicationUser(Guid applicationUserId, Guid licenseId);
         #region Public Methods
 
         Task<LicenseEntity?> FindLicenseByKey(string licenseKey, CancellationToken cancellationToken);

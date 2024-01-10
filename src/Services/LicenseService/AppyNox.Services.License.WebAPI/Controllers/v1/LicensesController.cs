@@ -89,9 +89,9 @@ namespace AppyNox.Services.License.WebAPI.Controllers.v1
         [HttpGet("validate/{licenseKey}")]
         public async Task<ActionResult> ValidateLicenseKey(string licenseKey)
         {
-            bool flag = await _mediator.Send(new ValidateLicenseKeyCommand(licenseKey));
+            var response = await _mediator.Send(new ValidateLicenseKeyCommand(licenseKey));
 
-            if (flag)
+            if (response.isValid)
             {
                 return Ok("License key is valid and has room for additional users.");
             }

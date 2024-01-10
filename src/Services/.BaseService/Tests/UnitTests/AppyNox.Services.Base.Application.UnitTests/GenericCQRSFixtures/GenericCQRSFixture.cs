@@ -4,6 +4,7 @@ using AppyNox.Services.Base.Application.MediatR.Commands;
 using AppyNox.Services.Base.Application.MediatR.Handlers;
 using AppyNox.Services.Base.Application.MediatR.Queries;
 using AppyNox.Services.Base.Application.UnitTests.Stubs;
+using AppyNox.Services.Base.Domain.Common;
 using AppyNox.Services.Base.Domain.Interfaces;
 using AutoMapper;
 using MediatR;
@@ -20,6 +21,8 @@ namespace AppyNox.Services.Base.Application.UnitTests.GenericCQRSFixtures
         public readonly Mock<IDtoMappingRegistryBase> MockDtoMappingRegistry;
 
         public readonly Mock<IServiceProvider> MockServiceProvider;
+
+        public readonly Mock<IQueryParameters> MockQueryParameters;
 
         private readonly Mock<IGenericRepositoryBase<TEntity>> _mockRepository;
 
@@ -58,6 +61,18 @@ namespace AppyNox.Services.Base.Application.UnitTests.GenericCQRSFixtures
             MockServiceProvider = new();
             _noxApplicationLogger = new();
             MockMediator = new Mock<IMediator>();
+
+            #region [ QueryParameter Mocks ]
+
+            MockQueryParameters = new Mock<IQueryParameters>();
+            MockQueryParameters.Setup(p => p.PageNumber).Returns(1);
+            MockQueryParameters.Setup(p => p.PageSize).Returns(10);
+            MockQueryParameters.Setup(p => p.CommonDtoLevel).Returns(CommonDtoLevelEnums.Simple);
+            MockQueryParameters.Setup(p => p.AccessType).Returns(DtoLevelMappingTypes.DataAccess);
+            MockQueryParameters.Setup(p => p.Access).Returns(string.Empty);
+            MockQueryParameters.Setup(p => p.DetailLevel).Returns("Simple");
+
+            #endregion
 
             #region [ Repository Mocks ]
 

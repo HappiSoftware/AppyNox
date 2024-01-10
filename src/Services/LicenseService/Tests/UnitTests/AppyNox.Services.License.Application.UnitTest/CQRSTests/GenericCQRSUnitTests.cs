@@ -59,7 +59,7 @@ namespace AppyNox.Services.License.Application.UnitTest.CQRSTests
         public async void GetAllEntitiesQuery_ShouldSuccess()
         {
             // Act
-            var result = await _fixture.MockMediator.Object.Send(new GetAllEntitiesQuery<LicenseEntity>(It.IsAny<IQueryParameters>()));
+            var result = await _fixture.MockMediator.Object.Send(new GetAllEntitiesQuery<LicenseEntity>(_fixture.MockQueryParameters.Object));
 
             // Assert
             Assert.NotNull(result);
@@ -70,7 +70,7 @@ namespace AppyNox.Services.License.Application.UnitTest.CQRSTests
         public async void GetEntityByIdQuery_ShouldSuccess()
         {
             // Act
-            var result = await _fixture.MockMediator.Object.Send(new GetEntityByIdQuery<LicenseEntity>(It.IsAny<Guid>(), It.IsAny<IQueryParameters>()));
+            var result = await _fixture.MockMediator.Object.Send(new GetEntityByIdQuery<LicenseEntity>(It.IsAny<Guid>(), _fixture.MockQueryParameters.Object));
 
             // Assert
             Assert.NotNull(result);

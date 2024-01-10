@@ -54,7 +54,7 @@ namespace AppyNox.Services.Base.Application.MediatR.Handlers
                 object createdObject = Mapper.Map(mappedEntity, returnDtoType, returnDtoType);
                 return (guid: mappedEntity.Id, basicDto: createdObject);
             }
-            catch (Exception ex) when (ex is INoxInfrastructureException || ex is NoxApplicationException)
+            catch (Exception ex) when (ex is INoxInfrastructureException || ex is INoxApplicationException)
             {
                 throw;
             }

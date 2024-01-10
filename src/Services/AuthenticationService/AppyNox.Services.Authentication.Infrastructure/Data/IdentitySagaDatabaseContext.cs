@@ -5,17 +5,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AppyNox.Services.Authentication.Infrastructure.Data
 {
-    public class IdentitySagaDbContext : SagaDbContext
+    public class IdentitySagaDatabaseContext(DbContextOptions<IdentitySagaDatabaseContext> options) : SagaDbContext(options)
     {
-        public IdentitySagaDbContext(DbContextOptions<IdentitySagaDbContext> options)
-        : base(options)
-        {
-        }
+        #region [ Properties ]
 
         protected override IEnumerable<ISagaClassMap> Configurations
         {
             get { yield return new UserCreationSagaStateMap(); }
         }
+
+        #endregion
 
         #region [ Db Sets ]
 

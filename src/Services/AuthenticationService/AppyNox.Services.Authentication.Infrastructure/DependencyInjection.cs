@@ -1,19 +1,18 @@
 ﻿using AppyNox.Services.Authentication.Application.Validators.SharedRules;
 using AppyNox.Services.Authentication.Infrastructure.Data;
+using AppyNox.Services.Authentication.Infrastructure.MassTransit.Consumers;
+using AppyNox.Services.Authentication.Infrastructure.MassTransit.Sagas;
 using AppyNox.Services.Authentication.Infrastructure.Services;
-using AppyNox.Services.Base.Application.DtoUtilities;
 using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Domain.Common;
 using AppyNox.Services.Base.Infrastructure.HostedServices;
 using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
-using AppyNox.Services.License.Application.Dtos.DtoUtilities;
 using Consul;
-using FluentValidation;
+using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System.Reflection;
 
 namespace AppyNox.Services.Authentication.Infrastructure
 {
@@ -62,22 +61,42 @@ namespace AppyNox.Services.Authentication.Infrastructure
 
             #endregion
 
-            #region [ Application ]
+            #region [ MassTransit ]
 
-            Assembly applicationAssembly = Assembly.Load("AppyNox.Services.Authentication.Application");
-            services.AddAutoMapper(applicationAssembly);
-            services.AddValidatorsFromAssembly(applicationAssembly);
+            services.AddDbContext<IdentitySagaDatabaseContext>(options =>
+                options.UseNpgsql(configuration.GetConnectionString("SagaConnection")));
 
-            #region [ CQRS ]
-
-            services.AddMediatR(cfg =>
+            services.AddMassTransit(busConfigurator =>
             {
-                cfg.RegisterServicesFromAssembly(applicationAssembly);
+                busConfigurator.AddConsumer<CreateApplicationUserMessageConsumer>();
+
+                busConfigurator.AddSagaStateMachine<UserCreationSaga, UserCreationSagaState>()
+                  .EntityFrameworkRepository(r =>
+                  {
+                      r.ConcurrencyMode = ConcurrencyMode.Pessimistic;
+                      r.AddDbContext<DbContext, IdentitySagaDatabaseContext>((provider, builder) =>
+                      {
+                          builder.UseNpgsql(configuration.GetConnectionString("SagaConnection"));
+                      });
+                      r.UsePostgres();
+                  });
+
+                busConfigurator.UsingRabbitMq((context, configurator) =>
+                {
+                    configurator.Host(new Uri(configuration["MessageBroker:Host"]!), h =>
+                    {
+                        h.Username(configuration["MessageBroker:Username"]!);
+                        h.Password(configuration["MessageBroker:Password"]!);
+                    });
+
+                    configurator.ReceiveEndpoint("create-user", e =>
+                    {
+                        e.ConfigureConsumer<CreateApplicationUserMessageConsumer>(context);
+                    });
+
+                    configurator.ConfigureEndpoints(context);
+                });
             });
-
-            #endregion
-
-            services.AddSingleton(typeof(IDtoMappingRegistryBase), typeof(DtoMappingRegistry));
 
             #endregion
 

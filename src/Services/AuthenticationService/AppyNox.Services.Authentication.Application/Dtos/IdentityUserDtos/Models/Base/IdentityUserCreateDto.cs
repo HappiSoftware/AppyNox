@@ -21,5 +21,11 @@ namespace AppyNox.Services.Authentication.Application.Dtos.IdentityUserDtos.Mode
         public string LicenseKey { get; set; } = string.Empty;
 
         #endregion
+
+        #region [ Relations ]
+
+        public Guid CompanyId { get; set; }
+
+        #endregion
     }
 }

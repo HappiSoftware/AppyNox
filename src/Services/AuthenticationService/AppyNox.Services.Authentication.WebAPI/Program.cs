@@ -167,44 +167,6 @@ noxLogger.LogInformation("Registering JWT Configuration completed.");
 
 #endregion
 
-#region [ MassTransit ]
-
-builder.Services.AddMassTransit(busConfigurator =>
-{
-    busConfigurator.AddConsumer<CreateApplicationUserMessageConsumer>();
-
-    //busConfigurator.AddConsumer<TemporaryLicenseValidationCompletedConsumer>();
-
-    busConfigurator.AddSagaStateMachine<UserCreationSaga, UserCreationSagaState>()
-      .EntityFrameworkRepository(r =>
-      {
-          r.ConcurrencyMode = ConcurrencyMode.Pessimistic;
-          r.AddDbContext<DbContext, IdentitySagaDbContext>((provider, builder) =>
-          {
-              builder.UseNpgsql(configuration.GetConnectionString("SagaConnection"));
-          });
-          r.UsePostgres();
-      });
-
-    busConfigurator.UsingRabbitMq((context, configurator) =>
-    {
-        configurator.Host(new Uri(builder.Configuration["MessageBroker:Host"]!), h =>
-        {
-            h.Username(builder.Configuration["MessageBroker:Username"]!);
-            h.Password(builder.Configuration["MessageBroker:Password"]!);
-        });
-
-        configurator.ReceiveEndpoint("create-user", e =>
-        {
-            e.ConfigureConsumer<CreateApplicationUserMessageConsumer>(context);
-        });
-
-        configurator.ConfigureEndpoints(context);
-    });
-});
-
-#endregion
-
 var app = builder.Build();
 
 #region [ Pipeline ]
@@ -248,6 +210,12 @@ consulHostedService.OnConsulConnectionFailed += (Exception ex) =>
 
 #endregion
 
+#region [ Migrations ]
+
 app.Services.ApplyMigrations<IdentityDbContext>();
+
+app.Services.ApplyMigrations<IdentitySagaDatabaseContext>();
+
+#endregion
 
 app.Run();

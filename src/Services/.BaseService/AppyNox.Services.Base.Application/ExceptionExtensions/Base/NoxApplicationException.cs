@@ -1,4 +1,5 @@
-﻿using AppyNox.Services.Base.Domain.ExceptionExtensions.Base;
+﻿using AppyNox.Services.Base.Application.Interfaces.Exceptions;
+using AppyNox.Services.Base.Domain.ExceptionExtensions.Base;
 using AppyNox.Services.Base.Domain.ExceptionExtensions.Enums;
 
 namespace AppyNox.Services.Base.Application.ExceptionExtensions.Base
@@ -6,7 +7,7 @@ namespace AppyNox.Services.Base.Application.ExceptionExtensions.Base
     /// <summary>
     /// Represents exceptions specific to the application layer of the application.
     /// </summary>
-    public class NoxApplicationException : NoxException
+    public class NoxApplicationException : NoxException, INoxApplicationException
     {
         #region [ Public Constructors ]
 
@@ -15,8 +16,8 @@ namespace AppyNox.Services.Base.Application.ExceptionExtensions.Base
         /// Http status code is set to 500.
         /// </summary>
         /// <param name="message">The message that describes the error.</param>
-        public NoxApplicationException(string message)
-            : base(ExceptionThrownLayer.ApplicationBase, message)
+        public NoxApplicationException(string message, string service = "Base")
+            : base(ExceptionThrownLayer.Application, service, message)
         {
         }
 
@@ -25,8 +26,8 @@ namespace AppyNox.Services.Base.Application.ExceptionExtensions.Base
         /// </summary>
         /// <param name="message">The message that describes the error.</param>
         /// <param name="statusCode">The HTTP status code associated with the exception.</param>
-        public NoxApplicationException(string message, int statusCode)
-            : base(ExceptionThrownLayer.ApplicationBase, message, statusCode)
+        public NoxApplicationException(string message, int statusCode, string service = "Base")
+            : base(ExceptionThrownLayer.Application, service, message, statusCode)
         {
         }
 
@@ -36,8 +37,8 @@ namespace AppyNox.Services.Base.Application.ExceptionExtensions.Base
         /// </summary>
         /// <param name="ex">The inner exception.</param>
         /// <param name="message">The message that describes the error. Defaults to "Unexpected error" if not provided.</param>
-        public NoxApplicationException(Exception ex, string message = "Unexpected error")
-            : base(ExceptionThrownLayer.ApplicationBase, message, ex)
+        public NoxApplicationException(Exception ex, string message = "Unexpected error", string service = "Base")
+            : base(ExceptionThrownLayer.Application, service, message, ex)
         {
         }
 

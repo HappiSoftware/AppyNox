@@ -26,6 +26,9 @@ namespace AppyNox.Services.License.Application.Validators.License.Create
 
             RuleFor(license => license.MaxUsers)
                 .NotNull().NotEmpty().WithMessage("Max Users is mandatory");
+
+            RuleFor(license => license.MaxMacAddresses)
+                .NotNull().NotEmpty().WithMessage("Max Mac Addresses is mandatory");
         }
 
         #endregion
