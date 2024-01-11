@@ -7,7 +7,7 @@ namespace AppyNox.Services.Authentication.Infrastructure.ExceptionExtensions.Bas
     {
         #region [ Fields ]
 
-        private const string service = "Authentication";
+        private const string _service = "Authentication";
 
         #endregion
 
@@ -21,7 +21,7 @@ namespace AppyNox.Services.Authentication.Infrastructure.ExceptionExtensions.Bas
         /// <param name="ex">The inner exception.</param>
         /// <param name="message">The message that describes the error.</param>
         public NoxAuthenticationInfrastructureException(string message)
-            : base(message, service)
+            : base(message, _service)
         {
         }
 
@@ -32,7 +32,7 @@ namespace AppyNox.Services.Authentication.Infrastructure.ExceptionExtensions.Bas
         /// <param name="message">The message that describes the error.</param>
         /// <param name="statusCode">The HTTP status code associated with the exception.</param>
         public NoxAuthenticationInfrastructureException(string message, int statusCode)
-            : base(message, statusCode, service)
+            : base(message, statusCode, _service)
         {
         }
 
@@ -44,7 +44,7 @@ namespace AppyNox.Services.Authentication.Infrastructure.ExceptionExtensions.Bas
         /// <param name="ex">The inner exception.</param>
         /// <param name="message">The message that describes the error.</param>
         public NoxAuthenticationInfrastructureException(Exception ex, string message = "Unexpected error")
-            : base(ex, message, service)
+            : base(ex, message, _service)
         {
         }
 

@@ -5,7 +5,7 @@ volumes:
 
 services:
   appynox-rabbitmq-service:
-    image: rabbitmq:latest
+    image: rabbitmq:management
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
@@ -36,15 +36,26 @@ services:
     volumes:
       - app_data:/var/lib/authenticationdb/data
 
+  appynox-authentication-saga-db:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: AppyNox_Authentication_Saga
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: auth_saga_password
+    volumes:
+      - app_data:/var/lib/authenticationdb/data 
+
   appynox-services-authentication-webapi:
     image: ${DOCKER_REGISTRY-}appynoxservicesauthenticationwebapi
     depends_on:
+      - appynox-rabbitmq-service
       - appynox-consul
       - appynox-authentication-db
+      - appynox-authentication-saga-db
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://+:7001
-      - WAIT_HOSTS=appynox-authentication-db:5432
+      - WAIT_HOSTS=appynox-authentication-db:5432,appynox-authentication-saga-db:5432,appynox-rabbitmq-service:5672
       - WAIT_TIMEOUT=300
       - WAIT_SLEEP_INTERVAL=30
       - WAIT_HOST_CONNECT_TIMEOUT=30

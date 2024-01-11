@@ -10,7 +10,7 @@ using MediatR;
 
 namespace AppyNox.Services.Base.Application.MediatR.Handlers
 {
-    public class DeleteEntityCommandHandler<TEntity>(
+    public sealed class DeleteEntityCommandHandler<TEntity>(
         IGenericRepositoryBase<TEntity> repository,
         IMapper mapper,
         IDtoMappingRegistryBase dtoMappingRegistry,

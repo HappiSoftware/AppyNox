@@ -99,7 +99,8 @@ namespace AppyNox.Services.License.WebAPI.IntegrationTest
                 description = "string",
                 licenseKey = "4547a28a-ce2c-4d84-b791-466d7aedd2bb",
                 expirationDate = "2025-01-03T20:30:02.928Z",
-                maxUsers = 2
+                maxUsers = 2,
+                maxMacAddresses = 3
             };
             var jsonRequest = JsonSerializer.Serialize(requestBody);
             var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
@@ -146,6 +147,7 @@ namespace AppyNox.Services.License.WebAPI.IntegrationTest
             string newLicenseKey = Guid.NewGuid().ToString();
             string newDescription = "new description";
             int newMaxUsers = license.MaxUsers + 1;
+            int newmaxMacAddresses = license.MaxMacAddresses + 1;
 
             string requestUri = $"{_serviceURIs.LicenseServiceURI}/licenses/{id}";
             var requestBody = new
@@ -155,6 +157,7 @@ namespace AppyNox.Services.License.WebAPI.IntegrationTest
                 licenseKey = newLicenseKey,
                 description = newDescription,
                 maxUsers = newMaxUsers,
+                maxMacAddresses = newmaxMacAddresses,
                 id = license.Id
             };
             var jsonRequest = JsonSerializer.Serialize(requestBody);
@@ -182,6 +185,7 @@ namespace AppyNox.Services.License.WebAPI.IntegrationTest
             Assert.Equal(newLicenseKey, license.LicenseKey);
             Assert.Equal(newDescription, license.Description);
             Assert.Equal(newMaxUsers, license.MaxUsers);
+            Assert.Equal(newmaxMacAddresses, license.MaxMacAddresses);
 
             #endregion
         }

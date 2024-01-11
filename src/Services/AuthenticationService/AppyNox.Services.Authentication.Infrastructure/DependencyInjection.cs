@@ -63,12 +63,20 @@ namespace AppyNox.Services.Authentication.Infrastructure
 
             #region [ MassTransit ]
 
+            // Add to DI to be able to migrate changes
             services.AddDbContext<IdentitySagaDatabaseContext>(options =>
                 options.UseNpgsql(configuration.GetConnectionString("SagaConnection")));
 
             services.AddMassTransit(busConfigurator =>
             {
+                #region [ Consumers ]
+
                 busConfigurator.AddConsumer<CreateApplicationUserMessageConsumer>();
+                busConfigurator.AddConsumer<DeleteApplicationUserMessageConsumer>();
+
+                #endregion
+
+                #region [ StateMachine ]
 
                 busConfigurator.AddSagaStateMachine<UserCreationSaga, UserCreationSagaState>()
                   .EntityFrameworkRepository(r =>
@@ -81,6 +89,10 @@ namespace AppyNox.Services.Authentication.Infrastructure
                       r.UsePostgres();
                   });
 
+                #endregion
+
+                #region [ RabbitMQ ]
+
                 busConfigurator.UsingRabbitMq((context, configurator) =>
                 {
                     configurator.Host(new Uri(configuration["MessageBroker:Host"]!), h =>
@@ -89,13 +101,23 @@ namespace AppyNox.Services.Authentication.Infrastructure
                         h.Password(configuration["MessageBroker:Password"]!);
                     });
 
+                    #region [ Endpoints ]
+
                     configurator.ReceiveEndpoint("create-user", e =>
                     {
                         e.ConfigureConsumer<CreateApplicationUserMessageConsumer>(context);
                     });
+                    configurator.ReceiveEndpoint("delete-user", e =>
+                    {
+                        e.ConfigureConsumer<DeleteApplicationUserMessageConsumer>(context);
+                    });
+
+                    #endregion
 
                     configurator.ConfigureEndpoints(context);
                 });
+
+                #endregion
             });
 
             #endregion

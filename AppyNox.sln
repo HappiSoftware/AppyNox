@@ -91,7 +91,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppyNox.Services.License.Sh
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppyNox.Services.Authentication.SharedEvents", "src\Services\AuthenticationService\AppyNox.Services.Authentication.SharedEvents\AppyNox.Services.Authentication.SharedEvents.csproj", "{E5C49166-2286-4417-9E47-CED80D0E5192}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppyNox.Services.Authentication.Domain", "src\Services\AuthenticationService\AppyNox.Services.Authentication.Domain\AppyNox.Services.Authentication.Domain.csproj", "{B53C828E-9CB3-4BF1-91E4-40ABDA18B104}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppyNox.Services.Authentication.Domain", "src\Services\AuthenticationService\AppyNox.Services.Authentication.Domain\AppyNox.Services.Authentication.Domain.csproj", "{B53C828E-9CB3-4BF1-91E4-40ABDA18B104}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{C17866BD-9B28-4516-B3D7-FCBEFE171801}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{1721927B-A87B-435F-A8D0-6704AE2C9BCD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppyNox.Services.Authentication.Application.UnitTest", "src\Services\AuthenticationService\Tests\UnitTests\AppyNox.Services.Authentication.Application.UnitTest\AppyNox.Services.Authentication.Application.UnitTest.csproj", "{408D5534-752C-4A8F-9152-C9CF6F4BA771}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppyNox.Services.Authentication.WebAPI.UnitTest", "src\Services\AuthenticationService\Tests\UnitTests\AppyNox.Services.Authentication.WebAPI.UnitTest\AppyNox.Services.Authentication.WebAPI.UnitTest.csproj", "{D68FA5A8-B7F9-4254-AB45-DE8865307B71}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -219,6 +227,14 @@ Global
 		{B53C828E-9CB3-4BF1-91E4-40ABDA18B104}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B53C828E-9CB3-4BF1-91E4-40ABDA18B104}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B53C828E-9CB3-4BF1-91E4-40ABDA18B104}.Release|Any CPU.Build.0 = Release|Any CPU
+		{408D5534-752C-4A8F-9152-C9CF6F4BA771}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{408D5534-752C-4A8F-9152-C9CF6F4BA771}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{408D5534-752C-4A8F-9152-C9CF6F4BA771}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{408D5534-752C-4A8F-9152-C9CF6F4BA771}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D68FA5A8-B7F9-4254-AB45-DE8865307B71}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D68FA5A8-B7F9-4254-AB45-DE8865307B71}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D68FA5A8-B7F9-4254-AB45-DE8865307B71}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D68FA5A8-B7F9-4254-AB45-DE8865307B71}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -266,6 +282,10 @@ Global
 		{15E3DB28-642C-4210-9167-DCDA8D6018CB} = {351EC289-7778-4519-8478-D7DDBD3F5377}
 		{E5C49166-2286-4417-9E47-CED80D0E5192} = {AD2F15A2-813D-422E-A37D-BED8810752C6}
 		{B53C828E-9CB3-4BF1-91E4-40ABDA18B104} = {AD2F15A2-813D-422E-A37D-BED8810752C6}
+		{C17866BD-9B28-4516-B3D7-FCBEFE171801} = {AD2F15A2-813D-422E-A37D-BED8810752C6}
+		{1721927B-A87B-435F-A8D0-6704AE2C9BCD} = {C17866BD-9B28-4516-B3D7-FCBEFE171801}
+		{408D5534-752C-4A8F-9152-C9CF6F4BA771} = {1721927B-A87B-435F-A8D0-6704AE2C9BCD}
+		{D68FA5A8-B7F9-4254-AB45-DE8865307B71} = {1721927B-A87B-435F-A8D0-6704AE2C9BCD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EA4F2302-DC43-4149-814A-609940BEC847}

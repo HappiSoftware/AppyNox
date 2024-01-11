@@ -1,4 +1,6 @@
-﻿using FluentValidation;
+﻿using AppyNox.Services.Authentication.Domain.Entities;
+using FluentValidation;
+using Microsoft.AspNetCore.Identity;
 
 namespace AppyNox.Services.Authentication.Application.Validators.SharedRules
 {
@@ -44,6 +46,18 @@ namespace AppyNox.Services.Authentication.Application.Validators.SharedRules
                 .NotEmpty().WithMessage("Username is required.")
                 .MustAsync(validatorDatabaseChecker.IsUsernameUniqueAsync)
                 .WithMessage("Username already exists.");
+        }
+
+        public static IRuleBuilderOptions<T, string> BeAValidPassword<T>(
+            this IRuleBuilder<T, string> ruleBuilder,
+            IPasswordValidator<ApplicationUser> passwordValidator,
+            UserManager<ApplicationUser> userManager)
+        {
+            return ruleBuilder.MustAsync(async (dto, password, cancellationToken) =>
+            {
+                var result = await passwordValidator.ValidateAsync(userManager, new ApplicationUser(), password);
+                return result.Succeeded;
+            }).WithMessage("Password does not meet the required criteria.");
         }
 
         #endregion

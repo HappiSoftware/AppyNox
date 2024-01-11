@@ -11,7 +11,6 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
-    <PackageReference Include="Moq" Version="4.20.70" />
     <PackageReference Include="xunit" Version="2.6.5" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.5.6">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -25,7 +24,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\.BaseService\Tests\UnitTests\AppyNox.Services.Base.Application.UnitTests\AppyNox.Services.Base.Application.UnitTests.csproj" />
-    <ProjectReference Include="..\..\..\AppyNox.Services.Coupon.Application\AppyNox.Services.Coupon.Application.csproj" />
+    <ProjectReference Include="..\..\..\AppyNox.Services.Authentication.Application\AppyNox.Services.Authentication.Application.csproj" />
   </ItemGroup>
+
+
 
 </Project>

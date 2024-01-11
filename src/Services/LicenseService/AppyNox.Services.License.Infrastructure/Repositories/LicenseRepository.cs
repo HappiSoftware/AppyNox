@@ -1,10 +1,10 @@
 ﻿using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Application.Interfaces.Repositories;
-using AppyNox.Services.Base.Domain.Interfaces;
 using AppyNox.Services.Base.Infrastructure.Repositories;
 using AppyNox.Services.License.Application.Interfaces;
 using AppyNox.Services.License.Domain.Entities;
 using AppyNox.Services.License.Infrastructure.Data;
+using AppyNox.Services.License.Infrastructure.ExceptionExtensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace AppyNox.Services.License.Infrastructure.Repositories
@@ -43,19 +43,12 @@ namespace AppyNox.Services.License.Infrastructure.Repositories
                     LicenseId = licenseId,
                     UserId = applicationUserId
                 };
-                _unitOfWork.BeginTransaction();
-
-                var tt = _context.ApplicationUserLicenses.ToList();
                 _context.ApplicationUserLicenses.Add(entity);
-                _unitOfWork.Commit();
                 await _unitOfWork.SaveChangesAsync();
-                tt = _context.ApplicationUserLicenses.ToList();
-                int a = 2;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                int a = 1;
-                throw;
+                throw new NoxLicenseInfrastructureException(ex);
             }
         }
 

@@ -68,8 +68,17 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTest.Fixtures
                     ForceRecreate = true,
                     RemoveOrphans = true,
                     StopOnDispose = true,
-                    Services = ["appynox-consul", "appynox-gateway-ocelotgateway", "appynox-coupon-db",
-                        "appynox-services-coupon-webapi", "appynox-authentication-db", "appynox-services-authentication-webapi"]
+                    Services =
+                    [
+                        "appynox-rabbitmq-service",
+                        "appynox-consul",
+                        "appynox-gateway-ocelotgateway",
+                        "appynox-coupon-db",
+                        "appynox-services-coupon-webapi",
+                        "appynox-authentication-db",
+                        "appynox-authentication-saga-db",
+                        "appynox-services-authentication-webapi"
+                    ]
                 });
         }
 

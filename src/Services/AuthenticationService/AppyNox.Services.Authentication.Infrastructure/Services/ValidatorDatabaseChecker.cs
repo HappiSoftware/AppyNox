@@ -6,13 +6,13 @@ namespace AppyNox.Services.Authentication.Infrastructure.Services
 {
     public class ValidatorDatabaseChecker(IdentityDbContext dbContext) : IDatabaseChecks
     {
-        #region Fields
+        #region [ Fields ]
 
         private readonly IdentityDbContext _dbContext = dbContext;
 
         #endregion
 
-        #region Public Methods
+        #region [ Public Methods ]
 
         public async Task<bool> IsEmailUniqueAsync(string email, CancellationToken cancellationToken)
         {

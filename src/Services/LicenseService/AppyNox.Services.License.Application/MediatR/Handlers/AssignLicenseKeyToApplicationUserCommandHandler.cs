@@ -1,4 +1,6 @@
-﻿using AppyNox.Services.License.Application.Interfaces;
+﻿using AppyNox.Services.Base.Application.Interfaces.Exceptions;
+using AppyNox.Services.License.Application.ExceptionExtensions;
+using AppyNox.Services.License.Application.Interfaces;
 using AppyNox.Services.License.Application.MediatR.Commands;
 using MediatR;
 
@@ -17,7 +19,18 @@ namespace AppyNox.Services.License.Application.MediatR.Handlers
 
         public async Task Handle(AssignLicenseKeyToApplicationUserCommand request, CancellationToken cancellationToken)
         {
-            await _licenseRepository.AssignLicenseToApplicationUser(request.LicenseId, request.UserId);
+            try
+            {
+                await _licenseRepository.AssignLicenseToApplicationUser(request.LicenseId, request.UserId);
+            }
+            catch (Exception ex) when (ex is INoxInfrastructureException || ex is INoxApplicationException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw new NoxLicenseApplicationException(ex);
+            }
         }
 
         #endregion

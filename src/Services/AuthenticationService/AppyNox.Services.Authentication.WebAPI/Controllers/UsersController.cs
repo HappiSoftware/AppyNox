@@ -1,8 +1,6 @@
 ﻿using AppyNox.Services.Authentication.Application.Dtos.IdentityRoleDtos.Models.Base;
 using AppyNox.Services.Authentication.Application.Dtos.IdentityUserDtos.Models.Base;
 using AppyNox.Services.Authentication.Application.Dtos.IdentityUserDtos.Models.Extended;
-using AppyNox.Services.Authentication.Application.Validators.IdentityUser;
-using AppyNox.Services.Authentication.Domain.Entities;
 using AppyNox.Services.Authentication.SharedEvents.Events;
 using AppyNox.Services.Authentication.WebAPI.ControllerDependencies;
 using AppyNox.Services.Authentication.WebAPI.ExceptionExtensions.Base;
@@ -19,6 +17,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
+using static MassTransit.Monitoring.Performance.BuiltInCounters;
 using ValidationResult = FluentValidation.Results.ValidationResult;
 
 namespace AppyNox.Services.Authentication.WebAPI.Controllers
@@ -31,8 +30,6 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
     {
         #region [ Fields ]
 
-        private readonly IdentityUserCreateDtoValidator _identityUserCreateDtoValidator;
-
         private readonly UsersControllerBaseDependencies _baseDependencies;
 
         private readonly IPublishEndpoint _publishEndpoint;
@@ -41,11 +38,9 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
 
         #region [ Public Constructors ]
 
-        public UsersController(UsersControllerBaseDependencies usersControllerBaseDependencies,
-            IdentityUserCreateDtoValidator identityUserCreateDtoValidator, IPublishEndpoint publishEndpoint)
+        public UsersController(UsersControllerBaseDependencies usersControllerBaseDependencies, IPublishEndpoint publishEndpoint)
         {
             _baseDependencies = usersControllerBaseDependencies;
-            _identityUserCreateDtoValidator = identityUserCreateDtoValidator;
             _publishEndpoint = publishEndpoint;
         }
 
@@ -143,9 +138,9 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
 
         [HttpPost]
         [Authorize(Permissions.Users.Create)]
-        public async Task<ApiResponse> Post(IdentityUserCreateDto registerDto)
+        public async Task<IActionResult> Post(IdentityUserCreateDto registerDto)
         {
-            var startUserCreationEvent = new StartUserCreationMessage
+            StartUserCreationMessage startUserCreationEvent = new
             (
                 CorrelationContext.CorrelationId,
                 registerDto.LicenseKey,
@@ -156,22 +151,15 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
             );
             await _publishEndpoint.Publish(startUserCreationEvent);
 
-            return new ApiResponse("Process queued successfully", 201);
+            return Accepted();
         }
 
         [HttpDelete("{id}")]
         [Authorize(Permissions.Users.Delete)]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var identityUser = await _baseDependencies.UserManager.FindByIdAsync(id.ToString());
-            if (identityUser == null)
-            {
-                throw new AuthenticationServiceException("User Not Found", (int)HttpStatusCode.NotFound);
-            }
-
-            await _baseDependencies.UserManager.DeleteAsync(identityUser);
-
-            return NoContent();
+            await _publishEndpoint.Publish(new DeleteApplicationUserMessage(CorrelationContext.CorrelationId, id));
+            return Accepted();
         }
 
         #endregion

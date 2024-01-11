@@ -13,7 +13,7 @@ using System.Text.Json;
 
 namespace AppyNox.Services.Base.Application.MediatR.Handlers
 {
-    public class CreateEntityCommandHandler<TEntity>(
+    public sealed class CreateEntityCommandHandler<TEntity>(
         IGenericRepositoryBase<TEntity> repository,
         IMapper mapper,
         IDtoMappingRegistryBase dtoMappingRegistry,

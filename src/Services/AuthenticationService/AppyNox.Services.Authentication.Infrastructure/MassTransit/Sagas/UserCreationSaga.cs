@@ -1,7 +1,5 @@
 ﻿using AppyNox.Services.Authentication.Infrastructure.ExceptionExtensions.Base;
 using AppyNox.Services.Authentication.SharedEvents.Events;
-using AppyNox.Services.Base.Infrastructure.ExceptionExtensions.Base;
-using AppyNox.Services.Base.Infrastructure.Helpers;
 using AppyNox.Services.License.SharedEvents.Events;
 using MassTransit;
 
@@ -71,7 +69,16 @@ namespace AppyNox.Services.Authentication.Infrastructure.MassTransit.Sagas
                         context.Saga.CorrelationId,
                         context.Saga.UserId,
                         context.Saga.LicenseId
-                    ))
+                    )),
+                When(RevertApplicationUserCreationEvent)
+                    .Then(context =>
+                    {
+                        context.Send(new Uri("queue:delete-user"), new DeleteApplicationUserMessage
+                            (
+                                context.Saga.CorrelationId,
+                                context.Message.UserId
+                            ));
+                    })
                     .Finalize());
         }
 
@@ -90,6 +97,8 @@ namespace AppyNox.Services.Authentication.Infrastructure.MassTransit.Sagas
         public Event<LicenseValidatedEvent> LicenseValidatedEvent { get; private set; } = default!;
 
         public Event<ApplicationUserCreatedEvent> ApplicationUserCreatedEvent { get; private set; } = default!;
+
+        public Event<RevertApplicationUserCreationEvent> RevertApplicationUserCreationEvent { get; private set; } = default!;
 
         #endregion
     }

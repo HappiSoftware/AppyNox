@@ -8,8 +8,10 @@ volumes:
   app_data:
 
 services:
-
   appynox-rabbitmq-service:
+    environment:
+      RABBITMQ_DEFAULT_USER: HappiCorp
+      RABBITMQ_DEFAULT_PASS: HappiCorp
     networks:
       - nox_network
 
@@ -36,6 +38,10 @@ services:
       - nox_network
 
   appynox-authentication-db:
+    networks:
+      - nox_network
+
+  appynox-authentication-saga-db:
     networks:
       - nox_network
 

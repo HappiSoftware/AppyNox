@@ -77,8 +77,14 @@ namespace AppyNox.Services.License.Infrastructure
 
             builder.Services.AddMassTransit(busConfigurator =>
             {
+                #region [ Consumers ]
+
                 busConfigurator.AddConsumer<ValidateLicenseMessageConsumer>();
                 busConfigurator.AddConsumer<AssignLicenseToUserMessageConsumer>();
+
+                #endregion
+
+                #region [ RabbitMQ ]
 
                 busConfigurator.UsingRabbitMq((context, configurator) =>
                 {
@@ -87,6 +93,8 @@ namespace AppyNox.Services.License.Infrastructure
                         h.Username(builder.Configuration["MessageBroker:Username"]!);
                         h.Password(builder.Configuration["MessageBroker:Password"]!);
                     });
+
+                    #region [ Endpoints ]
 
                     configurator.ReceiveEndpoint("validate-license", e =>
                     {
@@ -98,8 +106,12 @@ namespace AppyNox.Services.License.Infrastructure
                         e.ConfigureConsumer<AssignLicenseToUserMessageConsumer>(context);
                     });
 
+                    #endregion
+
                     configurator.ConfigureEndpoints(context);
                 });
+
+                #endregion
             });
 
             #endregion

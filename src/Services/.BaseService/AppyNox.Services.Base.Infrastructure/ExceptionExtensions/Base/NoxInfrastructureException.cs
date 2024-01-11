@@ -45,6 +45,18 @@ namespace AppyNox.Services.Base.Infrastructure.ExceptionExtensions.Base
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NoxInfrastructureException"/> class with an inner exception and an optional message with StatusCode.
+        /// </summary>
+        /// <param name="ex">The inner exception.</param>
+        /// <param name="message">The message that describes the error.</param>
+        /// <param name="statusCode">The HTTP status code associated with the exception.</param>
+        /// <param name="service">The service of the exception, representing the service where the exception is thrown.</param>
+        public NoxInfrastructureException(Exception ex, string message, int statusCode, string service = "Base")
+            : base(ExceptionThrownLayer.Infrastructure, service, message, statusCode, ex)
+        {
+        }
+
         #endregion
     }
 }

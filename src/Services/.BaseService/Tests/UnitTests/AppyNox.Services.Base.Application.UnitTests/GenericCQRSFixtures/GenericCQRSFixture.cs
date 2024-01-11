@@ -60,7 +60,7 @@ namespace AppyNox.Services.Base.Application.UnitTests.GenericCQRSFixtures
             _mockUnitOfWork = new();
             MockServiceProvider = new();
             _noxApplicationLogger = new();
-            MockMediator = new Mock<IMediator>();
+            MockMediator = new();
 
             #region [ QueryParameter Mocks ]
 

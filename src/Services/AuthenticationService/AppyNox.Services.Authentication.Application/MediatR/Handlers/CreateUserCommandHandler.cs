@@ -10,12 +10,15 @@ using Microsoft.AspNetCore.Identity;
 
 namespace AppyNox.Services.Authentication.Application.MediatR.Handlers
 {
-    internal sealed class CreateUserCommandHandler(IdentityUserCreateDtoValidator identityUserCreateDtoValidator, IMapper mapper,
-        UserManager<ApplicationUser> userManager, IUserValidator<ApplicationUser> userValidator, PasswordValidator<ApplicationUser> passwordValidator,
-        PasswordHasher<ApplicationUser> passwordHasher)
+    internal sealed class CreateUserCommandHandler(IdentityUserCreateDtoValidator identityUserCreateDtoValidator,
+                                                   IMapper mapper,
+                                                   UserManager<ApplicationUser> userManager,
+                                                   IUserValidator<ApplicationUser> userValidator,
+                                                   PasswordValidator<ApplicationUser> passwordValidator,
+                                                   PasswordHasher<ApplicationUser> passwordHasher)
         : IRequestHandler<CreateUserCommand, (Guid id, IdentityUserDto dto)>
     {
-        #region Fields
+        #region [ Fields ]
 
         private readonly IdentityUserCreateDtoValidator _identityUserCreateDtoValidator = identityUserCreateDtoValidator;
 
@@ -31,18 +34,18 @@ namespace AppyNox.Services.Authentication.Application.MediatR.Handlers
 
         #endregion
 
-        #region Public Methods
+        #region [ Public Methods ]
 
         public async Task<(Guid id, IdentityUserDto dto)> Handle(CreateUserCommand request, CancellationToken cancellationToken)
         {
-            var dtoValidationResult = await _identityUserCreateDtoValidator.ValidateAsync(request.IdentityUserCreateDto, cancellationToken);
+            ValidationResult dtoValidationResult = await _identityUserCreateDtoValidator.ValidateAsync(request.IdentityUserCreateDto, cancellationToken);
             if (!dtoValidationResult.IsValid)
             {
                 throw new FluentValidationException(typeof(ApplicationUser), dtoValidationResult);
             }
 
-            var userEntity = _mapper.Map<ApplicationUser>(request.IdentityUserCreateDto);
-            var result = await _userValidator.ValidateAsync(_userManager, userEntity);
+            ApplicationUser userEntity = _mapper.Map<ApplicationUser>(request.IdentityUserCreateDto);
+            IdentityResult result = await _userValidator.ValidateAsync(_userManager, userEntity);
             if (!result.Succeeded)
             {
                 ValidationResult validationResult = new();
@@ -54,12 +57,12 @@ namespace AppyNox.Services.Authentication.Application.MediatR.Handlers
                 throw new FluentValidationException(typeof(ApplicationUser), validationResult);
             }
 
-            var passwordResult = await _passwordValidator.ValidateAsync(_userManager, userEntity, request.IdentityUserCreateDto.Password);
+            IdentityResult passwordResult = await _passwordValidator.ValidateAsync(_userManager, userEntity, request.IdentityUserCreateDto.Password);
 
             if (!passwordResult.Succeeded)
             {
                 ValidationResult validationResult = new();
-                foreach (var error in passwordResult.Errors)
+                foreach (IdentityError error in passwordResult.Errors)
                 {
                     ValidationFailure validationFailure = new(error.Code, error.Description);
                     validationResult.Errors.Add(validationFailure);
