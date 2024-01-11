@@ -12,7 +12,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="[1.19.6-Preview.1, 1.19.6]" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.6" />
 	  <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0">
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -21,8 +21,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\.BaseService\AppyNox.Services.Base.API\AppyNox.Services.Base.API.csproj" />
-    <ProjectReference Include="..\AppyNox.Services.License.Application\AppyNox.Services.License.Application.csproj" />
     <ProjectReference Include="..\AppyNox.Services.License.Infrastructure\AppyNox.Services.License.Infrastructure.csproj" />
+    <ProjectReference Include="..\AppyNox.Services.License.SharedEvents\AppyNox.Services.License.SharedEvents.csproj" />
   </ItemGroup>
 
 </Project>

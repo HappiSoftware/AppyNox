@@ -1,18 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Identity;
 
 namespace AppyNox.Services.Authentication.Domain.Entities
 {
     public class ApplicationUser : IdentityUser
     {
-        #region Properties
+        #region [ Properties ]
 
-        public int CompanyId { get; set; }
+        public Guid CompanyId { get; set; }
 
-        public CompanyEntity Company { get; set; }
+        public virtual CompanyEntity Company { get; set; } = null!;
 
         #endregion
     }

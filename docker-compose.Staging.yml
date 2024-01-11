@@ -8,6 +8,18 @@ volumes:
   app_data:
 
 services:
+  appynox-rabbitmq-service:
+    environment:
+      RABBITMQ_DEFAULT_USER: HappiCorp
+      RABBITMQ_DEFAULT_PASS: HappiCorp
+    networks:
+      - integration-test
+    healthcheck:
+      test: ["CMD-SHELL", "rabbitmq-diagnostics -q ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 20 
+
   appynox-authentication-db:
     environment:
       POSTGRES_DB: AppyNox_Authentication_Test
@@ -15,6 +27,21 @@ services:
     restart: always
     ports:
       - "5435:5432" # allow external access to be able to set the DbContext to assert tests
+    networks:
+      - integration-test
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  appynox-authentication-saga-db:
+    environment:
+      POSTGRES_DB: AppyNox_Authentication_Saga_Test
+      POSTGRES_PASSWORD: auth_saga_password
+    restart: always
+    ports:
+      - "5430:5432" # allow external access to be able to set the DbContext to assert tests
     networks:
       - integration-test
     healthcheck:

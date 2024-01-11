@@ -2,7 +2,6 @@
 using AppyNox.Services.Base.Application.Validators;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Extended;
 using FluentValidation;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Model;
 
 namespace AppyNox.Services.Coupon.Application.Validators.Coupon.Create
 {

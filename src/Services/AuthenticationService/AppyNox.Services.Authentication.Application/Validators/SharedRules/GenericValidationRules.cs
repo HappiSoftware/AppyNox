@@ -1,7 +1,6 @@
-﻿using AppyNox.Services.Authentication.Infrastructure.Data;
+﻿using AppyNox.Services.Authentication.Domain.Entities;
 using FluentValidation;
-using FluentValidation.Results;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace AppyNox.Services.Authentication.Application.Validators.SharedRules
 {
@@ -20,25 +19,15 @@ namespace AppyNox.Services.Authentication.Application.Validators.SharedRules
         /// <typeparam name="T">The type of the object being validated.</typeparam>
         /// <returns>An IRuleBuilderOptions instance for further rule configuration.</returns>
         /// <exception cref="ArgumentNullException">Thrown if the dbContext is null.</exception>
-        public static IRuleBuilderOptions<T, string> CheckEmailValidity<T>(this IRuleBuilder<T, string> ruleBuilder, IdentityDbContext? dbContext)
+        public static IRuleBuilderOptions<T, string> CheckEmailValidity<T>(
+            this IRuleBuilder<T, string> ruleBuilder,
+            IDatabaseChecks userUniquenessChecker)
         {
-            if (dbContext == null)
-            {
-                throw new ArgumentNullException(nameof(dbContext), "Database context was null.");
-            }
-
-            return (IRuleBuilderOptions<T, string>)ruleBuilder
-            .NotEmpty().WithMessage("Email is required.")
-            .EmailAddress().WithMessage("Invalid email format.")
-            .CustomAsync(async (email, context, cancellationToken) =>
-            {
-                if (await dbContext.Users.AnyAsync(x => x.Email == email, cancellationToken))
-                {
-                    var failure = new ValidationFailure("Email", "Email already exists.");
-                    failure.ErrorCode = "EMAIL_ALREADY_EXISTS"; // Custom error code
-                    context.AddFailure(failure);
-                }
-            });
+            return ruleBuilder
+                .NotEmpty().WithMessage("Email is required.")
+                .EmailAddress().WithMessage("Invalid email format.")
+                .MustAsync(userUniquenessChecker.IsEmailUniqueAsync)
+                .WithMessage("Email already exists.");
         }
 
         /// <summary>
@@ -49,24 +38,26 @@ namespace AppyNox.Services.Authentication.Application.Validators.SharedRules
         /// <typeparam name="T">The type of the object being validated.</typeparam>
         /// <returns>An IRuleBuilderOptions instance for further rule configuration.</returns>
         /// <exception cref="ArgumentNullException">Thrown if the dbContext is null.</exception>
-        public static IRuleBuilderOptions<T, string> CheckUserNameValidity<T>(this IRuleBuilder<T, string> ruleBuilder, IdentityDbContext? dbContext)
+        public static IRuleBuilderOptions<T, string> CheckUsernameValidity<T>(
+            this IRuleBuilder<T, string> ruleBuilder,
+            IDatabaseChecks validatorDatabaseChecker)
         {
-            if (dbContext == null)
-            {
-                throw new ArgumentNullException(nameof(dbContext), "Database context was null.");
-            }
+            return ruleBuilder
+                .NotEmpty().WithMessage("Username is required.")
+                .MustAsync(validatorDatabaseChecker.IsUsernameUniqueAsync)
+                .WithMessage("Username already exists.");
+        }
 
-            return (IRuleBuilderOptions<T, string>)ruleBuilder
-            .NotEmpty().WithMessage("Username is required.")
-            .CustomAsync(async (username, context, cancellationToken) =>
+        public static IRuleBuilderOptions<T, string> BeAValidPassword<T>(
+            this IRuleBuilder<T, string> ruleBuilder,
+            IPasswordValidator<ApplicationUser> passwordValidator,
+            UserManager<ApplicationUser> userManager)
+        {
+            return ruleBuilder.MustAsync(async (dto, password, cancellationToken) =>
             {
-                if (await dbContext.Users.AnyAsync(x => x.UserName == username, cancellationToken))
-                {
-                    var failure = new ValidationFailure("UserName", "Username already exists.");
-                    failure.ErrorCode = "USERNAME_ALREADY_EXISTS"; // Custom error code
-                    context.AddFailure(failure);
-                }
-            });
+                var result = await passwordValidator.ValidateAsync(userManager, new ApplicationUser(), password);
+                return result.Succeeded;
+            }).WithMessage("Password does not meet the required criteria.");
         }
 
         #endregion

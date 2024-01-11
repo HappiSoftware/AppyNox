@@ -128,7 +128,12 @@ jobs:
 
       - name: Run Unit Tests (LicenseService - Application)
         run: dotnet test ./src/Services/LicenseService/Tests/UnitTests/AppyNox.Services.License.Application.UnitTest/ --no-restore
-    
+
+      - name: Run Unit Tests (AuthenticationService - Application)
+        run: dotnet test ./src/Services/AuthenticationService/Tests/UnitTests/AppyNox.Services.Authentication.Application.UnitTest/ --no-restore
+
+      - name: Run Unit Tests (AuthenticationService - WebAPI)
+        run: dotnet test ./src/Services/AuthenticationService/Tests/UnitTests/AppyNox.Services.Authentication.WebAPI.UnitTest/ --no-restore  
 
   integration-tests:
     needs: unit-tests

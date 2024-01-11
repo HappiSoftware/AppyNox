@@ -1,6 +1,6 @@
 ﻿using AppyNox.Services.Base.Application.DtoUtilities;
 using AppyNox.Services.Base.Application.Helpers;
-using AppyNox.Services.Base.Application.Logger;
+using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.License.Application.Dtos.DtoUtilities;
 using AppyNox.Services.License.Domain.Entities;
 using FluentValidation;
@@ -30,7 +30,6 @@ namespace AppyNox.Services.License.Application
             #endregion
 
             services.AddSingleton(typeof(IDtoMappingRegistryBase), typeof(DtoMappingRegistry));
-            services.AddSingleton<INoxApplicationLogger, NoxApplicationLogger>();
         }
 
         #endregion

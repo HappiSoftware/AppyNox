@@ -1,6 +1,7 @@
-﻿using AppyNox.Services.Base.Infrastructure.ExceptionExtensions;
-using AppyNox.Services.Base.Infrastructure.Interfaces;
-using AppyNox.Services.Base.Infrastructure.Logger;
+﻿using AppyNox.Services.Base.Application.Interfaces.Loggers;
+using AppyNox.Services.Base.Application.Interfaces.Repositories;
+using AppyNox.Services.Base.Infrastructure.ExceptionExtensions;
+using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
@@ -52,7 +53,6 @@ namespace AppyNox.Services.Base.Infrastructure.Repositories
             try
             {
                 _logger.LogInformation("Attempting to commit the current transaction.");
-                _dbContext.SaveChanges();
                 _transaction!.Commit();
                 _logger.LogInformation("Transaction committed successfully.");
             }

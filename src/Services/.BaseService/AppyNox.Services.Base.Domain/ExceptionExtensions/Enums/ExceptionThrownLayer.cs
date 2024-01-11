@@ -8,27 +8,27 @@ namespace AppyNox.Services.Base.Domain.ExceptionExtensions.Enums
     public enum ExceptionThrownLayer
     {
         /// <summary>
-        /// Represents the domain base layer where exceptions thrown.
+        /// Represents the domain layer where exceptions thrown.
         /// </summary>
-        [Display(Name = "Nox Domain Base")]
-        DomainBase,
+        [Display(Name = "Nox Domain")]
+        Domain,
 
         /// <summary>
-        /// Represents the application base layer where exceptions thrown.
+        /// Represents the application layer where exceptions thrown.
         /// </summary>
-        [Display(Name = "Nox Application Base")]
-        ApplicationBase,
+        [Display(Name = "Nox Application")]
+        Application,
 
         /// <summary>
-        /// Represents the infrastructure base layer where exceptions thrown.
+        /// Represents the infrastructure layer where exceptions thrown.
         /// </summary>
-        [Display(Name = "Nox Infrastructure Base")]
-        InfrastructureBase,
+        [Display(Name = "Nox Infrastructure")]
+        Infrastructure,
 
         /// <summary>
-        /// Represents the API base layer where exceptions thrown.
+        /// Represents the API layer where exceptions thrown.
         /// </summary>
-        [Display(Name = "Nox Api Base")]
-        ApiBase
+        [Display(Name = "Nox Api")]
+        Api
     }
 }

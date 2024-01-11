@@ -23,11 +23,13 @@ namespace AppyNox.Services.Base.API.ExceptionExtensions
 
             public int Code { get; set; } = error.StatusCode;
 
-            public string Title { get; set; } = error.Title;
+            public string Title { get; set; } = $"{error.Service} {error.Layer}";
 
             public string Message { get; set; } = error.Message;
 
             public string CorrelationId { get; set; } = correlationId;
+
+            public Exception? InnerException { get; set; } = error.InnerException;
 
             #endregion
         }

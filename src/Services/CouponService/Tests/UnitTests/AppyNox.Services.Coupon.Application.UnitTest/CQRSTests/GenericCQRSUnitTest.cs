@@ -1,9 +1,9 @@
 ﻿using AppyNox.Services.Base.Application.Helpers;
+using AppyNox.Services.Base.Application.Interfaces.Repositories;
 using AppyNox.Services.Base.Application.MediatR.Commands;
 using AppyNox.Services.Base.Application.MediatR.Queries;
-using AppyNox.Services.Base.Application.UnitTests.CQRSTests;
+using AppyNox.Services.Base.Application.UnitTests.GenericCQRSFixtures;
 using AppyNox.Services.Base.Domain.Common;
-using AppyNox.Services.Base.Infrastructure.Repositories.Common;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.DetailLevel;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
 using AppyNox.Services.Coupon.Domain.Entities;
@@ -12,7 +12,7 @@ using FluentValidation.Results;
 using Moq;
 using System.Text.Json;
 
-namespace AppyNox.Services.Coupon.Application.UnitTest.ServiceTests
+namespace AppyNox.Services.Coupon.Application.UnitTest.CQRSTests
 {
     public class GenericCQRSUnitTest : IClassFixture<GenericCQRSFixture<CouponEntity>>
     {
@@ -59,7 +59,7 @@ namespace AppyNox.Services.Coupon.Application.UnitTest.ServiceTests
         public async Task GetAllEntitiesQuery_ShouldSuccess()
         {
             // Act
-            var result = await _fixture.MockMediator.Object.Send(new GetAllEntitiesQuery<CouponEntity>(new QueryParameters()));
+            var result = await _fixture.MockMediator.Object.Send(new GetAllEntitiesQuery<CouponEntity>(_fixture.MockQueryParameters.Object));
 
             // Assert
             Assert.NotNull(result);
@@ -70,7 +70,7 @@ namespace AppyNox.Services.Coupon.Application.UnitTest.ServiceTests
         public async void GetEntityByIdQuery_ShouldSuccess()
         {
             // Act
-            var result = await _fixture.MockMediator.Object.Send(new GetEntityByIdQuery<CouponEntity>(It.IsAny<Guid>(), new QueryParameters()));
+            var result = await _fixture.MockMediator.Object.Send(new GetEntityByIdQuery<CouponEntity>(It.IsAny<Guid>(), _fixture.MockQueryParameters.Object));
 
             // Assert
             Assert.NotNull(result);

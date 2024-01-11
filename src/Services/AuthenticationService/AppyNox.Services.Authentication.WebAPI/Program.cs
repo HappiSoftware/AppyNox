@@ -1,23 +1,27 @@
 using AppyNox.Services.Authentication.Application;
-using AppyNox.Services.Authentication.Infrastructure.Entities;
+using AppyNox.Services.Authentication.Domain.Entities;
 using AppyNox.Services.Authentication.Infrastructure;
 using AppyNox.Services.Authentication.Infrastructure.Data;
+using AppyNox.Services.Authentication.Infrastructure.MassTransit.Consumers;
+using AppyNox.Services.Authentication.Infrastructure.MassTransit.Sagas;
 using AppyNox.Services.Authentication.WebAPI.Configuration;
 using AppyNox.Services.Authentication.WebAPI.ControllerDependencies;
 using AppyNox.Services.Authentication.WebAPI.Managers.Implementations;
 using AppyNox.Services.Authentication.WebAPI.Managers.Interfaces;
 using AppyNox.Services.Authentication.WebAPI.Utilities;
 using AppyNox.Services.Base.API.Helpers;
-using AppyNox.Services.Base.API.Logger;
 using AppyNox.Services.Base.API.Middleware;
+using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Infrastructure.Helpers;
 using AppyNox.Services.Base.Infrastructure.HostedServices;
 using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
 using Asp.Versioning;
 using AutoWrapper;
+using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 
@@ -206,6 +210,12 @@ consulHostedService.OnConsulConnectionFailed += (Exception ex) =>
 
 #endregion
 
+#region [ Migrations ]
+
 app.Services.ApplyMigrations<IdentityDbContext>();
+
+app.Services.ApplyMigrations<IdentitySagaDatabaseContext>();
+
+#endregion
 
 app.Run();

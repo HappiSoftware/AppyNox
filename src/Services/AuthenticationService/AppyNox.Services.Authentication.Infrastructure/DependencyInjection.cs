@@ -1,8 +1,14 @@
-﻿using AppyNox.Services.Authentication.Infrastructure.Data;
+﻿using AppyNox.Services.Authentication.Application.Validators.SharedRules;
+using AppyNox.Services.Authentication.Infrastructure.Data;
+using AppyNox.Services.Authentication.Infrastructure.MassTransit.Consumers;
+using AppyNox.Services.Authentication.Infrastructure.MassTransit.Sagas;
+using AppyNox.Services.Authentication.Infrastructure.Services;
+using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Domain.Common;
 using AppyNox.Services.Base.Infrastructure.HostedServices;
-using AppyNox.Services.Base.Infrastructure.Logger;
+using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
 using Consul;
+using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -54,6 +60,69 @@ namespace AppyNox.Services.Authentication.Infrastructure
             services.Configure<ConsulConfig>(configuration.GetSection("consul"));
 
             #endregion
+
+            #region [ MassTransit ]
+
+            // Add to DI to be able to migrate changes
+            services.AddDbContext<IdentitySagaDatabaseContext>(options =>
+                options.UseNpgsql(configuration.GetConnectionString("SagaConnection")));
+
+            services.AddMassTransit(busConfigurator =>
+            {
+                #region [ Consumers ]
+
+                busConfigurator.AddConsumer<CreateApplicationUserMessageConsumer>();
+                busConfigurator.AddConsumer<DeleteApplicationUserMessageConsumer>();
+
+                #endregion
+
+                #region [ StateMachine ]
+
+                busConfigurator.AddSagaStateMachine<UserCreationSaga, UserCreationSagaState>()
+                  .EntityFrameworkRepository(r =>
+                  {
+                      r.ConcurrencyMode = ConcurrencyMode.Pessimistic;
+                      r.AddDbContext<DbContext, IdentitySagaDatabaseContext>((provider, builder) =>
+                      {
+                          builder.UseNpgsql(configuration.GetConnectionString("SagaConnection"));
+                      });
+                      r.UsePostgres();
+                  });
+
+                #endregion
+
+                #region [ RabbitMQ ]
+
+                busConfigurator.UsingRabbitMq((context, configurator) =>
+                {
+                    configurator.Host(new Uri(configuration["MessageBroker:Host"]!), h =>
+                    {
+                        h.Username(configuration["MessageBroker:Username"]!);
+                        h.Password(configuration["MessageBroker:Password"]!);
+                    });
+
+                    #region [ Endpoints ]
+
+                    configurator.ReceiveEndpoint("create-user", e =>
+                    {
+                        e.ConfigureConsumer<CreateApplicationUserMessageConsumer>(context);
+                    });
+                    configurator.ReceiveEndpoint("delete-user", e =>
+                    {
+                        e.ConfigureConsumer<DeleteApplicationUserMessageConsumer>(context);
+                    });
+
+                    #endregion
+
+                    configurator.ConfigureEndpoints(context);
+                });
+
+                #endregion
+            });
+
+            #endregion
+
+            services.AddScoped<IDatabaseChecks, ValidatorDatabaseChecker>();
         }
 
         #endregion

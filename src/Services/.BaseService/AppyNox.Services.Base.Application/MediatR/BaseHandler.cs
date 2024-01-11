@@ -2,15 +2,13 @@
 using AppyNox.Services.Base.Application.ExceptionExtensions;
 using AppyNox.Services.Base.Application.ExceptionExtensions.Base;
 using AppyNox.Services.Base.Application.Helpers;
-using AppyNox.Services.Base.Application.Logger;
+using AppyNox.Services.Base.Application.Interfaces.Loggers;
+using AppyNox.Services.Base.Application.Interfaces.Repositories;
 using AppyNox.Services.Base.Domain.Common;
 using AppyNox.Services.Base.Domain.Interfaces;
-using AppyNox.Services.Base.Infrastructure.Interfaces;
-using AppyNox.Services.Base.Infrastructure.Repositories.Common;
 using AutoMapper;
 using FluentValidation;
 using FluentValidation.Internal;
-using Microsoft.Extensions.DependencyInjection;
 using System.Dynamic;
 using System.Linq.Expressions;
 using System.Text.Json;
@@ -58,7 +56,7 @@ namespace AppyNox.Services.Base.Application.MediatR
         /// <returns>A tuple conatining the projection expression and the DTO type</returns>
         /// <exception cref="DtoDetailLevelNotFoundException">Thrown if queryParameters.CommonDtoLevel is not fully covered in switch statements.
         /// It's not an expected case.</exception>
-        protected (Expression<Func<TEntity, dynamic>> expression, Type dtoType) CreateProjection(QueryParametersBase queryParameters)
+        protected (Expression<Func<TEntity, dynamic>> expression, Type dtoType) CreateProjection(IQueryParameters queryParameters)
         {
             Type dtoType;
             List<string> properties = [];
@@ -114,7 +112,7 @@ namespace AppyNox.Services.Base.Application.MediatR
         /// <param name="queryParametersBase">The query parameters for mapping logic</param>
         /// <returns>A list of mapped objects</returns>
         /// <exception cref="NoxApplicationException">Thrown if an unexpected error occurs.</exception>
-        protected List<object> MapEntitiesToDto(IEnumerable<dynamic> entities, Type dtoType, QueryParametersBase queryParametersBase)
+        protected List<object> MapEntitiesToDto(IEnumerable<dynamic> entities, Type dtoType, IQueryParameters queryParametersBase)
         {
             try
             {

@@ -22,6 +22,48 @@ namespace AppyNox.Services.License.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("AppyNox.Services.License.Domain.Entities.ApplicationUserLicenseMacAddress", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ApplicationUserLicenseId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("MacAddress")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserLicenseId");
+
+                    b.ToTable("ApplicationUserLicenseMacAddresses");
+                });
+
+            modelBuilder.Entity("AppyNox.Services.License.Domain.Entities.ApplicationUserLicenses", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("LicenseId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LicenseId");
+
+                    b.HasIndex("UserId", "LicenseId")
+                        .IsUnique();
+
+                    b.ToTable("ApplicationUserLicenses");
+                });
+
             modelBuilder.Entity("AppyNox.Services.License.Domain.Entities.LicenseEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -49,6 +91,9 @@ namespace AppyNox.Services.License.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("MaxMacAddresses")
+                        .HasColumnType("integer");
+
                     b.Property<int>("MaxUsers")
                         .HasColumnType("integer");
 
@@ -63,10 +108,43 @@ namespace AppyNox.Services.License.Infrastructure.Migrations
                             Code = "LK001",
                             CompanyId = new Guid("221e8b2c-59d5-4e5b-b010-86c239b66738"),
                             Description = "License Description",
-                            ExpirationDate = new DateTime(2025, 1, 2, 21, 33, 34, 534, DateTimeKind.Utc).AddTicks(4202),
+                            ExpirationDate = new DateTime(2025, 1, 9, 0, 10, 24, 115, DateTimeKind.Utc).AddTicks(3656),
                             LicenseKey = "7f033381-fbf7-4929-b5f7-c64261b20bf3",
+                            MaxMacAddresses = 1,
                             MaxUsers = 3
                         });
+                });
+
+            modelBuilder.Entity("AppyNox.Services.License.Domain.Entities.ApplicationUserLicenseMacAddress", b =>
+                {
+                    b.HasOne("AppyNox.Services.License.Domain.Entities.ApplicationUserLicenses", "ApplicationUserLicense")
+                        .WithMany("MacAddresses")
+                        .HasForeignKey("ApplicationUserLicenseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUserLicense");
+                });
+
+            modelBuilder.Entity("AppyNox.Services.License.Domain.Entities.ApplicationUserLicenses", b =>
+                {
+                    b.HasOne("AppyNox.Services.License.Domain.Entities.LicenseEntity", "License")
+                        .WithMany("ApplicationUserLicenses")
+                        .HasForeignKey("LicenseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("License");
+                });
+
+            modelBuilder.Entity("AppyNox.Services.License.Domain.Entities.ApplicationUserLicenses", b =>
+                {
+                    b.Navigation("MacAddresses");
+                });
+
+            modelBuilder.Entity("AppyNox.Services.License.Domain.Entities.LicenseEntity", b =>
+                {
+                    b.Navigation("ApplicationUserLicenses");
                 });
 #pragma warning restore 612, 618
         }

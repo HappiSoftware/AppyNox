@@ -1,9 +1,7 @@
-﻿using AppyNox.Services.Authentication.Infrastructure.Data.Configurations;
-using AppyNox.Services.Authentication.Infrastructure.Entities;
-using Microsoft.AspNetCore.Identity;
+﻿using AppyNox.Services.Authentication.Domain.Entities;
+using AppyNox.Services.Authentication.Infrastructure.Data.Configurations;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 
 namespace AppyNox.Services.Authentication.Infrastructure.Data
 {

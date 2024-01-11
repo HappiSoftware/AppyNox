@@ -16,12 +16,11 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.6-Preview.1" />
+		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.6" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\.BaseService\AppyNox.Services.Base.API\AppyNox.Services.Base.API.csproj" />
-		<ProjectReference Include="..\AppyNox.Services.Coupon.Application\AppyNox.Services.Coupon.Application.csproj" />
 		<ProjectReference Include="..\AppyNox.Services.Coupon.Infrastructure\AppyNox.Services.Coupon.Infrastructure.csproj" />
 	</ItemGroup>
 

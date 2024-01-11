@@ -1,17 +1,17 @@
 ﻿using AppyNox.Services.Base.Application.DtoUtilities;
+using AppyNox.Services.Base.Application.Interfaces.Repositories;
 using AppyNox.Services.Base.Application.MediatR.Commands;
 using AppyNox.Services.Base.Application.MediatR.Handlers;
 using AppyNox.Services.Base.Application.MediatR.Queries;
 using AppyNox.Services.Base.Application.UnitTests.Stubs;
+using AppyNox.Services.Base.Domain.Common;
 using AppyNox.Services.Base.Domain.Interfaces;
-using AppyNox.Services.Base.Infrastructure.Interfaces;
-using AppyNox.Services.Base.Infrastructure.Repositories.Common;
 using AutoMapper;
 using MediatR;
 using Moq;
 using System.Linq.Expressions;
 
-namespace AppyNox.Services.Base.Application.UnitTests.CQRSTests
+namespace AppyNox.Services.Base.Application.UnitTests.GenericCQRSFixtures
 {
     public class GenericCQRSFixture<TEntity> : IDisposable
         where TEntity : class, IEntityWithGuid
@@ -21,6 +21,8 @@ namespace AppyNox.Services.Base.Application.UnitTests.CQRSTests
         public readonly Mock<IDtoMappingRegistryBase> MockDtoMappingRegistry;
 
         public readonly Mock<IServiceProvider> MockServiceProvider;
+
+        public readonly Mock<IQueryParameters> MockQueryParameters;
 
         private readonly Mock<IGenericRepositoryBase<TEntity>> _mockRepository;
 
@@ -58,11 +60,23 @@ namespace AppyNox.Services.Base.Application.UnitTests.CQRSTests
             _mockUnitOfWork = new();
             MockServiceProvider = new();
             _noxApplicationLogger = new();
-            MockMediator = new Mock<IMediator>();
+            MockMediator = new();
+
+            #region [ QueryParameter Mocks ]
+
+            MockQueryParameters = new Mock<IQueryParameters>();
+            MockQueryParameters.Setup(p => p.PageNumber).Returns(1);
+            MockQueryParameters.Setup(p => p.PageSize).Returns(10);
+            MockQueryParameters.Setup(p => p.CommonDtoLevel).Returns(CommonDtoLevelEnums.Simple);
+            MockQueryParameters.Setup(p => p.AccessType).Returns(DtoLevelMappingTypes.DataAccess);
+            MockQueryParameters.Setup(p => p.Access).Returns(string.Empty);
+            MockQueryParameters.Setup(p => p.DetailLevel).Returns("Simple");
+
+            #endregion
 
             #region [ Repository Mocks ]
 
-            _mockRepository.Setup(repo => repo.GetAllAsync(It.IsAny<QueryParametersBase>(), It.IsAny<Expression<Func<TEntity, dynamic>>>()))
+            _mockRepository.Setup(repo => repo.GetAllAsync(It.IsAny<IQueryParameters>(), It.IsAny<Expression<Func<TEntity, dynamic>>>()))
                 .ReturnsAsync(new Mock<List<dynamic>>().Object);
 
             _mockRepository.Setup(repo => repo.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<Expression<Func<TEntity, dynamic>>>()))

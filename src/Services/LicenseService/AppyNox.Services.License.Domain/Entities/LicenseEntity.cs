@@ -18,11 +18,15 @@ namespace AppyNox.Services.License.Domain.Entities
 
         public int MaxUsers { get; set; }
 
+        public int MaxMacAddresses { get; set; }
+
         #endregion
 
         #region [ Relations ]
 
         public Guid? CompanyId { get; set; }
+
+        public virtual ICollection<ApplicationUserLicenses>? ApplicationUserLicenses { get; set; }
 
         #endregion
     }

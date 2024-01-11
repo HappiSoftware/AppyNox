@@ -1,4 +1,6 @@
-﻿using AppyNox.Services.Base.Infrastructure.Helpers;
+﻿using AppyNox.Services.Base.Application.Interfaces;
+using AppyNox.Services.Base.Application.Interfaces.Loggers;
+using AppyNox.Services.Base.Infrastructure.Helpers;
 using Microsoft.Extensions.Logging;
 
 namespace AppyNox.Services.Base.Infrastructure.Services.LoggerService
@@ -61,15 +63,6 @@ namespace AppyNox.Services.Base.Infrastructure.Services.LoggerService
             {
                 _logger.LogCritical(exception, "{@LogData}", CreateLogData(message, LogLevel.Critical));
             }
-        }
-
-        protected virtual string FormatMessage(string message, LogLevel logLevel, string layer)
-        {
-            var timeStamp = DateTime.UtcNow;
-            return $"--------------- Nox{layer} ({logLevel}) ---------------\n" +
-                   $"|-- {timeStamp:yyyy-MM-dd HH:mm:ss} --|\n" +
-                   $"{message}\n" +
-                   $"------------------------------\n";
         }
 
         protected virtual object CreateLogData(string message, LogLevel logLevel)

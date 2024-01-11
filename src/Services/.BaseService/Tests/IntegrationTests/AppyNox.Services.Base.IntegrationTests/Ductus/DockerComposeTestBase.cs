@@ -1,4 +1,5 @@
-﻿using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
+﻿using AppyNox.Services.Base.Application.Interfaces.Loggers;
+using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
 using AppyNox.Services.Base.IntegrationTests.Helpers;
 using AppyNox.Services.Base.IntegrationTests.URIs;
 using AutoWrapper.Server;

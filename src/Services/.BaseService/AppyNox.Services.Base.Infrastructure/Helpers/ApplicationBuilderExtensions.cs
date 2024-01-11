@@ -1,5 +1,7 @@
 ﻿using Consul;
+using MassTransit;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Text;
 using System.Text.Json;
@@ -45,6 +47,23 @@ namespace AppyNox.Services.Base.Infrastructure.Helpers
                         throw new ApplicationException($"Failed to load configuration from Consul for '{microServiceName}' in '{environmentName}' environment", exceptionContext.Exception);
                     };
                 });
+        }
+
+        public static void AddMassTransitWithRabbitMq(this IHostApplicationBuilder builder)
+        {
+            builder.Services.AddMassTransit(busConfigurator =>
+            {
+                busConfigurator.UsingRabbitMq((context, configurator) =>
+                {
+                    configurator.Host(new Uri(builder.Configuration["MessageBroker:Host"]!), h =>
+                    {
+                        h.Username(builder.Configuration["MessageBroker:Username"]!);
+                        h.Password(builder.Configuration["MessageBroker:Password"]!);
+                    });
+
+                    configurator.ConfigureEndpoints(context);
+                });
+            });
         }
 
         #endregion

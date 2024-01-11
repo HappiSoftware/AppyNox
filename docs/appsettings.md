@@ -206,7 +206,8 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
   "ConnectionStrings": {
     "DevelopmentConnection": "User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_Authentication",
     "DefaultConnection": "User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_Authentication",
-    "TestConnection": ""
+    "TestConnection": "",
+    "SagaConnection": "User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_Authentication_Saga"
   },
   "JwtSettings": {
     "SecretKey": "vA+A/of8yadsbwe/CmS6PD0Kp837BozrQFMDuQ2Kwwg=",
@@ -227,6 +228,11 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
     "HealthCheckUrl": "health-check",
     "HealthCheckIntervalSeconds": 30,
     "HealthCheckTimeoutSeconds": 5
+  },
+  "MessageBroker": {
+    "Host": "rabbitmq://localhost",
+    "Username": "guest",
+    "Password": "guest"
   }
 }
 ```
@@ -262,7 +268,8 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
   "ConnectionStrings": {
     "StagingConnection": "User ID=postgres;Password=auth_password;Server=appynox-authentication-db;Port=5432;Database=AppyNox_Authentication_Test",
     "DefaultConnection": "User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_Authentication",
-    "TestConnection": ""
+    "TestConnection": "",
+    "SagaConnection": "User ID=postgres;Password=auth_saga_password;Server=appynox-authentication-saga-db;Port=5432;Database=AppyNox_Authentication_Saga_Test"
   },
   "JwtSettings": {
     "SecretKey": "vA+A/of8yadsbwe/CmS6PD0Kp837BozrQFMDuQ2Kwwg=",
@@ -283,6 +290,11 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
     "HealthCheckUrl": "health-check",
     "HealthCheckIntervalSeconds": 30,
     "HealthCheckTimeoutSeconds": 5
+  },
+  "MessageBroker": {
+    "Host": "rabbitmq://appynox-rabbitmq-service",
+    "Username": "HappiCorp",
+    "Password": "HappiCorp"
   }
 }
 ```
@@ -317,7 +329,8 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
   },
   "ConnectionStrings": {
     "ProductionConnection": "User ID=postgres;Password=auth_password;Server=appynox-authentication-db;Port=5432;Database=AppyNox_Authentication",
-    "DefaultConnection": "User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_Authentication;Pooling=true"
+    "DefaultConnection": "User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_Authentication;Pooling=true",
+    "SagaConnection": "User ID=postgres;Password=auth_saga_password;Server=appynox-authentication-saga-db;Port=5432;Database=AppyNox_Authentication_Saga"
   },
   "JwtSettings": {
     "SecretKey": "vA+A/of8yadsbwe/CmS6PD0Kp837BozrQFMDuQ2Kwwg=",
@@ -338,6 +351,11 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
     "HealthCheckUrl": "health-check",
     "HealthCheckIntervalSeconds": 30,
     "HealthCheckTimeoutSeconds": 5
+  },
+  "MessageBroker": {
+    "Host": "rabbitmq://appynox-rabbitmq-service",
+    "Username": "HappiCorp",
+    "Password": "HappiCorp"
   }
 }
 ```

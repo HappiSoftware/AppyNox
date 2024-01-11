@@ -7,7 +7,7 @@
     {
         #region [ Fields ]
 
-        private static readonly AsyncLocal<string> _correlationId = new();
+        private static readonly AsyncLocal<Guid> _correlationId = new();
 
         #endregion
 
@@ -16,7 +16,7 @@
         /// <summary>
         /// Gets or sets the correlation ID for the current request.
         /// </summary>
-        public static string CorrelationId
+        public static Guid CorrelationId
         {
             get => _correlationId.Value;
             set => _correlationId.Value = value;

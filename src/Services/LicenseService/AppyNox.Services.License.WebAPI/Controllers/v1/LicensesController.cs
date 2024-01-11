@@ -3,10 +3,12 @@ using AppyNox.Services.Base.API.ViewModels;
 using AppyNox.Services.Base.Application.MediatR.Commands;
 using AppyNox.Services.Base.Application.MediatR.Queries;
 using AppyNox.Services.Base.Infrastructure.Repositories.Common;
+using AppyNox.Services.License.Application.MediatR.Commands;
 using AppyNox.Services.License.Domain.Entities;
 using AppyNox.Services.License.WebAPI.Helpers.Permissions;
 using Asp.Versioning;
 using AutoWrapper.Wrappers;
+using MassTransit;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,15 +18,17 @@ namespace AppyNox.Services.License.WebAPI.Controllers.v1
     [ApiController]
     [ApiVersion("1.0")]
     [Route("api/[controller]")]
-    public class LicensesController(IMediator mediator) : Controller
+    public class LicensesController(IMediator mediator, IPublishEndpoint publishEndpoint) : Controller
     {
         #region [ Fields ]
 
         private readonly IMediator _mediator = mediator;
 
+        private readonly IPublishEndpoint _publishEndpoint = publishEndpoint;
+
         #endregion
 
-        #region [ Public Methods ]
+        #region [ CRUD Endpoints ]
 
         [HttpGet]
         [Authorize(Permissions.Licenses.View)]
@@ -76,6 +80,22 @@ namespace AppyNox.Services.License.WebAPI.Controllers.v1
 
             await _mediator.Send(new DeleteEntityCommand<LicenseEntity>(id));
             return NoContent();
+        }
+
+        #endregion
+
+        #region [ Custom Endpoints ]
+
+        [HttpGet("validate/{licenseKey}")]
+        public async Task<ActionResult> ValidateLicenseKey(string licenseKey)
+        {
+            var response = await _mediator.Send(new ValidateLicenseKeyCommand(licenseKey));
+
+            if (response.isValid)
+            {
+                return Ok("License key is valid and has room for additional users.");
+            }
+            else { return BadRequest(); }
         }
 
         #endregion

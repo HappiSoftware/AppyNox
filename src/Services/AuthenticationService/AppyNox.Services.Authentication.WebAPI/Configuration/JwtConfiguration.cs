@@ -15,6 +15,24 @@ namespace AppyNox.Services.Authentication.WebAPI.Configuration
 
         public string Audience { get; set; } = string.Empty;
 
+        public int TokenLifetimeMinutes { get; set; }
+
+        #endregion
+
+        #region [ Public Constructors ]
+
+        public JwtConfiguration()
+        {
+        }
+
+        public JwtConfiguration(string secretKey, string issuer, string audience, int tokenLifetimeMinutes = 1)
+        {
+            SecretKey = secretKey;
+            Issuer = issuer;
+            Audience = audience;
+            TokenLifetimeMinutes = tokenLifetimeMinutes;
+        }
+
         #endregion
 
         #region [ Public Methods ]

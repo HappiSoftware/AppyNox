@@ -1,8 +1,7 @@
-﻿using AppyNox.Services.Authentication.Infrastructure.Entities;
+﻿using AppyNox.Services.Authentication.Domain.Entities;
 using AppyNox.Services.Authentication.WebAPI.Configuration;
 using AppyNox.Services.Authentication.WebAPI.ExceptionExtensions.Base;
 using AppyNox.Services.Authentication.WebAPI.Managers.Interfaces;
-using AutoWrapper.Wrappers;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -15,8 +14,9 @@ namespace AppyNox.Services.Authentication.WebAPI.Managers.Implementations
     /// <summary>
     /// Manages the creation and validation of JWT tokens.
     /// </summary>
-    public class JwtTokenManager(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager,
-        JwtConfiguration jwtConfiguration, IConfiguration configuration) : ICustomTokenManager
+    public class JwtTokenManager(UserManager<ApplicationUser> userManager,
+                                 RoleManager<IdentityRole> roleManager,
+                                 JwtConfiguration jwtConfiguration) : ICustomTokenManager
     {
         #region [ Fields ]
 
@@ -27,8 +27,6 @@ namespace AppyNox.Services.Authentication.WebAPI.Managers.Implementations
         private readonly JwtConfiguration _jwtConfiguration = jwtConfiguration;
 
         private readonly JwtSecurityTokenHandler _tokenHandler = new();
-
-        private readonly IConfiguration _configuration = configuration;
 
         #endregion
 
@@ -69,7 +67,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Managers.Implementations
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.UtcNow.AddMinutes(_configuration.GetValue<int>("JwtSettings:TokenLifetimeMinutes")),
+                Expires = DateTime.UtcNow.AddMinutes(_jwtConfiguration.TokenLifetimeMinutes),
                 Issuer = _jwtConfiguration.Issuer,
                 Audience = _jwtConfiguration.Audience,
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(_jwtConfiguration.GetSecretKeyBytes()), SecurityAlgorithms.HmacSha256Signature),

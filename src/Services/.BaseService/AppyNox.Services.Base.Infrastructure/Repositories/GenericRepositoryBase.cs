@@ -1,8 +1,8 @@
-﻿using AppyNox.Services.Base.Domain.Interfaces;
+﻿using AppyNox.Services.Base.Application.Interfaces.Loggers;
+using AppyNox.Services.Base.Application.Interfaces.Repositories;
+using AppyNox.Services.Base.Domain.Interfaces;
 using AppyNox.Services.Base.Infrastructure.ExceptionExtensions;
 using AppyNox.Services.Base.Infrastructure.ExceptionExtensions.Base;
-using AppyNox.Services.Base.Infrastructure.Interfaces;
-using AppyNox.Services.Base.Infrastructure.Logger;
 using AppyNox.Services.Base.Infrastructure.Repositories.Common;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Dynamic.Core;
@@ -74,7 +74,7 @@ namespace AppyNox.Services.Base.Infrastructure.Repositories
             }
         }
 
-        public async Task<IEnumerable<object>> GetAllAsync(QueryParametersBase queryParameters, Expression<Func<TEntity, dynamic>> selectedColumns)
+        public async Task<IEnumerable<object>> GetAllAsync(IQueryParameters queryParameters, Expression<Func<TEntity, dynamic>> selectedColumns)
         {
             try
             {

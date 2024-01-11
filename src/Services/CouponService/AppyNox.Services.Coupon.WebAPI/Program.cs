@@ -1,8 +1,6 @@
 using AppyNox.Services.Base.API.Helpers;
-using AppyNox.Services.Base.API.Logger;
 using AppyNox.Services.Base.API.Middleware;
 using AppyNox.Services.Base.Infrastructure.Helpers;
-using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
 using AppyNox.Services.Base.Infrastructure.HostedServices;
 using AppyNox.Services.Coupon.Application;
 using AppyNox.Services.Coupon.Infrastructure;
@@ -15,6 +13,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
+using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
+using AppyNox.Services.Base.Application.Interfaces.Loggers;
 
 var builder = WebApplication.CreateBuilder(args);
 

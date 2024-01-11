@@ -1,5 +1,5 @@
 ﻿using AppyNox.Services.Authentication.Application.Dtos.AccountDtos.Models.Base;
-using AppyNox.Services.Authentication.Infrastructure.Entities;
+using AppyNox.Services.Authentication.Domain.Entities;
 using AppyNox.Services.Authentication.WebAPI.ExceptionExtensions.Base;
 using AppyNox.Services.Authentication.WebAPI.Managers.Interfaces;
 using AutoWrapper.Wrappers;
