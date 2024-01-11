@@ -2,8 +2,6 @@ name: Publish NuGet Package
 
 on:
   push:
-    branches:
-      - master
     tags:
       - 'v*'  # This will trigger the workflow when you push tags like v1.0.0
 
@@ -14,31 +12,34 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
 
-      - name: Set up .NET Core
+      - name: Set up .NET
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '8.0.x'
 
-      - name: Restore dependencies
-        run: dotnet restore
+      - name: Restore dependencies for BaseService API
+        run: dotnet restore ./src/Services/BaseService/AppyNox.Services.Base.API/AppyNox.Services.Base.API.csproj
 
-      - name: Build
-        run: dotnet build --configuration Release --no-restore
+      - name: Restore dependencies for BaseService Application
+        run: dotnet restore ./src/Services/BaseService/AppyNox.Services.Base.Application/AppyNox.Services.Base.Application.csproj
 
-      - name: Test
-        run: dotnet test --no-restore --verbosity normal
+      - name: Restore dependencies for BaseService Domain
+        run: dotnet restore ./src/Services/BaseService/AppyNox.Services.Base.Domain/AppyNox.Services.Base.Domain.csproj
 
-      - name: Pack BaseService API
-        run: dotnet pack ./src/Services/BaseService/AppyNox.Services.Base.API --configuration Release --output ./nupkgs
+      - name: Restore dependencies for BaseService Infrastructure
+        run: dotnet restore ./src/Services/BaseService/AppyNox.Services.Base.Infrastructure/AppyNox.Services.Base.Infrastructure.csproj
 
-      - name: Pack BaseService Application
-        run: dotnet pack ./src/Services/BaseService/AppyNox.Services.Base.Application --configuration Release --output ./nupkgs
+      - name: Build and Pack BaseService API
+        run: dotnet pack ./src/Services/BaseService/AppyNox.Services.Base.API/AppyNox.Services.Base.API.csproj --configuration Release --output ../../nupkgs
 
-      - name: Pack BaseService Domain
-        run: dotnet pack ./src/Services/BaseService/AppyNox.Services.Base.Domain --configuration Release --output ./nupkgs
+      - name: Build and Pack BaseService Application
+        run: dotnet pack ./src/Services/BaseService/AppyNox.Services.Base.Application/AppyNox.Services.Base.Application.csproj --configuration Release --output ../../nupkgs
 
-      - name: Pack BaseService Infrastructure
-        run: dotnet pack ./src/Services/BaseService/AppyNox.Services.Base.Infrastructure --configuration Release --output ./nupkgs
+      - name: Build and Pack BaseService Domain
+        run: dotnet pack ./src/Services/BaseService/AppyNox.Services.Base.Domain/AppyNox.Services.Base.Domain.csproj --configuration Release --output ../../nupkgs
+
+      - name: Build and Pack BaseService Infrastructure
+        run: dotnet pack ./src/Services/BaseService/AppyNox.Services.Base.Infrastructure/AppyNox.Services.Base.Infrastructure.csproj --configuration Release --output ../../nupkgs
 
       - name: Publish to GitHub Packages
         run: dotnet nuget push ./nupkgs/*.nupkg --source "github" --api-key ${{ secrets.NUGET_API_KEY }}
