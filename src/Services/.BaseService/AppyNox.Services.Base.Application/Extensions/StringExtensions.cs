@@ -1,4 +1,4 @@
-﻿namespace AppyNox.Services.Base.Application.Helpers;
+﻿namespace AppyNox.Services.Base.Application.Extensions;
 
 /// <summary>
 /// Provides extension methods for string manipulation, particularly for logging and validation purposes.

@@ -1,13 +1,8 @@
 ﻿using AppyNox.Services.Base.Domain.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AppyNox.Services.Coupon.Domain.Entities
 {
-    public class CouponEntity : IEntityWithGuid
+    public class CouponEntity : IEntityWithGuid, IAuditableData
     {
         #region [ Properties ]
 
@@ -22,6 +17,18 @@ namespace AppyNox.Services.Coupon.Domain.Entities
         public int MinAmount { get; set; }
 
         public string? Detail { get; set; }
+
+        #endregion
+
+        #region [ IAuditableData ]
+
+        public string CreatedBy { get; set; } = string.Empty;
+
+        public DateTime CreationDate { get; set; }
+
+        public string UpdatedBy { get; set; } = string.Empty;
+
+        public DateTime? UpdateDate { get; set; }
 
         #endregion
 

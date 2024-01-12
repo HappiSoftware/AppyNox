@@ -1,12 +1,11 @@
 ﻿using AppyNox.Services.Base.Application.MediatR.Commands;
 using AppyNox.Services.Base.Application.MediatR.Handlers;
-using AppyNox.Services.Base.Application.MediatR.Queries;
 using AppyNox.Services.Base.Domain.Interfaces;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
-namespace AppyNox.Services.Base.Application.Helpers
+namespace AppyNox.Services.Base.Application.Extensions
 {
     public static class ServiceCollectionExtensions
     {

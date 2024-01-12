@@ -61,6 +61,8 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddHealthChecks();
 
+builder.Services.AddHttpContextAccessor();
+
 #endregion
 
 #region [ Dependency Injection For Layers ]

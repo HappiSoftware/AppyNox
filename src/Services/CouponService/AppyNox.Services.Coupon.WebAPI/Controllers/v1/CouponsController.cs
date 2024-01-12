@@ -1,20 +1,22 @@
-﻿using AppyNox.Services.Base.API.Helpers;
+﻿using AppyNox.Services.Base.API.Controllers;
+using AppyNox.Services.Base.API.Helpers;
 using AppyNox.Services.Base.API.ViewModels;
 using AppyNox.Services.Base.Application.MediatR.Commands;
-using AppyNox.Services.Base.Application.MediatR.Queries;
 using AppyNox.Services.Base.Infrastructure.Repositories.Common;
 using AppyNox.Services.Coupon.Domain.Entities;
 using Asp.Versioning;
 using AutoWrapper.Wrappers;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using static AppyNox.Services.Coupon.WebAPI.Helpers.Permissions.Permissions;
 
 namespace AppyNox.Services.Coupon.WebAPI.Controllers.v1
 {
     [ApiController]
     [ApiVersion("1.0")]
     [Route("api/[controller]")]
-    public class CouponsController(IMediator mediator) : Controller
+    public class CouponsController(IMediator mediator) : NoxController
     {
         #region [ Fields ]
 
@@ -25,21 +27,24 @@ namespace AppyNox.Services.Coupon.WebAPI.Controllers.v1
         #region [ Public Methods ]
 
         [HttpGet]
+        [Authorize(Coupons.View)]
         public async Task<ApiResponse> GetAll([FromQuery] QueryParametersViewModel queryParameters)
         {
             return new ApiResponse(await _mediator.Send(new GetAllEntitiesQuery<CouponEntity>(queryParameters)));
         }
 
         [HttpGet("{id}")]
+        [Authorize(Coupons.View)]
         public async Task<ApiResponse> GetById(Guid id, [FromQuery] QueryParametersViewModel queryParameters)
         {
             return new ApiResponse(await _mediator.Send(new GetEntityByIdQuery<CouponEntity>(id, queryParameters)));
         }
 
         [HttpPost]
+        [Authorize(Coupons.Create)]
         public async Task<IActionResult> Create([FromBody] dynamic couponDto, string detailLevel = "Simple")
         {
-            dynamic result = await _mediator.Send(new CreateEntityCommand<CouponEntity>(couponDto, detailLevel));
+            dynamic result = await _mediator.Send(new CreateEntityCommand<CouponEntity>(couponDto, detailLevel, GetUserIdFromJwtToken()));
             var response = new
             {
                 Id = result.Item1,
@@ -49,6 +54,7 @@ namespace AppyNox.Services.Coupon.WebAPI.Controllers.v1
         }
 
         [HttpPut("{id}")]
+        [Authorize(Coupons.Edit)]
         public async Task<IActionResult> Update(Guid id, [FromBody] dynamic couponDto, string detailLevel = "Simple")
         {
             if (id != ValidationHelpers.GetIdFromDynamicDto(couponDto))
@@ -58,11 +64,12 @@ namespace AppyNox.Services.Coupon.WebAPI.Controllers.v1
 
             await _mediator.Send(new GetEntityByIdQuery<CouponEntity>(id, QueryParameters.CreateForIdOnly()));
 
-            await _mediator.Send(new UpdateEntityCommand<CouponEntity>(id, couponDto, detailLevel));
+            await _mediator.Send(new UpdateEntityCommand<CouponEntity>(id, couponDto, detailLevel, GetUserIdFromJwtToken()));
             return NoContent();
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Coupons.Delete)]
         public async Task<IActionResult> Delete(Guid id)
         {
             await _mediator.Send(new GetEntityByIdQuery<CouponEntity>(id, QueryParameters.CreateForIdOnly()));

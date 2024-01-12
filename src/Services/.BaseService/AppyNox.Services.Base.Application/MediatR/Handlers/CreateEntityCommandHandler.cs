@@ -1,6 +1,6 @@
 ﻿using AppyNox.Services.Base.Application.DtoUtilities;
 using AppyNox.Services.Base.Application.ExceptionExtensions.Base;
-using AppyNox.Services.Base.Application.Helpers;
+using AppyNox.Services.Base.Application.Extensions;
 using AppyNox.Services.Base.Application.Interfaces.Exceptions;
 using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Application.Interfaces.Repositories;
@@ -48,8 +48,7 @@ namespace AppyNox.Services.Base.Application.MediatR.Handlers
 
                 TEntity mappedEntity = Mapper.Map(dtoObject, dtoType, entityType);
                 await Repository.AddAsync(mappedEntity);
-                await UnitOfWork.SaveChangesAsync();
-
+                await UnitOfWork.SaveChangesAsync(request.UserId);
                 Type returnDtoType = DtoMappingRegistry.GetDtoType(DtoLevelMappingTypes.DataAccess, entityType, CommonDtoLevelEnums.Simple.GetDisplayName());
                 object createdObject = Mapper.Map(mappedEntity, returnDtoType, returnDtoType);
                 return (guid: mappedEntity.Id, basicDto: createdObject);

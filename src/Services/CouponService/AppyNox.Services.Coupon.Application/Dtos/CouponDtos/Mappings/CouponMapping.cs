@@ -1,4 +1,6 @@
-﻿using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
+﻿using AppyNox.Services.Base.Application.Dtos;
+using AppyNox.Services.Base.Application.Extensions;
+using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Extended;
 using AppyNox.Services.Coupon.Domain.Entities;
 using AutoMapper;
@@ -19,7 +21,7 @@ namespace AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Mappings
 
             CreateMap<CouponExtendedUpdateDto, CouponEntity>().ReverseMap();
 
-            CreateMap<CouponEntity, CouponSimpleDto>().ReverseMap();
+            CreateMap<CouponEntity, CouponSimpleDto>().MapAuditInfo().ReverseMap();
 
             CreateMap<CouponEntity, CouponWithAllRelationsDto>();
         }

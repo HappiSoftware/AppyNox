@@ -1,4 +1,4 @@
-﻿using AppyNox.Services.Base.Application.Helpers;
+﻿using AppyNox.Services.Base.Application.Extensions;
 using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Domain.Common;
 using Newtonsoft.Json;

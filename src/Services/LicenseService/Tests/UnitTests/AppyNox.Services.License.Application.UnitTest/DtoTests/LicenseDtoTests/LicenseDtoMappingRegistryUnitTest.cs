@@ -4,7 +4,7 @@ using AppyNox.Services.License.Application.Dtos.LicenseDtos.DetailLevel;
 using AppyNox.Services.License.Application.Dtos.LicenseDtos.Models.Base;
 using AppyNox.Services.License.Application.UnitTest.DtoTests.Fixtures;
 using AppyNox.Services.License.Domain.Entities;
-using AppyNox.Services.Base.Application.Helpers;
+using AppyNox.Services.Base.Application.Extensions;
 
 namespace AppyNox.Services.License.Application.UnitTest.DtoTests.LicenseDtoTests
 {

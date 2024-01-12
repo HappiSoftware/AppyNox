@@ -1,7 +1,8 @@
-﻿using AppyNox.Services.Base.Application.DtoUtilities;
+﻿using AppyNox.Services.Base.Application.Dtos;
+using AppyNox.Services.Base.Application.DtoUtilities;
 using AppyNox.Services.Base.Application.ExceptionExtensions;
 using AppyNox.Services.Base.Application.ExceptionExtensions.Base;
-using AppyNox.Services.Base.Application.Helpers;
+using AppyNox.Services.Base.Application.Extensions;
 using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Application.Interfaces.Repositories;
 using AppyNox.Services.Base.Domain.Common;
@@ -11,6 +12,7 @@ using FluentValidation;
 using FluentValidation.Internal;
 using System.Dynamic;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Text.Json;
 
 namespace AppyNox.Services.Base.Application.MediatR
@@ -24,7 +26,7 @@ namespace AppyNox.Services.Base.Application.MediatR
         IUnitOfWorkBase unitOfWork)
         where TEntity : class, IEntityWithGuid
     {
-        #region Fields
+        #region [ Fields ]
 
         protected readonly IGenericRepositoryBase<TEntity> Repository = repository;
 
@@ -60,17 +62,20 @@ namespace AppyNox.Services.Base.Application.MediatR
         {
             Type dtoType;
             List<string> properties = [];
+            PropertyInfo[] propertyInformations = [];
 
             switch (queryParameters.CommonDtoLevel)
             {
                 case CommonDtoLevelEnums.None:
                     dtoType = DtoMappingRegistry.GetDtoType(queryParameters.AccessType, EntityType, queryParameters.DetailLevel);
-                    properties = dtoType.GetProperties().Select(p => p.Name).ToList();
+                    propertyInformations = dtoType.GetProperties();
+                    properties = AdjustAuditInfoProperties(propertyInformations).Select(p => p.Name).ToList();
                     break;
 
                 case CommonDtoLevelEnums.Simple:
                     dtoType = DtoMappingRegistry.GetDtoType(queryParameters.AccessType, EntityType, CommonDtoLevelEnums.Simple.GetDisplayName());
-                    properties = dtoType.GetProperties().Select(p => p.Name).ToList();
+                    propertyInformations = dtoType.GetProperties();
+                    properties = AdjustAuditInfoProperties(propertyInformations).Select(p => p.Name).ToList();
                     break;
 
                 case CommonDtoLevelEnums.IdOnly:
@@ -174,6 +179,18 @@ namespace AppyNox.Services.Base.Application.MediatR
                 Logger.LogError(ex, $"Error occurred while mapping single entity of type {typeof(TEntity).Name} to DTO.");
                 throw new NoxApplicationException(ex);
             }
+        }
+
+        #endregion
+
+        #region [ Private Methods ]
+
+        private PropertyInfo[] AdjustAuditInfoProperties(PropertyInfo[] propertyInformations)
+        {
+            return propertyInformations
+                .SelectMany(property => property.PropertyType == typeof(AuditInfo)
+                            ? typeof(AuditInfo).GetProperties()
+                            : [property]).ToArray();
         }
 
         #endregion
