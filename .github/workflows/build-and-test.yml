@@ -1,4 +1,4 @@
-name: AppyNox CI
+name: AppyNox CI (SingleStep)
 
 on:
   push:
