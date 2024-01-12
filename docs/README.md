@@ -1,6 +1,8 @@
 # Introduction
 
-[![AppyNox CI](https://github.com/HappiSoftware/AppyNox/actions/workflows/ci.yml/badge.svg)](https://github.com/HappiSoftware/AppyNox/actions/workflows/ci.yml)
+[![AppyNox CI (SingleStep)](https://github.com/HappiSoftware/AppyNox/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/HappiSoftware/AppyNox/actions/workflows/build-and-test.yml)
+
+[![AppyNox CI (MultiStep)](https://github.com/HappiSoftware/AppyNox/actions/workflows/build-and-test-multi-step.yml/badge.svg)](https://github.com/HappiSoftware/AppyNox/actions/workflows/build-and-test-multi-step.yml) - Disabled
 
 [![ASP.NET Core](https://img.shields.io/badge/ASP.NET%20Core-latest-brightgreen.svg)](https://docs.microsoft.com/en-us/aspnet/core)
 [![Entity Framework Core](https://img.shields.io/badge/Entity%20Framework%20Core-Latest-brightgreen.svg)](https://docs.microsoft.com/en-us/ef/core/)
