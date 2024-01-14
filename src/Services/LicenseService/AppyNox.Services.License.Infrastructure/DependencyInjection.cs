@@ -3,23 +3,16 @@ using AppyNox.Services.Base.Application.Interfaces.Repositories;
 using AppyNox.Services.Base.Domain.Common;
 using AppyNox.Services.Base.Infrastructure.HostedServices;
 using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
-using AppyNox.Services.License.Domain.Entities;
+using AppyNox.Services.License.Application.Interfaces;
 using AppyNox.Services.License.Infrastructure.Data;
+using AppyNox.Services.License.Infrastructure.MassTransit.Consumers;
 using AppyNox.Services.License.Infrastructure.Repositories;
 using Consul;
+using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using AppyNox.Services.License.Application.Interfaces;
-using System.Reflection;
-using FluentValidation;
-using AppyNox.Services.Base.Application.DtoUtilities;
-using AppyNox.Services.License.Application.Dtos.DtoUtilities;
-using AppyNox.Services.Base.Application.Helpers;
-using MassTransit;
-using AppyNox.Services.License.Infrastructure.MassTransit.Consumers;
-using AppyNox.Services.License.SharedEvents.Events;
 
 namespace AppyNox.Services.License.Infrastructure
 {

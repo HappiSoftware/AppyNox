@@ -2,7 +2,7 @@
 using AppyNox.Services.Base.Domain.Helpers;
 using System.ComponentModel.DataAnnotations;
 
-namespace AppyNox.Services.Base.Application.Helpers
+namespace AppyNox.Services.Base.Application.Extensions
 {
     /// <summary>
     /// Provides extension methods for working with enums in the application.

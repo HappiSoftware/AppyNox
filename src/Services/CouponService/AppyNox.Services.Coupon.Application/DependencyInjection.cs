@@ -1,5 +1,5 @@
 ﻿using AppyNox.Services.Base.Application.DtoUtilities;
-using AppyNox.Services.Base.Application.Helpers;
+using AppyNox.Services.Base.Application.Extensions;
 using AppyNox.Services.Coupon.Application.Dtos.DtoUtilities;
 using AppyNox.Services.Coupon.Domain.Entities;
 using FluentValidation;

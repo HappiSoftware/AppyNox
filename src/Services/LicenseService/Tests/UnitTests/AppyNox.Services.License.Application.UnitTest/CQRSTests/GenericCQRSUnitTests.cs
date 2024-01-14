@@ -1,7 +1,5 @@
-﻿using AppyNox.Services.Base.Application.Helpers;
-using AppyNox.Services.Base.Application.Interfaces.Repositories;
+﻿using AppyNox.Services.Base.Application.Extensions;
 using AppyNox.Services.Base.Application.MediatR.Commands;
-using AppyNox.Services.Base.Application.MediatR.Queries;
 using AppyNox.Services.Base.Application.UnitTests.GenericCQRSFixtures;
 using AppyNox.Services.Base.Domain.Common;
 using AppyNox.Services.License.Application.Dtos.LicenseDtos.DetailLevel;

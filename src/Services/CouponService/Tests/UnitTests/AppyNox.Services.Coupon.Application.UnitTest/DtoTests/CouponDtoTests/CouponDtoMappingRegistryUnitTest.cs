@@ -1,4 +1,4 @@
-﻿using AppyNox.Services.Base.Application.Helpers;
+﻿using AppyNox.Services.Base.Application.Extensions;
 using AppyNox.Services.Base.Domain.Common;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.DetailLevel;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;

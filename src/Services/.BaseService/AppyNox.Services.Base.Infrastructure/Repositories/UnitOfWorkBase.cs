@@ -1,5 +1,6 @@
 ﻿using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Application.Interfaces.Repositories;
+using AppyNox.Services.Base.Domain.Interfaces;
 using AppyNox.Services.Base.Infrastructure.ExceptionExtensions;
 using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
 using Microsoft.EntityFrameworkCore;
@@ -23,6 +24,8 @@ namespace AppyNox.Services.Base.Infrastructure.Repositories
 
         private bool _disposed = false;
 
+        private string _currentUserId = "Unknown";
+
         #endregion
 
         #region [ Public Methods ]
@@ -33,6 +36,16 @@ namespace AppyNox.Services.Base.Infrastructure.Repositories
         ~UnitOfWorkBase()
         {
             Dispose(false);
+        }
+
+        /// <summary>
+        /// Sets userId field for IAuditableEntity classes.
+        /// <para>Used for generating CreatedBy and UpdatedBy columns</para>
+        /// </summary>
+        /// <param name="userId">UserId from JWT token</param>
+        public void SetCurrentUser(string userId)
+        {
+            _currentUserId = userId;
         }
 
         /// <summary>
@@ -77,9 +90,30 @@ namespace AppyNox.Services.Base.Infrastructure.Repositories
         /// Saves all changes made in the context of the database asynchronously.
         /// </summary>
         /// <returns>The number of objects written to the underlying database.</returns>
-        public async Task<int> SaveChangesAsync()
+        public async Task<int> SaveChangesAsync(string userId = "Unknown")
         {
-            _logger.LogInformation("Attempting to saving changes to the database asynchronously.");
+            if (!"Unknown".Equals(userId))
+            {
+                _currentUserId = userId;
+                _logger.LogInformation($"UserId is specified, changing the currentUserId to {userId}");
+            }
+
+            _logger.LogInformation($"Attempting to saving changes to the database asynchronously, responsible user: {_currentUserId}.");
+
+            foreach (var entry in _dbContext.ChangeTracker.Entries<IAuditableData>())
+            {
+                if (entry.State == EntityState.Added)
+                {
+                    entry.Entity.CreatedBy = _currentUserId;
+                    entry.Entity.CreationDate = DateTime.UtcNow;
+                }
+                else if (entry.State == EntityState.Modified)
+                {
+                    entry.Entity.UpdatedBy = _currentUserId;
+                    entry.Entity.UpdateDate = DateTime.UtcNow;
+                }
+            }
+
             return await _dbContext.SaveChangesAsync();
         }
 

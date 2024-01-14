@@ -1,7 +1,6 @@
 ﻿using AppyNox.Services.Base.API.Helpers;
 using AppyNox.Services.Base.API.ViewModels;
 using AppyNox.Services.Base.Application.MediatR.Commands;
-using AppyNox.Services.Base.Application.MediatR.Queries;
 using AppyNox.Services.Base.Infrastructure.Repositories.Common;
 using AppyNox.Services.License.Application.MediatR.Commands;
 using AppyNox.Services.License.Domain.Entities;

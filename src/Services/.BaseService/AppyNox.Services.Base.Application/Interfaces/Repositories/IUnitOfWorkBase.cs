@@ -26,7 +26,7 @@
         /// Saves all changes made in the context of the unit of work.
         /// </summary>
         /// <returns>The number of objects written to the underlying database.</returns>
-        Task<int> SaveChangesAsync();
+        Task<int> SaveChangesAsync(string userId = "Unknown");
 
         #endregion
     }

@@ -12,7 +12,7 @@ namespace AppyNox.Services.Coupon.Infrastructure.Data
         {
         }
 
-        public CouponDbContext(DbContextOptions<CouponDbContext> options)
+        public CouponDbContext(DbContextOptions options)
             : base(options)
         {
         }
