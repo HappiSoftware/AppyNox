@@ -6,6 +6,7 @@ namespace AppyNox.Services.Base.Core.ExceptionExtensions.Base
 {
     /// <summary>
     /// Represents a base class for custom exceptions in the application.
+    /// <para>It is not suggested to use this exception directly in microservices. Please check the documentation for more information.</para>
     /// </summary>
     public abstract class NoxException : Exception, INoxException
     {

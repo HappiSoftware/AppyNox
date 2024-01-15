@@ -175,8 +175,8 @@ app.UseMiddleware<UserIdMiddleware>();
 app.MapControllers();
 
 app.UseApiResponseAndExceptionWrapper(new AutoWrapperOptions { IsApiOnly = true, ShowApiVersion = true, ApiVersion = "1.0" });
-app.UseMiddleware<QueryParameterValidateMiddleware>();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
+app.UseMiddleware<QueryParameterValidateMiddleware>();
 
 app.UseHealthChecks("/api/health");
 

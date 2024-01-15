@@ -42,17 +42,20 @@ jobs:
 
 
       # Build
-      - name: Build BaseService API
-        run: dotnet build ./src/Services/.BaseService/AppyNox.Services.Base.API/AppyNox.Services.Base.API.csproj --configuration Release --no-restore
-
-      - name: Build BaseService Application
-        run: dotnet build ./src/Services/.BaseService/AppyNox.Services.Base.Application/AppyNox.Services.Base.Application.csproj --configuration Release --no-restore
+      - name: Build BaseService Core
+        run: dotnet build ./src/Services/.BaseService/AppyNox.Services.Base.Core/AppyNox.Services.Base.Core.csproj --configuration Release --no-restore
 
       - name: Build BaseService Domain
         run: dotnet build ./src/Services/.BaseService/AppyNox.Services.Base.Domain/AppyNox.Services.Base.Domain.csproj --configuration Release --no-restore
 
+      - name: Build BaseService Application
+        run: dotnet build ./src/Services/.BaseService/AppyNox.Services.Base.Application/AppyNox.Services.Base.Application.csproj --configuration Release --no-restore
+
       - name: Build BaseService Infrastructure
         run: dotnet build ./src/Services/.BaseService/AppyNox.Services.Base.Infrastructure/AppyNox.Services.Base.Infrastructure.csproj --configuration Release --no-restore
+
+      - name: Build BaseService API
+        run: dotnet build ./src/Services/.BaseService/AppyNox.Services.Base.API/AppyNox.Services.Base.API.csproj --configuration Release --no-restore
 
       - name: Build for BaseService Application UnitTests
         run: dotnet build ./src/Services/.BaseService/Tests/UnitTests/AppyNox.Services.Base.Application.UnitTests/AppyNox.Services.Base.Application.UnitTests.csproj --configuration Release --no-restore
@@ -65,17 +68,20 @@ jobs:
 
 
       # Pack
-      - name: Pack BaseService API
-        run: dotnet pack ./src/Services/.BaseService/AppyNox.Services.Base.API/AppyNox.Services.Base.API.csproj --configuration Release --no-build --output ./nupkgs
-
-      - name: Pack BaseService Application
-        run: dotnet pack ./src/Services/.BaseService/AppyNox.Services.Base.Application/AppyNox.Services.Base.Application.csproj --configuration Release --no-build --output ./nupkgs
+      - name: Pack BaseService Core
+        run: dotnet pack ./src/Services/.BaseService/AppyNox.Services.Base.Core/AppyNox.Services.Base.Core.csproj --configuration Release --no-build --output ./nupkgs
 
       - name: Pack BaseService Domain
         run: dotnet pack ./src/Services/.BaseService/AppyNox.Services.Base.Domain/AppyNox.Services.Base.Domain.csproj --configuration Release --no-build --output ./nupkgs
 
       - name: Pack BaseService Infrastructure
         run: dotnet pack ./src/Services/.BaseService/AppyNox.Services.Base.Infrastructure/AppyNox.Services.Base.Infrastructure.csproj --configuration Release --no-build --output ./nupkgs
+
+      - name: Pack BaseService Application
+        run: dotnet pack ./src/Services/.BaseService/AppyNox.Services.Base.Application/AppyNox.Services.Base.Application.csproj --configuration Release --no-build --output ./nupkgs
+
+      - name: Pack BaseService API
+        run: dotnet pack ./src/Services/.BaseService/AppyNox.Services.Base.API/AppyNox.Services.Base.API.csproj --configuration Release --no-build --output ./nupkgs
 
       - name: Pack for BaseService Application UnitTests
         run: dotnet pack ./src/Services/.BaseService/Tests/UnitTests/AppyNox.Services.Base.Application.UnitTests/AppyNox.Services.Base.Application.UnitTests.csproj --configuration Release --no-build --output ./nupkgs

@@ -4,6 +4,7 @@ using AppyNox.Services.Base.API.ViewModels;
 using AppyNox.Services.Base.Application.MediatR.Commands;
 using AppyNox.Services.Base.Infrastructure.Repositories.Common;
 using AppyNox.Services.Coupon.Domain.Entities;
+using AppyNox.Services.Coupon.WebAPI.ExceptionExtensions.Base;
 using Asp.Versioning;
 using AutoWrapper.Wrappers;
 using MediatR;
