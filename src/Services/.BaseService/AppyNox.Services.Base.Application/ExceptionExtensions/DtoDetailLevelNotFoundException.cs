@@ -1,5 +1,5 @@
 ﻿using AppyNox.Services.Base.Application.ExceptionExtensions.Base;
-using AppyNox.Services.Base.Domain.Common;
+using AppyNox.Services.Base.Core.Enums;
 using System.Net;
 
 namespace AppyNox.Services.Base.Application.ExceptionExtensions

@@ -1,21 +1,23 @@
-﻿using AppyNox.Services.Base.Domain.ExceptionExtensions.Enums;
-using AppyNox.Services.Base.Domain.Helpers;
+﻿using AppyNox.Services.Base.Core.AsyncLocals;
+using AppyNox.Services.Base.Core.Extensions;
 using System.Net;
 
-namespace AppyNox.Services.Base.Domain.ExceptionExtensions.Base
+namespace AppyNox.Services.Base.Core.ExceptionExtensions.Base
 {
     /// <summary>
     /// Represents a base class for custom exceptions in the application.
     /// </summary>
-    public abstract class NoxException : Exception
+    public abstract class NoxException : Exception, INoxException
     {
         #region [ Fields ]
 
         private readonly string _service = "Base";
 
-        private readonly string _layer = ExceptionThrownLayer.Domain.ToString();
+        private readonly string _layer = "Core";
 
         private readonly int _statusCode;
+
+        private readonly Guid _correlationId = CorrelationContext.CorrelationId;
 
         #endregion
 
@@ -35,6 +37,11 @@ namespace AppyNox.Services.Base.Domain.ExceptionExtensions.Base
         /// Gets the Service of the exception, typically representing the service where the exception is thrown. Ex: Base or Authentication
         /// </summary>
         public string Service => _service;
+
+        /// <summary>
+        /// Gets the correlation id of the request
+        /// </summary>
+        public Guid CorrelationId => _correlationId;
 
         #endregion
 

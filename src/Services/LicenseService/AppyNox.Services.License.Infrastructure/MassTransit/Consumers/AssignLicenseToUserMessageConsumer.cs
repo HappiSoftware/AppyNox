@@ -23,7 +23,7 @@ namespace AppyNox.Services.License.Infrastructure.MassTransit.Consumers
             {
                 await _mediator.Send(new AssignLicenseKeyToApplicationUserCommand(context.Message.LicenseId, context.Message.UserId));
             }
-            catch (Exception ex) when (ex is INoxInfrastructureException || ex is INoxApplicationException)
+            catch (Exception ex) when (ex is INoxException)
             {
                 throw;
             }

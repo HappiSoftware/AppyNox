@@ -1,10 +1,10 @@
-﻿using AppyNox.Services.Base.Domain.Common;
+﻿using AppyNox.Services.Base.Core.Enums;
+using AppyNox.Services.Base.Core.Extensions;
 using AppyNox.Services.License.Application.Dtos.DtoUtilities;
 using AppyNox.Services.License.Application.Dtos.LicenseDtos.DetailLevel;
 using AppyNox.Services.License.Application.Dtos.LicenseDtos.Models.Base;
 using AppyNox.Services.License.Application.UnitTest.DtoTests.Fixtures;
 using AppyNox.Services.License.Domain.Entities;
-using AppyNox.Services.Base.Application.Extensions;
 
 namespace AppyNox.Services.License.Application.UnitTest.DtoTests.LicenseDtoTests
 {

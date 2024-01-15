@@ -1,6 +1,6 @@
 ﻿using AppyNox.Services.Base.Application.Extensions;
 using AppyNox.Services.Base.Application.Interfaces.Loggers;
-using AppyNox.Services.Base.Domain.Common;
+using AppyNox.Services.Base.Core.Common;
 using Newtonsoft.Json;
 
 namespace AppyNox.Gateway.OcelotGateway.Middlewares

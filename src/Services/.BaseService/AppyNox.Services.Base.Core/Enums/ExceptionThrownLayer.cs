@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace AppyNox.Services.Base.Domain.ExceptionExtensions.Enums
+namespace AppyNox.Services.Base.Core.Enums
 {
     /// <summary>
     /// Enumerates the different layers of the application where exceptions are thrown. Used to determine which layer is responsible for the exception.

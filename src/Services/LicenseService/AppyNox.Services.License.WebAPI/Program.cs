@@ -1,6 +1,4 @@
-using AppyNox.Services.Base.Infrastructure.Helpers;
 using AppyNox.Services.License.Infrastructure;
-using AppyNox.Services.Base.API.Helpers;
 using Serilog;
 using AppyNox.Services.License.WebAPI.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -17,6 +15,8 @@ using MassTransit;
 using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
 using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.License.Infrastructure.MassTransit.Consumers;
+using AppyNox.Services.Base.Infrastructure.Extensions;
+using AppyNox.Services.Base.API.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -157,20 +157,21 @@ var app = builder.Build();
 
 #region [ Pipeline ]
 
-//if (!app.Environment.IsDevelopment())
-//{
-app.UseSwagger();
-app.UseSwaggerUI();
+if (!app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
-//}
-
-app.UseMiddleware<CorrelationIdMiddleware>(app.Environment);
+app.UseMiddleware<CorrelationIdMiddleware>();
 
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
 
 app.UseAuthorization();
+
+app.UseMiddleware<UserIdMiddleware>();
 
 app.MapControllers();
 

@@ -1,6 +1,5 @@
-﻿using AppyNox.Services.Base.Application.Interfaces;
-using AppyNox.Services.Base.Application.Interfaces.Loggers;
-using AppyNox.Services.Base.Infrastructure.Helpers;
+﻿using AppyNox.Services.Base.Application.Interfaces.Loggers;
+using AppyNox.Services.Base.Core.AsyncLocals;
 using Microsoft.Extensions.Logging;
 
 namespace AppyNox.Services.Base.Infrastructure.Services.LoggerService

@@ -1,4 +1,4 @@
-﻿namespace AppyNox.Services.Base.Domain.Common
+﻿namespace AppyNox.Services.Base.Core.Enums
 {
     /// <summary>
     /// Represents the application's running environment.

@@ -1,13 +1,13 @@
-﻿using AppyNox.Services.Base.Domain.Common;
+﻿using AppyNox.Services.Base.Core.Enums;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
-namespace AppyNox.Services.Base.API.Helpers
+namespace AppyNox.Services.Base.API.Extensions
 {
     /// <summary>
     /// Provides helper methods for working with application environments.
     /// </summary>
-    public static class EnvironmentHelpers
+    public static class WebHostEnvironmentExtensions
     {
         #region [ Public Methods ]
 

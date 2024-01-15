@@ -1,5 +1,5 @@
 ﻿using AppyNox.Services.Base.API.ExceptionExtensions.Base;
-using AppyNox.Services.Base.Domain.Common;
+using AppyNox.Services.Base.Core.Enums;
 using Microsoft.AspNetCore.Http;
 using System.Net;
 

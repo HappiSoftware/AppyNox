@@ -1,6 +1,7 @@
 ﻿using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Application.Interfaces.Repositories;
-using AppyNox.Services.Base.Domain.Common;
+using AppyNox.Services.Base.Core.Common;
+using AppyNox.Services.Base.Core.Enums;
 using AppyNox.Services.Base.Infrastructure.HostedServices;
 using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
 using AppyNox.Services.Coupon.Infrastructure.Data;
@@ -32,6 +33,7 @@ namespace AppyNox.Services.Coupon.Infrastructure
 
             services.AddSingleton<INoxInfrastructureLogger, NoxInfrastructureLogger>();
             services.AddSingleton<INoxApplicationLogger, NoxApplicationLogger>();
+            services.AddSingleton<INoxApiLogger, NoxApiLogger>();
 
             #region [ Database Configuration ]
 

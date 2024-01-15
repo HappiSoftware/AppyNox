@@ -1,5 +1,4 @@
 ﻿using AppyNox.Services.Base.Application.ExceptionExtensions.Base;
-using System.Net;
 
 namespace AppyNox.Services.Base.Application.ExceptionExtensions
 {

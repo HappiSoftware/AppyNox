@@ -7,7 +7,7 @@ using AppyNox.Services.Authentication.WebAPI.ExceptionExtensions.Base;
 using AppyNox.Services.Authentication.WebAPI.Filters;
 using AppyNox.Services.Authentication.WebAPI.Utilities;
 using AppyNox.Services.Base.Application.ExceptionExtensions;
-using AppyNox.Services.Base.Infrastructure.Helpers;
+using AppyNox.Services.Base.Core.AsyncLocals;
 using Asp.Versioning;
 using AutoWrapper.Wrappers;
 using FluentValidation.Results;
@@ -17,7 +17,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
-using static MassTransit.Monitoring.Performance.BuiltInCounters;
 using ValidationResult = FluentValidation.Results.ValidationResult;
 
 namespace AppyNox.Services.Authentication.WebAPI.Controllers

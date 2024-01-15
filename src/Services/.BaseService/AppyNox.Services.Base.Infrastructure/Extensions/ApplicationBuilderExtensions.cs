@@ -7,7 +7,7 @@ using System.Text;
 using System.Text.Json;
 using Winton.Extensions.Configuration.Consul;
 
-namespace AppyNox.Services.Base.Infrastructure.Helpers
+namespace AppyNox.Services.Base.Infrastructure.Extensions
 {
     public static class ApplicationBuilderExtensions
     {

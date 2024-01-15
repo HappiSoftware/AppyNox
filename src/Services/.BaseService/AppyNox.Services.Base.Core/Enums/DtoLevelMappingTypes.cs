@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace AppyNox.Services.Base.Domain.Common
+namespace AppyNox.Services.Base.Core.Enums
 {
     /// <summary>
     /// Specifies the types of Data Transfer Object (DTO) level mappings.

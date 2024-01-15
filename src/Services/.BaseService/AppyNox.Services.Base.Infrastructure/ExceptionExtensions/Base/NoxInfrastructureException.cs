@@ -1,6 +1,6 @@
 ﻿using AppyNox.Services.Base.Application.Interfaces.Exceptions;
-using AppyNox.Services.Base.Domain.ExceptionExtensions.Base;
-using AppyNox.Services.Base.Domain.ExceptionExtensions.Enums;
+using AppyNox.Services.Base.Core.Enums;
+using AppyNox.Services.Base.Core.ExceptionExtensions.Base;
 
 namespace AppyNox.Services.Base.Infrastructure.ExceptionExtensions.Base
 {

@@ -1,4 +1,4 @@
-﻿namespace AppyNox.Services.Base.Domain.Common;
+﻿namespace AppyNox.Services.Base.Core.Common;
 
 /// <summary>
 /// Configuration settings for Consul service registration and health checks.

@@ -1,8 +1,8 @@
-﻿using AppyNox.Services.Base.Domain.ExceptionExtensions;
+﻿using AppyNox.Services.Base.Core.ExceptionExtensions;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 
-namespace AppyNox.Services.Base.Domain.Helpers
+namespace AppyNox.Services.Base.Core.Extensions
 {
     /// <summary>
     /// Provides extension methods for enums.

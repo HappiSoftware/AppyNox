@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace AppyNox.Services.Base.Infrastructure.Helpers
+namespace AppyNox.Services.Base.Infrastructure.Extensions
 {
     /// <summary>
     /// Provides helper methods for dependency injection and service configuration.

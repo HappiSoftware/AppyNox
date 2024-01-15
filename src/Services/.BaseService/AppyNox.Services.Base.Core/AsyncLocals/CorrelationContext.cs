@@ -1,4 +1,4 @@
-﻿namespace AppyNox.Services.Base.Infrastructure.Helpers
+﻿namespace AppyNox.Services.Base.Core.AsyncLocals
 {
     /// <summary>
     /// Provides a context for storing and retrieving the current request's correlation ID.

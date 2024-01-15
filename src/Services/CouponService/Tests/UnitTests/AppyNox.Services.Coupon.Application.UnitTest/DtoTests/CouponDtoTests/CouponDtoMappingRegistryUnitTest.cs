@@ -1,5 +1,5 @@
-﻿using AppyNox.Services.Base.Application.Extensions;
-using AppyNox.Services.Base.Domain.Common;
+﻿using AppyNox.Services.Base.Core.Enums;
+using AppyNox.Services.Base.Core.Extensions;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.DetailLevel;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Extended;

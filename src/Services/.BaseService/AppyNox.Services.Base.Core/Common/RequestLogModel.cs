@@ -1,4 +1,4 @@
-﻿namespace AppyNox.Services.Base.Domain.Common;
+﻿namespace AppyNox.Services.Base.Core.Common;
 
 /// <summary>
 /// Model representing the log information of an HTTP request.
