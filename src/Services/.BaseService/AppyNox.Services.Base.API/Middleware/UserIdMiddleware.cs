@@ -25,9 +25,11 @@ namespace AppyNox.Services.Base.API.Middleware
         /// <param name="context">The HTTP context for the current request.</param>
         public async Task Invoke(HttpContext context)
         {
-            string userId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                ?? throw new AsyncLocalException("Jwt Token has not NameIdentifier!!", (int)HttpStatusCode.Unauthorized);
-            UserIdContext.UserId = userId;
+            string? userId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (!string.IsNullOrEmpty(userId))
+            {
+                UserIdContext.UserId = userId;
+            }
 
             await _next(context);
         }

@@ -9,6 +9,9 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - ./rabbitmq-data:/var/lib/rabbitmq
+    command: ["bash", "-c", "chmod 400 /var/lib/rabbitmq/.erlang.cookie; rabbitmq-server"] 
     restart: on-failure
 
   appynox-consul:

@@ -1,4 +1,5 @@
 ﻿using AppyNox.Services.Base.Application.Interfaces.Exceptions;
+using AppyNox.Services.Base.Core.ExceptionExtensions.Base;
 using AppyNox.Services.License.Application.MediatR.Commands;
 using AppyNox.Services.License.Infrastructure.ExceptionExtensions;
 using AppyNox.Services.License.SharedEvents.Events;
