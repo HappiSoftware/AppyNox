@@ -144,7 +144,7 @@ namespace AppyNox.Services.Authentication.Application.UnitTest.FluentValidation
 
         #region [ Private Methods ]
 
-        private bool IsValidPassword(string password)
+        private static bool IsValidPassword(string password)
         {
             bool hasDigit = password.Any(char.IsDigit);
             bool hasUpperCase = password.Any(char.IsUpper);

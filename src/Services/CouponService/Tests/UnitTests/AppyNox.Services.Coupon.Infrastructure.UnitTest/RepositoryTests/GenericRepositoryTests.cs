@@ -26,7 +26,7 @@ namespace AppyNox.Services.Coupon.Infrastructure.UnitTest.RepositoryTests
         [Fact]
         public async Task GetAllAsync_ShouldReturnEntity()
         {
-            CouponDbContext context = _fixture.CreateDatabaseContext<CouponDbContext>();
+            CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
             context.SeedOneCoupon();
             var repository = new GenericRepository<CouponEntity>(context, _noxLoggerStub);
             QueryParameters queryParameters = new()
@@ -47,7 +47,7 @@ namespace AppyNox.Services.Coupon.Infrastructure.UnitTest.RepositoryTests
         [Fact]
         public async Task GetAllAsync_ShouldPaginationReturnTwo()
         {
-            CouponDbContext context = _fixture.CreateDatabaseContext<CouponDbContext>();
+            CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
             context.SeedMultipleCoupons(2, 1);
             var repository = new GenericRepository<CouponEntity>(context, _noxLoggerStub);
             QueryParameters queryParameters = new()
@@ -68,7 +68,7 @@ namespace AppyNox.Services.Coupon.Infrastructure.UnitTest.RepositoryTests
         [Fact]
         public async Task GetAllAsync_ShouldPaginationReturnCorrectEntity()
         {
-            CouponDbContext context = _fixture.CreateDatabaseContext<CouponDbContext>();
+            CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
             var coupons = context.SeedMultipleCoupons(2, 1);
             Assert.NotNull(coupons);
 
@@ -95,7 +95,7 @@ namespace AppyNox.Services.Coupon.Infrastructure.UnitTest.RepositoryTests
         [Fact]
         public async Task GetAllAsync_ShouldPaginationReturnFifty()
         {
-            CouponDbContext context = _fixture.CreateDatabaseContext<CouponDbContext>();
+            CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
             context.SeedMultipleCoupons(50, 5);
             var repository = new GenericRepository<CouponEntity>(context, _noxLoggerStub);
             QueryParameters queryParameters = new()
@@ -116,7 +116,7 @@ namespace AppyNox.Services.Coupon.Infrastructure.UnitTest.RepositoryTests
         [Fact]
         public async Task GetAllAsync_ShouldPaginationReturnFiftyAndCorrectEntities()
         {
-            CouponDbContext context = _fixture.CreateDatabaseContext<CouponDbContext>();
+            CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
             var coupons = context.SeedMultipleCoupons(50, 5);
             Assert.NotNull(coupons);
 
@@ -148,7 +148,7 @@ namespace AppyNox.Services.Coupon.Infrastructure.UnitTest.RepositoryTests
         [Fact]
         public async Task GetByIdAsync_ShouldReturnEntity()
         {
-            CouponDbContext context = _fixture.CreateDatabaseContext<CouponDbContext>();
+            CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
             var existingCoupon = context.SeedOneCoupon();
             Assert.NotNull(existingCoupon);
 
@@ -163,7 +163,7 @@ namespace AppyNox.Services.Coupon.Infrastructure.UnitTest.RepositoryTests
         [Fact]
         public async Task GetByIdAsync_ShouldValuesBeCorrect()
         {
-            CouponDbContext context = _fixture.CreateDatabaseContext<CouponDbContext>();
+            CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
             var existingCoupon = context.SeedOneCoupon();
             Assert.NotNull(existingCoupon);
 
@@ -187,7 +187,7 @@ namespace AppyNox.Services.Coupon.Infrastructure.UnitTest.RepositoryTests
         [Fact]
         public async Task AddAsync_ShouldAddEntity()
         {
-            CouponDbContext context = _fixture.CreateDatabaseContext<CouponDbContext>();
+            CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
             var unitOfWork = new UnitOfWork(context, _noxLoggerStub);
             var repository = new GenericRepository<CouponEntity>(context, _noxLoggerStub);
 
@@ -226,7 +226,7 @@ namespace AppyNox.Services.Coupon.Infrastructure.UnitTest.RepositoryTests
         [Fact]
         public async Task UpdateAsync_ShouldUpdateEntity()
         {
-            CouponDbContext context = _fixture.CreateDatabaseContext<CouponDbContext>();
+            CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
             var existingCoupon = context.SeedOneCoupon();
             var existingCoupon2 = context.SeedOneCoupon(); // For getting a second CouponDetailEntityId
             Assert.NotNull(existingCoupon);
@@ -265,7 +265,7 @@ namespace AppyNox.Services.Coupon.Infrastructure.UnitTest.RepositoryTests
         [Fact]
         public async Task DeleteAsync_ShouldDeleteEntity()
         {
-            CouponDbContext context = _fixture.CreateDatabaseContext<CouponDbContext>();
+            CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
             var existingCoupon = context.SeedOneCoupon();
             Assert.NotNull(existingCoupon);
 
