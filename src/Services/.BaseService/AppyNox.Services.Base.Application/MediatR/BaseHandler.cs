@@ -62,7 +62,7 @@ namespace AppyNox.Services.Base.Application.MediatR
         {
             Type dtoType;
             List<string> properties = [];
-            PropertyInfo[] propertyInformations = [];
+            PropertyInfo[] propertyInformations;
 
             switch (queryParameters.CommonDtoLevel)
             {

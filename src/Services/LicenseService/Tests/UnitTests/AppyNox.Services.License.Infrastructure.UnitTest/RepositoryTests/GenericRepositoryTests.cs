@@ -26,7 +26,7 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
         [Fact]
         public async Task GetAllAsync_ShouldReturnEntity()
         {
-            LicenseDatabaseContext context = _fixture.CreateDatabaseContext<LicenseDatabaseContext>();
+            LicenseDatabaseContext context = RepositoryFixture.CreateDatabaseContext<LicenseDatabaseContext>();
             context.SeedOneLicense();
             var repository = new GenericRepository<LicenseEntity>(context, _noxLoggerStub);
             QueryParameters queryParameters = new()
@@ -47,7 +47,7 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
         [Fact]
         public async Task GetAllAsync_ShouldPaginationReturnTwo()
         {
-            LicenseDatabaseContext context = _fixture.CreateDatabaseContext<LicenseDatabaseContext>();
+            LicenseDatabaseContext context = RepositoryFixture.CreateDatabaseContext<LicenseDatabaseContext>();
             context.SeedMultipleLicenses(2);
             var repository = new GenericRepository<LicenseEntity>(context, _noxLoggerStub);
             QueryParameters queryParameters = new()
@@ -68,7 +68,7 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
         [Fact]
         public async Task GetAllAsync_ShouldPaginationReturnCorrectEntity()
         {
-            LicenseDatabaseContext context = _fixture.CreateDatabaseContext<LicenseDatabaseContext>();
+            LicenseDatabaseContext context = RepositoryFixture.CreateDatabaseContext<LicenseDatabaseContext>();
             var licenses = context.SeedMultipleLicenses(2);
             Assert.NotNull(licenses);
 
@@ -93,7 +93,7 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
         [Fact]
         public async Task GetAllAsync_ShouldPaginationReturnFifty()
         {
-            LicenseDatabaseContext context = _fixture.CreateDatabaseContext<LicenseDatabaseContext>();
+            LicenseDatabaseContext context = RepositoryFixture.CreateDatabaseContext<LicenseDatabaseContext>();
             context.SeedMultipleLicenses(50);
             var repository = new GenericRepository<LicenseEntity>(context, _noxLoggerStub);
             QueryParameters queryParameters = new()
@@ -114,7 +114,7 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
         [Fact]
         public async Task GetAllAsync_ShouldPaginationReturnFiftyAndCorrectEntities()
         {
-            LicenseDatabaseContext context = _fixture.CreateDatabaseContext<LicenseDatabaseContext>();
+            LicenseDatabaseContext context = RepositoryFixture.CreateDatabaseContext<LicenseDatabaseContext>();
             var licenses = context.SeedMultipleLicenses(50);
             Assert.NotNull(licenses);
 
@@ -146,7 +146,7 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
         [Fact]
         public async Task GetByIdAsync_ShouldReturnEntity()
         {
-            LicenseDatabaseContext context = _fixture.CreateDatabaseContext<LicenseDatabaseContext>();
+            LicenseDatabaseContext context = RepositoryFixture.CreateDatabaseContext<LicenseDatabaseContext>();
             var existingLicense = context.SeedOneLicense();
             Assert.NotNull(existingLicense);
 
@@ -161,7 +161,7 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
         [Fact]
         public async Task GetByIdAsync_ShouldValuesBeCorrect()
         {
-            LicenseDatabaseContext context = _fixture.CreateDatabaseContext<LicenseDatabaseContext>();
+            LicenseDatabaseContext context = RepositoryFixture.CreateDatabaseContext<LicenseDatabaseContext>();
             var existingLicense = context.SeedOneLicense();
             Assert.NotNull(existingLicense);
 
@@ -185,7 +185,7 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
         [Fact]
         public async Task AddAsync_ShouldAddEntity()
         {
-            LicenseDatabaseContext context = _fixture.CreateDatabaseContext<LicenseDatabaseContext>();
+            LicenseDatabaseContext context = RepositoryFixture.CreateDatabaseContext<LicenseDatabaseContext>();
             var unitOfWork = new UnitOfWork(context, _noxLoggerStub);
             var repository = new GenericRepository<LicenseEntity>(context, _noxLoggerStub);
 
@@ -221,7 +221,7 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
         [Fact]
         public async Task UpdateAsync_ShouldUpdateEntity()
         {
-            LicenseDatabaseContext context = _fixture.CreateDatabaseContext<LicenseDatabaseContext>();
+            LicenseDatabaseContext context = RepositoryFixture.CreateDatabaseContext<LicenseDatabaseContext>();
             var existingLicense = context.SeedOneLicense();
             Assert.NotNull(existingLicense);
 
@@ -258,7 +258,7 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
         [Fact]
         public async Task DeleteAsync_ShouldDeleteEntity()
         {
-            LicenseDatabaseContext context = _fixture.CreateDatabaseContext<LicenseDatabaseContext>();
+            LicenseDatabaseContext context = RepositoryFixture.CreateDatabaseContext<LicenseDatabaseContext>();
             var existingLicense = context.SeedOneLicense();
             Assert.NotNull(existingLicense);
 

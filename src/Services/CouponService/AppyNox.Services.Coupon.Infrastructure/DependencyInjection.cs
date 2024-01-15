@@ -29,7 +29,6 @@ namespace AppyNox.Services.Coupon.Infrastructure
         public static IServiceCollection AddCouponInfrastructure(this IServiceCollection services, IHostApplicationBuilder builder, ApplicationEnvironment environment, INoxLogger logger)
         {
             IConfiguration configuration = builder.Configuration;
-            string environmentName = builder.Environment.EnvironmentName;
 
             services.AddSingleton<INoxInfrastructureLogger, NoxInfrastructureLogger>();
             services.AddSingleton<INoxApplicationLogger, NoxApplicationLogger>();

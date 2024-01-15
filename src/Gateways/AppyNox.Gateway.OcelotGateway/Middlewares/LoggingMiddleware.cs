@@ -40,7 +40,7 @@ namespace AppyNox.Gateway.OcelotGateway.Middlewares
                 using var responseBody = new MemoryStream();
                 context.Response.Body = responseBody;
                 await _next.Invoke(context);
-                await LogResponse(context, responseBody, originalResponseBody);
+                await LogResponse(responseBody, originalResponseBody);
             }
             finally
             {
@@ -69,14 +69,14 @@ namespace AppyNox.Gateway.OcelotGateway.Middlewares
         /// This method reads the response content from a memory stream, logs it,
         /// and then copies it back to the original response body stream.
         /// </remarks>
-        private async Task LogResponse(HttpContext context, MemoryStream responseBody, Stream originalResponseBody)
+        private async Task LogResponse(MemoryStream responseBody, Stream originalResponseBody)
         {
             // Read and log the response body.
             responseBody.Position = 0;
             var content = await new StreamReader(responseBody).ReadToEndAsync();
             _logger.LogInformation(JsonConvert.SerializeObject(content).MinifyLogData());
 
-            // Copy the logged response abck to the original response body stream.
+            // Copy the logged response back to the original response body stream.
             responseBody.Position = 0;
             await responseBody.CopyToAsync(originalResponseBody);
         }
