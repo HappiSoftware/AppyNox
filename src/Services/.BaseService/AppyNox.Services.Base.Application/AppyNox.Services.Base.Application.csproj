@@ -2,14 +2,21 @@
 	<PropertyGroup>
 		<TargetFramework>net8.0</TargetFramework>
 		<PackageId>NoxApplication</PackageId>
-		<Version>1.0.0</Version>
+		<Version>1.0.1</Version>
 		<Authors>Behlül UYSAL, Yasin DERE</Authors>
 		<Company>HappiSoftware</Company>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<RepositoryUrl>https://github.com/HappiSoftware/AppyNox</RepositoryUrl>
 		<PackageTags>microservice; application; .NET;</PackageTags>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<Description>This package provides foundational services and utilities for Nox Application Applications.</Description>
+		<Description>
+			The Application layer of AppyNox is designed for seamless integration and efficiency. 
+			It features Dto interfaces and DtoUtilities for dynamic data mapping, 
+			bolstered by the NoxApplicationException class for robust application-level exception handling. 
+			This layer includes specialized extensions, validators, and interfaces for exceptions, loggers, and repositories, 
+			ensuring a comprehensive toolkit for application development. The inclusion of GenericCQRS classes further facilitates effective 
+			Command Query Responsibility Segregation, making it a central piece in the AppyNox architecture.
+		</Description>
 	</PropertyGroup>
 	
 	<PropertyGroup>

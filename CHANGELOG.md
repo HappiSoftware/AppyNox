@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to AppyNox will be documented in this file.
 
-## [1.0.1](https://github.com/HappiSoftware/AppyNox/compare/v1.0.0...v1.0.1) - NOT RELEASED
+## [1.0.1](https://github.com/HappiSoftware/AppyNox/compare/v1.0.0...v1.0.1) - 2024.01.15
 ### Added
 - Added Auditable data support. ([#112](https://github.com/HappiSoftware/AppyNox/issues/112))
 

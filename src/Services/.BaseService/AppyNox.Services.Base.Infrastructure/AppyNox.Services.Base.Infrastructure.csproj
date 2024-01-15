@@ -2,14 +2,20 @@
 	<PropertyGroup>
 		<TargetFramework>net8.0</TargetFramework>
 		<PackageId>NoxInfrastructure</PackageId>
-		<Version>1.0.0</Version>
+		<Version>1.0.1</Version>
 		<Authors>Behlül UYSAL, Yasin DERE</Authors>
 		<Company>HappiSoftware</Company>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<RepositoryUrl>https://github.com/HappiSoftware/AppyNox</RepositoryUrl>
 		<PackageTags>microservice; infrastructure; .NET;</PackageTags>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<Description>This package provides foundational services and utilities for Nox Infrastructure Applications.</Description>
+		<Description>
+			The Infrastructure layer in AppyNox is the robust underpinning that supports and connects the higher-level layers. 
+			It includes the implementation of NoxInfrastructureException, providing tailored exception handling specific to infrastructure-related concerns. 
+			This layer also features a set of extensions designed for infrastructure needs, enhancing the overall functionality and integration capabilities. 
+			Key components include hosted services essential for running AppyNox smoothly and a GenericRepository implementation that standardizes data access 
+			across various data sources, ensuring a consistent and efficient interaction with the database.
+		</Description>
 	</PropertyGroup>
 
 	<PropertyGroup>
