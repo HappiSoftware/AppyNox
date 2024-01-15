@@ -1,5 +1,22 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<PackageId>NoxCore</PackageId>
+		<Version>1.0.1</Version>
+		<Authors>Behlül UYSAL, Yasin DERE</Authors>
+		<Company>HappiSoftware</Company>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<RepositoryUrl>https://github.com/HappiSoftware/AppyNox</RepositoryUrl>
+		<PackageTags>microservice; resources; .NET;</PackageTags>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<Description>
+			The Core layer of AppyNox serves as the bedrock of the architecture, providing essential shared resources accessible across all layers. 
+			It features AsyncLocal classes tailored for API operations and a comprehensive set of enums, ensuring a consistent and centralized foundation. 
+			Designed to be versatile and foundational, this layer can seamlessly integrate with any part of the architecture, 
+			underpinning the entire AppyNox ecosystem with its robust and reusable components.
+		</Description>
+	</PropertyGroup>
+	
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
