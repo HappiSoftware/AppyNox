@@ -1,4 +1,4 @@
-﻿using AppyNox.Services.Base.Application.Interfaces.Exceptions;
+﻿using AppyNox.Services.Base.Core.ExceptionExtensions.Base;
 using AppyNox.Services.License.Application.ExceptionExtensions;
 using AppyNox.Services.License.Application.Interfaces;
 using AppyNox.Services.License.Application.MediatR.Commands;
@@ -23,7 +23,7 @@ namespace AppyNox.Services.License.Application.MediatR.Handlers
             {
                 await _licenseRepository.AssignLicenseToApplicationUser(request.LicenseId, request.UserId);
             }
-            catch (Exception ex) when (ex is INoxInfrastructureException || ex is INoxApplicationException)
+            catch (Exception ex) when (ex is INoxException)
             {
                 throw;
             }

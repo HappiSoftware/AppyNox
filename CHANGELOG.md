@@ -5,5 +5,8 @@ All notable changes to AppyNox will be documented in this file.
 ### Added
 - Added Auditable data support. ([#112](https://github.com/HappiSoftware/AppyNox/issues/112))
 
+### Changed
+- Auditable data support improved. ([#116](https://github.com/HappiSoftware/AppyNox/issues/116))
+
 ## [1.0.0](https://github.com/HappiSoftware/AppyNox/releases/tag/v1.0.0) - 2024-01-11
 - Initial release

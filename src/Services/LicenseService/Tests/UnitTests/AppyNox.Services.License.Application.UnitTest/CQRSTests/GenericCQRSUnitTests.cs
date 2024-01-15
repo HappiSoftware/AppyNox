@@ -1,7 +1,7 @@
-﻿using AppyNox.Services.Base.Application.Extensions;
-using AppyNox.Services.Base.Application.MediatR.Commands;
+﻿using AppyNox.Services.Base.Application.MediatR.Commands;
 using AppyNox.Services.Base.Application.UnitTests.GenericCQRSFixtures;
-using AppyNox.Services.Base.Domain.Common;
+using AppyNox.Services.Base.Core.Enums;
+using AppyNox.Services.Base.Core.Extensions;
 using AppyNox.Services.License.Application.Dtos.LicenseDtos.DetailLevel;
 using AppyNox.Services.License.Application.Dtos.LicenseDtos.Models.Base;
 using AppyNox.Services.License.Domain.Entities;

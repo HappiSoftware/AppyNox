@@ -99,7 +99,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppyNox.Services.Authentication.Application.UnitTest", "src\Services\AuthenticationService\Tests\UnitTests\AppyNox.Services.Authentication.Application.UnitTest\AppyNox.Services.Authentication.Application.UnitTest.csproj", "{408D5534-752C-4A8F-9152-C9CF6F4BA771}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppyNox.Services.Authentication.WebAPI.UnitTest", "src\Services\AuthenticationService\Tests\UnitTests\AppyNox.Services.Authentication.WebAPI.UnitTest\AppyNox.Services.Authentication.WebAPI.UnitTest.csproj", "{D68FA5A8-B7F9-4254-AB45-DE8865307B71}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppyNox.Services.Authentication.WebAPI.UnitTest", "src\Services\AuthenticationService\Tests\UnitTests\AppyNox.Services.Authentication.WebAPI.UnitTest\AppyNox.Services.Authentication.WebAPI.UnitTest.csproj", "{D68FA5A8-B7F9-4254-AB45-DE8865307B71}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppyNox.Services.Base.Core", "src\Services\.BaseService\AppyNox.Services.Base.Core\AppyNox.Services.Base.Core.csproj", "{1B30A1FB-30EA-41ED-B2CE-168447E57F62}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -235,6 +237,10 @@ Global
 		{D68FA5A8-B7F9-4254-AB45-DE8865307B71}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D68FA5A8-B7F9-4254-AB45-DE8865307B71}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D68FA5A8-B7F9-4254-AB45-DE8865307B71}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1B30A1FB-30EA-41ED-B2CE-168447E57F62}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B30A1FB-30EA-41ED-B2CE-168447E57F62}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B30A1FB-30EA-41ED-B2CE-168447E57F62}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B30A1FB-30EA-41ED-B2CE-168447E57F62}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -286,6 +292,7 @@ Global
 		{1721927B-A87B-435F-A8D0-6704AE2C9BCD} = {C17866BD-9B28-4516-B3D7-FCBEFE171801}
 		{408D5534-752C-4A8F-9152-C9CF6F4BA771} = {1721927B-A87B-435F-A8D0-6704AE2C9BCD}
 		{D68FA5A8-B7F9-4254-AB45-DE8865307B71} = {1721927B-A87B-435F-A8D0-6704AE2C9BCD}
+		{1B30A1FB-30EA-41ED-B2CE-168447E57F62} = {87C72E4A-C538-412C-8256-FCC0808B6B66}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EA4F2302-DC43-4149-814A-609940BEC847}

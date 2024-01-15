@@ -1,7 +1,8 @@
 ﻿using AppyNox.Services.Base.API.ExceptionExtensions;
 using AppyNox.Services.Base.API.Helpers;
 using AppyNox.Services.Base.Application.ExceptionExtensions;
-using AppyNox.Services.Base.Domain.ExceptionExtensions.Base;
+using AppyNox.Services.Base.Application.Interfaces.Loggers;
+using AppyNox.Services.Base.Core.ExceptionExtensions.Base;
 using AutoWrapper.Extensions;
 using AutoWrapper.Wrappers;
 using Microsoft.AspNetCore.Http;
@@ -15,11 +16,13 @@ namespace AppyNox.Services.Base.API.Middleware
     /// <summary>
     /// Middleware for handling exceptions that occur in the request pipeline.
     /// </summary>
-    public class ExceptionHandlingMiddleware(RequestDelegate next)
+    public class ExceptionHandlingMiddleware(RequestDelegate next, INoxApiLogger logger)
     {
         #region [ Fields ]
 
         private readonly RequestDelegate _next = next ?? throw new ArgumentNullException(nameof(next));
+
+        private readonly INoxApiLogger _logger = logger;
 
         #endregion
 
@@ -37,20 +40,44 @@ namespace AppyNox.Services.Base.API.Middleware
             }
             catch (FluentValidationException ex)
             {
-                string correlationId = (context.Items["CorrelationId"] ?? string.Empty).ToString() ?? string.Empty;
-                var actionContext = new ActionContext(context, context.GetRouteData(), new ControllerActionDescriptor());
-                var modelState = new ModelStateDictionary();
+                string correlationId = CheckCorrelationIdsAndReturn(context, ex);
+
+                ActionContext actionContext = new(context, context.GetRouteData(), new ControllerActionDescriptor());
+                ModelStateDictionary modelState = new();
                 ValidationHelpers.HandleValidationResult(modelState, ex.ValidationResult, actionContext);
                 throw new ApiException(new NoxApiValidationExceptionWrapObject(ex, correlationId, modelState.AllErrors()), statusCode: ex.StatusCode);
             }
             catch (NoxException ex)
             {
-                string correlationId = (context.Items["CorrelationId"] ?? string.Empty).ToString() ?? string.Empty;
+                string correlationId = CheckCorrelationIdsAndReturn(context, ex);
                 throw new ApiException(new NoxApiExceptionWrapObject(ex, correlationId), statusCode: ex.StatusCode);
             }
             catch (Exception ex)
             {
                 throw new ApiException(ex, statusCode: 500);
+            }
+        }
+
+        #endregion
+
+        #region [ Private Methods ]
+
+        /// <summary>
+        /// Checks the CorrelationId from the request header and exception property.
+        /// <para>NoxExceptionProperty of correlation id is set from CorrelationContext</para>
+        /// </summary>
+        private string CheckCorrelationIdsAndReturn(HttpContext context, NoxException ex)
+        {
+            string correlationId = (context.Request.Headers["X-Correlation-ID"].FirstOrDefault() ?? string.Empty).ToString() ?? string.Empty;
+            if (correlationId.Equals(ex.CorrelationId.ToString()))
+            {
+                return correlationId;
+            }
+            else
+            {
+                Guid tempCorrelationId = Guid.NewGuid();
+                _logger.LogCritical(new Exception(), $"Correlation Ids mismatched!!! Header: '{correlationId}', CorrelationContext: {ex.CorrelationId}", tempCorrelationId);
+                return $"Malformed Correlation Id. Please provide '{tempCorrelationId} to customer service.'";
             }
         }
 

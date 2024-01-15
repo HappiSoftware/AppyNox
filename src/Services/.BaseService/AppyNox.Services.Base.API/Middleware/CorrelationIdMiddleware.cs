@@ -1,9 +1,7 @@
 ﻿using AppyNox.Services.Base.API.ExceptionExtensions;
 using AppyNox.Services.Base.Application.Interfaces.Loggers;
-using AppyNox.Services.Base.Infrastructure.Helpers;
-using Microsoft.AspNetCore.Hosting;
+using AppyNox.Services.Base.Core.AsyncLocals;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Hosting;
 using System.Net;
 
 namespace AppyNox.Services.Base.API.Middleware
@@ -11,15 +9,13 @@ namespace AppyNox.Services.Base.API.Middleware
     /// <summary>
     /// Middleware for ensuring that each HTTP request includes a correlation ID.
     /// </summary>
-    public class CorrelationIdMiddleware(RequestDelegate next, INoxApiLogger logger, IWebHostEnvironment env)
+    public class CorrelationIdMiddleware(RequestDelegate next, INoxApiLogger logger)
     {
         #region [ Fields ]
 
         private readonly RequestDelegate _next = next;
 
         private readonly INoxApiLogger _logger = logger;
-
-        private readonly IWebHostEnvironment _env = env;
 
         #endregion
 
@@ -31,15 +27,6 @@ namespace AppyNox.Services.Base.API.Middleware
         /// <param name="context">The HTTP context for the current request.</param>
         public async Task Invoke(HttpContext context)
         {
-            //if (_env.IsDevelopment()) // Check if in development environment
-            //{
-            //    // In development, you may choose to skip correlation ID validation
-            //    CorrelationContext.CorrelationId = Guid.NewGuid();
-            //    context.Response.Headers["X-Correlation-ID"] = CorrelationContext.CorrelationId.ToString();
-            //    _logger.LogInformation($"Endpoint invoked in Development mode. Generated correlation-id: {CorrelationContext.CorrelationId}");
-            //}
-            //else
-            //{
             string? correlationId = context.Request.Headers["X-Correlation-ID"].FirstOrDefault();
             if (string.IsNullOrEmpty(correlationId))
             {
@@ -52,8 +39,6 @@ namespace AppyNox.Services.Base.API.Middleware
 
             CorrelationContext.CorrelationId = Guid.Parse(correlationId);
             context.Response.Headers["X-Correlation-ID"] = correlationId;
-
-            //}
 
             await _next(context);
         }

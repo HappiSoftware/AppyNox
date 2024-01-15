@@ -1,6 +1,4 @@
-using AppyNox.Services.Base.API.Helpers;
 using AppyNox.Services.Base.API.Middleware;
-using AppyNox.Services.Base.Infrastructure.Helpers;
 using AppyNox.Services.Base.Infrastructure.HostedServices;
 using AppyNox.Services.Coupon.Application;
 using AppyNox.Services.Coupon.Infrastructure;
@@ -15,6 +13,8 @@ using Microsoft.OpenApi.Models;
 using Serilog;
 using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
 using AppyNox.Services.Base.Application.Interfaces.Loggers;
+using AppyNox.Services.Base.Infrastructure.Extensions;
+using AppyNox.Services.Base.API.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -162,7 +162,7 @@ if (!app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseMiddleware<CorrelationIdMiddleware>(app.Environment);
+app.UseMiddleware<CorrelationIdMiddleware>();
 
 app.UseHttpsRedirection();
 
@@ -170,11 +170,13 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
+app.UseMiddleware<UserIdMiddleware>();
+
 app.MapControllers();
 
 app.UseApiResponseAndExceptionWrapper(new AutoWrapperOptions { IsApiOnly = true, ShowApiVersion = true, ApiVersion = "1.0" });
-app.UseMiddleware<QueryParameterValidateMiddleware>();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
+app.UseMiddleware<QueryParameterValidateMiddleware>();
 
 app.UseHealthChecks("/api/health");
 

@@ -5,5 +5,10 @@
     /// </summary>
     public interface INoxApiLogger : INoxLogger
     {
+        #region [ Public Methods ]
+
+        void LogCritical(Exception exception, string message, Guid correlationId);
+
+        #endregion
     }
 }

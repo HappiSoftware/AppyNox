@@ -36,6 +36,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\AppyNox.Services.Base.Core\AppyNox.Services.Base.Core.csproj" />
 		<ProjectReference Include="..\AppyNox.Services.Base.Domain\AppyNox.Services.Base.Domain.csproj" />
 	</ItemGroup>
 

@@ -1,4 +1,4 @@
-﻿using AppyNox.Services.Base.Domain.ExceptionExtensions.Base;
+﻿using AppyNox.Services.Base.Core.ExceptionExtensions.Base;
 using AutoWrapper;
 
 namespace AppyNox.Services.Base.API.ExceptionExtensions

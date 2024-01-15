@@ -4,6 +4,7 @@ using AppyNox.Services.Base.API.ViewModels;
 using AppyNox.Services.Base.Application.MediatR.Commands;
 using AppyNox.Services.Base.Infrastructure.Repositories.Common;
 using AppyNox.Services.Coupon.Domain.Entities;
+using AppyNox.Services.Coupon.WebAPI.ExceptionExtensions.Base;
 using Asp.Versioning;
 using AutoWrapper.Wrappers;
 using MediatR;
@@ -44,7 +45,7 @@ namespace AppyNox.Services.Coupon.WebAPI.Controllers.v1
         [Authorize(Coupons.Create)]
         public async Task<IActionResult> Create([FromBody] dynamic couponDto, string detailLevel = "Simple")
         {
-            dynamic result = await _mediator.Send(new CreateEntityCommand<CouponEntity>(couponDto, detailLevel, GetUserIdFromJwtToken()));
+            dynamic result = await _mediator.Send(new CreateEntityCommand<CouponEntity>(couponDto, detailLevel));
             var response = new
             {
                 Id = result.Item1,
@@ -64,7 +65,7 @@ namespace AppyNox.Services.Coupon.WebAPI.Controllers.v1
 
             await _mediator.Send(new GetEntityByIdQuery<CouponEntity>(id, QueryParameters.CreateForIdOnly()));
 
-            await _mediator.Send(new UpdateEntityCommand<CouponEntity>(id, couponDto, detailLevel, GetUserIdFromJwtToken()));
+            await _mediator.Send(new UpdateEntityCommand<CouponEntity>(id, couponDto, detailLevel));
             return NoContent();
         }
 

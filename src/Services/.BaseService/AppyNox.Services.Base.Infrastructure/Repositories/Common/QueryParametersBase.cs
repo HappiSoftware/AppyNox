@@ -1,5 +1,5 @@
 ﻿using AppyNox.Services.Base.Application.Interfaces.Repositories;
-using AppyNox.Services.Base.Domain.Common;
+using AppyNox.Services.Base.Core.Enums;
 using System.ComponentModel.DataAnnotations;
 
 namespace AppyNox.Services.Base.Infrastructure.Repositories.Common
@@ -31,6 +31,7 @@ namespace AppyNox.Services.Base.Infrastructure.Repositories.Common
         public string Access
         {
             get => string.Empty;
+
             set
             {
                 AccessType = Enum.TryParse<DtoLevelMappingTypes>(value, true, out var result)
@@ -42,6 +43,7 @@ namespace AppyNox.Services.Base.Infrastructure.Repositories.Common
         public string DetailLevel
         {
             get => _detailLevel;
+
             set
             {
                 _detailLevel = string.IsNullOrEmpty(value)

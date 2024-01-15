@@ -1,5 +1,5 @@
 ﻿using AppyNox.Services.Base.Application.ExceptionExtensions;
-using AppyNox.Services.Base.Domain.Helpers;
+using AppyNox.Services.Base.Core.Extensions;
 using System.ComponentModel.DataAnnotations;
 
 namespace AppyNox.Services.Base.Application.Extensions
@@ -28,16 +28,6 @@ namespace AppyNox.Services.Base.Application.Extensions
                 }
             }
             throw new DtoDetailLevelNotFoundException(displayName, enumType);
-        }
-
-        /// <summary>
-        /// Retrieves the display name of an enum value.
-        /// </summary>
-        /// <param name="value">The enum value.</param>
-        /// <returns>The display name of the enum value.</returns>
-        public static string GetDisplayName(this Enum value)
-        {
-            return NoxEnumExtensionsBase.GetDisplayName(value);
         }
 
         #endregion

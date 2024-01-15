@@ -1,4 +1,5 @@
 ﻿using AppyNox.Services.Base.Application.Interfaces.Exceptions;
+using AppyNox.Services.Base.Core.ExceptionExtensions.Base;
 using AppyNox.Services.License.Application.MediatR.Commands;
 using AppyNox.Services.License.Infrastructure.ExceptionExtensions;
 using AppyNox.Services.License.SharedEvents.Events;
@@ -23,7 +24,7 @@ namespace AppyNox.Services.License.Infrastructure.MassTransit.Consumers
             {
                 await _mediator.Send(new AssignLicenseKeyToApplicationUserCommand(context.Message.LicenseId, context.Message.UserId));
             }
-            catch (Exception ex) when (ex is INoxInfrastructureException || ex is INoxApplicationException)
+            catch (Exception ex) when (ex is INoxException)
             {
                 throw;
             }

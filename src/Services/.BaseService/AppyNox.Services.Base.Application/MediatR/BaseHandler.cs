@@ -2,10 +2,10 @@
 using AppyNox.Services.Base.Application.DtoUtilities;
 using AppyNox.Services.Base.Application.ExceptionExtensions;
 using AppyNox.Services.Base.Application.ExceptionExtensions.Base;
-using AppyNox.Services.Base.Application.Extensions;
 using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Application.Interfaces.Repositories;
-using AppyNox.Services.Base.Domain.Common;
+using AppyNox.Services.Base.Core.Enums;
+using AppyNox.Services.Base.Core.Extensions;
 using AppyNox.Services.Base.Domain.Interfaces;
 using AutoMapper;
 using FluentValidation;

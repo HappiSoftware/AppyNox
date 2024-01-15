@@ -1,9 +1,6 @@
 ﻿using AppyNox.Services.Base.Application.ExceptionExtensions;
 using AppyNox.Services.Base.Application.Extensions;
-using AppyNox.Services.Base.Domain.Common;
-using AppyNox.Services.Base.Domain.ExceptionExtensions.Enums;
-using System.Data;
-using System.Reflection;
+using AppyNox.Services.Base.Core.Enums;
 
 namespace AppyNox.Services.Base.Application.DtoUtilities
 {

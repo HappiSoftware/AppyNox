@@ -1,10 +1,11 @@
 ﻿using AppyNox.Services.Base.Application.DtoUtilities;
 using AppyNox.Services.Base.Application.ExceptionExtensions.Base;
-using AppyNox.Services.Base.Application.Interfaces.Exceptions;
 using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Application.Interfaces.Repositories;
 using AppyNox.Services.Base.Application.MediatR.Commands;
-using AppyNox.Services.Base.Domain.Common;
+using AppyNox.Services.Base.Core.AsyncLocals;
+using AppyNox.Services.Base.Core.Enums;
+using AppyNox.Services.Base.Core.ExceptionExtensions.Base;
 using AppyNox.Services.Base.Domain.Interfaces;
 using AutoMapper;
 using MediatR;
@@ -47,9 +48,9 @@ namespace AppyNox.Services.Base.Application.MediatR.Handlers
                 TEntity mappedEntity = Mapper.Map(dtoObject, dtoType, typeof(TEntity));
                 List<string> propertyList = (dtoObject as object).GetType().GetProperties().Select(x => x.Name).ToList();
                 Repository.Update(mappedEntity, propertyList);
-                await UnitOfWork.SaveChangesAsync(request.UserId);
+                await UnitOfWork.SaveChangesAsync(UserIdContext.UserId);
             }
-            catch (Exception ex) when (ex is INoxInfrastructureException || ex is INoxApplicationException)
+            catch (Exception ex) when (ex is INoxException)
             {
                 throw;
             }
