@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to AppyNox will be documented in this file.
 
+## [1.0.2](https://github.com/HappiSoftware/AppyNox/compare/v1.0.1...v1.0.2) - 2024.01.15
+### Maintenance
+- Weekly Sonar Cleanup (First week of January 2024) ([#121](https://github.com/HappiSoftware/AppyNox/issues/121))
+
 ## [1.0.1](https://github.com/HappiSoftware/AppyNox/compare/v1.0.0...v1.0.1) - 2024.01.15
 ### Added
 - Added Auditable data support. ([#112](https://github.com/HappiSoftware/AppyNox/issues/112))

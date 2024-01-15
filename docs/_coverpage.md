@@ -1,6 +1,6 @@
 <img src="_media/icon.png" alt="AppyNox Logo" width="350" height="350">
 
-<h1>AppyNox <small>v1.0.1</small></h1>
+<h1>AppyNox <small>v1.0.2</small></h1>
 
 > AppyNox Documentation
 
