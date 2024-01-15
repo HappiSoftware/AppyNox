@@ -17,13 +17,11 @@ namespace AppyNox.Services.License.WebAPI.Controllers.v1
     [ApiController]
     [ApiVersion("1.0")]
     [Route("api/[controller]")]
-    public class LicensesController(IMediator mediator, IPublishEndpoint publishEndpoint) : Controller
+    public class LicensesController(IMediator mediator) : Controller
     {
         #region [ Fields ]
 
         private readonly IMediator _mediator = mediator;
-
-        private readonly IPublishEndpoint _publishEndpoint = publishEndpoint;
 
         #endregion
 

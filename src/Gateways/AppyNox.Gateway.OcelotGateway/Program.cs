@@ -13,7 +13,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 await builder.AddConsulConfiguration("OcelotService");
 await builder.AddConsulConfiguration("OcelotService", "ocelot");
-var configuration = builder.Configuration;
 
 #endregion
 

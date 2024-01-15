@@ -30,6 +30,10 @@ namespace AppyNox.Services.Base.API.Middleware
             {
                 UserIdContext.UserId = userId;
             }
+            else
+            {
+                _logger.LogWarning("UserId is empty. Could not set to UserIdContext");
+            }
 
             await _next(context);
         }

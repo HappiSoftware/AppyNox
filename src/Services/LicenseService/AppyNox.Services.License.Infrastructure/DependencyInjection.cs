@@ -32,7 +32,6 @@ namespace AppyNox.Services.License.Infrastructure
         public static IServiceCollection AddLicenseInfrastructure(this IServiceCollection services, IHostApplicationBuilder builder, ApplicationEnvironment environment, INoxLogger logger)
         {
             IConfiguration configuration = builder.Configuration;
-            string environmentName = builder.Environment.EnvironmentName;
 
             services.AddSingleton<INoxInfrastructureLogger, NoxInfrastructureLogger>();
             services.AddSingleton<INoxApplicationLogger, NoxApplicationLogger>();

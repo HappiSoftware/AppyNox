@@ -68,7 +68,7 @@ namespace AppyNox.Services.Base.API.Middleware
         /// </summary>
         private string CheckCorrelationIdsAndReturn(HttpContext context, NoxException ex)
         {
-            string correlationId = (context.Request.Headers["X-Correlation-ID"].FirstOrDefault() ?? string.Empty).ToString() ?? string.Empty;
+            string correlationId = (context.Request.Headers["X-Correlation-ID"].FirstOrDefault() ?? string.Empty).ToString();
             if (correlationId.Equals(ex.CorrelationId.ToString()))
             {
                 return correlationId;

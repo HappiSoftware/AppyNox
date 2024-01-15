@@ -1,7 +1,7 @@
-﻿using Consul;
+﻿using AppyNox.Services.Base.Application.ExceptionExtensions.Base;
+using Consul;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Text;
 using System.Text.Json;
@@ -11,6 +11,12 @@ namespace AppyNox.Services.Base.Infrastructure.Extensions
 {
     public static class ApplicationBuilderExtensions
     {
+        #region [ Fields ]
+
+        private static readonly JsonSerializerOptions _jsonSerializerOptions = new JsonSerializerOptions() { PropertyNameCaseInsensitive = true };
+
+        #endregion
+
         #region [ Public Methods ]
 
         /// <summary>
@@ -44,7 +50,7 @@ namespace AppyNox.Services.Base.Infrastructure.Extensions
                     options.ReloadOnChange = true;
                     options.OnLoadException = exceptionContext =>
                     {
-                        throw new ApplicationException($"Failed to load configuration from Consul for '{microServiceName}' in '{environmentName}' environment", exceptionContext.Exception);
+                        throw new NoxApplicationException(exceptionContext.Exception, $"Failed to load configuration from Consul for '{microServiceName}' in '{environmentName}' environment");
                     };
                 });
         }
@@ -90,7 +96,7 @@ namespace AppyNox.Services.Base.Infrastructure.Extensions
 
             var appsettings = JsonSerializer.Deserialize<Dictionary<string, object>>(
                 File.ReadAllText(appSettingsPath),
-                new JsonSerializerOptions() { PropertyNameCaseInsensitive = true }
+                _jsonSerializerOptions
                 ) ?? throw new InvalidOperationException($"Failed to deserialize {configurationFile} for '{microServiceName}' in '{environmentName}' environment");
 
             foreach (var setting in appsettings)

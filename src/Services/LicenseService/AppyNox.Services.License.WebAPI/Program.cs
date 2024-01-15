@@ -99,24 +99,24 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-//if (!builder.Environment.IsDevelopment())
-//{
-noxLogger.LogInformation("Adjusting swagger endpoints.");
-builder.Services.AddSwaggerGen(opt =>
+if (!builder.Environment.IsDevelopment())
 {
-    opt.SwaggerDoc("v1", new OpenApiInfo { Title = "Coupons Service", Version = "v1" });
-    opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    noxLogger.LogInformation("Adjusting swagger endpoints.");
+    builder.Services.AddSwaggerGen(opt =>
     {
-        In = ParameterLocation.Header,
-        Description = "Please enter token",
-        Name = "Authorization",
-        Type = SecuritySchemeType.Http,
-        BearerFormat = "JWT",
-        Scheme = "bearer"
-    });
+        opt.SwaggerDoc("v1", new OpenApiInfo { Title = "Coupons Service", Version = "v1" });
+        opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+        {
+            In = ParameterLocation.Header,
+            Description = "Please enter token",
+            Name = "Authorization",
+            Type = SecuritySchemeType.Http,
+            BearerFormat = "JWT",
+            Scheme = "bearer"
+        });
 
-    opt.AddSecurityRequirement(new OpenApiSecurityRequirement
-{
+        opt.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
         {
             new OpenApiSecurityScheme
             {
@@ -128,11 +128,10 @@ builder.Services.AddSwaggerGen(opt =>
             },
             Array.Empty<string>()
         }
-});
-});
-noxLogger.LogInformation("Adjusting swagger endpoints completed.");
-
-//}
+    });
+    });
+    noxLogger.LogInformation("Adjusting swagger endpoints completed.");
+}
 
 // Add Policy-based Authorization
 builder.Services.AddAuthorization(options =>

@@ -9,11 +9,13 @@ namespace AppyNox.Services.Base.Infrastructure.UnitTests.Fixtures
 
         public readonly NoxInfrastructureLoggerStub NoxLoggerStub = new();
 
+        private bool _disposed = false;
+
         #endregion
 
         #region [ Public Methods ]
 
-        public TContext CreateDatabaseContext<TContext>() where TContext : DbContext
+        public static TContext CreateDatabaseContext<TContext>() where TContext : DbContext
         {
             var databaseName = Guid.NewGuid().ToString(); // Unique database name
             var options = new DbContextOptionsBuilder<TContext>()
@@ -27,7 +29,27 @@ namespace AppyNox.Services.Base.Infrastructure.UnitTests.Fixtures
 
         public void Dispose()
         {
+            Dispose(true);
             GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            _disposed = true;
+        }
+
+        #endregion
+
+        #region [ Private Destructors ]
+
+        ~RepositoryFixture()
+        {
+            Dispose(false);
         }
 
         #endregion
