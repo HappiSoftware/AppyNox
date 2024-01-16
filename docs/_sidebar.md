@@ -4,6 +4,7 @@
   - [Getting Started](started.md)
   - [SonarQube](sonar.md)
 - Development Documentations
+  - [Adding New Service](addingnewservice.md)
   - [Exception Handling](exception.md)
   - [Auditable Data Usage](auditabledata.md)
   - [SSL Certificate](certificate.md)
