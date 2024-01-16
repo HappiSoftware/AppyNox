@@ -1,3 +1,10 @@
+using AppyNox.Services.Base.API.Extensions;
+using AppyNox.Services.Base.API.Middleware;
+using AppyNox.Services.Base.Application.Interfaces.Loggers;
+using AppyNox.Services.Base.Infrastructure.Extensions;
+using AppyNox.Services.Base.Infrastructure.HostedServices;
+using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
+using AppyNox.Services.Base.API.Permissions;
 using AppyNox.Services.Authentication.Application;
 using AppyNox.Services.Authentication.Domain.Entities;
 using AppyNox.Services.Authentication.Infrastructure;
@@ -6,13 +13,6 @@ using AppyNox.Services.Authentication.WebAPI.Configuration;
 using AppyNox.Services.Authentication.WebAPI.ControllerDependencies;
 using AppyNox.Services.Authentication.WebAPI.Managers.Implementations;
 using AppyNox.Services.Authentication.WebAPI.Managers.Interfaces;
-using AppyNox.Services.Authentication.WebAPI.Utilities;
-using AppyNox.Services.Base.API.Extensions;
-using AppyNox.Services.Base.API.Middleware;
-using AppyNox.Services.Base.Application.Interfaces.Loggers;
-using AppyNox.Services.Base.Infrastructure.Extensions;
-using AppyNox.Services.Base.Infrastructure.HostedServices;
-using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
 using Asp.Versioning;
 using AutoWrapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -20,6 +20,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
+using AppyNox.Services.Authentication.WebAPI.Permission;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -118,7 +119,7 @@ builder.Services.AddScoped<UsersControllerBaseDependencies>();
 #region [ Jwt Settings ]
 
 noxLogger.LogInformation("Registering JWT Configuration.");
-var jwtConfiguration = new JwtConfiguration();
+var jwtConfiguration = new AuthenticationJwtConfiguration();
 configuration.GetSection("JwtSettings").Bind(jwtConfiguration);
 builder.Services.AddSingleton(jwtConfiguration);
 

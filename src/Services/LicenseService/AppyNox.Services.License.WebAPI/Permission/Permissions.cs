@@ -1,6 +1,6 @@
 ﻿using System.Collections.Immutable;
 
-namespace AppyNox.Services.License.WebAPI.Helpers.Permissions;
+namespace AppyNox.Services.License.WebAPI.Permission;
 
 public static class Permissions
 {

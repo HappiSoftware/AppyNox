@@ -16,7 +16,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Managers.Implementations
     /// </summary>
     public class JwtTokenManager(UserManager<ApplicationUser> userManager,
                                  RoleManager<IdentityRole> roleManager,
-                                 JwtConfiguration jwtConfiguration) : ICustomTokenManager
+                                 AuthenticationJwtConfiguration jwtConfiguration) : ICustomTokenManager
     {
         #region [ Fields ]
 
@@ -24,7 +24,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Managers.Implementations
 
         private readonly RoleManager<IdentityRole> _roleManager = roleManager;
 
-        private readonly JwtConfiguration _jwtConfiguration = jwtConfiguration;
+        private readonly AuthenticationJwtConfiguration _jwtConfiguration = jwtConfiguration;
 
         private readonly JwtSecurityTokenHandler _tokenHandler = new();
 

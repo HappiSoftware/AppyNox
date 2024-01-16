@@ -54,11 +54,11 @@ namespace AppyNox.Services.Authentication.Infrastructure
 
             services.AddSingleton<IConsulClient, ConsulClient>(p => new ConsulClient(consulConfig =>
             {
-                var address = configuration["ConsulConfig:Address"] ?? "http://localhost:8500";
+                var address = configuration["ConsulConfiguration:Address"] ?? "http://localhost:8500";
                 consulConfig.Address = new Uri(address);
             }));
             services.AddSingleton<IHostedService, ConsulHostedService>();
-            services.Configure<ConsulConfig>(configuration.GetSection("consul"));
+            services.Configure<ConsulConfiguration>(configuration.GetSection("consul"));
 
             #endregion
 

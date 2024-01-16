@@ -24,4 +24,8 @@
 		<ProjectReference Include="..\AppyNox.Services.Coupon.Infrastructure\AppyNox.Services.Coupon.Infrastructure.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Helpers\" />
+	</ItemGroup>
+
 </Project>

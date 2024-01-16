@@ -44,7 +44,7 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
     "Issuer": "AuthServerV1",
     "Audience": "AppyNoxBasic"
   },
-  "ConsulConfig": {
+  "ConsulConfiguration": {
     "Address": "http://localhost:8500"
   },
   "Consul": {
@@ -99,7 +99,7 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
     "Issuer": "AuthServerV1",
     "Audience": "AppyNoxBasic"
   },
-  "ConsulConfig": {
+  "ConsulConfiguration": {
     "Address": "http://appynox-consul:8500"
   },
   "Consul": {
@@ -153,7 +153,7 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
     "Issuer": "AuthServerV1",
     "Audience": "AppyNoxBasic"
   },
-  "ConsulConfig": {
+  "ConsulConfiguration": {
     "Address": "http://appynox-consul:8500"
   },
   "Consul": {
@@ -215,7 +215,7 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
     "Audience": "AppyNoxBasic",
     "TokenLifetimeMinutes": "5"
   },
-  "ConsulConfig": {
+  "ConsulConfiguration": {
     "Address": "http://localhost:8500"
   },
   "Consul": {
@@ -277,7 +277,7 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
     "Audience": "AppyNoxBasic",
     "TokenLifetimeMinutes": "30"
   },
-  "ConsulConfig": {
+  "ConsulConfiguration": {
     "Address": "http://appynox-consul:8500"
   },
   "Consul": {
@@ -338,7 +338,7 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
     "Audience": "AppyNoxBasic",
     "TokenLifetimeMinutes": "1"
   },
-  "ConsulConfig": {
+  "ConsulConfiguration": {
     "Address": "http://appynox-consul:8500"
   },
   "Consul": {
@@ -691,7 +691,7 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
     ],
     "Enrich": ["FromLogContext"]
   },
-  "ConsulConfig": {
+  "ConsulConfiguration": {
     "Address": "http://localhost:8500"
   }
 }
@@ -725,7 +725,7 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
     ],
     "Enrich": ["FromLogContext"]
   },
-  "ConsulConfig": {
+  "ConsulConfiguration": {
     "Address": "http://appynox-consul:8500"
   }
 }
@@ -759,7 +759,7 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
     ],
     "Enrich": ["FromLogContext"]
   },
-  "ConsulConfig": {
+  "ConsulConfiguration": {
     "Address": "http://appynox-consul:8500"
   }
 }
@@ -812,7 +812,7 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
     "Issuer": "AuthServerV1",
     "Audience": "AppyNoxBasic"
   },
-  "ConsulConfig": {
+  "ConsulConfiguration": {
     "Address": "http://localhost:8500"
   },
   "Consul": {
@@ -867,7 +867,7 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
     "Issuer": "AuthServerV1",
     "Audience": "AppyNoxBasic"
   },
-  "ConsulConfig": {
+  "ConsulConfiguration": {
     "Address": "http://appynox-consul:8500"
   },
   "Consul": {
@@ -921,7 +921,7 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
     "Issuer": "AuthServerV1",
     "Audience": "AppyNoxBasic"
   },
-  "ConsulConfig": {
+  "ConsulConfiguration": {
     "Address": "http://appynox-consul:8500"
   },
   "Consul": {

@@ -1,22 +1,21 @@
+using AppyNox.Services.Base.API.Extensions;
+using AppyNox.Services.Base.API.Middleware;
+using AppyNox.Services.Base.Application.Interfaces.Loggers;
+using AppyNox.Services.Base.Core.Common;
+using AppyNox.Services.Base.Infrastructure.Extensions;
+using AppyNox.Services.Base.Infrastructure.HostedServices;
+using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
+using AppyNox.Services.Base.API.Permissions;
+using AppyNox.Services.License.Application;
 using AppyNox.Services.License.Infrastructure;
-using Serilog;
-using AppyNox.Services.License.WebAPI.Helpers;
+using AppyNox.Services.License.Infrastructure.Data;
+using AppyNox.Services.License.WebAPI.Permission;
+using AutoWrapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using Microsoft.AspNetCore.Authorization;
-using AppyNox.Services.Base.API.Middleware;
-using AutoWrapper;
-using AppyNox.Services.Base.Infrastructure.HostedServices;
-using AppyNox.Services.License.Infrastructure.Data;
-using AppyNox.Services.License.Application;
-using AppyNox.Services.License.WebAPI.Helpers.Permissions;
-using MassTransit;
-using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
-using AppyNox.Services.Base.Application.Interfaces.Loggers;
-using AppyNox.Services.License.Infrastructure.MassTransit.Consumers;
-using AppyNox.Services.Base.Infrastructure.Extensions;
-using AppyNox.Services.Base.API.Extensions;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 

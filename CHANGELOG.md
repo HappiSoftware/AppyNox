@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to AppyNox will be documented in this file.
 
+## [1.0.3](https://github.com/HappiSoftware/AppyNox/compare/v1.0.2...v1.0.3) - NOT RELEASED
+### Added
+- AppyFleet Requests For Base WebAPI ([#123](https://github.com/HappiSoftware/AppyNox/issues/123))
+
 ## [1.0.2](https://github.com/HappiSoftware/AppyNox/compare/v1.0.1...v1.0.2) - 2024.01.15
 ### Maintenance
 - Weekly Sonar Cleanup (First week of January 2024) ([#121](https://github.com/HappiSoftware/AppyNox/issues/121))

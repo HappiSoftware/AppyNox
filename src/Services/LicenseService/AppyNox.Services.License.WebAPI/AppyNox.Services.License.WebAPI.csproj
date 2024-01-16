@@ -25,4 +25,8 @@
     <ProjectReference Include="..\AppyNox.Services.License.SharedEvents\AppyNox.Services.License.SharedEvents.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Helpers\" />
+  </ItemGroup>
+
 </Project>
