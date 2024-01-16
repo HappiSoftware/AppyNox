@@ -32,7 +32,7 @@ namespace AppyNox.Services.Base.Infrastructure.Extensions
         {
             IConfiguration configuration = builder.Configuration;
             string environmentName = builder.Environment.EnvironmentName;
-            Uri consulUri = new(configuration["ConsulConfig:Address"] ?? "http://localhost:8500");
+            Uri consulUri = new(configuration["ConsulConfiguration:Address"] ?? "http://localhost:8500");
 
             IConsulClient consulClient = new ConsulClient(config =>
             {

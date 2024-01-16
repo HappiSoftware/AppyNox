@@ -3,7 +3,7 @@
 /// <summary>
 /// Configuration settings for Consul service registration and health checks.
 /// </summary>
-public class ConsulConfig
+public class ConsulConfiguration
 {
     #region [ Properties ]
 

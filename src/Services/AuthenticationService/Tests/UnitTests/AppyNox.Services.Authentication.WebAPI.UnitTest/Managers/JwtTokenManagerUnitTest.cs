@@ -15,7 +15,7 @@ namespace AppyNox.Services.Authentication.WebAPI.UnitTest.Managers
     {
         #region Fields
 
-        private readonly JwtConfiguration _jwtConfiguration;
+        private readonly AuthenticationJwtConfiguration _jwtConfiguration;
 
         private readonly JwtTokenManager _jwtTokenManager;
 

@@ -5,7 +5,7 @@ using AppyNox.Services.Authentication.SharedEvents.Events;
 using AppyNox.Services.Authentication.WebAPI.ControllerDependencies;
 using AppyNox.Services.Authentication.WebAPI.ExceptionExtensions.Base;
 using AppyNox.Services.Authentication.WebAPI.Filters;
-using AppyNox.Services.Authentication.WebAPI.Utilities;
+using AppyNox.Services.Authentication.WebAPI.Permission;
 using AppyNox.Services.Base.Application.ExceptionExtensions;
 using AppyNox.Services.Base.Core.AsyncLocals;
 using Asp.Versioning;

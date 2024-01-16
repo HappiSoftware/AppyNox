@@ -4,7 +4,7 @@ using AppyNox.Services.Base.Application.MediatR.Commands;
 using AppyNox.Services.Base.Infrastructure.Repositories.Common;
 using AppyNox.Services.License.Application.MediatR.Commands;
 using AppyNox.Services.License.Domain.Entities;
-using AppyNox.Services.License.WebAPI.Helpers.Permissions;
+using AppyNox.Services.License.WebAPI.Permission;
 using Asp.Versioning;
 using AutoWrapper.Wrappers;
 using MassTransit;

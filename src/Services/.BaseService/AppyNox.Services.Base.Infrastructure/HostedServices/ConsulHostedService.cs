@@ -14,7 +14,7 @@ public class ConsulHostedService : IHostedService
 
     private readonly IConsulClient _consulClient;
 
-    private readonly ConsulConfig _consulConfig;
+    private readonly ConsulConfiguration _consulConfig;
 
     private readonly INoxInfrastructureLogger _logger;
 
@@ -32,7 +32,7 @@ public class ConsulHostedService : IHostedService
     {
         _consulClient = consulClient;
         _logger = logger;
-        _consulConfig = configuration.GetSection("consul").Get<ConsulConfig>() ??
+        _consulConfig = configuration.GetSection("consul").Get<ConsulConfiguration>() ??
             throw new NoxInfrastructureException("Consul configuration is not defined. Service will not be discovered.", (int)HttpStatusCode.ServiceUnavailable);
     }
 

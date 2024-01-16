@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 
-namespace AppyNox.Services.License.WebAPI.Helpers.Permissions;
+namespace AppyNox.Services.Base.API.Permissions;
 
-internal class PermissionAuthorizationHandler : AuthorizationHandler<PermissionRequirement>
+public class PermissionAuthorizationHandler : AuthorizationHandler<PermissionRequirement>
 {
     #region [ Protected Methods ]
 

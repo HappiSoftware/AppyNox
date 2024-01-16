@@ -10,7 +10,7 @@ using AutoWrapper.Wrappers;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using static AppyNox.Services.Coupon.WebAPI.Helpers.Permissions.Permissions;
+using static AppyNox.Services.Coupon.WebAPI.Permission.Permissions;
 
 namespace AppyNox.Services.Coupon.WebAPI.Controllers.v1
 {

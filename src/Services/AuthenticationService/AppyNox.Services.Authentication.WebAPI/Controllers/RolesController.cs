@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
 using System.Security.Claims;
-using static AppyNox.Services.Authentication.WebAPI.Utilities.Permissions;
+using static AppyNox.Services.Authentication.WebAPI.Permission.Permissions;
 
 namespace AppyNox.Services.Authentication.WebAPI.Controllers
 {

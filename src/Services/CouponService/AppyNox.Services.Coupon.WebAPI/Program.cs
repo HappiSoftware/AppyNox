@@ -1,20 +1,21 @@
+using AppyNox.Services.Base.API.Extensions;
 using AppyNox.Services.Base.API.Middleware;
+using AppyNox.Services.Base.Application.Interfaces.Loggers;
+using AppyNox.Services.Base.Core.Common;
+using AppyNox.Services.Base.Infrastructure.Extensions;
 using AppyNox.Services.Base.Infrastructure.HostedServices;
+using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
+using AppyNox.Services.Base.API.Permissions;
 using AppyNox.Services.Coupon.Application;
 using AppyNox.Services.Coupon.Infrastructure;
 using AppyNox.Services.Coupon.Infrastructure.Data;
-using AppyNox.Services.Coupon.WebAPI.Helpers;
-using AppyNox.Services.Coupon.WebAPI.Helpers.Permissions;
 using AutoWrapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
-using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
-using AppyNox.Services.Base.Application.Interfaces.Loggers;
-using AppyNox.Services.Base.Infrastructure.Extensions;
-using AppyNox.Services.Base.API.Extensions;
+using AppyNox.Services.Coupon.WebAPI.Permission;
 
 var builder = WebApplication.CreateBuilder(args);
 
