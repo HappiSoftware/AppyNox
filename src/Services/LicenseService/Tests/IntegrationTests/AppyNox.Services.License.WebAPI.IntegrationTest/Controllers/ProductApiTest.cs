@@ -1,6 +1,5 @@
 ﻿using AppyNox.Services.Base.IntegrationTests.Helpers;
 using AppyNox.Services.Base.IntegrationTests.URIs;
-using AppyNox.Services.License.Application.Dtos.LicenseDtos.Models.Base;
 using AppyNox.Services.License.Application.Dtos.ProductDtos.Models.Base;
 using AppyNox.Services.License.WebAPI.IntegrationTest.Fixtures;
 using AutoWrapper.Server;
@@ -12,13 +11,14 @@ using Xunit.Extensions.Ordering;
 
 namespace AppyNox.Services.License.WebAPI.IntegrationTest.Controllers
 {
-    public class ProductApiTest(LicenseApiTestFixture licenseApiTestFixture) : IClassFixture<LicenseApiTestFixture>
+    [Collection("LicenseService Collection")]
+    public class ProductApiTest(LicenseServiceFixture licenseApiTestFixture)
     {
         #region [ Fields ]
 
         private readonly JsonSerializerOptions _jsonSerializerOptions = licenseApiTestFixture.JsonSerializerOptions;
 
-        private readonly LicenseApiTestFixture _licenseApiTestFixture = licenseApiTestFixture;
+        private readonly LicenseServiceFixture _licenseApiTestFixture = licenseApiTestFixture;
 
         private readonly HttpClient _client = licenseApiTestFixture.Client;
 
@@ -95,16 +95,18 @@ namespace AppyNox.Services.License.WebAPI.IntegrationTest.Controllers
             var requestUri = $"{_serviceURIs.LicenseServiceURI}/products";
             var requestBody = new
             {
-                name = "NewProduct"
+                name = "NewProduct",
+                code = "drop1"
             };
             var jsonRequest = JsonSerializer.Serialize(requestBody);
             var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
 
             // Act
             var response = await _client.PostAsync(requestUri, content);
-            var jsonResponse = await response.Content.ReadAsStringAsync();
-            var apiResponse = Unwrapper.Unwrap<ApiResponse>(jsonResponse);
-            var result = JsonSerializer.Deserialize<(Guid, ProductSimpleDto)>(apiResponse.Result.ToString()!, _jsonSerializerOptions);
+            string jsonString = await response.Content.ReadAsStringAsync();
+            using var jsonDoc = JsonDocument.Parse(jsonString);
+            string? id = jsonDoc.RootElement.GetProperty("result").GetProperty("id").GetString();
+            Assert.NotNull(id);
 
             // Assert
             response.EnsureSuccessStatusCode();
@@ -115,7 +117,7 @@ namespace AppyNox.Services.License.WebAPI.IntegrationTest.Controllers
             #region [ Get Products ]
 
             // Act
-            var product = _licenseApiTestFixture.DbContext.Products.SingleOrDefault(x => x.Id == result.Item1);
+            var product = _licenseApiTestFixture.DbContext.Products.SingleOrDefault(x => x.Id == Guid.Parse(id));
 
             // Assert
             Assert.NotNull(product);
@@ -142,11 +144,14 @@ namespace AppyNox.Services.License.WebAPI.IntegrationTest.Controllers
             // Arrange
             Guid id = product.Id;
             string newName = "NameUpdated";
+            string newCode = "drop2";
 
             string requestUri = $"{_serviceURIs.LicenseServiceURI}/products/{id}";
             var requestBody = new
             {
                 name = newName,
+                code = newCode,
+                id = id,
             };
             var jsonRequest = JsonSerializer.Serialize(requestBody);
             var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
@@ -170,6 +175,7 @@ namespace AppyNox.Services.License.WebAPI.IntegrationTest.Controllers
             // Assert
             Assert.NotNull(product);
             Assert.Equal(newName, product.Name);
+            Assert.Equal(newCode, product.Code);
 
             #endregion
         }

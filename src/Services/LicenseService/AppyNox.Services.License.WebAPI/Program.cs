@@ -176,7 +176,7 @@ app.UseMiddleware<UserIdMiddleware>();
 
 app.MapControllers();
 
-app.UseApiResponseAndExceptionWrapper(new AutoWrapperOptions { IsApiOnly = true, ShowApiVersion = true, ApiVersion = "1.0" });
+app.UseApiResponseAndExceptionWrapper(new AutoWrapperOptions { IsApiOnly = true, ShowApiVersion = true, ApiVersion = "1.0", ShowStatusCode = true });
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseMiddleware<QueryParameterValidateMiddleware>();
 

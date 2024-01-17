@@ -11,13 +11,14 @@ using Xunit.Extensions.Ordering;
 
 namespace AppyNox.Services.License.WebAPI.IntegrationTest.Controllers
 {
-    public class LicenseApiTest(LicenseApiTestFixture licenseApiTestFixture) : IClassFixture<LicenseApiTestFixture>
+    [Collection("LicenseService Collection")]
+    public class LicenseApiTest(LicenseServiceFixture licenseApiTestFixture)
     {
         #region [ Fields ]
 
         private readonly JsonSerializerOptions _jsonSerializerOptions = licenseApiTestFixture.JsonSerializerOptions;
 
-        private readonly LicenseApiTestFixture _licenseApiTestFixture = licenseApiTestFixture;
+        private readonly LicenseServiceFixture _licenseApiTestFixture = licenseApiTestFixture;
 
         private readonly HttpClient _client = licenseApiTestFixture.Client;
 
