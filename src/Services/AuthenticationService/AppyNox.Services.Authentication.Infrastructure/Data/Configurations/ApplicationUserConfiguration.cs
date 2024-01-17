@@ -40,6 +40,8 @@ namespace AppyNox.Services.Authentication.Infrastructure.Data.Configurations
         {
             #region [ Configurations ]
 
+            builder.Property(x => x.Code).IsRequired().HasMaxLength(5);
+
             builder.HasOne(c => c.Company)
                 .WithMany(cd => cd.Users)
                 .HasForeignKey(c => c.CompanyId)
@@ -54,6 +56,7 @@ namespace AppyNox.Services.Authentication.Infrastructure.Data.Configurations
             builder.HasData(new ApplicationUser
             {
                 Id = _adminUserId,
+                Code = "USR01",
                 UserName = "admin",
                 NormalizedUserName = "ADMIN",
                 Email = "admin@email.com",
@@ -67,6 +70,7 @@ namespace AppyNox.Services.Authentication.Infrastructure.Data.Configurations
             new ApplicationUser
             {
                 Id = _superAdminId,
+                Code = "USR02",
                 UserName = "superadmin",
                 NormalizedUserName = "SUPERADMIN",
                 Email = "sadmin@email.com",

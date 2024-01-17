@@ -1,4 +1,5 @@
-﻿using AppyNox.Services.Base.API.Helpers;
+﻿using AppyNox.Services.Base.API.Filters;
+using AppyNox.Services.Base.API.Helpers;
 using AppyNox.Services.Base.API.ViewModels;
 using AppyNox.Services.Base.Application.MediatR.Commands;
 using AppyNox.Services.Base.Infrastructure.Repositories.Common;
@@ -7,7 +8,6 @@ using AppyNox.Services.License.Domain.Entities;
 using AppyNox.Services.License.WebAPI.Permission;
 using Asp.Versioning;
 using AutoWrapper.Wrappers;
-using MassTransit;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,6 +17,7 @@ namespace AppyNox.Services.License.WebAPI.Controllers.v1
     [ApiController]
     [ApiVersion("1.0")]
     [Route("api/[controller]")]
+    [JwtTokenValidate]
     public class LicensesController(IMediator mediator) : Controller
     {
         #region [ Fields ]

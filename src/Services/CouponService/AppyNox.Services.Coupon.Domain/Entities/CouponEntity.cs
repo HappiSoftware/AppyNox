@@ -1,14 +1,13 @@
-﻿using AppyNox.Services.Base.Domain.Interfaces;
+﻿using AppyNox.Services.Base.Domain;
+using AppyNox.Services.Base.Domain.Interfaces;
 
 namespace AppyNox.Services.Coupon.Domain.Entities
 {
-    public class CouponEntity : IEntityWithGuid, IAuditableData
+    public class CouponEntity : EntityBase, IEntityWithGuid, IAuditableData
     {
         #region [ Properties ]
 
         public Guid Id { get; set; }
-
-        public string Code { get; set; } = string.Empty;
 
         public string Description { get; set; } = string.Empty;
 

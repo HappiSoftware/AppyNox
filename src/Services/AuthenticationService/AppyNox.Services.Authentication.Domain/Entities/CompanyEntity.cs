@@ -1,8 +1,9 @@
-﻿using AppyNox.Services.Base.Domain.Interfaces;
+﻿using AppyNox.Services.Base.Domain;
+using AppyNox.Services.Base.Domain.Interfaces;
 
 namespace AppyNox.Services.Authentication.Domain.Entities
 {
-    public class CompanyEntity : IEntityWithGuid
+    public class CompanyEntity : EntityBase, IEntityWithGuid
     {
         #region [ Properties ]
 

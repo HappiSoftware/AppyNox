@@ -3,7 +3,7 @@
     /// <summary>
     /// Represents the base class for data transfer objects (DTOs) in the application.
     /// </summary>
-    public abstract class BaseDto
+    public abstract class DtoBase
     {
         #region [ Properties ]
 

@@ -10,7 +10,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace AppyNox.Services.License.WebAPI.IntegrationTest.Fixtures
 {
-    public class LicenseApiTestFixture : DockerComposeTestBase
+    public class LicenseServiceFixture : DockerComposeTestBase
     {
         #region [ Properties ]
 
@@ -20,7 +20,7 @@ namespace AppyNox.Services.License.WebAPI.IntegrationTest.Fixtures
 
         #region [ Public Constructors ]
 
-        public LicenseApiTestFixture()
+        public LicenseServiceFixture()
         {
             IConfigurationRoot appsettings = IntegrationTestHelpers.GetConfiguration("appsettings.Staging");
 
@@ -37,6 +37,7 @@ namespace AppyNox.Services.License.WebAPI.IntegrationTest.Fixtures
                 .Options;
 
             DbContext = new LicenseDatabaseContext(options);
+            IsDatabaseHealthy().GetAwaiter().GetResult();
         }
 
         #endregion
@@ -79,6 +80,32 @@ namespace AppyNox.Services.License.WebAPI.IntegrationTest.Fixtures
                         "appynox-services-authentication-webapi"
                     ],
                 });
+        }
+
+        #endregion
+
+        #region [ Private Methods ]
+
+        private async Task IsDatabaseHealthy(int maxAttempts = 10, int delayInSeconds = 5)
+        {
+            int attempts = 0;
+            while (attempts < maxAttempts)
+            {
+                try
+                {
+                    // Try a simple operation, like checking if a table exists
+                    var canConnect = await DbContext.Database.CanConnectAsync();
+                    if (canConnect) return;
+                }
+                catch (Exception)
+                {
+                }
+
+                await Task.Delay(TimeSpan.FromSeconds(delayInSeconds));
+                attempts++;
+            }
+
+            throw new Exception("Database did not get healthy.");
         }
 
         #endregion

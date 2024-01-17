@@ -4,7 +4,7 @@ using FluentValidation;
 
 namespace AppyNox.Services.Coupon.Application.Validators.Coupon.Create
 {
-    public class CouponSimpleCreateValidator : BaseDtoValidator<CouponSimpleCreateDto>
+    public class CouponSimpleCreateValidator : DtoValidatorBase<CouponSimpleCreateDto>
     {
         #region [ Public Constructors ]
 

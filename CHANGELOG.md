@@ -4,6 +4,7 @@ All notable changes to AppyNox will be documented in this file.
 ## [1.0.3](https://github.com/HappiSoftware/AppyNox/compare/v1.0.2...v1.0.3) - NOT RELEASED
 ### Added
 - AppyFleet Requests For Base WebAPI ([#123](https://github.com/HappiSoftware/AppyNox/issues/123))
+- Adding Product to LicenseService ([#128](https://github.com/HappiSoftware/AppyNox/issues/128))
 
 ### Maintenance
 - AppyNox-127 AuthenticationService Refactor ([#127](https://github.com/HappiSoftware/AppyNox/issues/127))

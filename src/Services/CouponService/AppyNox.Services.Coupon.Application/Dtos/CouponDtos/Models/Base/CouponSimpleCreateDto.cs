@@ -4,7 +4,7 @@ using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.DetailLevel;
 namespace AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base
 {
     [CouponDetailLevel(CouponCreateDetailLevel.Simple)]
-    public class CouponSimpleCreateDto : BaseDto
+    public class CouponSimpleCreateDto : DtoBase
     {
         #region [ Properties ]
 

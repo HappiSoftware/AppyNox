@@ -6,7 +6,7 @@ namespace AppyNox.Services.Authentication.Application.DTOs.IdentityUserDTOs.Mode
     /// Data transfer object for creating a new identity user.
     /// Contains user credentials and personal information.
     /// </summary>
-    public class ApplicationUserCreateDto : BaseDto
+    public class ApplicationUserCreateDto : DtoBase
     {
         #region [ Properties ]
 

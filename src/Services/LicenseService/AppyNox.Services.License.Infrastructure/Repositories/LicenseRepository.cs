@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AppyNox.Services.License.Infrastructure.Repositories
 {
-    internal class LicenseRepository(LicenseDatabaseContext context, INoxInfrastructureLogger noxInfrastructureLogger, IUnitOfWorkBase unitOfWork)
+    public class LicenseRepository(LicenseDatabaseContext context, INoxInfrastructureLogger noxInfrastructureLogger, IUnitOfWorkBase unitOfWork)
         : GenericRepositoryBase<LicenseEntity>(context, noxInfrastructureLogger), ILicenseRepository
     {
         #region [ Fields ]
@@ -22,19 +22,19 @@ namespace AppyNox.Services.License.Infrastructure.Repositories
 
         #region Public Methods
 
-        public async Task<LicenseEntity?> FindLicenseByKey(string licenseKey, CancellationToken cancellationToken)
+        public async Task<LicenseEntity?> FindLicenseByKeyAsync(string licenseKey, CancellationToken cancellationToken)
         {
             return await _context.Licenses
                                         .FirstOrDefaultAsync(l => l.LicenseKey == licenseKey, cancellationToken);
         }
 
-        public async Task<int> GetUserCountForLicenseKey(Guid licenseId, CancellationToken cancellationToken)
+        public async Task<int> GetUserCountForLicenseKeyAsync(Guid licenseId, CancellationToken cancellationToken)
         {
             return await _context.ApplicationUserLicenses
                                           .CountAsync(ul => ul.LicenseId == licenseId, cancellationToken);
         }
 
-        public async Task AssignLicenseToApplicationUser(Guid licenseId, Guid applicationUserId)
+        public async Task AssignLicenseToApplicationUserAsync(Guid licenseId, Guid applicationUserId)
         {
             try
             {

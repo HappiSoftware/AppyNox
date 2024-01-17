@@ -4,11 +4,13 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace AppyNox.Services.License.Infrastructure.Data.Configurations
 {
-    internal class LicenseConfiguration(Guid licenseId) : IEntityTypeConfiguration<LicenseEntity>
+    internal class LicenseConfiguration(Guid licenseId, Guid productId) : IEntityTypeConfiguration<LicenseEntity>
     {
         #region [ Fields ]
 
         private readonly Guid _licenseId = licenseId;
+
+        private readonly Guid _productId = productId;
 
         #endregion
 
@@ -28,6 +30,11 @@ namespace AppyNox.Services.License.Infrastructure.Data.Configurations
                 .HasForeignKey(aul => aul.LicenseId)
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasOne(l => l.Product)
+                .WithMany(p => p.Licenses)
+                .HasForeignKey(l => l.ProductId)
+                .IsRequired();
 
             builder.Property(x => x.Code).IsRequired().HasMaxLength(5);
             builder.Property(x => x.Description).HasMaxLength(60).IsUnicode().IsRequired();
@@ -50,7 +57,8 @@ namespace AppyNox.Services.License.Infrastructure.Data.Configurations
                     CompanyId = Guid.Parse("221e8b2c-59d5-4e5b-b010-86c239b66738"),
                     ExpirationDate = DateTime.UtcNow.AddDays(365),
                     MaxUsers = 3,
-                    MaxMacAddresses = 1
+                    MaxMacAddresses = 1,
+                    ProductId = _productId
                 });
 
             #endregion

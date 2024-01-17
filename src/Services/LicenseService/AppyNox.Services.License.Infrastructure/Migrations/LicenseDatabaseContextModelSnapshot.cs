@@ -97,7 +97,12 @@ namespace AppyNox.Services.License.Infrastructure.Migrations
                     b.Property<int>("MaxUsers")
                         .HasColumnType("integer");
 
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
 
                     b.ToTable("Licenses");
 
@@ -108,10 +113,41 @@ namespace AppyNox.Services.License.Infrastructure.Migrations
                             Code = "LK001",
                             CompanyId = new Guid("221e8b2c-59d5-4e5b-b010-86c239b66738"),
                             Description = "License Description",
-                            ExpirationDate = new DateTime(2025, 1, 9, 0, 10, 24, 115, DateTimeKind.Utc).AddTicks(3656),
+                            ExpirationDate = new DateTime(2025, 1, 16, 10, 50, 13, 898, DateTimeKind.Utc).AddTicks(442),
                             LicenseKey = "7f033381-fbf7-4929-b5f7-c64261b20bf3",
                             MaxMacAddresses = 1,
-                            MaxUsers = 3
+                            MaxUsers = 3,
+                            ProductId = new Guid("9991492a-118c-4f20-ac8c-76410d57957c")
+                        });
+                });
+
+            modelBuilder.Entity("AppyNox.Services.License.Domain.Entities.ProductEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(5)
+                        .HasColumnType("character varying(5)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .IsUnicode(true)
+                        .HasColumnType("character varying(20)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Products");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("9991492a-118c-4f20-ac8c-76410d57957c"),
+                            Code = "PROD1",
+                            Name = "AppyNox"
                         });
                 });
 
@@ -137,6 +173,17 @@ namespace AppyNox.Services.License.Infrastructure.Migrations
                     b.Navigation("License");
                 });
 
+            modelBuilder.Entity("AppyNox.Services.License.Domain.Entities.LicenseEntity", b =>
+                {
+                    b.HasOne("AppyNox.Services.License.Domain.Entities.ProductEntity", "Product")
+                        .WithMany("Licenses")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("AppyNox.Services.License.Domain.Entities.ApplicationUserLicenses", b =>
                 {
                     b.Navigation("MacAddresses");
@@ -145,6 +192,11 @@ namespace AppyNox.Services.License.Infrastructure.Migrations
             modelBuilder.Entity("AppyNox.Services.License.Domain.Entities.LicenseEntity", b =>
                 {
                     b.Navigation("ApplicationUserLicenses");
+                });
+
+            modelBuilder.Entity("AppyNox.Services.License.Domain.Entities.ProductEntity", b =>
+                {
+                    b.Navigation("Licenses");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,6 +1,7 @@
 ﻿using AppyNox.Services.Authentication.Application.DTOs.IdentityUserDTOs.Models;
 using AppyNox.Services.Authentication.Application.Validators.SharedRules;
 using AppyNox.Services.Authentication.Domain.Entities;
+using AppyNox.Services.Base.Application.Validators;
 using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 
@@ -10,11 +11,11 @@ namespace AppyNox.Services.Authentication.Application.Validators.IdentityUser
     /// Validator class for IdentityUserCreateDto using FluentValidation.
     /// Includes rules for validating user creation data.
     /// </summary>
-    public class IdentityUserCreateDtoValidator : AbstractValidator<ApplicationUserCreateDto>
+    public class ApplicationUserCreateDtoValidator : DtoValidatorBase<ApplicationUserCreateDto>
     {
         #region [ Public Constructors ]
 
-        public IdentityUserCreateDtoValidator(IDatabaseChecks databaseChecks,
+        public ApplicationUserCreateDtoValidator(IDatabaseChecks databaseChecks,
                                               IPasswordValidator<ApplicationUser> passwordValidator,
                                               UserManager<ApplicationUser> userManager)
         {
