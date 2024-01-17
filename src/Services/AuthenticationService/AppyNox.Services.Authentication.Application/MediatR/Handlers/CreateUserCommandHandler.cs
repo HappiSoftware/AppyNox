@@ -1,4 +1,4 @@
-﻿using AppyNox.Services.Authentication.Application.Dtos.IdentityUserDtos.Models.Base;
+﻿using AppyNox.Services.Authentication.Application.DTOs.IdentityUserDTOs.Models;
 using AppyNox.Services.Authentication.Application.MediatR.Commands;
 using AppyNox.Services.Authentication.Application.Validators.IdentityUser;
 using AppyNox.Services.Authentication.Domain.Entities;
@@ -16,7 +16,7 @@ namespace AppyNox.Services.Authentication.Application.MediatR.Handlers
                                                    IUserValidator<ApplicationUser> userValidator,
                                                    PasswordValidator<ApplicationUser> passwordValidator,
                                                    PasswordHasher<ApplicationUser> passwordHasher)
-        : IRequestHandler<CreateUserCommand, (Guid id, IdentityUserDto dto)>
+        : IRequestHandler<CreateUserCommand, (Guid id, ApplicationUserDto dto)>
     {
         #region [ Fields ]
 
@@ -36,7 +36,7 @@ namespace AppyNox.Services.Authentication.Application.MediatR.Handlers
 
         #region [ Public Methods ]
 
-        public async Task<(Guid id, IdentityUserDto dto)> Handle(CreateUserCommand request, CancellationToken cancellationToken)
+        public async Task<(Guid id, ApplicationUserDto dto)> Handle(CreateUserCommand request, CancellationToken cancellationToken)
         {
             ValidationResult dtoValidationResult = await _identityUserCreateDtoValidator.ValidateAsync(request.IdentityUserCreateDto, cancellationToken);
             if (!dtoValidationResult.IsValid)
@@ -73,7 +73,7 @@ namespace AppyNox.Services.Authentication.Application.MediatR.Handlers
             userEntity.PasswordHash = _passwordHasher.HashPassword(userEntity, request.IdentityUserCreateDto.Password);
             await _userManager.CreateAsync(userEntity);
 
-            return (Guid.Parse(userEntity.Id), _mapper.Map<IdentityUserDto>(userEntity));
+            return (userEntity.Id, _mapper.Map<ApplicationUserDto>(userEntity));
         }
 
         #endregion

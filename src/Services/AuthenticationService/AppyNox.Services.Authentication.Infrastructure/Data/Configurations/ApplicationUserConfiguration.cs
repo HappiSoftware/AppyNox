@@ -12,13 +12,21 @@ namespace AppyNox.Services.Authentication.Infrastructure.Data.Configurations
     /// Initializes a new instance of the ApplicationUserConfiguration class with the specified admin user ID.
     /// </remarks>
     /// <param name="adminUserId">The ID of the admin user for seeding data.</param>
-    internal class ApplicationUserConfiguration(string adminUserId, Guid companyId) : IEntityTypeConfiguration<ApplicationUser>
+    /// <param name="companyId">The ID of the admin user company for seeding data.</param>
+    /// <param name="superAdminId">The ID of the super admin user for seeding data.</param>
+    /// <param name="happiCompanyId">The ID of the super admin company user for seeding data.</param>
+    internal class ApplicationUserConfiguration(Guid adminUserId, Guid companyId, Guid superAdminId, Guid happiCompanyId)
+        : IEntityTypeConfiguration<ApplicationUser>
     {
         #region [ Fields ]
 
-        private readonly string _adminUserId = adminUserId;
+        private readonly Guid _adminUserId = adminUserId;
+
+        private readonly Guid _superAdminId = superAdminId;
 
         private readonly Guid _companyId = companyId;
+
+        private readonly Guid _happiCompanyId = happiCompanyId;
 
         #endregion
 
@@ -30,10 +38,14 @@ namespace AppyNox.Services.Authentication.Infrastructure.Data.Configurations
         /// <param name="builder">The builder being used to construct the entity type model.</param>
         public void Configure(EntityTypeBuilder<ApplicationUser> builder)
         {
+            #region [ Configurations ]
+
             builder.HasOne(c => c.Company)
                 .WithMany(cd => cd.Users)
                 .HasForeignKey(c => c.CompanyId)
                 .IsRequired();
+
+            #endregion
 
             #region [ Seeds ]
 
@@ -48,7 +60,22 @@ namespace AppyNox.Services.Authentication.Infrastructure.Data.Configurations
                 NormalizedEmail = "ADMIN@EMAIL.COM",
                 EmailConfirmed = true,
                 PasswordHash = hasher.HashPassword(new ApplicationUser(), "Admin@123"),
-                CompanyId = _companyId
+                IsAdmin = true,
+                CompanyId = _companyId,
+                SecurityStamp = Guid.NewGuid().ToString()
+            },
+            new ApplicationUser
+            {
+                Id = _superAdminId,
+                UserName = "superadmin",
+                NormalizedUserName = "SUPERADMIN",
+                Email = "sadmin@email.com",
+                NormalizedEmail = "SADMIN@EMAIL.COM",
+                EmailConfirmed = true,
+                PasswordHash = hasher.HashPassword(new ApplicationUser(), "SAdmin@123"),
+                IsAdmin = true,
+                CompanyId = _happiCompanyId,
+                SecurityStamp = Guid.NewGuid().ToString()
             });
 
             #endregion

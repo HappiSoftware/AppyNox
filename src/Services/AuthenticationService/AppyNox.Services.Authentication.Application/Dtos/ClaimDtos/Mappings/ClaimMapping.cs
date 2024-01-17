@@ -1,4 +1,4 @@
-﻿using AppyNox.Services.Authentication.Application.Dtos.ClaimDtos.Models.Base;
+﻿using AppyNox.Services.Authentication.Application.DTOs.ClaimDtos.Models;
 using AutoMapper;
 using System.Security.Claims;
 

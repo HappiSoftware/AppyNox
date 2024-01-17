@@ -1,7 +1,9 @@
 ﻿using AppyNox.Services.Authentication.Domain.Entities;
 using AppyNox.Services.Authentication.WebAPI.Configuration;
 using AppyNox.Services.Authentication.WebAPI.ExceptionExtensions.Base;
-using AppyNox.Services.Authentication.WebAPI.Managers.Implementations;
+using AppyNox.Services.Authentication.WebAPI.Managers;
+using AppyNox.Services.Base.API.ExceptionExtensions.Base;
+using AppyNox.Services.Base.Application.Interfaces.Exceptions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Moq;
@@ -13,7 +15,7 @@ namespace AppyNox.Services.Authentication.WebAPI.UnitTest.Managers
 {
     public class JwtTokenManagerUnitTest
     {
-        #region Fields
+        #region [ Fields ]
 
         private readonly AuthenticationJwtConfiguration _jwtConfiguration;
 
@@ -26,7 +28,7 @@ namespace AppyNox.Services.Authentication.WebAPI.UnitTest.Managers
         public JwtTokenManagerUnitTest()
         {
             _jwtConfiguration = new("TotallySecretAndAccurateSecretKey", "HappiCorp", "HappyCustomers");
-            _jwtTokenManager = new(It.IsAny<UserManager<ApplicationUser>>(), It.IsAny<RoleManager<IdentityRole>>(), _jwtConfiguration);
+            _jwtTokenManager = new(It.IsAny<UserManager<ApplicationUser>>(), It.IsAny<RoleManager<ApplicationRole>>(), _jwtConfiguration);
         }
 
         #endregion
@@ -82,7 +84,7 @@ namespace AppyNox.Services.Authentication.WebAPI.UnitTest.Managers
             string token = GenerateTestToken(expired: true);
 
             // Act & Assert
-            var exception = Assert.Throws<AuthenticationServiceException>(() => _jwtTokenManager.VerifyToken(token));
+            var exception = Assert.Throws<NoxApiException>(() => _jwtTokenManager.VerifyToken(token));
             Assert.Equal((int)HttpStatusCode.Unauthorized, exception.StatusCode);
         }
 

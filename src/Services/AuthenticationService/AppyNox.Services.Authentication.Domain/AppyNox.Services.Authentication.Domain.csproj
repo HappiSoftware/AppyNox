@@ -16,4 +16,8 @@
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\.BaseService\AppyNox.Services.Base.Domain\AppyNox.Services.Base.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -184,11 +184,11 @@ namespace AppyNox.Services.Base.IntegrationTests.Ductus
             throw new Exception($"Service did not become healthy in time '{healthUri}'");
         }
 
-        protected async Task AuthenticateAndGetToken()
+        protected async Task AuthenticateAndGetToken(string userName = "admin", string password = "Admin@123")
         {
             var authUri = ServiceURIs.AuthenticationServiceURI + "/authentication/connect/token";
             var content = new StringContent(
-                JsonSerializer.Serialize(new { userName = "admin", password = "Admin@123" }),
+                JsonSerializer.Serialize(new { userName, password }),
                 Encoding.UTF8,
                 "application/json"
             );

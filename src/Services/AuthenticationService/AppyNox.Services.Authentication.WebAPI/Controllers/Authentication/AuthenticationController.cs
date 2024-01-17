@@ -1,12 +1,12 @@
-﻿using AppyNox.Services.Authentication.Application.Dtos.AccountDtos.Models.Base;
-using AppyNox.Services.Authentication.Application.Dtos.RefreshTokenDtos.Models.Base;
-using AppyNox.Services.Authentication.WebAPI.ExceptionExtensions.Base;
-using AppyNox.Services.Authentication.WebAPI.Managers.Interfaces;
+﻿using AppyNox.Services.Authentication.WebAPI.ExceptionExtensions.Base;
+using AppyNox.Services.Authentication.Application.Interfaces.Authentication;
 using AppyNox.Services.Base.Application.ExceptionExtensions;
 using AutoWrapper.Wrappers;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using AppyNox.Services.Authentication.Application.DTOs.RefreshTokenDtos.Models;
+using AppyNox.Services.Authentication.Application.DTOs.AccountDtos.Models;
 
 namespace AppyNox.Services.Authentication.WebAPI.Controllers.Authentication
 {
@@ -41,11 +41,11 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers.Authentication
 
             if (string.IsNullOrEmpty(tokens.jwtToken) || string.IsNullOrEmpty(tokens.refreshToken))
             {
-                throw new AuthenticationServiceException("Invalid login attempt", (int)HttpStatusCode.Unauthorized);
+                throw new AuthenticationApiException("Invalid login attempt", (int)HttpStatusCode.Unauthorized);
             }
             if (tokens.jwtToken == "I am a teapot")
             {
-                throw new AuthenticationServiceException("I am a teapot", (int)HttpStatusCode.Locked);
+                throw new AuthenticationApiException("I am a teapot", (int)HttpStatusCode.Locked);
             }
 
             return new ApiResponse(new { Token = tokens.jwtToken, RefreshToken = tokens.refreshToken }, 200);
@@ -73,7 +73,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers.Authentication
 
             if (!_customTokenManager.VerifyRefreshToken(model.RefreshToken, storedRefreshToken))
             {
-                throw new AuthenticationServiceException("", (int)HttpStatusCode.Unauthorized);
+                throw new AuthenticationApiException("", (int)HttpStatusCode.Unauthorized);
             }
 
             var newJwtToken = await _customTokenManager.CreateToken(userId);

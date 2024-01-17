@@ -1,8 +1,8 @@
-﻿using AppyNox.Services.Authentication.Application.Dtos.IdentityUserDtos.Models.Base;
+﻿using AppyNox.Services.Authentication.Application.DTOs.IdentityUserDTOs.Models;
 using MediatR;
 
 namespace AppyNox.Services.Authentication.Application.MediatR.Commands
 {
-    public record CreateUserCommand(IdentityUserCreateDto IdentityUserCreateDto) : IRequest<(Guid id, IdentityUserDto dto)>;
+    public record CreateUserCommand(ApplicationUserCreateDto IdentityUserCreateDto) : IRequest<(Guid id, ApplicationUserDto dto)>;
     public record DeleteUserCommand(Guid UserId) : IRequest;
 }

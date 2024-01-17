@@ -10,12 +10,15 @@ namespace AppyNox.Services.Authentication.Infrastructure.Data.Configurations
     /// <remarks>
     /// Initializes a new instance of the CompanyEntity class with the specified company ID.
     /// </remarks>
+    /// <param name="happiCompanyId">The ID of the Happi CompanyEntity for seeding data.</param>
     /// <param name="companyId">The ID of the CompanyEntity for seeding data.</param>
-    internal class CompanyConfiguration(Guid companyId) : IEntityTypeConfiguration<CompanyEntity>
+    internal class CompanyConfiguration(Guid happiCompanyId, Guid companyId) : IEntityTypeConfiguration<CompanyEntity>
     {
         #region [ Fields ]
 
         private readonly Guid _companyId = companyId;
+
+        private readonly Guid _happiCompanyId = happiCompanyId;
 
         #endregion
 
@@ -37,7 +40,14 @@ namespace AppyNox.Services.Authentication.Infrastructure.Data.Configurations
             builder.HasMany(c => c.Users)
                 .WithOne(cd => cd.Company)
                 .HasForeignKey(c => c.CompanyId)
-                .IsRequired();
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasMany(c => c.Roles)
+                .WithOne(cd => cd.Company)
+                .HasForeignKey(c => c.CompanyId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder.Property(x => x.Name).IsRequired();
 
@@ -48,8 +58,13 @@ namespace AppyNox.Services.Authentication.Infrastructure.Data.Configurations
             builder.HasData(
                 new CompanyEntity
                 {
-                    Id = _companyId,
+                    Id = _happiCompanyId,
                     Name = "HappiSoft"
+                },
+                new CompanyEntity
+                {
+                    Id = _companyId,
+                    Name = "TestCompany"
                 });
 
             #endregion
