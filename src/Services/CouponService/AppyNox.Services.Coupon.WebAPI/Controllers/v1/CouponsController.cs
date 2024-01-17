@@ -1,10 +1,10 @@
 ﻿using AppyNox.Services.Base.API.Controllers;
+using AppyNox.Services.Base.API.Filters;
 using AppyNox.Services.Base.API.Helpers;
 using AppyNox.Services.Base.API.ViewModels;
 using AppyNox.Services.Base.Application.MediatR.Commands;
 using AppyNox.Services.Base.Infrastructure.Repositories.Common;
 using AppyNox.Services.Coupon.Domain.Entities;
-using AppyNox.Services.Coupon.WebAPI.ExceptionExtensions.Base;
 using Asp.Versioning;
 using AutoWrapper.Wrappers;
 using MediatR;
@@ -17,6 +17,7 @@ namespace AppyNox.Services.Coupon.WebAPI.Controllers.v1
     [ApiController]
     [ApiVersion("1.0")]
     [Route("api/[controller]")]
+    [JwtTokenValidate]
     public class CouponsController(IMediator mediator) : NoxController
     {
         #region [ Fields ]

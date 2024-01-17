@@ -6,6 +6,10 @@ namespace AppyNox.Services.Authentication.Domain.Entities
     {
         #region [ Relations ]
 
+        public string Code { get; set; } = string.Empty;
+
+        public string? Description { get; set; }
+
         public Guid CompanyId { get; set; }
 
         public virtual CompanyEntity Company { get; set; } = null!;

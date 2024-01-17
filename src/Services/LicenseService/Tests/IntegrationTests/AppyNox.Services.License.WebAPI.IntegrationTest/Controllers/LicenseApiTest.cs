@@ -9,7 +9,7 @@ using System.Text;
 using System.Text.Json;
 using Xunit.Extensions.Ordering;
 
-namespace AppyNox.Services.License.WebAPI.IntegrationTest
+namespace AppyNox.Services.License.WebAPI.IntegrationTest.Controllers
 {
     public class LicenseApiTest(LicenseApiTestFixture licenseApiTestFixture) : IClassFixture<LicenseApiTestFixture>
     {
@@ -86,7 +86,7 @@ namespace AppyNox.Services.License.WebAPI.IntegrationTest
 
         [Fact]
         [Order(3)]
-        public async Task Create_ShouldAddNewCoupon()
+        public async Task Create_ShouldAddNewLicense()
         {
             #region [ Create License ]
 
@@ -100,7 +100,8 @@ namespace AppyNox.Services.License.WebAPI.IntegrationTest
                 licenseKey = "4547a28a-ce2c-4d84-b791-466d7aedd2bb",
                 expirationDate = "2025-01-03T20:30:02.928Z",
                 maxUsers = 2,
-                maxMacAddresses = 3
+                maxMacAddresses = 3,
+                productId = "9991492a-118c-4f20-ac8c-76410d57957c"
             };
             var jsonRequest = JsonSerializer.Serialize(requestBody);
             var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
@@ -158,6 +159,7 @@ namespace AppyNox.Services.License.WebAPI.IntegrationTest
                 description = newDescription,
                 maxUsers = newMaxUsers,
                 maxMacAddresses = newmaxMacAddresses,
+                productId = license.ProductId,
                 id = license.Id
             };
             var jsonRequest = JsonSerializer.Serialize(requestBody);
@@ -222,10 +224,10 @@ namespace AppyNox.Services.License.WebAPI.IntegrationTest
             #region [ Get License ]
 
             // Act
-            var getCoupon = _licenseApiTestFixture.DbContext.Licenses.SingleOrDefault(x => x.Id == id);
+            var getLicense = _licenseApiTestFixture.DbContext.Licenses.SingleOrDefault(x => x.Id == id);
 
             // Assert
-            Assert.Null(getCoupon);
+            Assert.Null(getLicense);
 
             #endregion
         }

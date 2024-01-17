@@ -34,6 +34,8 @@ namespace AppyNox.Services.Authentication.Infrastructure.Data.Configurations
 
             builder.HasKey(c => c.Id);
 
+            builder.Property(x => x.Code).IsRequired().HasMaxLength(5);
+
             builder.Property(c => c.Id)
                 .ValueGeneratedOnAdd();
 

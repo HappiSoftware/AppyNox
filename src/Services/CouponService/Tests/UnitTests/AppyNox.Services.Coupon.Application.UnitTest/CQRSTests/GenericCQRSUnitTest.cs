@@ -93,7 +93,7 @@ namespace AppyNox.Services.Coupon.Application.UnitTest.CQRSTests
 
             // Assert
             Assert.NotNull(result.basicDto);
-            Assert.True(result.basicDto is CouponSimpleDto);
+            Assert.True(result.basicDto is CouponSimpleCreateDto);
         }
 
         [Fact]

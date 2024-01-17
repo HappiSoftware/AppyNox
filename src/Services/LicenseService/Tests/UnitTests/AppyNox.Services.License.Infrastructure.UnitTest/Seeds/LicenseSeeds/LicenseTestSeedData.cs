@@ -22,11 +22,10 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.Seeds.LicenseSeeds
         {
             if (licenseSize <= 0)
             {
-                throw new ArgumentException("Coupon size must be greater than 0.", nameof(licenseSize));
+                throw new ArgumentException("License size must be greater than 0.", nameof(licenseSize));
             }
 
             var licenses = new List<LicenseEntity>();
-            var random = new Random();
 
             #region [ Licenses ]
 
@@ -37,11 +36,14 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.Seeds.LicenseSeeds
                 LicenseEntity licenseEntity = new()
                 {
                     Id = Guid.NewGuid(),
-                    Code = $"LK{codeIdentifier}",
-                    Description = $"DescriptionCoupon{codeIdentifier++:D3}",
+                    Code = $"LK{codeIdentifier:D3}",
+                    Description = $"DescriptionCoupon{codeIdentifier++}",
                     LicenseKey = Guid.NewGuid().ToString(),
                     ExpirationDate = DateTime.UtcNow.AddDays(10),
-                    MaxUsers = 3
+                    MaxUsers = 3,
+                    MaxMacAddresses = 3,
+                    ProductId = Guid.NewGuid(),
+                    CompanyId = Guid.NewGuid()
                 };
                 licenses.Add(licenseEntity);
             }

@@ -10,11 +10,11 @@ namespace AppyNox.Services.License.Application.Dtos.LicenseDtos.Mappings
 
         public LicenseMapping()
         {
-            CreateMap<LicenseSimpleCreateDto, LicenseEntity>();
+            CreateMap<LicenseSimpleCreateDto, LicenseEntity>().ReverseMap();
 
             CreateMap<LicenseSimpleUpdateDto, LicenseEntity>().ReverseMap();
 
-            CreateMap<LicenseEntity, LicenseSimpleDto>().ReverseMap();
+            CreateMap<LicenseEntity, LicenseSimpleDto>();
         }
 
         #endregion

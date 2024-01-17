@@ -5,7 +5,7 @@ namespace AppyNox.Services.Authentication.Application.DTOs.IdentityUserDTOs.Mode
     /// <summary>
     /// Data transfer object representing an identity user.
     /// </summary>
-    public class ApplicationUserDto : BaseDto
+    public class ApplicationUserDto : DtoBase
     {
         #region [ Properties ]
 

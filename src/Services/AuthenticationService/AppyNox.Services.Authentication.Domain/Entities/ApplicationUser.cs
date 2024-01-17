@@ -6,6 +6,8 @@ namespace AppyNox.Services.Authentication.Domain.Entities
     {
         #region [ Properties ]
 
+        public string Code { get; set; } = string.Empty;
+
         public bool IsAdmin { get; set; }
 
         #endregion

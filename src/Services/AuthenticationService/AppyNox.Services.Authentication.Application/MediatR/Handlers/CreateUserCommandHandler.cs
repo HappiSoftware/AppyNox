@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace AppyNox.Services.Authentication.Application.MediatR.Handlers
 {
-    internal sealed class CreateUserCommandHandler(IdentityUserCreateDtoValidator identityUserCreateDtoValidator,
+    internal sealed class CreateUserCommandHandler(ApplicationUserCreateDtoValidator identityUserCreateDtoValidator,
                                                    IMapper mapper,
                                                    UserManager<ApplicationUser> userManager,
                                                    IUserValidator<ApplicationUser> userValidator,
@@ -20,7 +20,7 @@ namespace AppyNox.Services.Authentication.Application.MediatR.Handlers
     {
         #region [ Fields ]
 
-        private readonly IdentityUserCreateDtoValidator _identityUserCreateDtoValidator = identityUserCreateDtoValidator;
+        private readonly ApplicationUserCreateDtoValidator _identityUserCreateDtoValidator = identityUserCreateDtoValidator;
 
         private readonly IMapper _mapper = mapper;
 

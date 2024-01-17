@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace AppyNox.Services.Coupon.Application.Validators.Coupon.Update
 {
-    public class CouponSimpleUpdateValidator : BaseDtoValidator<CouponSimpleUpdateDto>
+    public class CouponSimpleUpdateValidator : DtoValidatorBase<CouponSimpleUpdateDto>
     {
         #region Public Constructors
 

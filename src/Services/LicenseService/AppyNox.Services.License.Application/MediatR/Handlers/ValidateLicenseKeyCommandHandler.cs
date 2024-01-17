@@ -17,12 +17,12 @@ namespace AppyNox.Services.License.Application.MediatR.Handlers
 
         public async Task<(bool isValid, Guid? CompanyId, Guid? LicenseId)> Handle(ValidateLicenseKeyCommand request, CancellationToken cancellationToken)
         {
-            var license = await _repository.FindLicenseByKey(request.LicenseKey, cancellationToken);
+            var license = await _repository.FindLicenseByKeyAsync(request.LicenseKey, cancellationToken);
 
             if (license == null) return (false, null, null);
 
             // Check MaxUsers constraint
-            var userCount = await _repository.GetUserCountForLicenseKey(license.Id, cancellationToken);
+            var userCount = await _repository.GetUserCountForLicenseKeyAsync(license.Id, cancellationToken);
 
             return (userCount < license.MaxUsers, license.CompanyId, license.Id);
         }

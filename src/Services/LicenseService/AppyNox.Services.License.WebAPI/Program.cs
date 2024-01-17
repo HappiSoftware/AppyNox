@@ -16,6 +16,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
+using AppyNox.Services.Base.API.Authentication;
+using AppyNox.Services.Base.Application.Interfaces.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -147,6 +149,7 @@ builder.Services.AddAuthorization(options =>
 });
 
 builder.Services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
+builder.Services.AddScoped<INoxTokenManager, NoxTokenManager>();
 noxLogger.LogInformation("Registering JWT Configuration completed.");
 
 #endregion

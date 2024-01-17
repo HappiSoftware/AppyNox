@@ -5,7 +5,7 @@ namespace AppyNox.Services.Authentication.Application.DTOs.ApplicationRoleDTOs.M
     /// <summary>
     /// Data transfer object representing an identity role.
     /// </summary>
-    public class ApplicationRoleDto : BaseDto
+    public class ApplicationRoleDto : DtoBase
     {
         #region [ Properties ]
 

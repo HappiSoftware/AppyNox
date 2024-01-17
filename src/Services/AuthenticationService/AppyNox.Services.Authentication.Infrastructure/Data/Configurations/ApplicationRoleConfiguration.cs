@@ -40,6 +40,9 @@ namespace AppyNox.Services.Authentication.Infrastructure.Data.Configurations
         {
             #region [ Configurations ]
 
+            builder.Property(x => x.Code).IsRequired().HasMaxLength(5);
+            builder.Property(x => x.Description).HasMaxLength(60);
+
             builder.HasOne(ar => ar.Company)
                 .WithMany(c => c.Roles)
                 .HasForeignKey(ar => ar.CompanyId)
@@ -52,14 +55,18 @@ namespace AppyNox.Services.Authentication.Infrastructure.Data.Configurations
             builder.HasData(new ApplicationRole
             {
                 Id = _adminRoleId,
+                Code = "Role1",
                 Name = "Admin",
+                Description = "RoleDescription",
                 NormalizedName = "ADMIN",
                 CompanyId = _companyId
             },
             new ApplicationRole
             {
                 Id = _superAdminRoleId,
+                Code = "Role2",
                 Name = "SuperAdmin",
+                Description = "RoleDescription",
                 NormalizedName = "SUPERADMIN",
                 CompanyId = _happiCompanyId
             });

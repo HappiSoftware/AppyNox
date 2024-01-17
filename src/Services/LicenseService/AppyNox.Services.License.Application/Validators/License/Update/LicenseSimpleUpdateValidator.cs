@@ -4,7 +4,7 @@ using AppyNox.Services.License.Application.Validators.License.Create;
 
 namespace AppyNox.Services.License.Application.Validators.License.Update
 {
-    public class LicenseSimpleUpdateValidator : BaseDtoValidator<LicenseSimpleUpdateDto>
+    public class LicenseSimpleUpdateValidator : DtoValidatorBase<LicenseSimpleUpdateDto>
     {
         #region [ Public Constructors ]
 

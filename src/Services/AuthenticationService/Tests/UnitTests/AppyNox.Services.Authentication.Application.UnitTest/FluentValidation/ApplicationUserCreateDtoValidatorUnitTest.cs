@@ -17,7 +17,7 @@ namespace AppyNox.Services.Authentication.Application.UnitTest.FluentValidation
 
         private readonly Mock<IPasswordValidator<ApplicationUser>> _passwordValidator;
 
-        private readonly IdentityUserCreateDtoValidator _validator;
+        private readonly ApplicationUserCreateDtoValidator _validator;
 
         #endregion
 
@@ -36,12 +36,30 @@ namespace AppyNox.Services.Authentication.Application.UnitTest.FluentValidation
 
             _databaseChecksMock.Setup(x => x.IsUsernameUniqueAsync(It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync(true);
             _databaseChecksMock.Setup(x => x.IsEmailUniqueAsync(It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync(true);
-            _validator = new IdentityUserCreateDtoValidator(_databaseChecksMock.Object, _passwordValidator.Object, It.IsAny<UserManager<ApplicationUser>>());
+            _validator = new ApplicationUserCreateDtoValidator(_databaseChecksMock.Object, _passwordValidator.Object, It.IsAny<UserManager<ApplicationUser>>());
         }
 
         #endregion
 
         #region [ Public Methods ]
+
+        [Theory]
+        [InlineData("USR01", true)]
+        [InlineData("USR001", false)]
+        [InlineData("USR1", false)]
+        [InlineData("", false)]
+        [InlineData(null, false)]
+        public async Task Validate_Code_ShouldMatchExpected(string? code, bool expectedIsValid)
+        {
+            // Arrange
+            var dto = new ApplicationUserCreateDto { Code = code, UserName = "validUser", Password = _validPassword, ConfirmPassword = _validPassword, Email = "test@happisoft.com" };
+
+            // Act
+            var result = await _validator.ValidateAsync(dto);
+
+            // Assert
+            Assert.Equal(expectedIsValid, result.IsValid);
+        }
 
         [Theory]
         [InlineData("validUser", true)]
@@ -50,7 +68,7 @@ namespace AppyNox.Services.Authentication.Application.UnitTest.FluentValidation
         public async Task Validate_Username_ShouldMatchExpected(string? username, bool expectedIsValid)
         {
             // Arrange
-            var dto = new ApplicationUserCreateDto { UserName = username!, Password = _validPassword, ConfirmPassword = _validPassword, Email = "test@happisoft.com" };
+            var dto = new ApplicationUserCreateDto { Code = "USR01", UserName = username!, Password = _validPassword, ConfirmPassword = _validPassword, Email = "test@happisoft.com" };
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -67,7 +85,7 @@ namespace AppyNox.Services.Authentication.Application.UnitTest.FluentValidation
         public async Task Validate_Email_ShouldMatchExpected(string? email, bool expectedIsValid)
         {
             // Arrange
-            var dto = new ApplicationUserCreateDto { UserName = "TestUser", Password = _validPassword, ConfirmPassword = _validPassword, Email = email! };
+            var dto = new ApplicationUserCreateDto { Code = "USR01", UserName = "TestUser", Password = _validPassword, ConfirmPassword = _validPassword, Email = email! };
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -98,7 +116,7 @@ namespace AppyNox.Services.Authentication.Application.UnitTest.FluentValidation
         public async Task Validate_Password_ShouldMatchExpected(string password, bool expectedIsValid)
         {
             // Arrange
-            var dto = new ApplicationUserCreateDto { UserName = "TestUser", Password = password, ConfirmPassword = password, Email = "test@happisoft.com" };
+            var dto = new ApplicationUserCreateDto { Code = "USR01", UserName = "TestUser", Password = password, ConfirmPassword = password, Email = "test@happisoft.com" };
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -113,7 +131,7 @@ namespace AppyNox.Services.Authentication.Application.UnitTest.FluentValidation
         public async Task Validate_PasswordConfirmPassword_ShouldMatch(string password, string confirmPassword, bool expectedIsValid)
         {
             // Arrange
-            var dto = new ApplicationUserCreateDto { UserName = "TestUser", Password = password, ConfirmPassword = confirmPassword, Email = "test@happisoft.com" };
+            var dto = new ApplicationUserCreateDto { Code = "USR01", UserName = "TestUser", Password = password, ConfirmPassword = confirmPassword, Email = "test@happisoft.com" };
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -129,7 +147,7 @@ namespace AppyNox.Services.Authentication.Application.UnitTest.FluentValidation
         public async Task Validate_DatabaseChecks_ShouldMatchExpected(string username, string email, bool expectedIsValid)
         {
             // Arrange
-            var dto = new ApplicationUserCreateDto { UserName = username, Email = email, Password = _validPassword, ConfirmPassword = _validPassword };
+            var dto = new ApplicationUserCreateDto { Code = "USR01", UserName = username, Email = email, Password = _validPassword, ConfirmPassword = _validPassword };
             _databaseChecksMock.Setup(x => x.IsUsernameUniqueAsync(username, It.IsAny<CancellationToken>())).ReturnsAsync(username != "existingUser");
             _databaseChecksMock.Setup(x => x.IsEmailUniqueAsync(email, It.IsAny<CancellationToken>())).ReturnsAsync(email != "existing@example.com");
 

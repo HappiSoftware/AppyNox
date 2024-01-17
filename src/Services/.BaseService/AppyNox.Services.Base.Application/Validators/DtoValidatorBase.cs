@@ -5,20 +5,24 @@ using FluentValidation;
 namespace AppyNox.Services.Base.Application.Validators
 {
     /// <summary>
-    /// Provides a Fluent Validation validator for BaseDto and its derived types.
+    /// Provides a Fluent Validation validator for Dto
     /// </summary>
-    /// <typeparam name="T">The type of the DTO being validated, which must be derived from BaseDto.</typeparam>
-    public class BaseDtoValidator<T> : AbstractValidator<T> where T : BaseDto
+    /// <typeparam name="T">The type of the DTO being validated</typeparam>
+    public class DtoValidatorBase<T> : AbstractValidator<T> where T : class
     {
         #region [ Public Constructors ]
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="BaseDtoValidator{T}"/> class,
-        /// setting up validation rules for BaseDto properties.
+        /// Initializes a new instance of the <see cref="DtoValidatorBase{T}"/> class,
+        /// setting up validation rules for DtoBase properties.
         /// </summary>
-        public BaseDtoValidator()
+        public DtoValidatorBase()
         {
-            RuleFor(dto => dto.Code).ValidateCode();
+            if (typeof(DtoBase).IsAssignableFrom(typeof(T)))
+            {
+                RuleFor(dto => dto).NotNull().WithMessage("Dto cannot be null.");
+                RuleFor(dto => (dto as DtoBase)!.Code).ValidateCode();
+            }
 
             if (typeof(IUpdateDto).IsAssignableFrom(typeof(T)))
             {

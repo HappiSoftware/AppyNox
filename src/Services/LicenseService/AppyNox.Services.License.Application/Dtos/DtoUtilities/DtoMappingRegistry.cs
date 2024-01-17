@@ -1,9 +1,12 @@
 ﻿using AppyNox.Services.Base.Application.DtoUtilities;
+using AppyNox.Services.Base.Application.ExceptionExtensions.Base;
 using AppyNox.Services.Base.Core.Enums;
 using AppyNox.Services.License.Application.Dtos.LicenseDtos.DetailLevel;
 using AppyNox.Services.License.Application.Dtos.LicenseDtos.Models.Base;
+using AppyNox.Services.License.Application.Dtos.ProductDtos.DetailLevel;
 using AppyNox.Services.License.Domain.Entities;
 using System.Data;
+using System.Net;
 using System.Reflection;
 
 namespace AppyNox.Services.License.Application.Dtos.DtoUtilities
@@ -29,8 +32,19 @@ namespace AppyNox.Services.License.Application.Dtos.DtoUtilities
                     _ => licenseDetailAttribute.DataAccessDetailLevel
                 };
             }
+            else if (attribute is ProductDetailLevelAttribute productDetailAttribute)
+            {
+                return mappingType switch
+                {
+                    DtoLevelMappingTypes.DataAccess => productDetailAttribute.DataAccessDetailLevel,
+                    DtoLevelMappingTypes.Create => productDetailAttribute.CreateDetailLevel,
+                    DtoLevelMappingTypes.Update => productDetailAttribute.UpdateDetailLevel,
+                    _ => productDetailAttribute.DataAccessDetailLevel
+                };
+            }
 
-            throw new ArgumentException("Unsupported attribute type for detail level mapping.");
+            throw new NoxApplicationException("Unsupported attribute type for detail level mapping. Check DtoMappingRegistry",
+                (int)HttpStatusCode.InternalServerError);
         }
 
         #endregion
@@ -52,9 +66,13 @@ namespace AppyNox.Services.License.Application.Dtos.DtoUtilities
                 var attributes = Attribute.GetCustomAttributes(dtoType);
                 foreach (var attribute in attributes)
                 {
-                    if (attribute is LicenseDetailLevelAttribute couponAttribute)
+                    if (attribute is LicenseDetailLevelAttribute licenseAttribute)
                     {
-                        RegisterMapping(typeof(LicenseEntity), dtoType, couponAttribute);
+                        RegisterMapping(typeof(LicenseEntity), dtoType, licenseAttribute);
+                    }
+                    else if (attribute is ProductDetailLevelAttribute productAttribute)
+                    {
+                        RegisterMapping(typeof(ProductEntity), dtoType, productAttribute);
                     }
                 }
             }

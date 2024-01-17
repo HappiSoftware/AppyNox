@@ -4,7 +4,7 @@ using AppyNox.Services.License.Application.Dtos.LicenseDtos.DetailLevel;
 namespace AppyNox.Services.License.Application.Dtos.LicenseDtos.Models.Base
 {
     [LicenseDetailLevel(LicenseCreateDetailLevel.Simple)]
-    public class LicenseSimpleCreateDto : BaseDto
+    public class LicenseSimpleCreateDto : DtoBase
     {
         #region [ Properties ]
 
@@ -17,6 +17,12 @@ namespace AppyNox.Services.License.Application.Dtos.LicenseDtos.Models.Base
         public int MaxUsers { get; set; }
 
         public int MaxMacAddresses { get; set; }
+
+        #endregion
+
+        #region [ Relations ]
+
+        public Guid ProductId { get; set; }
 
         #endregion
     }

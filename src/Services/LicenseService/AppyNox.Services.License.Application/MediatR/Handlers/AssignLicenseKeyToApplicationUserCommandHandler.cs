@@ -21,7 +21,7 @@ namespace AppyNox.Services.License.Application.MediatR.Handlers
         {
             try
             {
-                await _licenseRepository.AssignLicenseToApplicationUser(request.LicenseId, request.UserId);
+                await _licenseRepository.AssignLicenseToApplicationUserAsync(request.LicenseId, request.UserId);
             }
             catch (Exception ex) when (ex is INoxException)
             {

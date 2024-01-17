@@ -92,7 +92,7 @@ namespace AppyNox.Services.License.Application.UnitTest.CQRSTests
 
             // Assert
             Assert.NotNull(result.basicDto);
-            Assert.True(result.basicDto is LicenseSimpleDto);
+            Assert.True(result.basicDto is LicenseSimpleCreateDto);
         }
 
         [Fact]

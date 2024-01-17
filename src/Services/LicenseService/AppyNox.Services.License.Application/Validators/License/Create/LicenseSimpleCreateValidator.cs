@@ -4,7 +4,7 @@ using FluentValidation;
 
 namespace AppyNox.Services.License.Application.Validators.License.Create
 {
-    public class LicenseSimpleCreateValidator : BaseDtoValidator<LicenseSimpleCreateDto>
+    public class LicenseSimpleCreateValidator : DtoValidatorBase<LicenseSimpleCreateDto>
     {
         #region [ Public Constructors ]
 
@@ -29,6 +29,9 @@ namespace AppyNox.Services.License.Application.Validators.License.Create
 
             RuleFor(license => license.MaxMacAddresses)
                 .NotNull().NotEmpty().WithMessage("Max Mac Addresses is mandatory");
+
+            RuleFor(license => license.ProductId)
+                .NotNull().NotEmpty().WithMessage("ProductId is mandatory");
         }
 
         #endregion

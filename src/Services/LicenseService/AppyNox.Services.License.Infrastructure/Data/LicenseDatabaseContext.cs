@@ -27,6 +27,8 @@ namespace AppyNox.Services.License.Infrastructure.Data
 
         public DbSet<ApplicationUserLicenseMacAddress> ApplicationUserLicenseMacAddresses { get; set; }
 
+        public DbSet<ProductEntity> Products { get; set; }
+
         #endregion
 
         #region [ Protected Methods ]
@@ -38,12 +40,14 @@ namespace AppyNox.Services.License.Infrastructure.Data
             #region [ Common Ids ]
 
             Guid licenseId = Guid.Parse("00455e60-8524-48df-955c-cc9b1f2e7476");
+            Guid productId = Guid.Parse("9991492a-118c-4f20-ac8c-76410d57957c");
 
             #endregion
 
             #region [ Entity Configurations ]
 
-            modelBuilder.ApplyConfiguration(new LicenseConfiguration(licenseId));
+            modelBuilder.ApplyConfiguration(new ProductConfiguration(productId));
+            modelBuilder.ApplyConfiguration(new LicenseConfiguration(licenseId, productId));
             modelBuilder.ApplyConfiguration(new ApplicationUserLicensesConfiguration());
             modelBuilder.ApplyConfiguration(new ApplicationUserLicenseMacAddressConfiguration());
 

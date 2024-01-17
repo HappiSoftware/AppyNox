@@ -5,11 +5,13 @@ namespace AppyNox.Services.Authentication.Application.DTOs.ApplicationRoleDTOs.M
     /// <summary>
     /// Data transfer object for creating a new identity role.
     /// </summary>
-    public class ApplicationRoleCreateDto : BaseDto
+    public class ApplicationRoleCreateDto : DtoBase
     {
         #region [ Properties ]
 
         public string Name { get; set; } = string.Empty;
+
+        public string? Description { get; set; }
 
         #endregion
     }
