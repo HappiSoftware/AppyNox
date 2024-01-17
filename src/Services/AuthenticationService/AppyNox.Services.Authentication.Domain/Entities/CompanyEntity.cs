@@ -1,6 +1,8 @@
-﻿namespace AppyNox.Services.Authentication.Domain.Entities
+﻿using AppyNox.Services.Base.Domain.Interfaces;
+
+namespace AppyNox.Services.Authentication.Domain.Entities
 {
-    public class CompanyEntity
+    public class CompanyEntity : IEntityWithGuid
     {
         #region [ Properties ]
 
@@ -8,7 +10,13 @@
 
         public string Name { get; set; } = string.Empty;
 
+        #endregion
+
+        #region [ Relations ]
+
         public virtual ICollection<ApplicationUser>? Users { get; set; }
+
+        public virtual ICollection<ApplicationRole>? Roles { get; set; }
 
         #endregion
     }

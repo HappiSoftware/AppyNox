@@ -2,14 +2,8 @@
 
 namespace AppyNox.Services.Authentication.Domain.Entities
 {
-    public class ApplicationUser : IdentityUser<Guid>
+    public class ApplicationRole : IdentityRole<Guid>
     {
-        #region [ Properties ]
-
-        public bool IsAdmin { get; set; }
-
-        #endregion
-
         #region [ Relations ]
 
         public Guid CompanyId { get; set; }

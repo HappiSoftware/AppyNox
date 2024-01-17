@@ -45,7 +45,7 @@ namespace AppyNox.Services.Authentication.Infrastructure
                 _ => configuration.GetConnectionString("DefaultConnection"),
             };
 
-            services.AddDbContext<IdentityDbContext>(options =>
+            services.AddDbContext<IdentityDatabaseContext>(options =>
                 options.UseNpgsql(connectionString));
 
             #endregion

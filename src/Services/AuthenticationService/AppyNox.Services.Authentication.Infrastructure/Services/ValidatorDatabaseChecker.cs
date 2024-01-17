@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AppyNox.Services.Authentication.Infrastructure.Services
 {
-    public class ValidatorDatabaseChecker(IdentityDbContext dbContext) : IDatabaseChecks
+    public class ValidatorDatabaseChecker(IdentityDatabaseContext dbContext) : IDatabaseChecks
     {
         #region [ Fields ]
 
-        private readonly IdentityDbContext _dbContext = dbContext;
+        private readonly IdentityDatabaseContext _dbContext = dbContext;
 
         #endregion
 

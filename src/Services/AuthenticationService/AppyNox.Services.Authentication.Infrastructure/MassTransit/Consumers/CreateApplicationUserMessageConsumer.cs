@@ -1,4 +1,4 @@
-﻿using AppyNox.Services.Authentication.Application.Dtos.IdentityUserDtos.Models.Base;
+﻿using AppyNox.Services.Authentication.Application.DTOs.IdentityUserDTOs.Models;
 using AppyNox.Services.Authentication.Application.MediatR.Commands;
 using AppyNox.Services.Authentication.SharedEvents.Events;
 using MassTransit;
@@ -18,7 +18,7 @@ namespace AppyNox.Services.Authentication.Infrastructure.MassTransit.Consumers
 
         public async Task Consume(ConsumeContext<CreateApplicationUserMessage> context)
         {
-            IdentityUserCreateDto dto = new()
+            ApplicationUserCreateDto dto = new()
             {
                 UserName = context.Message.UserName,
                 Password = context.Message.Password,

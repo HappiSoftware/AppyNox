@@ -1,18 +1,19 @@
-using AppyNox.Services.Base.API.Extensions;
-using AppyNox.Services.Base.API.Middleware;
-using AppyNox.Services.Base.Application.Interfaces.Loggers;
-using AppyNox.Services.Base.Infrastructure.Extensions;
-using AppyNox.Services.Base.Infrastructure.HostedServices;
-using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
-using AppyNox.Services.Base.API.Permissions;
 using AppyNox.Services.Authentication.Application;
+using AppyNox.Services.Authentication.Application.Interfaces.Authentication;
 using AppyNox.Services.Authentication.Domain.Entities;
 using AppyNox.Services.Authentication.Infrastructure;
 using AppyNox.Services.Authentication.Infrastructure.Data;
 using AppyNox.Services.Authentication.WebAPI.Configuration;
 using AppyNox.Services.Authentication.WebAPI.ControllerDependencies;
-using AppyNox.Services.Authentication.WebAPI.Managers.Implementations;
-using AppyNox.Services.Authentication.WebAPI.Managers.Interfaces;
+using AppyNox.Services.Authentication.WebAPI.Managers;
+using AppyNox.Services.Authentication.WebAPI.Permission;
+using AppyNox.Services.Base.API.Extensions;
+using AppyNox.Services.Base.API.Middleware;
+using AppyNox.Services.Base.API.Permissions;
+using AppyNox.Services.Base.Application.Interfaces.Loggers;
+using AppyNox.Services.Base.Infrastructure.Extensions;
+using AppyNox.Services.Base.Infrastructure.HostedServices;
+using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
 using Asp.Versioning;
 using AutoWrapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -20,7 +21,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
-using AppyNox.Services.Authentication.WebAPI.Permission;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -59,8 +59,8 @@ NoxLogger noxLogger = new(logger, "AuthenticationHost");
 
 #region [ Identity ]
 
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddSignInManager()
-        .AddEntityFrameworkStores<IdentityDbContext>().AddRoles<IdentityRole>();
+builder.Services.AddIdentity<ApplicationUser, ApplicationRole>().AddSignInManager()
+        .AddEntityFrameworkStores<IdentityDatabaseContext>().AddRoles<ApplicationRole>();
 
 builder.Services.Configure<IdentityOptions>(options =>
 {
@@ -209,7 +209,7 @@ consulHostedService.OnConsulConnectionFailed += (Exception ex) =>
 
 #region [ Migrations ]
 
-app.Services.ApplyMigrations<IdentityDbContext>();
+app.Services.ApplyMigrations<IdentityDatabaseContext>();
 
 app.Services.ApplyMigrations<IdentitySagaDatabaseContext>();
 

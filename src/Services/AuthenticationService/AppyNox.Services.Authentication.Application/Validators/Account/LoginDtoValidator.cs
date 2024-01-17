@@ -1,4 +1,4 @@
-﻿using AppyNox.Services.Authentication.Application.Dtos.AccountDtos.Models.Base;
+﻿using AppyNox.Services.Authentication.Application.DTOs.AccountDtos.Models;
 using FluentValidation;
 
 namespace AppyNox.Services.Authentication.Application.Validators.Account

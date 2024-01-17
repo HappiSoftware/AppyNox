@@ -13,7 +13,7 @@ namespace AppyNox.Services.Authentication.WebAPI.ControllerDependencies
 
         private readonly UserManager<ApplicationUser> _userManager;
 
-        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly RoleManager<ApplicationRole> _roleManager;
 
         private readonly IUserValidator<ApplicationUser> _userValidator;
 
@@ -28,7 +28,7 @@ namespace AppyNox.Services.Authentication.WebAPI.ControllerDependencies
         #region [ Public Constructors ]
 
         public UsersControllerBaseDependencies(IMapper mapper, UserManager<ApplicationUser> userManager,
-            IUserValidator<ApplicationUser> userValidator, RoleManager<IdentityRole> roleManager, PasswordValidator<ApplicationUser> passwordValidator,
+            IUserValidator<ApplicationUser> userValidator, RoleManager<ApplicationRole> roleManager, PasswordValidator<ApplicationUser> passwordValidator,
             PasswordHasher<ApplicationUser> passwordHasher)
         {
             _mapper = mapper;
@@ -45,7 +45,7 @@ namespace AppyNox.Services.Authentication.WebAPI.ControllerDependencies
 
         public UserManager<ApplicationUser> UserManager => _userManager;
 
-        public RoleManager<IdentityRole> RoleManager => _roleManager;
+        public RoleManager<ApplicationRole> RoleManager => _roleManager;
 
         public IUserValidator<ApplicationUser> UserValidator => _userValidator;
 
