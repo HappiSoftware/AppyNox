@@ -3,6 +3,7 @@ using Consul;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using System.Net;
 using System.Text;
 using System.Text.Json;
 using Winton.Extensions.Configuration.Consul;
@@ -106,7 +107,18 @@ namespace AppyNox.Services.Base.Infrastructure.Extensions
                 byte[] valueBytes = Encoding.UTF8.GetBytes(value);
 
                 var kvPair = new KVPair(key) { Value = valueBytes };
-                await consulClient.KV.Put(kvPair);
+                try
+                {
+                    WriteResult success = await consulClient.KV.Put(kvPair);
+                    if (success.StatusCode != HttpStatusCode.OK)
+                    {
+                        throw new Exception($"Failed to store the key-value pair to Consul KV for '{microServiceName}' in '{environmentName}'.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"An error occurred while trying to upload configurations to Consul for '{microServiceName}' in '{environmentName}'.", ex);
+                }
             }
         }
 

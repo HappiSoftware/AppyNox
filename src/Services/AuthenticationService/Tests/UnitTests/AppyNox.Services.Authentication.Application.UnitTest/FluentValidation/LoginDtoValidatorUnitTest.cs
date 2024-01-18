@@ -1,12 +1,5 @@
 ﻿using AppyNox.Services.Authentication.Application.DTOs.AccountDtos.Models;
-using AppyNox.Services.Authentication.Application.DTOs.IdentityUserDTOs.Models;
 using AppyNox.Services.Authentication.Application.Validators.Account;
-using AppyNox.Services.Authentication.Application.Validators.IdentityUser;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AppyNox.Services.Authentication.Application.UnitTest.FluentValidation
 {
@@ -27,7 +20,23 @@ namespace AppyNox.Services.Authentication.Application.UnitTest.FluentValidation
         public async Task Validate_UserNamePassword_ShouldMatchExpected(string? username, string? password, bool expectedIsValid)
         {
             // Arrange
-            var dto = new LoginDto { UserName = username!, Password = password! };
+            var dto = new LoginDto { UserName = username!, Password = password!, Audience = "audience" };
+
+            // Act
+            var result = await _validator.ValidateAsync(dto);
+
+            // Assert
+            Assert.Equal(expectedIsValid, result.IsValid);
+        }
+
+        [Theory]
+        [InlineData("test", true)]
+        [InlineData("", false)]
+        [InlineData(null, false)]
+        public async Task Validate_Audience_ShouldMatchExpected(string? audience, bool expectedIsValid)
+        {
+            // Arrange
+            var dto = new LoginDto { UserName = "test", Password = "test", Audience = audience! };
 
             // Act
             var result = await _validator.ValidateAsync(dto);

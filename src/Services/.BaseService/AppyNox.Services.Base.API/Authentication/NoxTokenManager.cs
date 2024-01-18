@@ -24,11 +24,9 @@ namespace AppyNox.Services.Base.API.Authentication
         /// </summary>
         /// <param name="token">The JWT token to validate.</param>
         /// <returns>True if the token is valid; otherwise, false.</returns>
-        /// <exception cref="AuthenticationServiceException">Thrown when token has expired.</exception>
+        /// <exception cref="NoxApiException">Thrown when token has expired.</exception>
         public bool VerifyToken(string token)
         {
-            SecurityToken securityToken;
-
             var validationParameters = new TokenValidationParameters
             {
                 ValidateIssuerSigningKey = true,
@@ -43,7 +41,8 @@ namespace AppyNox.Services.Base.API.Authentication
 
             try
             {
-                _tokenHandler.ValidateToken(token, validationParameters, out securityToken);
+                _tokenHandler.ValidateToken(token, validationParameters, out SecurityToken securityToken);
+                return true;
             }
             catch (SecurityTokenExpiredException)
             {
@@ -53,8 +52,6 @@ namespace AppyNox.Services.Base.API.Authentication
             {
                 return false;
             }
-
-            return securityToken != null;
         }
 
         /// <summary>
@@ -62,7 +59,7 @@ namespace AppyNox.Services.Base.API.Authentication
         /// </summary>
         /// <param name="token">The JWT token.</param>
         /// <returns>User information if token is valid.</returns>
-        /// <exception cref="AuthenticationServiceException">Thrown when token is invalid or user information is not found.</exception>
+        /// <exception cref="NoxApiException">Thrown when token is invalid or user information is not found.</exception>
         public string GetUserInfoByToken(string token)
         {
             if (string.IsNullOrWhiteSpace(token)) return string.Empty;

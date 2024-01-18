@@ -14,6 +14,7 @@ namespace AppyNox.Services.Authentication.Application.Validators.Account
         {
             RuleFor(user => user.UserName).NotNull().NotEmpty().NotEmpty().WithMessage("Username is required.").WithErrorCode("422");
             RuleFor(login => login.Password).NotNull().NotEmpty().NotEmpty().WithMessage("Password is required.").WithErrorCode("422");
+            RuleFor(login => login.Audience).NotNull().NotEmpty().NotEmpty().WithMessage("Audience is required.").WithErrorCode("422");
         }
 
         #endregion

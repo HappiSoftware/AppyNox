@@ -1,5 +1,6 @@
 ﻿using AppyNox.Services.Authentication.Application.DTOs.ApplicationRoleDTOs.Models;
-using AppyNox.Services.Authentication.Application.DTOs.IdentityUserDTOs.Models;
+using AppyNox.Services.Authentication.Application.DTOs.ApplicationUserDTOs.Models;
+using AppyNox.Services.Authentication.Infrastructure.Data;
 using AppyNox.Services.Authentication.SharedEvents.Events;
 using AppyNox.Services.Authentication.WebAPI.ControllerDependencies;
 using AppyNox.Services.Authentication.WebAPI.ExceptionExtensions.Base;
@@ -23,7 +24,8 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
     [Route("api/[controller]")]
     [ApiVersion("1.0")]
     [ApiController]
-    public class UsersController(UsersControllerBaseDependencies usersControllerBaseDependencies, IPublishEndpoint publishEndpoint) : ControllerBase
+    [AuthenticationJwtTokenValidateAttribute]
+    public class UsersController(UsersControllerBaseDependencies usersControllerBaseDependencies, IPublishEndpoint publishEndpoint, IdentityDatabaseContext conmtext) : ControllerBase
     {
         #region [ Fields ]
 
@@ -37,10 +39,10 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
 
         [HttpGet]
         [Authorize(Permissions.Users.View)]
-        [AuthenticationJwtTokenValidateAttribute]
         public async Task<ApiResponse> GetAll()
         {
-            var entities = await _baseDependencies.UserManager.Users.ToListAsync();
+            //var entities = await _baseDependencies.UserManager.Users.ToListAsync();
+            var entities = await conmtext.Users.ToListAsync();
             object response = new
             {
                 count = _baseDependencies.UserManager.Users.Count().ToString(),
@@ -52,14 +54,13 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
 
         [HttpGet("{id}")]
         [Authorize(Permissions.Users.View)]
-        [AuthenticationPersonalJwtTokenValidateAttribute]
         public async Task<ApiResponse> GetById(Guid id)
         {
             var identityUser = await _baseDependencies.UserManager.FindByIdAsync(id.ToString());
 
             if (identityUser == null)
             {
-                throw new AuthenticationApiException("User Not Found", (int)HttpStatusCode.NotFound);
+                throw new NoxAuthenticationApiException("User Not Found", (int)HttpStatusCode.NotFound);
             }
 
             return new ApiResponse(_baseDependencies.Mapper.Map(identityUser, identityUser.GetType(), typeof(ApplicationUserDto)));
@@ -67,18 +68,17 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
 
         [HttpPut("{id}")]
         [Authorize(Permissions.Users.Edit)]
-        [AuthenticationJwtTokenValidateAttribute]
         public async Task<IActionResult> Put(Guid id, ApplicationUserUpdateDto identityUserUpdateDto)
         {
             if (id != identityUserUpdateDto.Id)
             {
-                throw new AuthenticationApiException("Ids don't match", (int)HttpStatusCode.UnprocessableEntity);
+                throw new NoxAuthenticationApiException("Ids don't match", (int)HttpStatusCode.UnprocessableEntity);
             }
 
             var existingUser = await _baseDependencies.UserManager.FindByIdAsync(id.ToString());
             if (existingUser == null)
             {
-                throw new AuthenticationApiException("User Not Found", (int)HttpStatusCode.NotFound);
+                throw new NoxAuthenticationApiException("User Not Found", (int)HttpStatusCode.NotFound);
             }
 
             var concurrencyStamp = existingUser.ConcurrencyStamp;
@@ -115,7 +115,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
             {
                 if (!await IdentityUserExists(id))
                 {
-                    throw new AuthenticationApiException("User Not Found", (int)HttpStatusCode.NotFound);
+                    throw new NoxAuthenticationApiException("User Not Found", (int)HttpStatusCode.NotFound);
                 }
                 else
                 {
@@ -128,7 +128,6 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
 
         [HttpPost]
         [Authorize(Permissions.Users.Create)]
-        [AuthenticationJwtTokenValidateAttribute]
         public async Task<IActionResult> Post(ApplicationUserCreateDto registerDto)
         {
             StartUserCreationMessage startUserCreationEvent = new
@@ -147,7 +146,6 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
 
         [HttpDelete("{id}")]
         [Authorize(Permissions.Users.Delete)]
-        [AuthenticationJwtTokenValidateAttribute]
         public async Task<IActionResult> Delete(Guid id)
         {
             await _publishEndpoint.Publish(new DeleteApplicationUserMessage(CorrelationContext.CorrelationId, id));
@@ -170,12 +168,11 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
         [HttpGet]
         [Authorize(Permissions.Users.View)]
         [Route("/api/Users/{uid}/Roles")]
-        [AuthenticationJwtTokenValidateAttribute]
         public async Task<ApiResponse> GetRoles(Guid uid)
         {
             var user = await _baseDependencies.UserManager.FindByIdAsync(uid.ToString());
             if (user == null)
-                throw new AuthenticationApiException($"Record with id: {uid} does not exist.", (int)HttpStatusCode.NotFound);
+                throw new NoxAuthenticationApiException($"Record with id: {uid} does not exist.", (int)HttpStatusCode.NotFound);
             IList<string> roleNames = await _baseDependencies.UserManager.GetRolesAsync(user);
             List<ApplicationRoleDto> roles = new List<ApplicationRoleDto>();
 
@@ -192,15 +189,14 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
         [HttpPost]
         [Authorize(Permissions.Users.Edit)]
         [Route("/api/Users/{uid}/Roles/{rid}")]
-        [AuthenticationJwtTokenValidateAttribute]
         public async Task<ApiResponse> AssignRole(Guid uid, Guid rid)
         {
             var user = await _baseDependencies.UserManager.FindByIdAsync(uid.ToString());
             var role = await _baseDependencies.RoleManager.FindByIdAsync(rid.ToString());
             if (user == null)
-                throw new AuthenticationApiException($"Record with id: {uid} does not exist.", (int)HttpStatusCode.NotFound);
+                throw new NoxAuthenticationApiException($"Record with id: {uid} does not exist.", (int)HttpStatusCode.NotFound);
             if (role == null || string.IsNullOrEmpty(role.Name))
-                throw new AuthenticationApiException($"Record with id: {rid} does not exist.", (int)HttpStatusCode.NotFound);
+                throw new NoxAuthenticationApiException($"Record with id: {rid} does not exist.", (int)HttpStatusCode.NotFound);
 
             //Assign the role from user
             IdentityResult response = await _baseDependencies.UserManager.AddToRoleAsync(user, role.Name);
@@ -232,15 +228,14 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
         [HttpDelete]
         [Authorize(Permissions.Users.Edit)]
         [Route("/api/Users/{uid}/Roles/{rid}")]
-        [AuthenticationJwtTokenValidateAttribute]
         public async Task<IActionResult> WithdrawRole(Guid uid, Guid rid)
         {
             var user = await _baseDependencies.UserManager.FindByIdAsync(uid.ToString());
             var role = await _baseDependencies.RoleManager.FindByIdAsync(rid.ToString());
             if (user == null)
-                throw new AuthenticationApiException($"Record with id: {uid} does not exist.", (int)HttpStatusCode.NotFound);
+                throw new NoxAuthenticationApiException($"Record with id: {uid} does not exist.", (int)HttpStatusCode.NotFound);
             if (role == null || string.IsNullOrEmpty(role.Name))
-                throw new AuthenticationApiException($"Record with id: {rid} does not exist.", (int)HttpStatusCode.NotFound);
+                throw new NoxAuthenticationApiException($"Record with id: {rid} does not exist.", (int)HttpStatusCode.NotFound);
 
             //Withdraw the role from user
             IdentityResult response = await _baseDependencies.UserManager.RemoveFromRoleAsync(user, role.Name);

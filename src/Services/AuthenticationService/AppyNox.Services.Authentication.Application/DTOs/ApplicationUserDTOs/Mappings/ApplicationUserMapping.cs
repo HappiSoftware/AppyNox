@@ -1,8 +1,8 @@
-﻿using AppyNox.Services.Authentication.Application.DTOs.IdentityUserDTOs.Models;
+﻿using AppyNox.Services.Authentication.Application.DTOs.ApplicationUserDTOs.Models;
 using AppyNox.Services.Authentication.Domain.Entities;
 using AutoMapper;
 
-namespace AppyNox.Services.Authentication.Application.Dtos.IdentityUserDtos.Mappings
+namespace AppyNox.Services.Authentication.Application.DTOs.ApplicationUserDTOs.Mappings
 {
     /// <summary>
     /// Represents the mapping configuration for IdentityUser related DTOs and IdentityUser entity.
