@@ -27,20 +27,27 @@ namespace AppyNox.Services.Base.API.Middleware
         /// <param name="context">The HTTP context for the current request.</param>
         public async Task Invoke(HttpContext context)
         {
-            string? correlationId = context.Request.Headers["X-Correlation-ID"].FirstOrDefault();
-            if (string.IsNullOrEmpty(correlationId))
+            try
             {
-                _logger.LogCritical(new MissingCorrelationIdException("Correlation ID is required"), "A request with no correlation ID received.");
-                context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                context.Response.ContentType = "text/plain";
-                await context.Response.WriteAsync("Correlation ID is required");
-                return;
+                string? correlationId = context.Request.Headers["X-Correlation-ID"].FirstOrDefault();
+                if (string.IsNullOrEmpty(correlationId))
+                {
+                    _logger.LogCritical(new MissingCorrelationIdException("Correlation ID is required"), "A request with no correlation ID received.");
+                    context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    context.Response.ContentType = "text/plain";
+                    await context.Response.WriteAsync("Correlation ID is required");
+                    return;
+                }
+
+                CorrelationContext.CorrelationId = Guid.Parse(correlationId);
+                context.Response.Headers["X-Correlation-ID"] = correlationId;
+
+                await _next(context);
             }
-
-            CorrelationContext.CorrelationId = Guid.Parse(correlationId);
-            context.Response.Headers["X-Correlation-ID"] = correlationId;
-
-            await _next(context);
+            finally
+            {
+                CorrelationContext.CorrelationId = Guid.Empty;
+            }
         }
 
         #endregion

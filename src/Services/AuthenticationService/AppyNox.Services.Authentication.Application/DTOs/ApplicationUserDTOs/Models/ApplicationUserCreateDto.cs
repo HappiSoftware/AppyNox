@@ -1,6 +1,6 @@
 ﻿using AppyNox.Services.Base.Application.Dtos;
 
-namespace AppyNox.Services.Authentication.Application.DTOs.IdentityUserDTOs.Models
+namespace AppyNox.Services.Authentication.Application.DTOs.ApplicationUserDTOs.Models
 {
     /// <summary>
     /// Data transfer object for creating a new identity user.

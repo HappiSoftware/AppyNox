@@ -1,8 +1,6 @@
-﻿using AppyNox.Services.Base.API.ExceptionExtensions;
-using AppyNox.Services.Base.Application.Interfaces.Loggers;
+﻿using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Core.AsyncLocals;
 using Microsoft.AspNetCore.Http;
-using System.Net;
 using System.Security.Claims;
 
 namespace AppyNox.Services.Base.API.Middleware
@@ -25,17 +23,24 @@ namespace AppyNox.Services.Base.API.Middleware
         /// <param name="context">The HTTP context for the current request.</param>
         public async Task Invoke(HttpContext context)
         {
-            string? userId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (!string.IsNullOrEmpty(userId))
+            try
             {
-                UserIdContext.UserId = userId;
-            }
-            else
-            {
-                _logger.LogWarning("UserId is empty. Could not set to UserIdContext");
-            }
+                string? userId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (!string.IsNullOrEmpty(userId) && Guid.TryParse(userId, out Guid userIdGuid))
+                {
+                    UserIdContext.UserId = userIdGuid;
+                }
+                else
+                {
+                    _logger.LogWarning("UserId is empty. Could not set to UserIdContext");
+                }
 
-            await _next(context);
+                await _next(context);
+            }
+            finally
+            {
+                UserIdContext.UserId = Guid.Empty;
+            }
         }
 
         #endregion

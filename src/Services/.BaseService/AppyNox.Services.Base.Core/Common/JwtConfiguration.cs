@@ -17,6 +17,14 @@ public class JwtConfiguration
 
     #endregion
 
+    #region [ Public Constructors ]
+
+    public JwtConfiguration()
+    {
+    }
+
+    #endregion
+
     #region [ Public Methods ]
 
     /// <summary>

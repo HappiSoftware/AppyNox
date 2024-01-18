@@ -2,7 +2,7 @@
 
 namespace AppyNox.Services.Authentication.Domain.Entities
 {
-    public class ApplicationRole : IdentityRole<Guid>
+    public class ApplicationRole : IdentityRole<Guid>, ICompanyScopedEntity
     {
         #region [ Relations ]
 

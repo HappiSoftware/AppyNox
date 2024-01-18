@@ -18,13 +18,10 @@ namespace AppyNox.Services.Authentication.WebAPI.Filters
         {
             string token = context.HttpContext.Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
             ICustomTokenManager manager = context.HttpContext.RequestServices.GetService(typeof(ICustomTokenManager)) as ICustomTokenManager
-                ?? throw new AuthenticationApiException("Token Manager could not be initialized.");
+                ?? throw new NoxAuthenticationApiException("Token Manager could not be initialized.");
 
-            // Determine if the user is an admin
-            bool isAdmin = manager.GetIsAdmin(token);
-
-            bool isTokenValid = !string.IsNullOrWhiteSpace(token) && manager.VerifyToken(token);
-            if (!isTokenValid || !isAdmin)
+            bool isTokenValid = !string.IsNullOrWhiteSpace(token) && manager.VerifyToken(token, "AppyNox");
+            if (!isTokenValid)
             {
                 context.Result = new UnauthorizedResult();
                 return;

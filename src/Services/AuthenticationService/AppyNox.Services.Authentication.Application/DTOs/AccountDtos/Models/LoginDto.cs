@@ -7,9 +7,11 @@
     {
         #region [ Properties ]
 
-        public string UserName { get; set; } = null!;
+        public string UserName { get; set; } = string.Empty;
 
-        public string Password { get; set; } = null!;
+        public string Password { get; set; } = string.Empty;
+
+        public string Audience { get; set; } = string.Empty;
 
         #endregion
     }

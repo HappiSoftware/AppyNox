@@ -1,4 +1,5 @@
 ﻿using AppyNox.Services.Authentication.Domain.Entities;
+using AppyNox.Services.Authentication.Infrastructure.AsyncLocals;
 using AppyNox.Services.Authentication.Infrastructure.Data.Configurations;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -23,11 +24,8 @@ namespace AppyNox.Services.Authentication.Infrastructure.Data
     {
         #region [ Public Constructors ]
 
-        public IdentityDatabaseContext()
-        {
-        }
-
-        public IdentityDatabaseContext(DbContextOptions<IdentityDatabaseContext> options) : base(options)
+        public IdentityDatabaseContext(DbContextOptions<IdentityDatabaseContext> options)
+            : base(options)
         {
         }
 
@@ -67,6 +65,53 @@ namespace AppyNox.Services.Authentication.Infrastructure.Data
             builder.ApplyConfiguration(new ApplicationUserRoleConfiguration(adminRoleId, adminUserId, superAdminRoleId, superAdminUserId));
 
             #endregion
+
+            #region [ GlobalQueries ]
+
+            builder.Entity<ApplicationUser>(entity =>
+            {
+                entity.HasQueryFilter(u =>
+                    IsConnectRequest() || IsSuperAdmin() ||
+                    (IsAdmin() && u.CompanyId == GetCurrentCompanyId() && u.Id != GetCurrentUserId()));
+            });
+
+            builder.Entity<ApplicationRole>(entity =>
+            {
+                entity.HasQueryFilter(r =>
+                    IsConnectRequest() || IsSuperAdmin() ||
+                    (IsAdmin() && r.CompanyId == GetCurrentCompanyId()));
+            });
+
+            #endregion
+        }
+
+        #endregion
+
+        #region [ Global Query Helper Methods ]
+
+        private bool IsSuperAdmin()
+        {
+            return AuthenticationContext.IsSuperAdmin;
+        }
+
+        private bool IsAdmin()
+        {
+            return AuthenticationContext.IsAdmin;
+        }
+
+        private Guid GetCurrentCompanyId()
+        {
+            return AuthenticationContext.CompanyId;
+        }
+
+        private Guid GetCurrentUserId()
+        {
+            return AuthenticationContext.UserId;
+        }
+
+        private bool IsConnectRequest()
+        {
+            return AuthenticationContext.IsConnectRequest;
         }
 
         #endregion

@@ -2,7 +2,7 @@
 using AppyNox.Services.Base.Application.Validators;
 using FluentValidation;
 
-namespace AppyNox.Services.Authentication.Application.Validators.ApplicationRole
+namespace AppyNox.Services.Authentication.Application.Validators.ApplicationRoleValidators
 {
     public class ApplicationRoleCreateDtoValidator : DtoValidatorBase<ApplicationRoleCreateDto>
     {

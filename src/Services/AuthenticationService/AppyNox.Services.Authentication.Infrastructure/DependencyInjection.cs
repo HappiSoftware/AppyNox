@@ -1,4 +1,6 @@
-﻿using AppyNox.Services.Authentication.Application.Validators.SharedRules;
+﻿using AppyNox.Services.Authentication.Application.Interfaces;
+using AppyNox.Services.Authentication.Application.Validators.SharedRules;
+using AppyNox.Services.Authentication.Infrastructure.AsyncLocals;
 using AppyNox.Services.Authentication.Infrastructure.Data;
 using AppyNox.Services.Authentication.Infrastructure.MassTransit.Consumers;
 using AppyNox.Services.Authentication.Infrastructure.MassTransit.Sagas;
@@ -48,6 +50,8 @@ namespace AppyNox.Services.Authentication.Infrastructure
             services.AddDbContext<IdentityDatabaseContext>(options =>
                 options.UseNpgsql(connectionString));
 
+            services.AddHttpContextAccessor();
+
             #endregion
 
             #region [ Consul Discovery Service ]
@@ -66,7 +70,8 @@ namespace AppyNox.Services.Authentication.Infrastructure
 
             // Add to DI to be able to migrate changes
             services.AddDbContext<IdentitySagaDatabaseContext>(options =>
-                options.UseNpgsql(configuration.GetConnectionString("SagaConnection")));
+                options.UseNpgsql(configuration.GetConnectionString("SagaConnection")),
+                ServiceLifetime.Scoped);
 
             services.AddMassTransit(busConfigurator =>
             {

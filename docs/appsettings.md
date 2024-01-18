@@ -40,9 +40,9 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
     "DefaultConnection": "User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_Coupon;Pooling=true"
   },
   "JwtSettings": {
-    "SecretKey": "vA+A/of8yadsbwe/CmS6PD0Kp837BozrQFMDuQ2Kwwg=",
-    "Issuer": "AuthServerV1",
-    "Audience": "AppyNoxBasic"
+    "SecretKey": "XPFk7n/yI+Sm9DtWlZ/6TYawZs22meQjENPNMmZ9ONA=",
+    "Issuer": "NoxAuthServer",
+    "Audience": "AppyNox"
   },
   "ConsulConfiguration": {
     "Address": "http://localhost:8500"
@@ -95,9 +95,9 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
     "TestConnection": "User ID=postgres;Password=coupon_password;Server=localhost;Port=5434;Database=AppyNox_Coupon_Test"
   },
   "JwtSettings": {
-    "SecretKey": "vA+A/of8yadsbwe/CmS6PD0Kp837BozrQFMDuQ2Kwwg=",
-    "Issuer": "AuthServerV1",
-    "Audience": "AppyNoxBasic"
+    "SecretKey": "XPFk7n/yI+Sm9DtWlZ/6TYawZs22meQjENPNMmZ9ONA=",
+    "Issuer": "NoxAuthServer",
+    "Audience": "AppyNox"
   },
   "ConsulConfiguration": {
     "Address": "http://appynox-consul:8500"
@@ -149,9 +149,9 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
     "DefaultConnection": "User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_Coupon;Pooling=true"
   },
   "JwtSettings": {
-    "SecretKey": "vA+A/of8yadsbwe/CmS6PD0Kp837BozrQFMDuQ2Kwwg=",
-    "Issuer": "AuthServerV1",
-    "Audience": "AppyNoxBasic"
+    "SecretKey": "XPFk7n/yI+Sm9DtWlZ/6TYawZs22meQjENPNMmZ9ONA=",
+    "Issuer": "NoxAuthServer",
+    "Audience": "AppyNox"
   },
   "ConsulConfiguration": {
     "Address": "http://appynox-consul:8500"
@@ -210,10 +210,18 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
     "SagaConnection": "User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_Authentication_Saga"
   },
   "JwtSettings": {
-    "SecretKey": "vA+A/of8yadsbwe/CmS6PD0Kp837BozrQFMDuQ2Kwwg=",
-    "Issuer": "AuthServerV1",
-    "Audience": "AppyNoxBasic",
-    "TokenLifetimeMinutes": "5"
+    "AppyNox": {
+      "SecretKey": "XPFk7n/yI+Sm9DtWlZ/6TYawZs22meQjENPNMmZ9ONA=",
+      "Issuer": "NoxAuthServer",
+      "Audience": "AppyNox",
+      "TokenLifetimeMinutes": "5"
+    },
+    "AppyFleet": {
+      "SecretKey": "vA+A/of8yadsbwe/CmS6PD0Kp837BozrQFMDuQ2Kwwg=",
+      "Issuer": "NoxAuthServer",
+      "Audience": "AppyFleet",
+      "TokenLifetimeMinutes": "5"
+    }
   },
   "ConsulConfiguration": {
     "Address": "http://localhost:8500"
@@ -272,10 +280,18 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
     "SagaConnection": "User ID=postgres;Password=auth_saga_password;Server=appynox-authentication-saga-db;Port=5432;Database=AppyNox_Authentication_Saga_Test"
   },
   "JwtSettings": {
-    "SecretKey": "vA+A/of8yadsbwe/CmS6PD0Kp837BozrQFMDuQ2Kwwg=",
-    "Issuer": "AuthServerV1",
-    "Audience": "AppyNoxBasic",
-    "TokenLifetimeMinutes": "30"
+    "AppyNox": {
+      "SecretKey": "XPFk7n/yI+Sm9DtWlZ/6TYawZs22meQjENPNMmZ9ONA=",
+      "Issuer": "NoxAuthServer",
+      "Audience": "AppyNox",
+      "TokenLifetimeMinutes": "5"
+    },
+    "AppyFleet": {
+      "SecretKey": "vA+A/of8yadsbwe/CmS6PD0Kp837BozrQFMDuQ2Kwwg=",
+      "Issuer": "NoxAuthServer",
+      "Audience": "AppyFleet",
+      "TokenLifetimeMinutes": "5"
+    }
   },
   "ConsulConfiguration": {
     "Address": "http://appynox-consul:8500"
@@ -333,10 +349,18 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
     "SagaConnection": "User ID=postgres;Password=auth_saga_password;Server=appynox-authentication-saga-db;Port=5432;Database=AppyNox_Authentication_Saga"
   },
   "JwtSettings": {
-    "SecretKey": "vA+A/of8yadsbwe/CmS6PD0Kp837BozrQFMDuQ2Kwwg=",
-    "Issuer": "AuthServerV1",
-    "Audience": "AppyNoxBasic",
-    "TokenLifetimeMinutes": "1"
+    "AppyNox": {
+      "SecretKey": "XPFk7n/yI+Sm9DtWlZ/6TYawZs22meQjENPNMmZ9ONA=",
+      "Issuer": "NoxAuthServer",
+      "Audience": "AppyNox",
+      "TokenLifetimeMinutes": "5"
+    },
+    "AppyFleet": {
+      "SecretKey": "vA+A/of8yadsbwe/CmS6PD0Kp837BozrQFMDuQ2Kwwg=",
+      "Issuer": "NoxAuthServer",
+      "Audience": "AppyFleet",
+      "TokenLifetimeMinutes": "5"
+    }
   },
   "ConsulConfiguration": {
     "Address": "http://appynox-consul:8500"
@@ -808,9 +832,9 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
     "DefaultConnection": "User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_License;Pooling=true"
   },
   "JwtSettings": {
-    "SecretKey": "vA+A/of8yadsbwe/CmS6PD0Kp837BozrQFMDuQ2Kwwg=",
-    "Issuer": "AuthServerV1",
-    "Audience": "AppyNoxBasic"
+    "SecretKey": "XPFk7n/yI+Sm9DtWlZ/6TYawZs22meQjENPNMmZ9ONA=",
+    "Issuer": "NoxAuthServer",
+    "Audience": "AppyNox"
   },
   "ConsulConfiguration": {
     "Address": "http://localhost:8500"
@@ -825,6 +849,11 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
     "HealthCheckUrl": "health",
     "HealthCheckIntervalSeconds": 30,
     "HealthCheckTimeoutSeconds": 5
+  },
+  "MessageBroker": {
+    "Host": "rabbitmq://localhost",
+    "Username": "guest",
+    "Password": "guest"
   }
 }
 ```
@@ -863,9 +892,9 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
     "TestConnection": "User ID=postgres;Password=license_password;Server=localhost;Port=5436;Database=AppyNox_License_Test"
   },
   "JwtSettings": {
-    "SecretKey": "vA+A/of8yadsbwe/CmS6PD0Kp837BozrQFMDuQ2Kwwg=",
-    "Issuer": "AuthServerV1",
-    "Audience": "AppyNoxBasic"
+    "SecretKey": "XPFk7n/yI+Sm9DtWlZ/6TYawZs22meQjENPNMmZ9ONA=",
+    "Issuer": "NoxAuthServer",
+    "Audience": "AppyNox"
   },
   "ConsulConfiguration": {
     "Address": "http://appynox-consul:8500"
@@ -880,6 +909,11 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
     "HealthCheckUrl": "health",
     "HealthCheckIntervalSeconds": 30,
     "HealthCheckTimeoutSeconds": 5
+  },
+  "MessageBroker": {
+    "Host": "rabbitmq://appynox-rabbitmq-service",
+    "Username": "HappiCorp",
+    "Password": "HappiCorp"
   }
 }
 ```
@@ -917,9 +951,9 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
     "DefaultConnection": "User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_License;Pooling=true"
   },
   "JwtSettings": {
-    "SecretKey": "vA+A/of8yadsbwe/CmS6PD0Kp837BozrQFMDuQ2Kwwg=",
-    "Issuer": "AuthServerV1",
-    "Audience": "AppyNoxBasic"
+    "SecretKey": "XPFk7n/yI+Sm9DtWlZ/6TYawZs22meQjENPNMmZ9ONA=",
+    "Issuer": "NoxAuthServer",
+    "Audience": "AppyNox"
   },
   "ConsulConfiguration": {
     "Address": "http://appynox-consul:8500"
@@ -934,6 +968,11 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
     "HealthCheckUrl": "health",
     "HealthCheckIntervalSeconds": 30,
     "HealthCheckTimeoutSeconds": 5
+  },
+  "MessageBroker": {
+    "Host": "rabbitmq://appynox-rabbitmq-service",
+    "Username": "HappiCorp",
+    "Password": "HappiCorp"
   }
 }
 ```

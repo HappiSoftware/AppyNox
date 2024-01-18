@@ -5,7 +5,9 @@ using AppyNox.Services.Authentication.Infrastructure;
 using AppyNox.Services.Authentication.Infrastructure.Data;
 using AppyNox.Services.Authentication.WebAPI.Configuration;
 using AppyNox.Services.Authentication.WebAPI.ControllerDependencies;
+using AppyNox.Services.Authentication.WebAPI.Filters;
 using AppyNox.Services.Authentication.WebAPI.Managers;
+using AppyNox.Services.Authentication.WebAPI.Middlewares;
 using AppyNox.Services.Authentication.WebAPI.Permission;
 using AppyNox.Services.Base.API.Extensions;
 using AppyNox.Services.Base.API.Middleware;
@@ -120,8 +122,7 @@ builder.Services.AddScoped<UsersControllerBaseDependencies>();
 
 noxLogger.LogInformation("Registering JWT Configuration.");
 var jwtConfiguration = new AuthenticationJwtConfiguration();
-configuration.GetSection("JwtSettings").Bind(jwtConfiguration);
-builder.Services.AddSingleton(jwtConfiguration);
+configuration.GetSection("JwtSettings:AppyNox").Bind(jwtConfiguration);
 
 // Add JWT Authentication
 builder.Services.AddAuthentication(options =>
@@ -159,7 +160,7 @@ builder.Services.AddAuthorization(options =>
     }
 });
 
-builder.Services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
+builder.Services.AddScoped<IAuthorizationHandler, AuthenticationPermissionAuthorizationHandler>();
 noxLogger.LogInformation("Registering JWT Configuration completed.");
 
 #endregion
@@ -174,18 +175,20 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseMiddleware<CorrelationIdMiddleware>();
-
 app.UseHttpsRedirection();
 
+app.UseMiddleware<CorrelationIdMiddleware>();
+
+app.UseApiResponseAndExceptionWrapper(new AutoWrapperOptions { IsApiOnly = true, ShowApiVersion = true, ApiVersion = "1.0" });
+app.UseMiddleware<ExceptionHandlingMiddleware>();
+
 app.UseAuthentication();
+
+app.UseMiddleware<AuthenticationContextMiddleware>();
 
 app.UseAuthorization();
 
 app.MapControllers();
-
-app.UseApiResponseAndExceptionWrapper(new AutoWrapperOptions { IsApiOnly = true, ShowApiVersion = true, ApiVersion = "1.0" });
-app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseHealthChecks("/api/health");
 

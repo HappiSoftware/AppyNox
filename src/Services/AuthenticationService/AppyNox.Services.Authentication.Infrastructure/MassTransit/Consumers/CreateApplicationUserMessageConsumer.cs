@@ -1,4 +1,4 @@
-﻿using AppyNox.Services.Authentication.Application.DTOs.IdentityUserDTOs.Models;
+﻿using AppyNox.Services.Authentication.Application.DTOs.ApplicationUserDTOs.Models;
 using AppyNox.Services.Authentication.Application.MediatR.Commands;
 using AppyNox.Services.Authentication.SharedEvents.Events;
 using MassTransit;

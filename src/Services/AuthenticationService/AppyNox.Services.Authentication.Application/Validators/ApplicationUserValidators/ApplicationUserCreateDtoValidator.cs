@@ -1,11 +1,11 @@
-﻿using AppyNox.Services.Authentication.Application.DTOs.IdentityUserDTOs.Models;
+﻿using AppyNox.Services.Authentication.Application.DTOs.ApplicationUserDTOs.Models;
 using AppyNox.Services.Authentication.Application.Validators.SharedRules;
 using AppyNox.Services.Authentication.Domain.Entities;
 using AppyNox.Services.Base.Application.Validators;
 using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 
-namespace AppyNox.Services.Authentication.Application.Validators.IdentityUser
+namespace AppyNox.Services.Authentication.Application.Validators.ApplicationUserValidators
 {
     /// <summary>
     /// Validator class for IdentityUserCreateDto using FluentValidation.

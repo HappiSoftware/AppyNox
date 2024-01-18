@@ -11,6 +11,8 @@
 
         public string RefreshToken { get; set; } = string.Empty;
 
+        public string Audience { get; set; } = string.Empty;
+
         #endregion
     }
 }

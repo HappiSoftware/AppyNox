@@ -9,7 +9,7 @@ namespace AppyNox.Services.Base.Core.AsyncLocals
     {
         #region [ Fields ]
 
-        private static readonly AsyncLocal<string> _userId = new();
+        private static readonly AsyncLocal<Guid> _userId = new();
 
         #endregion
 
@@ -18,9 +18,9 @@ namespace AppyNox.Services.Base.Core.AsyncLocals
         /// <summary>
         /// Gets or sets the User ID for the current request.
         /// </summary>
-        public static string UserId
+        public static Guid UserId
         {
-            get => _userId.Value ?? throw new AsyncLocalException("UserId is not set!!");
+            get => _userId.Value;
             set => _userId.Value = value;
         }
 

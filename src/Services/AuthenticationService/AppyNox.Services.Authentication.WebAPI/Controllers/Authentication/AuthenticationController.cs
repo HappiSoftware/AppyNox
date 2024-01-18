@@ -41,11 +41,11 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers.Authentication
 
             if (string.IsNullOrEmpty(tokens.jwtToken) || string.IsNullOrEmpty(tokens.refreshToken))
             {
-                throw new AuthenticationApiException("Invalid login attempt", (int)HttpStatusCode.Unauthorized);
+                throw new NoxAuthenticationApiException("Invalid login attempt", (int)HttpStatusCode.Unauthorized);
             }
             if (tokens.jwtToken == "I am a teapot")
             {
-                throw new AuthenticationApiException("I am a teapot", (int)HttpStatusCode.Locked);
+                throw new NoxAuthenticationApiException("I am a teapot", (int)HttpStatusCode.Locked);
             }
 
             return new ApiResponse(new { Token = tokens.jwtToken, RefreshToken = tokens.refreshToken }, 200);
@@ -53,9 +53,9 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers.Authentication
 
         [HttpGet]
         [Route("verifytoken/{token}")]
-        public ApiResponse Verify(string token)
+        public ApiResponse Verify(string token, string audience)
         {
-            return new ApiResponse(_customTokenManager.VerifyToken(token), 200);
+            return new ApiResponse(_customTokenManager.VerifyToken(token, audience), 200);
         }
 
         [HttpGet]
@@ -73,10 +73,10 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers.Authentication
 
             if (!_customTokenManager.VerifyRefreshToken(model.RefreshToken, storedRefreshToken))
             {
-                throw new AuthenticationApiException("", (int)HttpStatusCode.Unauthorized);
+                throw new NoxAuthenticationApiException("", (int)HttpStatusCode.Unauthorized);
             }
 
-            var newJwtToken = await _customTokenManager.CreateToken(userId);
+            var newJwtToken = await _customTokenManager.CreateToken(userId, model.Audience);
             var newRefreshToken = _customTokenManager.CreateRefreshToken();
             await _customUserManager.SaveRefreshToken(userId, newRefreshToken);
 

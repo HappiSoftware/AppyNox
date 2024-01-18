@@ -20,14 +20,6 @@ namespace AppyNox.Services.Authentication.WebAPI.Configuration
         {
         }
 
-        public AuthenticationJwtConfiguration(string secretKey, string issuer, string audience, int tokenLifetimeMinutes = 1)
-        {
-            SecretKey = secretKey;
-            Issuer = issuer;
-            Audience = audience;
-            TokenLifetimeMinutes = tokenLifetimeMinutes;
-        }
-
         #endregion
     }
 }

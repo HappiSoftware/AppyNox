@@ -1,5 +1,5 @@
-﻿using AppyNox.Services.Authentication.Application.DTOs.IdentityUserDTOs.Models;
-using AppyNox.Services.Authentication.Application.Validators.IdentityUser;
+﻿using AppyNox.Services.Authentication.Application.DTOs.ApplicationUserDTOs.Models;
+using AppyNox.Services.Authentication.Application.Validators.ApplicationUserValidators;
 using AppyNox.Services.Authentication.Application.Validators.SharedRules;
 using AppyNox.Services.Authentication.Domain.Entities;
 using Microsoft.AspNetCore.Identity;

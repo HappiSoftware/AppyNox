@@ -1,8 +1,6 @@
 ﻿using AppyNox.Services.Authentication.Application.Interfaces.Authentication;
 using AppyNox.Services.Authentication.Domain.Entities;
 using AppyNox.Services.Authentication.WebAPI.Configuration;
-using AppyNox.Services.Authentication.WebAPI.ExceptionExtensions.Base;
-using AppyNox.Services.Base.API.Authentication;
 using AppyNox.Services.Base.API.ExceptionExtensions.Base;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
@@ -10,6 +8,9 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using AppyNox.Services.Authentication.WebAPI.ExceptionExtensions.Base;
+using AppyNox.Services.Base.API.Authentication;
+using AppyNox.Services.Base.Core.Common;
 
 namespace AppyNox.Services.Authentication.WebAPI.Managers
 {
@@ -17,9 +18,9 @@ namespace AppyNox.Services.Authentication.WebAPI.Managers
     /// Manages the creation and validation of JWT tokens.
     /// </summary>
     public class JwtTokenManager(UserManager<ApplicationUser> userManager,
-                                 RoleManager<ApplicationRole> roleManager,
-                                 AuthenticationJwtConfiguration jwtConfiguration)
-        : NoxTokenManager(jwtConfiguration), ICustomTokenManager
+                             RoleManager<ApplicationRole> roleManager,
+                             IConfiguration configuration)
+        : ICustomTokenManager
     {
         #region [ Fields ]
 
@@ -27,9 +28,9 @@ namespace AppyNox.Services.Authentication.WebAPI.Managers
 
         private readonly RoleManager<ApplicationRole> _roleManager = roleManager;
 
-        private readonly AuthenticationJwtConfiguration _jwtConfiguration = jwtConfiguration;
-
         private readonly JwtSecurityTokenHandler _tokenHandler = new();
+
+        private readonly IConfiguration _configuration = configuration;
 
         #endregion
 
@@ -40,17 +41,23 @@ namespace AppyNox.Services.Authentication.WebAPI.Managers
         /// </summary>
         /// <param name="userId">The user's identifier.</param>
         /// <returns>A JWT token string.</returns>
-        /// <exception cref="AuthenticationApiException">Thrown when user information is not found.</exception>
-        public async Task<string> CreateToken(string userId)
+        /// <exception cref="NoxAuthenticationApiException">Thrown when user information is not found.</exception>
+        public async Task<string> CreateToken(string userId, string audience)
         {
             List<Claim> claims = [];
+            AuthenticationJwtConfiguration jwtConfiguration = DetermineJwtConfigurationForAudience(audience);
 
             var user = await _userManager.FindByIdAsync(userId);
 
-            IList<string> roles = await _userManager.GetRolesAsync(user ?? throw new AuthenticationApiException("Wrong Credentials", (int)HttpStatusCode.NotFound));
+            IList<string> roles = await _userManager.GetRolesAsync(user ?? throw new NoxAuthenticationApiException("Wrong Credentials", (int)HttpStatusCode.NotFound));
 
-            claims.Add(new Claim(ClaimTypes.Name, user.Email ?? throw new AuthenticationApiException("Wrong Credentials", (int)HttpStatusCode.NotFound)));
+            claims.Add(new Claim(ClaimTypes.Name, user.Email ?? throw new NoxAuthenticationApiException("Wrong Credentials", (int)HttpStatusCode.NotFound)));
             claims.Add(new Claim(ClaimTypes.NameIdentifier, userId.ToString()));
+            claims.Add(new Claim("company", user.CompanyId.ToString()));
+            if (user.IsAdmin)
+            {
+                claims.Add(new Claim("admin", "true"));
+            }
 
             //create an empty list for userClaims
             IEnumerable<Claim> userClaims = Enumerable.Empty<Claim>();
@@ -59,10 +66,11 @@ namespace AppyNox.Services.Authentication.WebAPI.Managers
             foreach (var item in roles)
             {
                 var role = await _roleManager.FindByNameAsync(item)
-                    ?? throw new AuthenticationApiException("Wrong Credentials", (int)HttpStatusCode.NotFound);
+                    ?? throw new NoxAuthenticationApiException("Wrong Credentials", (int)HttpStatusCode.NotFound);
                 if (role.Name == "SuperAdmin")
                 {
                     claims.Add(new Claim("superadmin", "true"));
+                    claims.Remove(new Claim("admin", "true")); // SAdmin will not use admin anyways, remove if added to prevent complications
                 }
 
                 userClaims = userClaims.Concat(await _roleManager.GetClaimsAsync(role));
@@ -76,10 +84,10 @@ namespace AppyNox.Services.Authentication.WebAPI.Managers
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.UtcNow.AddMinutes(_jwtConfiguration.TokenLifetimeMinutes),
-                Issuer = _jwtConfiguration.Issuer,
-                Audience = _jwtConfiguration.Audience,
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(_jwtConfiguration.GetSecretKeyBytes()), SecurityAlgorithms.HmacSha256Signature),
+                Expires = DateTime.UtcNow.AddMinutes(jwtConfiguration.TokenLifetimeMinutes),
+                Issuer = jwtConfiguration.Issuer,
+                Audience = jwtConfiguration.Audience,
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(jwtConfiguration.GetSecretKeyBytes()), SecurityAlgorithms.HmacSha256Signature),
                 IssuedAt = DateTime.UtcNow,
             };
 
@@ -92,7 +100,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Managers
         /// </summary>
         /// <param name="token">The JWT token.</param>
         /// <returns>Bool value about IsAdmin</returns>
-        /// <exception cref="AuthenticationApiException">Thrown when token is invalid or user information is not found.</exception>
+        /// <exception cref="NoxAuthenticationApiException">Thrown when token is invalid or user information is not found.</exception>
         public bool GetIsAdmin(string token)
         {
             if (string.IsNullOrWhiteSpace(token)) { return false; }
@@ -106,6 +114,55 @@ namespace AppyNox.Services.Authentication.WebAPI.Managers
                 return claim.Value.Equals("true");
             }
             return false;
+        }
+
+        public bool VerifyToken(string token, string audience)
+        {
+            JwtConfiguration jwtConfiguration = DetermineJwtConfigurationForAudience(audience);
+
+            var validationParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(jwtConfiguration.GetSecretKeyBytes()),
+                ValidateLifetime = true,
+                ValidateAudience = true,
+                ValidateIssuer = true,
+                ValidAudience = jwtConfiguration.Audience,
+                ValidIssuer = jwtConfiguration.Issuer,
+                ClockSkew = TimeSpan.Zero
+            };
+
+            try
+            {
+                _tokenHandler.ValidateToken(token, validationParameters, out SecurityToken securityToken);
+                return true;
+            }
+            catch (SecurityTokenExpiredException)
+            {
+                throw new NoxAuthenticationApiException("Token has expired", (int)HttpStatusCode.Unauthorized);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Retrieves user information by validating a given JWT token.
+        /// </summary>
+        /// <param name="token">The JWT token.</param>
+        /// <returns>User information if token is valid.</returns>
+        /// <exception cref="NoxAuthenticationApiException">Thrown when token is invalid or user information is not found.</exception>
+        public string GetUserInfoByToken(string token)
+        {
+            if (string.IsNullOrWhiteSpace(token)) return string.Empty;
+
+            var jwtToken = _tokenHandler.ReadToken(token.Replace("\"", string.Empty)) as JwtSecurityToken
+                ?? throw new NoxAuthenticationApiException("Wrong Credentials", (int)HttpStatusCode.NotFound);
+
+            var claim = jwtToken.Claims.FirstOrDefault(x => x.Type == "nameid");
+            if (claim != null) return claim.Value;
+            return string.Empty;
         }
 
         #endregion
@@ -133,6 +190,28 @@ namespace AppyNox.Services.Authentication.WebAPI.Managers
         public bool VerifyRefreshToken(string tokenToVerify, string storedToken)
         {
             return tokenToVerify == storedToken;
+        }
+
+        #endregion
+
+        #region [ Private Methods ]
+
+        private AuthenticationJwtConfiguration DetermineJwtConfigurationForAudience(string audience)
+        {
+            var basePath = $"JwtSettings:{audience}";
+
+            // Try to get the configuration section for the provided audience
+            var jwtConfigSection = _configuration.GetSection(basePath);
+            if (jwtConfigSection.Exists())
+            {
+                AuthenticationJwtConfiguration jwtConfiguration = new();
+                jwtConfigSection.Bind(jwtConfiguration);
+                return jwtConfiguration;
+            }
+            else
+            {
+                throw new NoxAuthenticationApiException("Invalid or unsupported audience", (int)HttpStatusCode.BadRequest);
+            }
         }
 
         #endregion

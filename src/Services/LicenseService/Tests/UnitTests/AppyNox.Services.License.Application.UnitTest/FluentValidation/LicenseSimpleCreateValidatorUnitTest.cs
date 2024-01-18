@@ -49,7 +49,7 @@ namespace AppyNox.Services.License.Application.UnitTest.FluentValidation
         public async Task Validate_LicenseKey_ShouldMatchExpected(string? licenseKey, bool expectedIsValid)
         {
             var dto = CreateValidDto();
-            dto.LicenseKey = licenseKey;
+            dto.LicenseKey = licenseKey!;
 
             var result = await _validator.ValidateAsync(dto);
 

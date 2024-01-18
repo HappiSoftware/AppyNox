@@ -5,7 +5,7 @@ namespace AppyNox.Services.Authentication.WebAPI.ExceptionExtensions.Base
     /// <summary>
     /// Exception type for handling authentication-related errors in Api layer.
     /// </summary>
-    public class AuthenticationApiException : NoxApiException
+    public class NoxAuthenticationApiException : NoxApiException
     {
         #region [ Fields ]
 
@@ -15,22 +15,22 @@ namespace AppyNox.Services.Authentication.WebAPI.ExceptionExtensions.Base
 
         #region [ Public Constructors ]
 
-        public AuthenticationApiException(string message)
+        public NoxAuthenticationApiException(string message)
             : base(message, _service)
         {
         }
 
-        public AuthenticationApiException(string message, int statusCode)
+        public NoxAuthenticationApiException(string message, int statusCode)
             : base(message, statusCode, _service)
         {
         }
 
-        public AuthenticationApiException(Exception ex, string message = "Unexpected error")
+        public NoxAuthenticationApiException(Exception ex, string message = "Unexpected error")
             : base(ex, message, _service)
         {
         }
 
-        public AuthenticationApiException(Exception ex, string message, int statusCode)
+        public NoxAuthenticationApiException(Exception ex, string message, int statusCode)
             : base(ex, message, statusCode, _service)
         {
         }
