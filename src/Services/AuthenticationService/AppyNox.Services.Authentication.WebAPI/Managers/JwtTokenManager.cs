@@ -139,11 +139,11 @@ namespace AppyNox.Services.Authentication.WebAPI.Managers
             }
             catch (SecurityTokenExpiredException)
             {
-                throw new NoxAuthenticationApiException("Token has expired", (int)HttpStatusCode.Unauthorized);
+                throw new NoxAuthenticationApiException("Token has expired.", (int)HttpStatusCode.Unauthorized);
             }
             catch (Exception)
             {
-                return false;
+                throw new NoxAuthenticationApiException("Invalid token!", (int)HttpStatusCode.Unauthorized);
             }
         }
 

@@ -50,7 +50,7 @@ namespace AppyNox.Services.Base.API.Authentication
             }
             catch (Exception)
             {
-                return false;
+                throw new NoxApiException("Invalid token!", (int)HttpStatusCode.Unauthorized);
             }
         }
 

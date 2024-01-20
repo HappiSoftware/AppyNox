@@ -4,7 +4,6 @@ using AppyNox.Services.Authentication.Infrastructure.Data;
 using AppyNox.Services.Authentication.SharedEvents.Events;
 using AppyNox.Services.Authentication.WebAPI.ControllerDependencies;
 using AppyNox.Services.Authentication.WebAPI.ExceptionExtensions.Base;
-using AppyNox.Services.Authentication.WebAPI.Filters;
 using AppyNox.Services.Authentication.WebAPI.Permission;
 using AppyNox.Services.Base.Application.ExceptionExtensions;
 using AppyNox.Services.Base.Core.AsyncLocals;
@@ -24,7 +23,6 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
     [Route("api/[controller]")]
     [ApiVersion("1.0")]
     [ApiController]
-    [AuthenticationJwtTokenValidateAttribute]
     public class UsersController(UsersControllerBaseDependencies usersControllerBaseDependencies, IPublishEndpoint publishEndpoint, IdentityDatabaseContext conmtext) : ControllerBase
     {
         #region [ Fields ]

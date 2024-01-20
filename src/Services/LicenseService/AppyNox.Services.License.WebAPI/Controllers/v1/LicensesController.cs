@@ -1,5 +1,4 @@
-﻿using AppyNox.Services.Base.API.Filters;
-using AppyNox.Services.Base.API.Helpers;
+﻿using AppyNox.Services.Base.API.Helpers;
 using AppyNox.Services.Base.API.ViewModels;
 using AppyNox.Services.Base.Application.MediatR.Commands;
 using AppyNox.Services.Base.Infrastructure.Repositories.Common;
@@ -17,7 +16,6 @@ namespace AppyNox.Services.License.WebAPI.Controllers.v1
     [ApiController]
     [ApiVersion("1.0")]
     [Route("api/[controller]")]
-    [JwtTokenValidate]
     public class LicensesController(IMediator mediator) : Controller
     {
         #region [ Fields ]
