@@ -3,11 +3,9 @@ using AppyNox.Services.Base.Domain.Interfaces;
 
 namespace AppyNox.Services.Coupon.Domain.Entities
 {
-    public class CouponEntity : EntityBase, IEntityWithGuid, IAuditableData
+    public class CouponEntity : EntityBase, IAuditableData
     {
         #region [ Properties ]
-
-        public Guid Id { get; set; }
 
         public string Description { get; set; } = string.Empty;
 

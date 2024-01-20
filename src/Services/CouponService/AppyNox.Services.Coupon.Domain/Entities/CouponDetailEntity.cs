@@ -1,19 +1,10 @@
-﻿using AppyNox.Services.Base.Domain.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using AppyNox.Services.Base.Domain;
 
 namespace AppyNox.Services.Coupon.Domain.Entities
 {
-    public class CouponDetailEntity : IEntityWithGuid
+    public class CouponDetailEntity : EntityBase
     {
         #region [ Properties ]
-
-        public Guid Id { get; set; }
-
-        public string Code { get; set; } = string.Empty;
 
         public string? Detail { get; set; }
 

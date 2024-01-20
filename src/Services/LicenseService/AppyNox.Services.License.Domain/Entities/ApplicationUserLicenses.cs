@@ -1,6 +1,8 @@
-﻿namespace AppyNox.Services.License.Domain.Entities
+﻿using AppyNox.Services.Base.Domain.Interfaces;
+
+namespace AppyNox.Services.License.Domain.Entities
 {
-    public class ApplicationUserLicenses
+    public class ApplicationUserLicenses : IEntityWithGuid
     {
         #region [ Properties ]
 
