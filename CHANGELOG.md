@@ -2,6 +2,9 @@
 All notable changes to AppyNox will be documented in this file.
 
 ## [1.0.4](https://github.com/HappiSoftware/AppyNox/compare/v1.0.3...v1.0.4) - NOT RELEASED
+### Added
+- Adding CORS to Gateway ([#133](https://github.com/HappiSoftware/AppyNox/issues/133))
+
 ### Changed
 - EntityBase Improvement ([#138](https://github.com/HappiSoftware/AppyNox/issues/138))
 
