@@ -717,6 +717,9 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
   },
   "ConsulConfiguration": {
     "Address": "http://localhost:8500"
+  },
+  "Cors": {
+    "AllowedOrigins": ["http://localhost:3000"]
   }
 }
 ```
@@ -751,6 +754,9 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
   },
   "ConsulConfiguration": {
     "Address": "http://appynox-consul:8500"
+  },
+  "Cors": {
+    "AllowedOrigins": []
   }
 }
 ```
@@ -785,6 +791,9 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
   },
   "ConsulConfiguration": {
     "Address": "http://appynox-consul:8500"
+  },
+  "Cors": {
+    "AllowedOrigins": []
   }
 }
 ```
