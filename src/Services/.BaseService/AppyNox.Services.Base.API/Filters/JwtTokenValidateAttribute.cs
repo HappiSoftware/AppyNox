@@ -6,6 +6,7 @@ using Microsoft.Net.Http.Headers;
 namespace AppyNox.Services.Base.API.Filters
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = false, AllowMultiple = false)]
+    [Obsolete("JwtTokenValidateAttribute is deprecated. Use NoxJwtAuthenticationHandler instead. This class will be removed in v1.0.5")]
     public class JwtTokenValidateAttribute : Attribute, IAuthorizationFilter
     {
         #region [ Public Methods ]
