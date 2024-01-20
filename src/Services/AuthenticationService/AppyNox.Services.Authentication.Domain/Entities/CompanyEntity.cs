@@ -1,13 +1,10 @@
 ﻿using AppyNox.Services.Base.Domain;
-using AppyNox.Services.Base.Domain.Interfaces;
 
 namespace AppyNox.Services.Authentication.Domain.Entities
 {
-    public class CompanyEntity : EntityBase, IEntityWithGuid
+    public class CompanyEntity : EntityBase
     {
         #region [ Properties ]
-
-        public Guid Id { get; set; }
 
         public string Name { get; set; } = string.Empty;
 

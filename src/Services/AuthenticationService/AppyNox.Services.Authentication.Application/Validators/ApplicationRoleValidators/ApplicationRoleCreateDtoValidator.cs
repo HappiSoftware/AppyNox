@@ -6,7 +6,7 @@ namespace AppyNox.Services.Authentication.Application.Validators.ApplicationRole
 {
     public class ApplicationRoleCreateDtoValidator : DtoValidatorBase<ApplicationRoleCreateDto>
     {
-        #region Public Constructors
+        #region [ Public Constructors ]
 
         public ApplicationRoleCreateDtoValidator()
         {

@@ -5,6 +5,9 @@ All notable changes to AppyNox will be documented in this file.
 ### Added
 - Adding CORS to Gateway ([#133](https://github.com/HappiSoftware/AppyNox/issues/133))
 
+### Changed
+- EntityBase Improvement ([#138](https://github.com/HappiSoftware/AppyNox/issues/138))
+
 ## [1.0.3](https://github.com/HappiSoftware/AppyNox/compare/v1.0.2...v1.0.3) - 2024.01.19
 ### Added
 - AppyFleet Requests For Base WebAPI ([#123](https://github.com/HappiSoftware/AppyNox/issues/123))
