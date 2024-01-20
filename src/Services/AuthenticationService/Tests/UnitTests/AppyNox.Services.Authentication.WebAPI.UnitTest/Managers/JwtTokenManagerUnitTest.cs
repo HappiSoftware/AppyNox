@@ -110,10 +110,10 @@ namespace AppyNox.Services.Authentication.WebAPI.UnitTest.Managers
             string token = "invalidTokenString";
 
             // Act
-            bool result = _jwtTokenManager.VerifyToken(token, "AppyNox");
+            var exception = Assert.Throws<NoxAuthenticationApiException>(() => _jwtTokenManager.VerifyToken(token, "AppyNox"));
 
             // Assert
-            Assert.False(result);
+            Assert.Equal((int)HttpStatusCode.Unauthorized, exception.StatusCode);
         }
 
         #endregion
