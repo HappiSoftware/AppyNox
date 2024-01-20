@@ -18,8 +18,6 @@ using Microsoft.OpenApi.Models;
 using Serilog;
 using AppyNox.Services.Base.API.Authentication;
 using AppyNox.Services.Base.Application.Interfaces.Authentication;
-using AppyNox.Services.Authentication.WebAPI.Permission;
-using Microsoft.AspNetCore.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -86,8 +84,8 @@ builder.Services.AddSingleton(jwtConfiguration);
 
 builder.Services.AddAuthentication(options =>
 {
-    options.DefaultAuthenticateScheme = "NoxJwtScheme";
-    options.DefaultChallengeScheme = "NoxJwtScheme";
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 }).AddJwtBearer(options =>
 {
     options.TokenValidationParameters = new TokenValidationParameters
@@ -100,9 +98,6 @@ builder.Services.AddAuthentication(options =>
         ValidAudience = jwtConfiguration.Audience,
         IssuerSigningKey = new SymmetricSecurityKey(jwtConfiguration.GetSecretKeyBytes())
     };
-})
-.AddScheme<AuthenticationSchemeOptions, NoxJwtAuthenticationHandler>("NoxJwtScheme", options =>
-{
 });
 
 if (!builder.Environment.IsDevelopment())
@@ -153,7 +148,7 @@ builder.Services.AddAuthorization(options =>
     }
 });
 
-builder.Services.AddScoped<IAuthorizationHandler, NoxJwtAuthorizationHandler>();
+builder.Services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
 builder.Services.AddScoped<INoxTokenManager, NoxTokenManager>();
 noxLogger.LogInformation("Registering JWT Configuration completed.");
 
@@ -169,9 +164,6 @@ if (!app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseApiResponseAndExceptionWrapper(new AutoWrapperOptions { IsApiOnly = true, ShowApiVersion = true, ApiVersion = "1.0", ShowStatusCode = true });
-app.UseMiddleware<ExceptionHandlingMiddleware>();
-
 app.UseMiddleware<CorrelationIdMiddleware>();
 
 app.UseHttpsRedirection();
@@ -184,6 +176,8 @@ app.UseMiddleware<UserIdMiddleware>();
 
 app.MapControllers();
 
+app.UseApiResponseAndExceptionWrapper(new AutoWrapperOptions { IsApiOnly = true, ShowApiVersion = true, ApiVersion = "1.0", ShowStatusCode = true });
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseMiddleware<QueryParameterValidateMiddleware>();
 
 app.UseHealthChecks("/api/health");

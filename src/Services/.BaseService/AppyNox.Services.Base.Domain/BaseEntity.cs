@@ -1,6 +1,6 @@
 ﻿namespace AppyNox.Services.Base.Domain
 {
-    public abstract class EntityBase
+    public abstract class BaseEntity
     {
         #region [ Properties ]
 

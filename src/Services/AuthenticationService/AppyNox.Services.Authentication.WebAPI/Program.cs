@@ -5,6 +5,7 @@ using AppyNox.Services.Authentication.Infrastructure;
 using AppyNox.Services.Authentication.Infrastructure.Data;
 using AppyNox.Services.Authentication.WebAPI.Configuration;
 using AppyNox.Services.Authentication.WebAPI.ControllerDependencies;
+using AppyNox.Services.Authentication.WebAPI.Filters;
 using AppyNox.Services.Authentication.WebAPI.Managers;
 using AppyNox.Services.Authentication.WebAPI.Middlewares;
 using AppyNox.Services.Authentication.WebAPI.Permission;
@@ -17,7 +18,7 @@ using AppyNox.Services.Base.Infrastructure.HostedServices;
 using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
 using Asp.Versioning;
 using AutoWrapper;
-using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
@@ -126,8 +127,8 @@ configuration.GetSection("JwtSettings:AppyNox").Bind(jwtConfiguration);
 // Add JWT Authentication
 builder.Services.AddAuthentication(options =>
 {
-    options.DefaultAuthenticateScheme = "NoxSsoJwtScheme";
-    options.DefaultChallengeScheme = "NoxSsoJwtScheme";
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 }).AddJwtBearer(options =>
 {
     options.TokenValidationParameters = new TokenValidationParameters
@@ -140,10 +141,6 @@ builder.Services.AddAuthentication(options =>
         ValidAudience = jwtConfiguration.Audience,
         IssuerSigningKey = new SymmetricSecurityKey(jwtConfiguration.GetSecretKeyBytes())
     };
-})
-.AddScheme<NoxSsoJwtAuthenticationHandlerOptions, NoxSsoJwtAuthenticationHandler>("NoxSsoJwtScheme", options =>
-{
-    options.Audience = "AppyNox";
 });
 
 builder.Services.AddScoped<ICustomTokenManager, JwtTokenManager>();
@@ -163,7 +160,7 @@ builder.Services.AddAuthorization(options =>
     }
 });
 
-builder.Services.AddScoped<IAuthorizationHandler, NoxSsoAuthorizationHandler>();
+builder.Services.AddScoped<IAuthorizationHandler, AuthenticationPermissionAuthorizationHandler>();
 noxLogger.LogInformation("Registering JWT Configuration completed.");
 
 #endregion
@@ -178,18 +175,18 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseApiResponseAndExceptionWrapper(new AutoWrapperOptions { IsApiOnly = true, ShowApiVersion = true, ApiVersion = "1.0" });
-app.UseMiddleware<ExceptionHandlingMiddleware>();
+app.UseHttpsRedirection();
 
 app.UseMiddleware<CorrelationIdMiddleware>();
 
-app.UseHttpsRedirection();
+app.UseApiResponseAndExceptionWrapper(new AutoWrapperOptions { IsApiOnly = true, ShowApiVersion = true, ApiVersion = "1.0" });
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseAuthentication();
 
-app.UseAuthorization();
-
 app.UseMiddleware<AuthenticationContextMiddleware>();
+
+app.UseAuthorization();
 
 app.MapControllers();
 

@@ -70,11 +70,9 @@ namespace AppyNox.Services.Authentication.WebAPI.Middlewares
 
                 #region [ IsConnectRequest ]
 
-                string path = context.Request.Path.ToString();
-
-                // IsConnectRequest will allow database to bypass company global filter.
-                bool isConnectRequest = path.Equals("/api/authentication/connect/token") || path.Equals("/api/authentication/refresh");
+                bool isConnectRequest = context.Request.Path.Equals("/api/authentication/connect/token");
                 AuthenticationContext.IsConnectRequest = isConnectRequest;
+                bool allowContinue = isConnectRequest || context.Request.Path.Equals("/api/health");
 
                 #endregion
 
@@ -85,9 +83,10 @@ namespace AppyNox.Services.Authentication.WebAPI.Middlewares
                 {
                     AuthenticationContext.UserId = userIdGuid;
                 }
-                else
+                else if (!allowContinue)
                 {
                     _logger.LogWarning("UserId is empty. Could not set to UserIdContext");
+                    throw new NoxAuthenticationApiException("Jwt User Id is empty or invalid.");
                 }
 
                 #endregion
