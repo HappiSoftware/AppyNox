@@ -2,7 +2,8 @@
 All notable changes to AppyNox will be documented in this file.
 
 ## [1.0.4](https://github.com/HappiSoftware/AppyNox/compare/v1.0.3...v1.0.4) - NOT RELEASED
-
+### Added
+- NoxJwtAuthenticationHandler / NoxJwtAuthorizationHandler ([#136](https://github.com/HappiSoftware/AppyNox/issues/136))
 
 ## [1.0.3](https://github.com/HappiSoftware/AppyNox/compare/v1.0.2...v1.0.3) - 2024.01.19
 ### Added
