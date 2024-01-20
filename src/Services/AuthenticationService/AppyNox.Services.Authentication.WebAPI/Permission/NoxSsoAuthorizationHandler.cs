@@ -2,9 +2,9 @@
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 
-namespace AppyNox.Services.Authentication.WebAPI.Filters
+namespace AppyNox.Services.Authentication.WebAPI.Permission
 {
-    public class AuthenticationPermissionAuthorizationHandler : AuthorizationHandler<PermissionRequirement>
+    public class NoxSsoAuthorizationHandler : AuthorizationHandler<PermissionRequirement>
     {
         #region [ Protected Methods ]
 
@@ -16,7 +16,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Filters
                 return Task.CompletedTask;
             }
 
-            if (context.User.HasClaim(c => c.Type == ClaimTypes.NameIdentifier))
+            if (context.User.HasClaim(c => c.Type == "nameid"))
             {
                 if (context.User.HasClaim(c => c.Value == requirement.Permission))
                 {
