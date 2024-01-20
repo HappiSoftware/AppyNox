@@ -11,6 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 #region [ Configuration Service ]
 
+var configuration = builder.Configuration;
 await builder.AddConsulConfiguration("OcelotService");
 await builder.AddConsulConfiguration("OcelotService", "ocelot");
 
@@ -74,6 +75,23 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
 
 #endregion
 
+#region [ CORS ]
+
+string[]? allowedOrigins = configuration.GetSection("Cors:AllowedOrigins").Get<string[]>();
+
+if (allowedOrigins != null && allowedOrigins.Length > 0)
+{
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("AllowSpecificOrigin",
+            builder => builder.WithOrigins(allowedOrigins)
+                              .AllowAnyHeader()
+                              .AllowAnyMethod());
+    });
+}
+
+#endregion
+
 builder.Services.AddHealthChecks();
 
 builder.Services.AddOcelot(builder.Configuration.GetSection("Gateway")).AddConsul();
@@ -81,6 +99,10 @@ builder.Services.AddOcelot(builder.Configuration.GetSection("Gateway")).AddConsu
 var app = builder.Build();
 
 #region [ Pipeline ]
+
+app.UseHsts();
+
+app.UseCors("AllowSpecificOrigin");
 
 app.UseMiddleware<LoggingMiddleware>();
 
