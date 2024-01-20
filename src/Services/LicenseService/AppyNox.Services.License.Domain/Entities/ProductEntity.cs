@@ -3,11 +3,9 @@ using AppyNox.Services.Base.Domain.Interfaces;
 
 namespace AppyNox.Services.License.Domain.Entities
 {
-    public class ProductEntity : EntityBase, IEntityWithGuid
+    public class ProductEntity : EntityBase
     {
         #region [ Properties ]
-
-        public Guid Id { get; set; }
 
         public string Name { get; set; } = string.Empty;
 
