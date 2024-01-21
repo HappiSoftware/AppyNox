@@ -1,4 +1,5 @@
-﻿using AppyNox.Services.Base.API.ExceptionExtensions.Base;
+﻿using AppyNox.Services.Base.API.ExceptionExtensions;
+using AppyNox.Services.Base.API.ExceptionExtensions.Base;
 using AppyNox.Services.Base.Application.Interfaces.Authentication;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -10,7 +11,7 @@ using System.Net;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
 
-namespace AppyNox.Services.Authentication.WebAPI.Permission
+namespace AppyNox.Services.Base.API.Permissions
 {
     public class NoxJwtAuthenticationHandler(
         IOptionsMonitor<AuthenticationSchemeOptions> options,
@@ -36,9 +37,9 @@ namespace AppyNox.Services.Authentication.WebAPI.Permission
             }
 
             string token = Request.Headers.Authorization.FirstOrDefault()?.Split(" ").Last()
-                ?? throw new NoxApiException("Token is null!", (int)HttpStatusCode.Unauthorized);
+                ?? throw new NoxAuthenticationException("Token is null!");
 
-            if (_jwtTokenManager.VerifyToken(token))
+            if (await _jwtTokenManager.VerifyToken(token))
             {
                 var tokenHandler = new JwtSecurityTokenHandler();
                 var jwtToken = tokenHandler.ReadJwtToken(token);
@@ -51,7 +52,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Permission
                 return await Task.FromResult(AuthenticateResult.Success(ticket));
             }
 
-            throw new NoxApiException("Invalid token!", (int)HttpStatusCode.Unauthorized);
+            throw new NoxAuthenticationException("Invalid token!");
         }
 
         #endregion

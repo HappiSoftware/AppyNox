@@ -1,4 +1,5 @@
 ﻿using AppyNox.Services.Authentication.Infrastructure.ExceptionExtensions.Base;
+using AppyNox.Services.Base.Core.AsyncLocals;
 
 namespace AppyNox.Services.Authentication.Infrastructure.AsyncLocals
 {
@@ -14,8 +15,6 @@ namespace AppyNox.Services.Authentication.Infrastructure.AsyncLocals
         private static readonly AsyncLocal<bool> _isAdmin = new();
 
         private static readonly AsyncLocal<bool> _isSuperAdmin = new();
-
-        private static readonly AsyncLocal<Guid> _userId = new();
 
         private static readonly AsyncLocal<bool> _isConnectRequest = new();
 
@@ -48,15 +47,6 @@ namespace AppyNox.Services.Authentication.Infrastructure.AsyncLocals
         {
             get => _isSuperAdmin.Value;
             set => _isSuperAdmin.Value = value;
-        }
-
-        /// <summary>
-        /// Gets or sets the User ID for the current request.
-        /// </summary>
-        public static Guid UserId
-        {
-            get => _userId.Value;
-            set => _userId.Value = value;
         }
 
         /// <summary>

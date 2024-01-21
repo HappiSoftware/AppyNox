@@ -73,19 +73,19 @@ namespace AppyNox.Services.Authentication.WebAPI.Middlewares
                 string path = context.Request.Path.ToString();
 
                 // IsConnectRequest will allow database to bypass company global filter.
-                bool isConnectRequest = path.Equals("/api/authentication/connect/token") || path.Equals("/api/authentication/refresh");
+                bool isConnectRequest = path.EndsWith("/authentication/connect/token") || path.EndsWith("/authentication/refresh");
                 AuthenticationContext.IsConnectRequest = isConnectRequest;
 
                 #endregion
 
                 #region [ UserId ]
 
-                string? userId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                string? userId = context.User.FindFirst("nameid")?.Value;
                 if (!string.IsNullOrEmpty(userId) && Guid.TryParse(userId, out Guid userIdGuid))
                 {
-                    AuthenticationContext.UserId = userIdGuid;
+                    UserIdContext.UserId = userIdGuid;
                 }
-                else
+                else if(!isConnectRequest)
                 {
                     _logger.LogWarning("UserId is empty. Could not set to UserIdContext");
                 }
@@ -100,7 +100,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Middlewares
                 AuthenticationContext.CompanyId = Guid.Empty;
                 AuthenticationContext.IsAdmin = false;
                 AuthenticationContext.IsSuperAdmin = false;
-                AuthenticationContext.UserId = Guid.Empty;
+                UserIdContext.UserId = Guid.Empty;
                 AuthenticationContext.IsConnectRequest = false;
             }
         }

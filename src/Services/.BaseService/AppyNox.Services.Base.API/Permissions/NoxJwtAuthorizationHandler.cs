@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AppyNox.Services.Base.API.ExceptionExtensions;
+using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 
 namespace AppyNox.Services.Base.API.Permissions;
@@ -17,12 +18,12 @@ public class NoxJwtAuthorizationHandler : AuthorizationHandler<PermissionRequire
             }
             else
             {
-                context.Fail();
+                throw new NoxAuthorizationException();
             }
         }
         else
         {
-            context.Fail();
+            throw new NoxAuthorizationException();
         }
 
         return Task.CompletedTask;

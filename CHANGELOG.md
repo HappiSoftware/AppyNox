@@ -4,6 +4,7 @@ All notable changes to AppyNox will be documented in this file.
 ## [1.0.4](https://github.com/HappiSoftware/AppyNox/compare/v1.0.3...v1.0.4) - NOT RELEASED
 ### Added
 - Adding CORS to Gateway ([#133](https://github.com/HappiSoftware/AppyNox/issues/133))
+- ApiResponse Should Be Removed From Endpoints ([#135](https://github.com/HappiSoftware/AppyNox/issues/135))
 - NoxJwtAuthenticationHandler / NoxJwtAuthorizationHandler ([#136](https://github.com/HappiSoftware/AppyNox/issues/136))
 
 ### Changed

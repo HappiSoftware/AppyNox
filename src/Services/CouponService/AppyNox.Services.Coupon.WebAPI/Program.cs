@@ -1,25 +1,24 @@
+using AppyNox.Services.Base.API.Authentication;
+using AppyNox.Services.Base.API.Constants;
 using AppyNox.Services.Base.API.Extensions;
 using AppyNox.Services.Base.API.Middleware;
+using AppyNox.Services.Base.API.Middleware.Options;
+using AppyNox.Services.Base.API.Permissions;
+using AppyNox.Services.Base.Application.Interfaces.Authentication;
 using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Core.Common;
 using AppyNox.Services.Base.Infrastructure.Extensions;
 using AppyNox.Services.Base.Infrastructure.HostedServices;
 using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
-using AppyNox.Services.Base.API.Permissions;
 using AppyNox.Services.Coupon.Application;
 using AppyNox.Services.Coupon.Infrastructure;
 using AppyNox.Services.Coupon.Infrastructure.Data;
-using AutoWrapper;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using AppyNox.Services.Coupon.WebAPI.Permission;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
-using AppyNox.Services.Coupon.WebAPI.Permission;
-using AppyNox.Services.Base.Application.Interfaces.Authentication;
-using AppyNox.Services.Base.API.Authentication;
-using AppyNox.Services.Authentication.WebAPI.Permission;
-using Microsoft.AspNetCore.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -171,10 +170,12 @@ if (!app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseApiResponseAndExceptionWrapper(new AutoWrapperOptions { IsApiOnly = true, ShowApiVersion = true, ApiVersion = "1.0" });
-app.UseMiddleware<ExceptionHandlingMiddleware>();
+app.UseCorrelationContext();
 
-app.UseMiddleware<CorrelationIdMiddleware>();
+app.UseNoxResponseWrapper(new NoxResponseWrapperOptions
+{
+    ApiVersion = NoxVersions.v1_0,
+});
 
 app.UseHttpsRedirection();
 
@@ -182,7 +183,7 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
-app.UseMiddleware<UserIdMiddleware>();
+app.UseUserIdContext();
 
 app.MapControllers();
 

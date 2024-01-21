@@ -3,7 +3,7 @@ using AppyNox.Services.Base.Application.ExceptionExtensions;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Identity;
 
-namespace AppyNox.Services.Authentication.WebAPI.Helpers
+namespace AppyNox.Services.Authentication.WebAPI.Extensions
 {
     public static class IdentityResultExceptions
     {

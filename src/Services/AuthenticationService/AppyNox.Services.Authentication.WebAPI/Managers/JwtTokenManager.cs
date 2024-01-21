@@ -11,6 +11,7 @@ using System.Security.Cryptography;
 using AppyNox.Services.Authentication.WebAPI.ExceptionExtensions.Base;
 using AppyNox.Services.Base.API.Authentication;
 using AppyNox.Services.Base.Core.Common;
+using AppyNox.Services.Base.API.ExceptionExtensions;
 
 namespace AppyNox.Services.Authentication.WebAPI.Managers
 {
@@ -116,7 +117,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Managers
             return false;
         }
 
-        public bool VerifyToken(string token, string audience)
+        public async Task<bool> VerifyToken(string token, string audience)
         {
             JwtConfiguration jwtConfiguration = DetermineJwtConfigurationForAudience(audience);
 
@@ -134,16 +135,16 @@ namespace AppyNox.Services.Authentication.WebAPI.Managers
 
             try
             {
-                _tokenHandler.ValidateToken(token, validationParameters, out SecurityToken securityToken);
-                return true;
+                _tokenHandler.ValidateToken(token, validationParameters, out SecurityToken test);
+                return await Task.FromResult(true);
             }
             catch (SecurityTokenExpiredException)
             {
-                throw new NoxAuthenticationApiException("Token has expired.", (int)HttpStatusCode.Unauthorized);
+                throw new NoxTokenExpiredException();
             }
             catch (Exception)
             {
-                throw new NoxAuthenticationApiException("Invalid token!", (int)HttpStatusCode.Unauthorized);
+                throw new NoxAuthenticationException("Invalid token!");
             }
         }
 
@@ -153,10 +154,8 @@ namespace AppyNox.Services.Authentication.WebAPI.Managers
         /// <param name="token">The JWT token.</param>
         /// <returns>User information if token is valid.</returns>
         /// <exception cref="NoxAuthenticationApiException">Thrown when token is invalid or user information is not found.</exception>
-        public string GetUserInfoByToken(string token)
+        public string GetUserInfoByToken(string token, string audience)
         {
-            if (string.IsNullOrWhiteSpace(token)) return string.Empty;
-
             var jwtToken = _tokenHandler.ReadToken(token.Replace("\"", string.Empty)) as JwtSecurityToken
                 ?? throw new NoxAuthenticationApiException("Wrong Credentials", (int)HttpStatusCode.NotFound);
 

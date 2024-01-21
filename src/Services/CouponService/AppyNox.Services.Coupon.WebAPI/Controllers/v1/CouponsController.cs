@@ -1,11 +1,11 @@
-﻿using AppyNox.Services.Base.API.Controllers;
+﻿using AppyNox.Services.Base.API.Constants;
+using AppyNox.Services.Base.API.Controllers;
 using AppyNox.Services.Base.API.Helpers;
 using AppyNox.Services.Base.API.ViewModels;
 using AppyNox.Services.Base.Application.MediatR.Commands;
 using AppyNox.Services.Base.Infrastructure.Repositories.Common;
 using AppyNox.Services.Coupon.Domain.Entities;
 using Asp.Versioning;
-using AutoWrapper.Wrappers;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,7 +14,7 @@ using static AppyNox.Services.Coupon.WebAPI.Permission.Permissions;
 namespace AppyNox.Services.Coupon.WebAPI.Controllers.v1
 {
     [ApiController]
-    [ApiVersion("1.0")]
+    [ApiVersion(NoxVersions.v1_0)]
     [Route("api/[controller]")]
     public class CouponsController(IMediator mediator) : NoxController
     {
@@ -28,16 +28,16 @@ namespace AppyNox.Services.Coupon.WebAPI.Controllers.v1
 
         [HttpGet]
         [Authorize(Coupons.View)]
-        public async Task<ApiResponse> GetAll([FromQuery] QueryParametersViewModel queryParameters)
+        public async Task<IActionResult> GetAll([FromQuery] QueryParametersViewModel queryParameters)
         {
-            return new ApiResponse(await _mediator.Send(new GetAllEntitiesQuery<CouponEntity>(queryParameters)));
+            return Ok(await _mediator.Send(new GetAllEntitiesQuery<CouponEntity>(queryParameters)));
         }
 
         [HttpGet("{id}")]
         [Authorize(Coupons.View)]
-        public async Task<ApiResponse> GetById(Guid id, [FromQuery] QueryParametersViewModel queryParameters)
+        public async Task<IActionResult> GetById(Guid id, [FromQuery] QueryParametersViewModel queryParameters)
         {
-            return new ApiResponse(await _mediator.Send(new GetEntityByIdQuery<CouponEntity>(id, queryParameters)));
+            return Ok(await _mediator.Send(new GetEntityByIdQuery<CouponEntity>(id, queryParameters)));
         }
 
         [HttpPost]

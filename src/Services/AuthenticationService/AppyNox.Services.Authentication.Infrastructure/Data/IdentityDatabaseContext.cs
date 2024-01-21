@@ -1,6 +1,7 @@
 ﻿using AppyNox.Services.Authentication.Domain.Entities;
 using AppyNox.Services.Authentication.Infrastructure.AsyncLocals;
 using AppyNox.Services.Authentication.Infrastructure.Data.Configurations;
+using AppyNox.Services.Base.Core.AsyncLocals;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -106,7 +107,7 @@ namespace AppyNox.Services.Authentication.Infrastructure.Data
 
         private Guid GetCurrentUserId()
         {
-            return AuthenticationContext.UserId;
+            return UserIdContext.UserId;
         }
 
         private bool IsConnectRequest()

@@ -4,11 +4,11 @@ using AppyNox.Services.Authentication.Infrastructure.Data;
 using AppyNox.Services.Authentication.SharedEvents.Events;
 using AppyNox.Services.Authentication.WebAPI.ControllerDependencies;
 using AppyNox.Services.Authentication.WebAPI.ExceptionExtensions.Base;
+using AppyNox.Services.Authentication.WebAPI.Extensions;
 using AppyNox.Services.Authentication.WebAPI.Permission;
 using AppyNox.Services.Base.Application.ExceptionExtensions;
 using AppyNox.Services.Base.Core.AsyncLocals;
 using Asp.Versioning;
-using AutoWrapper.Wrappers;
 using FluentValidation.Results;
 using MassTransit;
 using Microsoft.AspNetCore.Authorization;
@@ -20,9 +20,9 @@ using ValidationResult = FluentValidation.Results.ValidationResult;
 
 namespace AppyNox.Services.Authentication.WebAPI.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiVersion("1.0")]
     [ApiController]
+    [ApiVersion("1.0")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     public class UsersController(UsersControllerBaseDependencies usersControllerBaseDependencies, IPublishEndpoint publishEndpoint, IdentityDatabaseContext conmtext) : ControllerBase
     {
         #region [ Fields ]
@@ -37,7 +37,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
 
         [HttpGet]
         [Authorize(Permissions.Users.View)]
-        public async Task<ApiResponse> GetAll()
+        public async Task<IActionResult> GetAll()
         {
             //var entities = await _baseDependencies.UserManager.Users.ToListAsync();
             var entities = await conmtext.Users.ToListAsync();
@@ -47,12 +47,12 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
                 roles = _baseDependencies.Mapper.Map(entities, entities.GetType(), typeof(List<ApplicationUserDto>))
             };
 
-            return new ApiResponse(response);
+            return Ok(response);
         }
 
         [HttpGet("{id}")]
         [Authorize(Permissions.Users.View)]
-        public async Task<ApiResponse> GetById(Guid id)
+        public async Task<IActionResult> GetById(Guid id)
         {
             var identityUser = await _baseDependencies.UserManager.FindByIdAsync(id.ToString());
 
@@ -61,7 +61,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
                 throw new NoxAuthenticationApiException("User Not Found", (int)HttpStatusCode.NotFound);
             }
 
-            return new ApiResponse(_baseDependencies.Mapper.Map(identityUser, identityUser.GetType(), typeof(ApplicationUserDto)));
+            return Ok(_baseDependencies.Mapper.Map(identityUser, identityUser.GetType(), typeof(ApplicationUserDto)));
         }
 
         [HttpPut("{id}")]
@@ -73,41 +73,20 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
                 throw new NoxAuthenticationApiException("Ids don't match", (int)HttpStatusCode.UnprocessableEntity);
             }
 
-            var existingUser = await _baseDependencies.UserManager.FindByIdAsync(id.ToString());
-            if (existingUser == null)
-            {
-                throw new NoxAuthenticationApiException("User Not Found", (int)HttpStatusCode.NotFound);
-            }
+            var existingUser = await _baseDependencies.UserManager.FindByIdAsync(id.ToString())
+                ?? throw new NoxAuthenticationApiException("User Not Found", (int)HttpStatusCode.NotFound);
 
             var concurrencyStamp = existingUser.ConcurrencyStamp;
             existingUser.UserName = identityUserUpdateDto.UserName;
 
             var result = await _baseDependencies.UserValidator.ValidateAsync(_baseDependencies.UserManager, existingUser);
-            if (!result.Succeeded)
-            {
-                ValidationResult validationResult = new();
-                foreach (var error in result.Errors)
-                {
-                    ValidationFailure validationFailure = new(error.Code, error.Description);
-                    validationResult.Errors.Add(validationFailure);
-                }
-                throw new FluentValidationException(typeof(IdentityUser), validationResult);
-            }
+            result.HandleValidationResult();
 
             try
             {
                 existingUser.ConcurrencyStamp = concurrencyStamp;
                 IdentityResult identityResuls = await _baseDependencies.UserManager.UpdateAsync(existingUser);
-                if (!identityResuls.Succeeded)
-                {
-                    ValidationResult validationResult = new();
-                    foreach (var error in identityResuls.Errors)
-                    {
-                        ValidationFailure validationFailure = new(error.Code, error.Description);
-                        validationResult.Errors.Add(validationFailure);
-                    }
-                    throw new FluentValidationException(typeof(IdentityUser), validationResult);
-                }
+                identityResuls.HandleValidationResult();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -166,11 +145,11 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
         [HttpGet]
         [Authorize(Permissions.Users.View)]
         [Route("/api/Users/{uid}/Roles")]
-        public async Task<ApiResponse> GetRoles(Guid uid)
+        public async Task<IActionResult> GetRoles(Guid uid)
         {
-            var user = await _baseDependencies.UserManager.FindByIdAsync(uid.ToString());
-            if (user == null)
-                throw new NoxAuthenticationApiException($"Record with id: {uid} does not exist.", (int)HttpStatusCode.NotFound);
+            var user = await _baseDependencies.UserManager.FindByIdAsync(uid.ToString())
+                ?? throw new NoxAuthenticationApiException($"Record with id: {uid} does not exist.", (int)HttpStatusCode.NotFound);
+
             IList<string> roleNames = await _baseDependencies.UserManager.GetRolesAsync(user);
             List<ApplicationRoleDto> roles = new List<ApplicationRoleDto>();
 
@@ -181,13 +160,13 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
 
             var userWithRolesDto = _baseDependencies.Mapper.Map<ApplicationUserWithRolesDto>(user);
             userWithRolesDto.Roles = roles;
-            return new ApiResponse(userWithRolesDto);
+            return Ok(userWithRolesDto);
         }
 
         [HttpPost]
         [Authorize(Permissions.Users.Edit)]
         [Route("/api/Users/{uid}/Roles/{rid}")]
-        public async Task<ApiResponse> AssignRole(Guid uid, Guid rid)
+        public async Task<IActionResult> AssignRole(Guid uid, Guid rid)
         {
             var user = await _baseDependencies.UserManager.FindByIdAsync(uid.ToString());
             var role = await _baseDependencies.RoleManager.FindByIdAsync(rid.ToString());
@@ -198,19 +177,11 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
 
             //Assign the role from user
             IdentityResult response = await _baseDependencies.UserManager.AddToRoleAsync(user, role.Name);
-            if (!response.Succeeded)
-            {
-                ValidationResult validationResult = new();
-                foreach (var error in response.Errors)
-                {
-                    ValidationFailure validationFailure = new(error.Code, error.Description);
-                    validationResult.Errors.Add(validationFailure);
-                }
-                throw new FluentValidationException(typeof(IdentityUser), validationResult);
-            }
+            response.HandleValidationResult();
+
             IList<string> roleNames = await _baseDependencies.UserManager.GetRolesAsync(user);
 
-            List<ApplicationRoleDto> roles = new List<ApplicationRoleDto>();
+            List<ApplicationRoleDto> roles = [];
 
             foreach (var item in roleNames)
             {
@@ -219,8 +190,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
 
             var userWithRolesDto = _baseDependencies.Mapper.Map<ApplicationUserWithRolesDto>(user);
             userWithRolesDto.Roles = roles;
-
-            return new ApiResponse("Role assigned to user successfully.", userWithRolesDto);
+            return Ok(userWithRolesDto);
         }
 
         [HttpDelete]

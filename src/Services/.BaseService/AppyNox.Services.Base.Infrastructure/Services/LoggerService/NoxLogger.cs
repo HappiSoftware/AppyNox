@@ -68,6 +68,7 @@ namespace AppyNox.Services.Base.Infrastructure.Services.LoggerService
         {
             var timeStamp = DateTime.UtcNow;
             var correlationId = CorrelationContext.CorrelationId;
+            var userId = UserIdContext.UserId;
 
             return new
             {
@@ -75,7 +76,8 @@ namespace AppyNox.Services.Base.Infrastructure.Services.LoggerService
                 Layer = _layer,
                 TimeStamp = timeStamp,
                 Message = message,
-                CorrelationId = correlationId
+                CorrelationId = correlationId,
+                UserId = userId
             };
         }
 

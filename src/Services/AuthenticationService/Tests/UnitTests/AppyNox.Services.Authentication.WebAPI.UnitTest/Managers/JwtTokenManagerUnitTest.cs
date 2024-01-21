@@ -1,9 +1,7 @@
 ﻿using AppyNox.Services.Authentication.Domain.Entities;
-using AppyNox.Services.Authentication.WebAPI.Configuration;
 using AppyNox.Services.Authentication.WebAPI.ExceptionExtensions.Base;
 using AppyNox.Services.Authentication.WebAPI.Managers;
-using AppyNox.Services.Base.API.ExceptionExtensions.Base;
-using AppyNox.Services.Base.Application.Interfaces.Exceptions;
+using AppyNox.Services.Base.API.ExceptionExtensions;
 using AppyNox.Services.Base.Core.Common;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -80,37 +78,37 @@ namespace AppyNox.Services.Authentication.WebAPI.UnitTest.Managers
         #region [ Public Methods ]
 
         [Fact]
-        public void VerifyToken_ShouldReturnTrue_WithValidToken()
+        public async Task VerifyToken_ShouldReturnTrue_WithValidToken()
         {
             // Arrange
             string token = GenerateTestToken();
 
             // Act
-            bool result = _jwtTokenManager.VerifyToken(token, "AppyNox");
+            bool result = await _jwtTokenManager.VerifyToken(token, "AppyNox");
 
             // Assert
             Assert.True(result);
         }
 
         [Fact]
-        public void VerifyToken_ShouldThrowException_WithExpiredToken()
+        public async Task VerifyToken_ShouldThrowException_WithExpiredToken()
         {
             // Arrange
             string token = GenerateTestToken(expired: true);
 
             // Act & Assert
-            var exception = Assert.Throws<NoxAuthenticationApiException>(() => _jwtTokenManager.VerifyToken(token, "AppyNox"));
+            var exception = await Assert.ThrowsAsync<NoxTokenExpiredException>(() => _jwtTokenManager.VerifyToken(token, "AppyNox"));
             Assert.Equal((int)HttpStatusCode.Unauthorized, exception.StatusCode);
         }
 
         [Fact]
-        public void VerifyToken_ShouldReturnFalse_WithInvalidToken()
+        public async Task VerifyToken_ShouldReturnFalse_WithInvalidToken()
         {
             // Arrange
             string token = "invalidTokenString";
 
             // Act
-            var exception = Assert.Throws<NoxAuthenticationApiException>(() => _jwtTokenManager.VerifyToken(token, "AppyNox"));
+            var exception = await Assert.ThrowsAsync<NoxAuthenticationException>(() => _jwtTokenManager.VerifyToken(token, "AppyNox"));
 
             // Assert
             Assert.Equal((int)HttpStatusCode.Unauthorized, exception.StatusCode);

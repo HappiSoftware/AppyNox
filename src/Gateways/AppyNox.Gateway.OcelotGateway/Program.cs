@@ -102,7 +102,10 @@ var app = builder.Build();
 
 app.UseHsts();
 
-app.UseCors("AllowSpecificOrigin");
+if (allowedOrigins != null && allowedOrigins.Length > 0)
+{
+    app.UseCors("AllowSpecificOrigin");
+}
 
 app.UseMiddleware<LoggingMiddleware>();
 
