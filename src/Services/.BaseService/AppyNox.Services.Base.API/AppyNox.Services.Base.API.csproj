@@ -2,7 +2,7 @@
 	<PropertyGroup>
 		<TargetFramework>net8.0</TargetFramework>
 		<PackageId>NoxAPI</PackageId>
-		<Version>1.0.3</Version>
+		<Version>1.0.4</Version>
 		<Authors>Behlül UYSAL, Yasin DERE</Authors>
 		<Company>HappiSoftware</Company>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -10,7 +10,7 @@
 		<PackageTags>microservice; api; .NET;</PackageTags>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<Description>
-			The NoxAPI package is a comprehensive toolkit designed for building robust, scalable microservices in the .NET ecosystem. It includes a suite of utilities and foundational services that streamline the development process, ensuring high performance and ease of use. Key features include NoxApiException, API layer extensions, and specialized middlewares for the Nox architecture, among others.
+			The NoxAPI package provides foundational services and utilities for Nox MicroService API Layer.
 		</Description>
 		<PackageReleaseNotes>https://github.com/HappiSoftware/AppyNox/releases/tag/v1.0.3</PackageReleaseNotes>
 	</PropertyGroup>
