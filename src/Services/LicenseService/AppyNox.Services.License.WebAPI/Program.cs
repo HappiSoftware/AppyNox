@@ -14,6 +14,7 @@ using AppyNox.Services.License.Application;
 using AppyNox.Services.License.Infrastructure;
 using AppyNox.Services.License.Infrastructure.Data;
 using AppyNox.Services.License.WebAPI.Permission;
+using Asp.Versioning;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
@@ -64,6 +65,14 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddHealthChecks();
+
+builder.Services.AddApiVersioning(options =>
+{
+    options.ReportApiVersions = true;
+    options.AssumeDefaultVersionWhenUnspecified = true;
+    options.DefaultApiVersion = new ApiVersion(1, 0);
+    options.ApiVersionReader = new UrlSegmentApiVersionReader();
+});
 
 #endregion
 

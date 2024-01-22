@@ -1,12 +1,11 @@
-using AutoWrapper.Wrappers;
-using System.Net;
-using System.Text.Json;
-using AutoWrapper.Server;
-using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
-using AppyNox.Services.Base.IntegrationTests.Helpers;
-using System.Text;
+using AppyNox.Services.Base.API.Constants;
+using AppyNox.Services.Base.API.Wrappers.Helpers;
 using AppyNox.Services.Base.IntegrationTests.URIs;
+using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
 using AppyNox.Services.Coupon.WebAPI.IntegrationTest.Fixtures;
+using System.Net;
+using System.Text;
+using System.Text.Json;
 
 namespace AppyNox.Services.Coupon.WebAPI.IntegrationTest
 {
@@ -30,16 +29,11 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTest
         public async Task GetAll_ShouldReturnSuccessStatusCode()
         {
             // Act
-            var response = await _client.GetAsync($"{_serviceURIs.CouponServiceURI}/coupons");
+            var response = await _client.GetAsync($"{_serviceURIs.CouponServiceURI}/v{NoxVersions.v1_0}/coupons");
 
             var jsonResponse = await response.Content.ReadAsStringAsync();
-            var apiResponse = Unwrapper.Unwrap<ApiResponse>(jsonResponse);
-            apiResponse.ValidateOk();
 
-            // Deserialize the result (assuming apiResponse.Result is a JSON array of CouponSimpleDto)
-            var coupons = apiResponse?.Result is not null
-                ? JsonSerializer.Deserialize<IList<CouponSimpleDto>>(apiResponse.Result.ToString()!, _jsonSerializerOptions)
-                : null;
+            var coupons = NoxResponseUnwrapper.UnwrapData<IList<CouponSimpleDto>>(jsonResponse, _jsonSerializerOptions);
 
             // Assert
             response.EnsureSuccessStatusCode();
@@ -64,14 +58,12 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTest
 
             // Arrange
             var id = coupon.Id;
-            var requestUri = $"{_serviceURIs.CouponServiceURI}/coupons/{id}";
+            var requestUri = $"{_serviceURIs.CouponServiceURI}/v{NoxVersions.v1_0}/coupons/{id}";
 
             // Act
             var response = await _client.GetAsync(requestUri);
             var jsonResponse = await response.Content.ReadAsStringAsync();
-            var apiResponse = Unwrapper.Unwrap<ApiResponse>(jsonResponse);
-            apiResponse.ValidateOk(); // This line covers if apiResponse.Result is null so we can use null forgiving operator on the next line
-            var couponObj = JsonSerializer.Deserialize<CouponSimpleDto>(apiResponse.Result.ToString()!, _jsonSerializerOptions);
+            var couponObj = NoxResponseUnwrapper.UnwrapData<CouponSimpleDto>(jsonResponse, _jsonSerializerOptions);
 
             // Assert
             response.EnsureSuccessStatusCode();
@@ -87,7 +79,7 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTest
             #region [ Create Coupon ]
 
             // Arrange
-            var requestUri = $"{_serviceURIs.CouponServiceURI}/coupons";
+            var requestUri = $"{_serviceURIs.CouponServiceURI}/v{NoxVersions.v1_0}/coupons";
             var uniqueCode = "ffff2";
             var requestBody = new
             {
@@ -101,18 +93,21 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTest
             var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
 
             // Act
-            var response = await _client.PostAsync(requestUri, content);
+            HttpResponseMessage response = await _client.PostAsync(requestUri, content);
+            string jsonResponse = await response.Content.ReadAsStringAsync();
+            (Guid id, CouponSimpleDto createdObject) = NoxResponseUnwrapper.UnwrapDataWithId<CouponSimpleDto>(jsonResponse, _jsonSerializerOptions);
 
             // Assert
             response.EnsureSuccessStatusCode();
             Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+            Assert.NotNull(createdObject);
 
             #endregion
 
             #region [ Get Coupons ]
 
             // Act
-            var coupon = _couponApiTestFixture.DbContext.Coupons.SingleOrDefault(x => x.Code == uniqueCode);
+            var coupon = _couponApiTestFixture.DbContext.Coupons.SingleOrDefault(x => x.Id == id);
 
             // Assert
             Assert.NotNull(coupon);
@@ -140,7 +135,7 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTest
             var newDiscountAmount = coupon.DiscountAmount + 1;
             var newMinAmount = coupon.MinAmount + 1;
             var newDescription = "new description";
-            var requestUri = $"{_serviceURIs.CouponServiceURI}/coupons/{id}";
+            var requestUri = $"{_serviceURIs.CouponServiceURI}/v{NoxVersions.v1_0}/coupons/{id}";
             var requestBody = new
             {
                 code = coupon.Code,
@@ -195,7 +190,7 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTest
 
             // Arrange
             var id = coupon.Id;
-            var requestUri = $"{_serviceURIs.CouponServiceURI}/coupons/{id}";
+            var requestUri = $"{_serviceURIs.CouponServiceURI}/v{NoxVersions.v1_0}/coupons/{id}";
 
             // Act
             var response = await _client.DeleteAsync(requestUri);

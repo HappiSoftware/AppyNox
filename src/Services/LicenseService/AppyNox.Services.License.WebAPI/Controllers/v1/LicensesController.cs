@@ -15,7 +15,7 @@ namespace AppyNox.Services.License.WebAPI.Controllers.v1
 {
     [ApiController]
     [ApiVersion(NoxVersions.v1_0)]
-    [Route("api/[controller]")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     public class LicensesController(IMediator mediator) : Controller
     {
         #region [ Fields ]
@@ -48,7 +48,7 @@ namespace AppyNox.Services.License.WebAPI.Controllers.v1
             var response = new
             {
                 Id = result.Item1,
-                Data = result.Item2
+                CreatedObject = result.Item2
             };
             return CreatedAtAction(nameof(GetById), new { id = result.Item1 }, response);
         }

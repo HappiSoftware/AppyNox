@@ -121,7 +121,7 @@ namespace AppyNox.Services.Base.API.Middleware
             try
             {
                 var response = JsonSerializer.Deserialize<NoxApiResponse>(responseBody, _jsonSerializeOptions);
-                return (response != null && response.Version != null, response);
+                return (response != null && response.Result != null, response);
             }
             catch
             {
@@ -150,7 +150,7 @@ namespace AppyNox.Services.Base.API.Middleware
 
         private async Task WriteResponseAsync(HttpContext context, Stream originalBodyStream, NoxApiResponse response)
         {
-            response.Result = !response.HasError ? new NoxApiSuccessResult(response.Result) : new NoxApiErrorResult(response.Result);
+            response.Result = !response.HasError ? new NoxApiResultObject(response.Result, null) : new NoxApiResultObject(null, response.Result);
             var responseContent = JsonSerializer.Serialize(response, _jsonSerializeOptions);
 
             context.Response.ContentType = "application/json";
