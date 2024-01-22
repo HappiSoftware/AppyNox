@@ -6,7 +6,7 @@
 
         string GetUserInfoByToken(string token);
 
-        bool VerifyToken(string token);
+        Task<bool> VerifyToken(string token);
 
         #endregion
     }

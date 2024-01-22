@@ -7,6 +7,7 @@ namespace AppyNox.Services.Base.IntegrationTests.Helpers
     /// <summary>
     /// Provides helper methods for validating API responses in integration tests, ensuring that responses meet expected criteria.
     /// </summary>
+    [Obsolete("This class is deprecated and will be removed on v1.0.5. Please adjust your usage of this class methods.")]
     public static class ApiResponseHelpers
     {
         #region [ Public Methods ]
@@ -15,6 +16,7 @@ namespace AppyNox.Services.Base.IntegrationTests.Helpers
         /// Asserts that the API response has an OK status code and contains a valid result.
         /// </summary>
         /// <param name="apiResponse">The API response to validate.</param>
+        [Obsolete("This method and corresponding class are deprecated and will be removed on v1.0.5. Please stop using this method.")]
         public static void ValidateOk(this ApiResponse apiResponse)
         {
             Assert.NotNull(apiResponse.Result);

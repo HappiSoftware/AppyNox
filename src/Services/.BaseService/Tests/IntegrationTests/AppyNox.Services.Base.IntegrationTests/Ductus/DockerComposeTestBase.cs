@@ -121,6 +121,7 @@ namespace AppyNox.Services.Base.IntegrationTests.Ductus
             #endregion
 
             Logger.LogInformation("Initializing Docker Compose Test Base");
+
             CompositeService = Build();
             try
             {
@@ -184,29 +185,37 @@ namespace AppyNox.Services.Base.IntegrationTests.Ductus
             throw new Exception($"Service did not become healthy in time '{healthUri}'");
         }
 
-        protected async Task AuthenticateAndGetToken(string userName = "admin", string password = "Admin@123", string audience = "AppyNox")
+        protected async Task AuthenticateAndGetToken(
+            string userName = "admin",
+            string password = "Admin@123",
+            string audience = "AppyNox",
+            string authenticationEndpoint = "/v1.0/authentication/connect/token")
         {
-            var authUri = ServiceURIs.AuthenticationServiceURI + "/authentication/connect/token";
+            var authenticationUri = ServiceURIs.AuthenticationServiceURI + authenticationEndpoint;
             var content = new StringContent(
                 JsonSerializer.Serialize(new { userName, password, audience }),
                 Encoding.UTF8,
                 "application/json"
             );
 
-            var response = await Client.PostAsync(authUri, content);
+            var response = await Client.PostAsync(authenticationUri, content);
             response.EnsureSuccessStatusCode();
 
             var responseString = await response.Content.ReadAsStringAsync();
-            var apiResponse = Unwrapper.Unwrap<ApiResponse>(responseString);
 
-            if (apiResponse?.Result is JsonElement resultElement &&
-                resultElement.TryGetProperty("token", out JsonElement tokenElement))
+            using (var document = JsonDocument.Parse(responseString))
             {
-                BearerToken = tokenElement.GetString() ?? throw new Exception("Token was null");
-            }
-            else
-            {
-                throw new Exception("Authentication failed or token was not found in the response.");
+                var root = document.RootElement;
+                var resultElement = root.GetProperty("result");
+                var dataElement = resultElement.GetProperty("data");
+                var token = dataElement.GetProperty("token").GetString();
+
+                if (string.IsNullOrEmpty(token))
+                {
+                    throw new Exception("Token was null or empty.");
+                }
+
+                BearerToken = token;
             }
 
             Client.DefaultRequestHeaders.Authorization =

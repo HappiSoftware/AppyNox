@@ -1,4 +1,5 @@
-﻿using AppyNox.Services.Base.API.ExceptionExtensions.Base;
+﻿using AppyNox.Services.Base.API.ExceptionExtensions;
+using AppyNox.Services.Base.API.ExceptionExtensions.Base;
 using AppyNox.Services.Base.Application.Interfaces.Authentication;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -10,7 +11,7 @@ using System.Net;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
 
-namespace AppyNox.Services.Authentication.WebAPI.Permission
+namespace AppyNox.Services.Base.API.Permissions
 {
     public class NoxJwtAuthenticationHandler(
         IOptionsMonitor<AuthenticationSchemeOptions> options,
@@ -29,16 +30,18 @@ namespace AppyNox.Services.Authentication.WebAPI.Permission
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
         {
             var endpoint = Context.GetEndpoint();
-            if (endpoint?.Metadata?.GetMetadata<IAllowAnonymous>() != null)
+            var requestPath = Context.Request.Path.ToString();
+            bool healthEndpoint = requestPath.Equals("/api/health");
+            if (endpoint?.Metadata?.GetMetadata<IAllowAnonymous>() != null || healthEndpoint)
             {
                 // Bypass authentication for this request
                 return AuthenticateResult.NoResult();
             }
 
             string token = Request.Headers.Authorization.FirstOrDefault()?.Split(" ").Last()
-                ?? throw new NoxApiException("Token is null!", (int)HttpStatusCode.Unauthorized);
+                ?? throw new NoxAuthenticationException("Token is null!");
 
-            if (_jwtTokenManager.VerifyToken(token))
+            if (await _jwtTokenManager.VerifyToken(token))
             {
                 var tokenHandler = new JwtSecurityTokenHandler();
                 var jwtToken = tokenHandler.ReadJwtToken(token);
@@ -51,7 +54,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Permission
                 return await Task.FromResult(AuthenticateResult.Success(ticket));
             }
 
-            throw new NoxApiException("Invalid token!", (int)HttpStatusCode.Unauthorized);
+            throw new NoxAuthenticationException("Invalid token!");
         }
 
         #endregion

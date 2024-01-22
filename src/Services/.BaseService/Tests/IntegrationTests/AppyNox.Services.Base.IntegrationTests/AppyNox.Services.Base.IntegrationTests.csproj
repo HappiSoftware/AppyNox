@@ -41,6 +41,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\AppyNox.Services.Base.API\AppyNox.Services.Base.API.csproj" />
     <ProjectReference Include="..\..\..\AppyNox.Services.Base.Infrastructure\AppyNox.Services.Base.Infrastructure.csproj" />
   </ItemGroup>
 

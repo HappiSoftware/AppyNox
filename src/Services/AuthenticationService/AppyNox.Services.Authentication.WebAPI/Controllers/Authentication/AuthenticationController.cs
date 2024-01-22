@@ -2,6 +2,9 @@
 using AppyNox.Services.Authentication.Application.DTOs.RefreshTokenDtos.Models;
 using AppyNox.Services.Authentication.Application.Interfaces.Authentication;
 using AppyNox.Services.Authentication.WebAPI.ExceptionExtensions.Base;
+using AppyNox.Services.Base.API.Constants;
+using AppyNox.Services.Base.API.ExceptionExtensions;
+using AppyNox.Services.Base.API.Wrappers;
 using AppyNox.Services.Base.Application.ExceptionExtensions;
 using Asp.Versioning;
 using FluentValidation;
@@ -12,8 +15,8 @@ using System.Net;
 namespace AppyNox.Services.Authentication.WebAPI.Controllers.Authentication
 {
     [ApiController]
-    [ApiVersion("1.0")]
-    [Route("api/[controller]")]
+    [ApiVersion(NoxVersions.v1_0)]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [AllowAnonymous]
     public class AuthenticationController(ICustomUserManager customUserManager,
         ICustomTokenManager customTokenManager, IValidator<LoginDto> loginDtoValidator) : Controller
@@ -32,7 +35,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers.Authentication
 
         [HttpPost]
         [Route("connect/token")]
-        public async Task<IActionResult> Authenticate([FromBody] LoginDto userCredential)
+        public async Task<NoxApiResponse> Authenticate([FromBody] LoginDto userCredential)
         {
             var validationResult = await _loginDtoValidator.ValidateAsync(userCredential);
             if (!validationResult.IsValid)
@@ -51,7 +54,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers.Authentication
                 throw new NoxAuthenticationApiException("I am a teapot", (int)HttpStatusCode.Locked);
             }
 
-            return Ok(new { Token = jwtToken, RefreshToken = refreshToken });
+            return new NoxApiResponse(new { Token = jwtToken, RefreshToken = refreshToken }, "SignIn Successful.");
         }
 
         [HttpGet]
@@ -64,7 +67,16 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers.Authentication
         [HttpPost("refresh")]
         public async Task<IActionResult> Refresh([FromBody] RefreshTokenDto model)
         {
-            var userId = _customTokenManager.GetUserInfoByToken(model.Token);
+            try
+            {
+                await _customTokenManager.VerifyToken(model.Token, model.Audience);
+            }
+            catch (NoxAuthenticationException)
+            {
+                throw;
+            }
+
+            var userId = _customTokenManager.GetUserInfoByToken(model.Token, model.Audience);
             var storedRefreshToken = await _customUserManager.RetrieveStoredRefreshToken(userId);
 
             if (!_customTokenManager.VerifyRefreshToken(model.RefreshToken, storedRefreshToken))

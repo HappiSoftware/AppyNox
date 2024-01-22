@@ -1,5 +1,4 @@
-﻿using AppyNox.Services.Authentication.Application.Dtos;
-using AppyNox.Services.Base.Application.Dtos;
+﻿using AppyNox.Services.Base.Application.Dtos;
 
 namespace AppyNox.Services.Authentication.Application.DTOs.ApplicationRoleDTOs.Models
 {

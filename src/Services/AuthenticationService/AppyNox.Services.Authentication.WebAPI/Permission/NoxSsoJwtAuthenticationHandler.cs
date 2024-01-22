@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 using System.IdentityModel.Tokens.Jwt;
+using System.IO;
 using System.Net;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
@@ -36,7 +37,9 @@ namespace AppyNox.Services.Authentication.WebAPI.Permission
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
         {
             var endpoint = Context.GetEndpoint();
-            if (endpoint?.Metadata?.GetMetadata<IAllowAnonymous>() != null)
+            var requestPath = Context.Request.Path.ToString();
+            bool isConnectRequest = requestPath.EndsWith("/authentication/connect/token") || requestPath.EndsWith("/authentication/refresh") || requestPath.Equals("/api/health");
+            if (endpoint?.Metadata?.GetMetadata<IAllowAnonymous>() != null || isConnectRequest)
             {
                 // Bypass authentication for this request
                 return AuthenticateResult.NoResult();
@@ -46,7 +49,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Permission
                 ?? throw new NoxAuthenticationApiException("Token is null!", (int)HttpStatusCode.Unauthorized);
             string audience = Options.Audience;
 
-            if (_jwtTokenManager.VerifyToken(token, audience))
+            if (await _jwtTokenManager.VerifyToken(token, audience))
             {
                 var tokenHandler = new JwtSecurityTokenHandler();
                 var jwtToken = tokenHandler.ReadJwtToken(token);

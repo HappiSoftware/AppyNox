@@ -4,11 +4,11 @@ using AppyNox.Services.Authentication.Application.Validators.ApplicationRoleVali
 using AppyNox.Services.Authentication.Domain.Entities;
 using AppyNox.Services.Authentication.Infrastructure.AsyncLocals;
 using AppyNox.Services.Authentication.WebAPI.ExceptionExtensions.Base;
-using AppyNox.Services.Authentication.WebAPI.Helpers;
+using AppyNox.Services.Authentication.WebAPI.Extensions;
+using AppyNox.Services.Base.API.Wrappers;
 using AppyNox.Services.Base.Application.ExceptionExtensions;
 using Asp.Versioning;
 using AutoMapper;
-using AutoWrapper.Wrappers;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -20,9 +20,9 @@ using static AppyNox.Services.Authentication.WebAPI.Permission.Permissions;
 
 namespace AppyNox.Services.Authentication.WebAPI.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiVersion("1.0")]
     [ApiController]
+    [ApiVersion("1.0")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     public class RolesController(IMapper mapper, RoleManager<ApplicationRole> roleManager,
         IRoleValidator<ApplicationRole> roleValidator, ApplicationRoleCreateDtoValidator roleDtoCreateValidator)
         : ControllerBase
@@ -59,11 +59,15 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
         [Authorize(Roles.View)]
         public async Task<IActionResult> GetById(Guid id)
         {
-            var identityRole = await _roleManager.FindByIdAsync(id.ToString());
+            var identityRole = await _roleManager.FindByIdAsync(id.ToString())
+                ?? throw new NoxAuthenticationApiException("Not Found", (int)HttpStatusCode.NotFound);
 
-            return identityRole == null
-                ? throw new NoxAuthenticationApiException("Not Found", (int)HttpStatusCode.NotFound)
-                : Ok(_mapper.Map(identityRole, identityRole.GetType(), typeof(ApplicationRoleDto)));
+            IList<ClaimDto> claims = _mapper.Map<List<ClaimDto>>(await _roleManager.GetClaimsAsync(identityRole));
+
+            var roleWithClaimsDto = _mapper.Map<ApplicationRoleWithClaimsDto>(identityRole);
+            roleWithClaimsDto.Claims = claims;
+
+            return Ok(roleWithClaimsDto);
         }
 
         [HttpPut("{id}")]
@@ -171,30 +175,29 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
         [HttpGet]
         [Authorize(Roles.View)]
         [Route("/api/roles/{rid}/claims")]
-        public async Task<ApiResponse> GetClaims(Guid rid)
+        public async Task<IActionResult> GetClaims(Guid rid)
         {
-            List<string> parameterList = new List<string> { "Value1", "Value2" };
+            List<string> parameterList = ["Value1", "Value2"];
             HttpContext.Items["RouteParameters"] = parameterList;
 
-            var role = await _roleManager.FindByIdAsync(rid.ToString());
-            if (role == null)
-                throw new NoxAuthenticationApiException($"Record with id: {rid} does not exist.", (int)HttpStatusCode.NotFound);
+            var role = await _roleManager.FindByIdAsync(rid.ToString())
+                ?? throw new NoxAuthenticationApiException($"Record with id: {rid} does not exist.", (int)HttpStatusCode.NotFound);
+
             IList<ClaimDto> claims = _mapper.Map<List<ClaimDto>>(await _roleManager.GetClaimsAsync(role));
 
             var roleWithClaimsDto = _mapper.Map<ApplicationRoleWithClaimsDto>(role);
             roleWithClaimsDto.Claims = claims;
 
-            return new ApiResponse(roleWithClaimsDto, 200);
+            return Ok(roleWithClaimsDto);
         }
 
         [HttpPost]
         [Authorize(Roles.AssignPermission)]
         [Route("/api/Roles/{rid}/Claims")]
-        public async Task<ApiResponse> AssignClaim(Guid rid, [FromBody] ClaimDto claim)
+        public async Task<IActionResult> AssignClaim(Guid rid, [FromBody] ClaimDto claim)
         {
-            var role = await _roleManager.FindByIdAsync(rid.ToString());
-            if (role == null)
-                throw new NoxAuthenticationApiException($"Record with id: {rid} does not exist.", (int)HttpStatusCode.NotFound);
+            var role = await _roleManager.FindByIdAsync(rid.ToString())
+                ?? throw new NoxAuthenticationApiException($"Record with id: {rid} does not exist.", (int)HttpStatusCode.NotFound);
 
             //Assign claim to role
             IList<ClaimDto> claims = _mapper.Map<List<ClaimDto>>(await _roleManager.GetClaimsAsync(role));
@@ -222,7 +225,8 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
             var roleWithClaimsDto = _mapper.Map<ApplicationRoleWithClaimsDto>(role);
             roleWithClaimsDto.Claims = claims;
 
-            return new ApiResponse(roleWithClaimsDto, 200);
+            NoxApiResponse ss = new(roleWithClaimsDto, "Your custom message here");
+            return Ok(ss);
         }
 
         [HttpDelete]
@@ -234,7 +238,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
             if (role == null)
                 throw new NoxAuthenticationApiException($"Record with id: {rid} does not exist.", (int)HttpStatusCode.NotFound);
 
-            IdentityResult response = await _roleManager.RemoveClaimAsync(role, new Claim("API.Permission", claimValue));
+            IdentityResult response = await _roleManager.RemoveClaimAsync(role, new Claim("Permission", claimValue));
 
             if (!response.Succeeded)
             {

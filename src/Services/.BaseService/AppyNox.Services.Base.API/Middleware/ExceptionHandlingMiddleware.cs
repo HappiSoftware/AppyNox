@@ -1,9 +1,8 @@
-﻿using AppyNox.Services.Base.API.ExceptionExtensions;
-using AppyNox.Services.Base.API.Helpers;
+﻿using AppyNox.Services.Base.API.Helpers;
+using AppyNox.Services.Base.API.Wrappers;
 using AppyNox.Services.Base.Application.ExceptionExtensions;
 using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Core.ExceptionExtensions.Base;
-using AutoWrapper.Extensions;
 using AutoWrapper.Wrappers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -16,6 +15,7 @@ namespace AppyNox.Services.Base.API.Middleware
     /// <summary>
     /// Middleware for handling exceptions that occur in the request pipeline.
     /// </summary>
+    [Obsolete("This Middleware is deprecated and will be removed on v1.0.5. Please use NoxResponseWrapperMiddleware instead.")]
     public class ExceptionHandlingMiddleware(RequestDelegate next, INoxApiLogger logger)
     {
         #region [ Fields ]
@@ -45,12 +45,12 @@ namespace AppyNox.Services.Base.API.Middleware
                 ActionContext actionContext = new(context, context.GetRouteData(), new ControllerActionDescriptor());
                 ModelStateDictionary modelState = new();
                 ValidationHelpers.HandleValidationResult(modelState, ex.ValidationResult, actionContext);
-                throw new ApiException(new NoxApiValidationExceptionWrapObject(ex, correlationId, modelState.AllErrors()), statusCode: ex.StatusCode);
+                throw new ApiException(new NoxApiValidationExceptionWrapObject(ex, Guid.Parse(correlationId), ex.ValidationResult.Errors), statusCode: ex.StatusCode);
             }
             catch (NoxException ex)
             {
                 string correlationId = CheckCorrelationIdsAndReturn(context, ex);
-                throw new ApiException(new NoxApiExceptionWrapObject(ex, correlationId), statusCode: ex.StatusCode);
+                throw new ApiException(new NoxApiExceptionWrapObject(ex, Guid.Parse(correlationId)), statusCode: ex.StatusCode);
             }
             catch (Exception ex)
             {

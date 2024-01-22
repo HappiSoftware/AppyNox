@@ -42,7 +42,7 @@ namespace AppyNox.Services.Base.Application.MediatR
 
         protected readonly Type EntityType = typeof(TEntity);
 
-        protected readonly JsonSerializerOptions JsonSerializerOptions = new JsonSerializerOptions
+        protected readonly JsonSerializerOptions JsonSerializerOptions = new()
         {
             PropertyNameCaseInsensitive = true
         };

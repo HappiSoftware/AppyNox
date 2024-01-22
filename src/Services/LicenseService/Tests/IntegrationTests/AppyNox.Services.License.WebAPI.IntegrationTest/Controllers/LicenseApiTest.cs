@@ -1,9 +1,8 @@
-﻿using AppyNox.Services.Base.IntegrationTests.Helpers;
+﻿using AppyNox.Services.Base.API.Constants;
+using AppyNox.Services.Base.API.Wrappers.Helpers;
 using AppyNox.Services.Base.IntegrationTests.URIs;
 using AppyNox.Services.License.Application.Dtos.LicenseDtos.Models.Base;
 using AppyNox.Services.License.WebAPI.IntegrationTest.Fixtures;
-using AutoWrapper.Server;
-using AutoWrapper.Wrappers;
 using System.Net;
 using System.Text;
 using System.Text.Json;
@@ -33,16 +32,11 @@ namespace AppyNox.Services.License.WebAPI.IntegrationTest.Controllers
         public async Task GetAll_ShouldReturnSuccessStatusCode()
         {
             // Act
-            var response = await _client.GetAsync($"{_serviceURIs.LicenseServiceURI}/licenses");
+            var response = await _client.GetAsync($"{_serviceURIs.LicenseServiceURI}/v{NoxVersions.v1_0}/licenses");
 
             var jsonResponse = await response.Content.ReadAsStringAsync();
-            var apiResponse = Unwrapper.Unwrap<ApiResponse>(jsonResponse);
-            apiResponse.ValidateOk();
 
-            // Deserialize the result (assuming apiResponse.Result is a JSON array of LicenseSimpleDto)
-            var licenses = apiResponse?.Result is not null
-                ? JsonSerializer.Deserialize<IList<LicenseSimpleDto>>(apiResponse.Result.ToString()!, _jsonSerializerOptions)
-                : null;
+            var licenses = NoxResponseUnwrapper.UnwrapData<IList<LicenseSimpleDto>>(jsonResponse, jsonSerializerOptions: _jsonSerializerOptions);
 
             // Assert
             response.EnsureSuccessStatusCode();
@@ -68,14 +62,12 @@ namespace AppyNox.Services.License.WebAPI.IntegrationTest.Controllers
 
             // Arrange
             var id = license.Id;
-            var requestUri = $"{_serviceURIs.LicenseServiceURI}/licenses/{id}";
+            var requestUri = $"{_serviceURIs.LicenseServiceURI}/v{NoxVersions.v1_0}/licenses/{id}";
 
             // Act
             var response = await _client.GetAsync(requestUri);
             var jsonResponse = await response.Content.ReadAsStringAsync();
-            var apiResponse = Unwrapper.Unwrap<ApiResponse>(jsonResponse);
-            apiResponse.ValidateOk(); // This line covers if apiResponse.Result is null so we can use null forgiving operator on the next line
-            var licenseObj = JsonSerializer.Deserialize<LicenseSimpleDto>(apiResponse.Result.ToString()!, _jsonSerializerOptions);
+            var licenseObj = NoxResponseUnwrapper.UnwrapData<LicenseSimpleDto>(jsonResponse, jsonSerializerOptions: _jsonSerializerOptions);
 
             // Assert
             response.EnsureSuccessStatusCode();
@@ -92,7 +84,7 @@ namespace AppyNox.Services.License.WebAPI.IntegrationTest.Controllers
             #region [ Create License ]
 
             // Arrange
-            var requestUri = $"{_serviceURIs.LicenseServiceURI}/licenses";
+            var requestUri = $"{_serviceURIs.LicenseServiceURI}/v{NoxVersions.v1_0}/licenses";
             var uniqueCode = "ffff2";
             var requestBody = new
             {
@@ -108,18 +100,21 @@ namespace AppyNox.Services.License.WebAPI.IntegrationTest.Controllers
             var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
 
             // Act
-            var response = await _client.PostAsync(requestUri, content);
+            HttpResponseMessage response = await _client.PostAsync(requestUri, content);
+            string jsonResponse = await response.Content.ReadAsStringAsync();
+            (Guid id, LicenseSimpleDto createdObject) = NoxResponseUnwrapper.UnwrapDataWithId<LicenseSimpleDto>(jsonResponse, _jsonSerializerOptions);
 
             // Assert
             response.EnsureSuccessStatusCode();
             Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+            Assert.NotNull(createdObject);
 
             #endregion
 
             #region [ Get Licenses ]
 
             // Act
-            var license = _licenseApiTestFixture.DbContext.Licenses.SingleOrDefault(x => x.Code == uniqueCode);
+            var license = _licenseApiTestFixture.DbContext.Licenses.SingleOrDefault(x => x.Id == id);
 
             // Assert
             Assert.NotNull(license);
@@ -151,7 +146,7 @@ namespace AppyNox.Services.License.WebAPI.IntegrationTest.Controllers
             int newMaxUsers = license.MaxUsers + 1;
             int newmaxMacAddresses = license.MaxMacAddresses + 1;
 
-            string requestUri = $"{_serviceURIs.LicenseServiceURI}/licenses/{id}";
+            string requestUri = $"{_serviceURIs.LicenseServiceURI}/v{NoxVersions.v1_0}/licenses/{id}";
             var requestBody = new
             {
                 code = license.Code,
@@ -211,7 +206,7 @@ namespace AppyNox.Services.License.WebAPI.IntegrationTest.Controllers
 
             // Arrange
             var id = license.Id;
-            var requestUri = $"{_serviceURIs.LicenseServiceURI}/licenses/{id}";
+            var requestUri = $"{_serviceURIs.LicenseServiceURI}/v{NoxVersions.v1_0}/licenses/{id}";
 
             // Act
             var response = await _client.DeleteAsync(requestUri);

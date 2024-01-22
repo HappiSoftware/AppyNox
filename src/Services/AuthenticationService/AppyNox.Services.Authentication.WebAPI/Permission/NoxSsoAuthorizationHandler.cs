@@ -1,6 +1,6 @@
-﻿using AppyNox.Services.Base.API.Permissions;
+﻿using AppyNox.Services.Base.API.ExceptionExtensions;
+using AppyNox.Services.Base.API.Permissions;
 using Microsoft.AspNetCore.Authorization;
-using System.Security.Claims;
 
 namespace AppyNox.Services.Authentication.WebAPI.Permission
 {
@@ -24,12 +24,12 @@ namespace AppyNox.Services.Authentication.WebAPI.Permission
                 }
                 else
                 {
-                    context.Fail();
+                    throw new NoxAuthorizationException();
                 }
             }
             else
             {
-                context.Fail();
+                throw new NoxAuthorizationException();
             }
 
             return Task.CompletedTask;

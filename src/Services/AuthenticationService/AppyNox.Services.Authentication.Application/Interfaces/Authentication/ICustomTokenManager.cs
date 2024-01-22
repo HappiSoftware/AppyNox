@@ -17,9 +17,9 @@ namespace AppyNox.Services.Authentication.Application.Interfaces.Authentication
 
         bool VerifyRefreshToken(string tokenToVerify, string storedToken);
 
-        string GetUserInfoByToken(string token);
+        string GetUserInfoByToken(string token, string audience);
 
-        bool VerifyToken(string token, string audience);
+        Task<bool> VerifyToken(string token, string audience);
 
         #endregion
     }

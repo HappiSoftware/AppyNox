@@ -2,7 +2,6 @@
 using AppyNox.Services.Authentication.Application.Interfaces.Authentication;
 using AppyNox.Services.Authentication.Domain.Entities;
 using AppyNox.Services.Authentication.WebAPI.ExceptionExtensions.Base;
-using AutoWrapper.Wrappers;
 using Microsoft.AspNetCore.Identity;
 using System.Net;
 
@@ -87,7 +86,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Managers
             }
             catch (Exception)
             {
-                throw new ApiException("Failed to save the refresh token. Please try again");
+                throw new NoxAuthenticationApiException("Failed to save the refresh token. Please try again");
             }
         }
 

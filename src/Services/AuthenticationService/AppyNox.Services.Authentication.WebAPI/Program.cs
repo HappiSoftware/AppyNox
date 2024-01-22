@@ -8,20 +8,21 @@ using AppyNox.Services.Authentication.WebAPI.ControllerDependencies;
 using AppyNox.Services.Authentication.WebAPI.Managers;
 using AppyNox.Services.Authentication.WebAPI.Middlewares;
 using AppyNox.Services.Authentication.WebAPI.Permission;
+using AppyNox.Services.Base.API.Constants;
 using AppyNox.Services.Base.API.Extensions;
 using AppyNox.Services.Base.API.Middleware;
+using AppyNox.Services.Base.API.Middleware.Options;
 using AppyNox.Services.Base.API.Permissions;
 using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Infrastructure.Extensions;
 using AppyNox.Services.Base.Infrastructure.HostedServices;
 using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
 using Asp.Versioning;
-using AutoWrapper;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -78,7 +79,10 @@ builder.Services.Configure<IdentityOptions>(options =>
 #region [ Configure Services ]
 
 // Add services to the container.
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+}); ;
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -88,7 +92,7 @@ builder.Services.AddApiVersioning(options =>
     options.ReportApiVersions = true;
     options.AssumeDefaultVersionWhenUnspecified = true;
     options.DefaultApiVersion = new ApiVersion(1, 0);
-    options.ApiVersionReader = new HeaderApiVersionReader("X-API-Version");
+    options.ApiVersionReader = new UrlSegmentApiVersionReader();
 });
 
 builder.Services.AddSwaggerGen(options =>
@@ -178,10 +182,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseApiResponseAndExceptionWrapper(new AutoWrapperOptions { IsApiOnly = true, ShowApiVersion = true, ApiVersion = "1.0" });
-app.UseMiddleware<ExceptionHandlingMiddleware>();
+app.UseCorrelationContext();
 
-app.UseMiddleware<CorrelationIdMiddleware>();
+app.UseNoxResponseWrapper(new NoxResponseWrapperOptions
+{
+    ApiVersion = NoxVersions.v1_0,
+});
 
 app.UseHttpsRedirection();
 

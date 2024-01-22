@@ -1,4 +1,5 @@
-﻿using AppyNox.Services.Base.API.ExceptionExtensions.Base;
+﻿using AppyNox.Services.Base.API.ExceptionExtensions;
+using AppyNox.Services.Base.API.ExceptionExtensions.Base;
 using AppyNox.Services.Base.Application.Interfaces.Authentication;
 using AppyNox.Services.Base.Core.Common;
 using Microsoft.IdentityModel.Tokens;
@@ -25,7 +26,7 @@ namespace AppyNox.Services.Base.API.Authentication
         /// <param name="token">The JWT token to validate.</param>
         /// <returns>True if the token is valid; otherwise, false.</returns>
         /// <exception cref="NoxApiException">Thrown when token has expired.</exception>
-        public bool VerifyToken(string token)
+        public async Task<bool> VerifyToken(string token)
         {
             var validationParameters = new TokenValidationParameters
             {
@@ -41,16 +42,16 @@ namespace AppyNox.Services.Base.API.Authentication
 
             try
             {
-                _tokenHandler.ValidateToken(token, validationParameters, out SecurityToken securityToken);
+                await _tokenHandler.ValidateTokenAsync(token, validationParameters);
                 return true;
             }
             catch (SecurityTokenExpiredException)
             {
-                throw new NoxApiException("Token has expired", (int)HttpStatusCode.Unauthorized);
+                throw new NoxTokenExpiredException();
             }
             catch (Exception)
             {
-                throw new NoxApiException("Invalid token!", (int)HttpStatusCode.Unauthorized);
+                throw new NoxAuthenticationException("Invalid token!");
             }
         }
 

@@ -6,7 +6,7 @@ using AppyNox.Services.License.Application.Dtos.ProductDtos.Models.Base;
 using AppyNox.Services.License.Application.UnitTest.DtoTests.Fixtures;
 using AppyNox.Services.License.Domain.Entities;
 
-namespace AppyNox.Services.License.Application.UnitTest.DtoTests.ProductDtoTests
+namespace AppyNox.Services.License.Application.UnitTest.DtoTests.DtoMappingRegistryUnitTests
 {
     [Collection("DtoMappingRegistry Collection")]
     public class ProductDtoMappingRegistryUnitTest(DtoMappingRegistryFixture fixture)
