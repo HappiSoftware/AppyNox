@@ -2,14 +2,14 @@
 	<PropertyGroup>
 		<TargetFramework>net8.0</TargetFramework>
 		<PackageId>NoxInfrastructureUnitTests</PackageId>
-		<Version>1.0.3</Version>
+		<Version>1.0.4</Version>
 		<Authors>Behlül UYSAL, Yasin DERE</Authors>
 		<Company>HappiSoftware</Company>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<RepositoryUrl>https://github.com/HappiSoftware/AppyNox</RepositoryUrl>
 		<PackageTags>microservice; infrastructure; unittest; .NET;</PackageTags>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<Description>This package provides foundational services and utilities for Infrastructure layer unit tests of Nox Infrastructures.</Description>
+		<Description>The NoxInfrastructureUnitTests package provides foundational services and utilities for Infrastructure layer unit tests of Nox Infrastructures.</Description>
 		<PackageReleaseNotes>https://github.com/HappiSoftware/AppyNox/releases/tag/v1.0.3</PackageReleaseNotes>
 	</PropertyGroup>
 	

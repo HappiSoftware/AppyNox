@@ -2,7 +2,7 @@
 	<PropertyGroup>
 		<TargetFramework>net8.0</TargetFramework>
 		<PackageId>NoxDomain</PackageId>
-		<Version>1.0.3</Version>
+		<Version>1.0.4</Version>
 		<Authors>Behlül UYSAL, Yasin DERE</Authors>
 		<Company>HappiSoftware</Company>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -10,7 +10,7 @@
 		<PackageTags>microservice; domain; .NET;</PackageTags>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<Description>
-			The Domain layer in AppyNox forms the core of business logic, featuring a suite of entity interfaces that define the essential business models and rules.This layer encapsulates the business domain, ensuring that all entities are accurately represented and interact according to the defined business logic. It serves as the backbone of the application, driving the behavior and data processing critical to fulfilling business requirements.
+			The NoxDomain package provides foundational services and utilities for Nox MicroService Domain Layer.
 		</Description>
 		<PackageReleaseNotes>https://github.com/HappiSoftware/AppyNox/releases/tag/v1.0.3</PackageReleaseNotes>
 	</PropertyGroup>
