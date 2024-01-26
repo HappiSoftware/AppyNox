@@ -37,9 +37,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Folder Include="Filters\" />
 	  <EmbeddedResource Update="Localization\NoxApiResourceService.resx">
 	    <Generator></Generator>
 	  </EmbeddedResource>
+
 	</ItemGroup>
 
 </Project>
