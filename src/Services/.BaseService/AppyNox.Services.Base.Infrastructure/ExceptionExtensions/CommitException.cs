@@ -1,9 +1,10 @@
 ﻿using AppyNox.Services.Base.Infrastructure.ExceptionExtensions.Base;
+using AppyNox.Services.Base.Infrastructure.Localization;
 
 namespace AppyNox.Services.Base.Infrastructure.ExceptionExtensions
 {
     internal class CommitException(Exception ex)
-        : NoxInfrastructureException(ex, "An error occurred while saving changes to the database.")
+        : NoxInfrastructureException(ex, NoxInfrastructureResourceService.CommitException)
     {
     }
 }

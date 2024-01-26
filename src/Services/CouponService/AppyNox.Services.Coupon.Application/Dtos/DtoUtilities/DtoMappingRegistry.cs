@@ -1,4 +1,5 @@
 ﻿using AppyNox.Services.Base.Application.DtoUtilities;
+using AppyNox.Services.Base.Application.Localization;
 using AppyNox.Services.Base.Core.Enums;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDetailDtos.DetailLevel;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.DetailLevel;
@@ -13,7 +14,8 @@ namespace AppyNox.Services.Coupon.Application.Dtos.DtoUtilities
     {
         #region [ Public Methods ]
 
-        public DtoMappingRegistry() : base()
+        public DtoMappingRegistry()
+            : base()
         {
             RegisterDtos();
         }

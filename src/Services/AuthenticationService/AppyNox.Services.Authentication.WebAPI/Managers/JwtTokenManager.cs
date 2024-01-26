@@ -1,17 +1,17 @@
 ﻿using AppyNox.Services.Authentication.Application.Interfaces.Authentication;
 using AppyNox.Services.Authentication.Domain.Entities;
 using AppyNox.Services.Authentication.WebAPI.Configuration;
+using AppyNox.Services.Authentication.WebAPI.ExceptionExtensions.Base;
+using AppyNox.Services.Base.API.ExceptionExtensions;
 using AppyNox.Services.Base.API.ExceptionExtensions.Base;
+using AppyNox.Services.Base.API.Localization;
+using AppyNox.Services.Base.Core.Common;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Security.Claims;
 using System.Security.Cryptography;
-using AppyNox.Services.Authentication.WebAPI.ExceptionExtensions.Base;
-using AppyNox.Services.Base.API.Authentication;
-using AppyNox.Services.Base.Core.Common;
-using AppyNox.Services.Base.API.ExceptionExtensions;
 
 namespace AppyNox.Services.Authentication.WebAPI.Managers
 {
@@ -55,6 +55,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Managers
             claims.Add(new Claim(ClaimTypes.Name, user.Email ?? throw new NoxAuthenticationApiException("Wrong Credentials", (int)HttpStatusCode.NotFound)));
             claims.Add(new Claim(ClaimTypes.NameIdentifier, userId.ToString()));
             claims.Add(new Claim("company", user.CompanyId.ToString()));
+
             if (user.IsAdmin)
             {
                 claims.Add(new Claim("admin", "true"));
@@ -140,11 +141,11 @@ namespace AppyNox.Services.Authentication.WebAPI.Managers
             }
             catch (SecurityTokenExpiredException)
             {
-                throw new NoxTokenExpiredException();
+                throw new NoxTokenExpiredException(NoxApiResourceService.ExpiredToken);
             }
             catch (Exception)
             {
-                throw new NoxAuthenticationException("Invalid token!");
+                throw new NoxAuthenticationException(NoxApiResourceService.InvalidToken);
             }
         }
 
@@ -157,7 +158,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Managers
         public string GetUserInfoByToken(string token, string audience)
         {
             var jwtToken = _tokenHandler.ReadToken(token.Replace("\"", string.Empty)) as JwtSecurityToken
-                ?? throw new NoxAuthenticationApiException("Wrong Credentials", (int)HttpStatusCode.NotFound);
+                ?? throw new NoxAuthenticationApiException(NoxApiResourceService.WrongCredentials, (int)HttpStatusCode.NotFound);
 
             var claim = jwtToken.Claims.FirstOrDefault(x => x.Type == "nameid");
             if (claim != null) return claim.Value;

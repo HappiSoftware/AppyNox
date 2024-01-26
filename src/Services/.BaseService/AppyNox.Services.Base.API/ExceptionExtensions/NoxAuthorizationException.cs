@@ -4,7 +4,7 @@ using System.Net;
 
 namespace AppyNox.Services.Base.API.ExceptionExtensions
 {
-    public class NoxAuthorizationException(string message = "You have no claims to take this action.")
+    public class NoxAuthorizationException(string message)
         : NoxApiException(message, (int)HttpStatusCode.Forbidden, "Base"), INoxAuthorizationException
     {
     }

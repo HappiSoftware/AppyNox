@@ -43,4 +43,10 @@
 		<ProjectReference Include="..\AppyNox.Services.Base.Domain\AppyNox.Services.Base.Domain.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <EmbeddedResource Update="Localization\NoxApplicationResourceService.resx">
+	    <Generator></Generator>
+	  </EmbeddedResource>
+	</ItemGroup>
+
 </Project>

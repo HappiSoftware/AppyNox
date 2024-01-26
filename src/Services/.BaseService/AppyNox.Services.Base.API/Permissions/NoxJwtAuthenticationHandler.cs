@@ -1,5 +1,6 @@
 ﻿using AppyNox.Services.Base.API.ExceptionExtensions;
 using AppyNox.Services.Base.API.ExceptionExtensions.Base;
+using AppyNox.Services.Base.API.Localization;
 using AppyNox.Services.Base.Application.Interfaces.Authentication;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -39,7 +40,7 @@ namespace AppyNox.Services.Base.API.Permissions
             }
 
             string token = Request.Headers.Authorization.FirstOrDefault()?.Split(" ").Last()
-                ?? throw new NoxAuthenticationException("Token is null!");
+                ?? throw new NoxAuthenticationException(NoxApiResourceService.NullToken);
 
             if (await _jwtTokenManager.VerifyToken(token))
             {
@@ -54,7 +55,7 @@ namespace AppyNox.Services.Base.API.Permissions
                 return await Task.FromResult(AuthenticateResult.Success(ticket));
             }
 
-            throw new NoxAuthenticationException("Invalid token!");
+            throw new NoxAuthenticationException(NoxApiResourceService.InvalidToken);
         }
 
         #endregion

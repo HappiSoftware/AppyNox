@@ -1,5 +1,7 @@
 ﻿using AppyNox.Services.Base.Application.Interfaces.Exceptions;
+using AppyNox.Services.Base.Application.Localization;
 using AppyNox.Services.Base.Infrastructure.ExceptionExtensions.Base;
+using AppyNox.Services.Base.Infrastructure.Localization;
 
 namespace AppyNox.Services.License.Infrastructure.ExceptionExtensions
 {
@@ -23,8 +25,8 @@ namespace AppyNox.Services.License.Infrastructure.ExceptionExtensions
         {
         }
 
-        public NoxLicenseInfrastructureException(Exception ex, string message = "Unexpected error")
-            : base(ex, message, _service)
+        public NoxLicenseInfrastructureException(Exception ex, string? message = null)
+            : base(ex, message ?? NoxInfrastructureResourceService.UnexpectedError, _service)
         {
         }
 

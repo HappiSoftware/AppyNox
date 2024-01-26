@@ -1,10 +1,11 @@
 ﻿using AppyNox.Services.Base.API.ExceptionExtensions;
+using AppyNox.Services.Base.API.Localization;
 using Microsoft.AspNetCore.Authorization;
-using System.Security.Claims;
 
 namespace AppyNox.Services.Base.API.Permissions;
 
-public class NoxJwtAuthorizationHandler : AuthorizationHandler<PermissionRequirement>
+public class NoxJwtAuthorizationHandler
+    : AuthorizationHandler<PermissionRequirement>
 {
     #region [ Protected Methods ]
 
@@ -18,12 +19,12 @@ public class NoxJwtAuthorizationHandler : AuthorizationHandler<PermissionRequire
             }
             else
             {
-                throw new NoxAuthorizationException();
+                throw new NoxAuthorizationException(NoxApiResourceService.UnauthorizedAccess);
             }
         }
         else
         {
-            throw new NoxAuthorizationException();
+            throw new NoxAuthorizationException(NoxApiResourceService.InvalidToken);
         }
 
         return Task.CompletedTask;

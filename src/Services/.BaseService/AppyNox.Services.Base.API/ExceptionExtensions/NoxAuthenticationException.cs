@@ -4,7 +4,7 @@ using System.Net;
 
 namespace AppyNox.Services.Base.API.ExceptionExtensions
 {
-    public class NoxAuthenticationException(string message = "Unauthorized access. Please SignIn first.")
+    public class NoxAuthenticationException(string message)
         : NoxApiException(message, (int)HttpStatusCode.Unauthorized, "Base"), INoxAuthenticationException
     {
     }
