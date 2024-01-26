@@ -1,4 +1,5 @@
 ﻿using AppyNox.Services.Base.API.ExceptionExtensions;
+using AppyNox.Services.Base.API.Localization;
 using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Core.AsyncLocals;
 using Microsoft.AspNetCore.Http;
@@ -32,10 +33,10 @@ namespace AppyNox.Services.Base.API.Middleware
                 string? correlationId = context.Request.Headers["X-Correlation-ID"].FirstOrDefault();
                 if (string.IsNullOrEmpty(correlationId))
                 {
-                    _logger.LogCritical(new MissingCorrelationIdException("Correlation ID is required"), "A request with no correlation ID received.");
+                    _logger.LogCritical(new MissingCorrelationIdException(), NoxApiResourceService.MissingCorrelationIdMessage);
                     context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                     context.Response.ContentType = "text/plain";
-                    await context.Response.WriteAsync("Correlation ID is required");
+                    await context.Response.WriteAsync(NoxApiResourceService.CorrelationIdIsRequired);
                     return;
                 }
 

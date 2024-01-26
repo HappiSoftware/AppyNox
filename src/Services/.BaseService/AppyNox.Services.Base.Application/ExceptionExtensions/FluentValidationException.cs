@@ -1,6 +1,8 @@
 ﻿using AppyNox.Services.Base.Application.ExceptionExtensions.Base;
+using AppyNox.Services.Base.Application.Localization;
 using FluentValidation.Results;
 using System.Net;
+using AppyNox.Services.Base.Core.Extensions;
 
 namespace AppyNox.Services.Base.Application.ExceptionExtensions
 {
@@ -8,7 +10,7 @@ namespace AppyNox.Services.Base.Application.ExceptionExtensions
     /// Exception thrown when FluentValidation detects validation errors in a DTO.
     /// </summary>
     public class FluentValidationException(Type dtoType, ValidationResult validationResult)
-        : NoxApplicationException($"Request responded with one or more validation errors for '{dtoType}'", (int)HttpStatusCode.BadRequest)
+        : NoxApplicationException(NoxApplicationResourceService.FluentValidationFailed.Format(dtoType), (int)HttpStatusCode.BadRequest)
     {
         #region [ Properties ]
 

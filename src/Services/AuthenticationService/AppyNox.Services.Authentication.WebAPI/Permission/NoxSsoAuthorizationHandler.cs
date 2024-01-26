@@ -1,4 +1,5 @@
 ﻿using AppyNox.Services.Base.API.ExceptionExtensions;
+using AppyNox.Services.Base.API.Localization;
 using AppyNox.Services.Base.API.Permissions;
 using Microsoft.AspNetCore.Authorization;
 
@@ -24,12 +25,12 @@ namespace AppyNox.Services.Authentication.WebAPI.Permission
                 }
                 else
                 {
-                    throw new NoxAuthorizationException();
+                    throw new NoxAuthorizationException(NoxApiResourceService.UnauthorizedAccess);
                 }
             }
             else
             {
-                throw new NoxAuthorizationException();
+                throw new NoxAuthorizationException(NoxApiResourceService.InvalidToken);
             }
 
             return Task.CompletedTask;

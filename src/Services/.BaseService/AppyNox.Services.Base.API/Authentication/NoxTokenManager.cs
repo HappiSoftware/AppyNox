@@ -1,5 +1,6 @@
 ﻿using AppyNox.Services.Base.API.ExceptionExtensions;
 using AppyNox.Services.Base.API.ExceptionExtensions.Base;
+using AppyNox.Services.Base.API.Localization;
 using AppyNox.Services.Base.Application.Interfaces.Authentication;
 using AppyNox.Services.Base.Core.Common;
 using Microsoft.IdentityModel.Tokens;
@@ -47,11 +48,11 @@ namespace AppyNox.Services.Base.API.Authentication
             }
             catch (SecurityTokenExpiredException)
             {
-                throw new NoxTokenExpiredException();
+                throw new NoxTokenExpiredException(NoxApiResourceService.ExpiredToken);
             }
             catch (Exception)
             {
-                throw new NoxAuthenticationException("Invalid token!");
+                throw new NoxAuthenticationException(NoxApiResourceService.InvalidToken);
             }
         }
 
@@ -66,7 +67,7 @@ namespace AppyNox.Services.Base.API.Authentication
             if (string.IsNullOrWhiteSpace(token)) return string.Empty;
 
             var jwtToken = _tokenHandler.ReadToken(token.Replace("\"", string.Empty)) as JwtSecurityToken
-                ?? throw new NoxApiException("Wrong Credentials", (int)HttpStatusCode.NotFound);
+                ?? throw new NoxApiException(NoxApiResourceService.WrongCredentials, (int)HttpStatusCode.NotFound);
 
             var claim = jwtToken.Claims.FirstOrDefault(x => x.Type == "nameid");
             if (claim != null) return claim.Value;

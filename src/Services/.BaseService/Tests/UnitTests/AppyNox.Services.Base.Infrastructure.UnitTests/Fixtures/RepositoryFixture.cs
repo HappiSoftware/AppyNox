@@ -1,5 +1,8 @@
-﻿using AppyNox.Services.Base.Infrastructure.UnitTests.Stubs;
+﻿using AppyNox.Services.Base.Infrastructure.Localization;
+using AppyNox.Services.Base.Infrastructure.UnitTests.Stubs;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
+using Moq;
 
 namespace AppyNox.Services.Base.Infrastructure.UnitTests.Fixtures
 {
@@ -10,6 +13,21 @@ namespace AppyNox.Services.Base.Infrastructure.UnitTests.Fixtures
         public readonly NoxInfrastructureLoggerStub NoxLoggerStub = new();
 
         private bool _disposed = false;
+
+        #endregion
+
+        #region Public Constructors
+
+        public RepositoryFixture()
+        {
+            var localizer = new Mock<IStringLocalizer>();
+            localizer.Setup(l => l[It.IsAny<string>()]).Returns(new LocalizedString("key", "mock value"));
+
+            var localizerFactory = new Mock<IStringLocalizerFactory>();
+            localizerFactory.Setup(lf => lf.Create(typeof(NoxInfrastructureResourceService))).Returns(localizer.Object);
+
+            NoxInfrastructureResourceService.Initialize(localizerFactory.Object);
+        }
 
         #endregion
 

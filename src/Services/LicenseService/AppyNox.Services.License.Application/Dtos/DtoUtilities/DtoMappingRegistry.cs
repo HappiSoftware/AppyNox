@@ -1,5 +1,6 @@
 ﻿using AppyNox.Services.Base.Application.DtoUtilities;
 using AppyNox.Services.Base.Application.ExceptionExtensions.Base;
+using AppyNox.Services.Base.Application.Localization;
 using AppyNox.Services.Base.Core.Enums;
 using AppyNox.Services.License.Application.Dtos.LicenseDtos.DetailLevel;
 using AppyNox.Services.License.Application.Dtos.LicenseDtos.Models.Base;
@@ -15,7 +16,8 @@ namespace AppyNox.Services.License.Application.Dtos.DtoUtilities
     {
         #region [ Public Methods ]
 
-        public DtoMappingRegistry() : base()
+        public DtoMappingRegistry()
+            : base()
         {
             RegisterDtos();
         }

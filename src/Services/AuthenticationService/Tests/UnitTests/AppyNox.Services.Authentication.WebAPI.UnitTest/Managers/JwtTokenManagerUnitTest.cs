@@ -1,10 +1,12 @@
 ﻿using AppyNox.Services.Authentication.Domain.Entities;
-using AppyNox.Services.Authentication.WebAPI.ExceptionExtensions.Base;
 using AppyNox.Services.Authentication.WebAPI.Managers;
 using AppyNox.Services.Base.API.ExceptionExtensions;
+using AppyNox.Services.Base.API.Localization;
+using AppyNox.Services.Base.Application.Localization;
 using AppyNox.Services.Base.Core.Common;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Localization;
 using Microsoft.IdentityModel.Tokens;
 using Moq;
 using System.IdentityModel.Tokens.Jwt;
@@ -42,6 +44,14 @@ namespace AppyNox.Services.Authentication.WebAPI.UnitTest.Managers
             configuration.GetSection("JwtSettings:AppyNox").Bind(_jwtConfiguration);
 
             _jwtTokenManager = new(It.IsAny<UserManager<ApplicationUser>>(), It.IsAny<RoleManager<ApplicationRole>>(), configuration);
+
+            var localizer = new Mock<IStringLocalizer>();
+            localizer.Setup(l => l[It.IsAny<string>()]).Returns(new LocalizedString("key", "mock value"));
+
+            var localizerFactory = new Mock<IStringLocalizerFactory>();
+            localizerFactory.Setup(lf => lf.Create(typeof(NoxApiResourceService))).Returns(localizer.Object);
+
+            NoxApiResourceService.Initialize(localizerFactory.Object);
         }
 
         #endregion
