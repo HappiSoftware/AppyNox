@@ -36,4 +36,8 @@
 		<ProjectReference Include="..\AppyNox.Services.Base.Infrastructure\AppyNox.Services.Base.Infrastructure.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Filters\" />
+	</ItemGroup>
+
 </Project>
