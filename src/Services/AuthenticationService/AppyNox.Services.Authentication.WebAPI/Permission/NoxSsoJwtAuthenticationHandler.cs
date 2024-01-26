@@ -1,17 +1,17 @@
 ﻿using AppyNox.Services.Authentication.Application.Interfaces.Authentication;
 using AppyNox.Services.Authentication.WebAPI.ExceptionExtensions.Base;
+using AppyNox.Services.Base.API.Localization;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 using System.IdentityModel.Tokens.Jwt;
-using System.IO;
 using System.Net;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
 
 namespace AppyNox.Services.Authentication.WebAPI.Permission
 {
-    public class NoxSsoJwtAuthenticationHandlerOptions : AuthenticationSchemeOptions
+    internal class NoxSsoJwtAuthenticationHandlerOptions : AuthenticationSchemeOptions
     {
         #region [ Properties ]
 
@@ -20,7 +20,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Permission
         #endregion
     }
 
-    public class NoxSsoJwtAuthenticationHandler(
+    internal class NoxSsoJwtAuthenticationHandler(
      IOptionsMonitor<NoxSsoJwtAuthenticationHandlerOptions> options,
      ILoggerFactory logger,
      UrlEncoder encoder,
@@ -46,7 +46,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Permission
             }
 
             string token = Request.Headers.Authorization.FirstOrDefault()?.Split(" ").Last()
-                ?? throw new NoxAuthenticationApiException("Token is null!", (int)HttpStatusCode.Unauthorized);
+                ?? throw new NoxAuthenticationApiException(NoxApiResourceService.NullToken, (int)HttpStatusCode.Unauthorized);
             string audience = Options.Audience;
 
             if (await _jwtTokenManager.VerifyToken(token, audience))
@@ -62,7 +62,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Permission
                 return await Task.FromResult(AuthenticateResult.Success(ticket));
             }
 
-            throw new NoxAuthenticationApiException("Invalid token.", (int)HttpStatusCode.Unauthorized);
+            throw new NoxAuthenticationApiException(NoxApiResourceService.InvalidToken, (int)HttpStatusCode.Unauthorized);
         }
 
         #endregion

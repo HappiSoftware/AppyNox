@@ -1,4 +1,6 @@
 ﻿using AppyNox.Services.Base.Application.ExceptionExtensions.Base;
+using AppyNox.Services.Base.Application.Localization;
+using AppyNox.Services.Base.Core.Extensions;
 using System.Net;
 
 namespace AppyNox.Services.Base.Application.ExceptionExtensions
@@ -16,8 +18,9 @@ namespace AppyNox.Services.Base.Application.ExceptionExtensions
         /// </summary>
         /// <param name="entity">The entity type for which the access level mapping is not found.</param>
         internal AccessTypeNotFoundException(Type entity)
-            : base($"This '{entity.FullName}' entity has no access level mapping.")
+            : base(message: NoxApplicationResourceService.EntityHasNoAccessLevel.Format(entity.FullName ?? entity.Name))
         {
+            ;
         }
 
         /// <summary>
@@ -27,7 +30,8 @@ namespace AppyNox.Services.Base.Application.ExceptionExtensions
         /// <param name="entity">The entity type for which the access level mapping is not found.</param>
         /// <param name="accessType">The specific access type that is not found.</param>
         internal AccessTypeNotFoundException(Type entity, string accessType)
-            : base($"This '{entity.FullName}' entity has no access level mapping for '{accessType}'.", (int)HttpStatusCode.BadRequest)
+            : base(message: NoxApplicationResourceService.EntityHasNoAccessLevelForType.Format(entity.FullName ?? entity.Name, accessType),
+                   statusCode: (int)HttpStatusCode.BadRequest)
         {
         }
 

@@ -1,5 +1,6 @@
 ﻿using AppyNox.Services.Base.Application.ExceptionExtensions;
 using AppyNox.Services.Base.Application.Extensions;
+using AppyNox.Services.Base.Application.Localization;
 using AppyNox.Services.Base.Core.Enums;
 
 namespace AppyNox.Services.Base.Application.DtoUtilities
@@ -99,8 +100,11 @@ namespace AppyNox.Services.Base.Application.DtoUtilities
 
         public Type GetDetailLevelType(DtoLevelMappingTypes type, Type entityType)
         {
-            var map = _entityToDtoDetailLevelMappings.GetValueOrDefault(entityType) ?? throw new AccessTypeNotFoundException(entityType, type.ToString());
-            return map.GetValueOrDefault(type) ?? throw new AccessTypeNotFoundException(entityType, type.ToString());
+            var map = _entityToDtoDetailLevelMappings.GetValueOrDefault(entityType)
+                ?? throw new AccessTypeNotFoundException(entityType, type.ToString());
+
+            return map.GetValueOrDefault(type)
+                ?? throw new AccessTypeNotFoundException(entityType, type.ToString());
         }
 
         #endregion

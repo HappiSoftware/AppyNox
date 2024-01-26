@@ -3,15 +3,8 @@ using System.Net;
 
 namespace AppyNox.Services.Base.API.ExceptionExtensions
 {
-    public class NoxTokenExpiredException : NoxApiException
+    public class NoxTokenExpiredException(string message)
+        : NoxApiException(message, (int)HttpStatusCode.Unauthorized)
     {
-        #region [ Public Constructors ]
-
-        public NoxTokenExpiredException()
-            : base("Token has expired.", (int)HttpStatusCode.Unauthorized)
-        {
-        }
-
-        #endregion
     }
 }

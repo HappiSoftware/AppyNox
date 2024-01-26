@@ -1,16 +1,20 @@
 ﻿using AppyNox.Services.Base.API.ExceptionExtensions.Interfaces;
+using AppyNox.Services.Base.API.Localization;
 using AppyNox.Services.Base.API.Middleware.Options;
 using AppyNox.Services.Base.API.Wrappers;
 using AppyNox.Services.Base.API.Wrappers.Results;
 using AppyNox.Services.Base.Application.ExceptionExtensions;
 using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Core.ExceptionExtensions.Base;
+using AppyNox.Services.Base.Core.Extensions;
 using Microsoft.AspNetCore.Http;
 using System.Text.Json;
 
 namespace AppyNox.Services.Base.API.Middleware
 {
-    public class NoxResponseWrapperMiddleware(RequestDelegate next, INoxApiLogger logger, NoxResponseWrapperOptions options)
+    public class NoxResponseWrapperMiddleware(RequestDelegate next,
+        INoxApiLogger logger,
+        NoxResponseWrapperOptions options)
     {
         #region [ Fields ]
 
@@ -52,7 +56,7 @@ namespace AppyNox.Services.Base.API.Middleware
                     {
                         if (string.IsNullOrEmpty(noxApiResponse?.Message))
                         {
-                            noxApiResponse!.Message = $"{context.Request.Method} Request Successful.";
+                            noxApiResponse!.Message = NoxApiResourceService.RequestSuccessful.Format(context.Request.Method);
                         }
                         await WriteResponseAsync(context, originalBodyStream, noxApiResponse);
                     }
@@ -60,7 +64,8 @@ namespace AppyNox.Services.Base.API.Middleware
                     {
                         object? result = DeserializeJson(bodyAsText, _jsonSerializeOptions);
 
-                        NoxApiResponse wrappedResponse = new(result!, $"{context.Request.Method} Request Successful.", _options.ApiVersion, false, context.Response.StatusCode);
+                        string message = NoxApiResourceService.RequestSuccessful.Format(context.Request.Method);
+                        NoxApiResponse wrappedResponse = new(result!, message, _options.ApiVersion, false, context.Response.StatusCode);
                         await WriteResponseAsync(context, originalBodyStream, wrappedResponse);
                     }
                 }
@@ -69,7 +74,8 @@ namespace AppyNox.Services.Base.API.Middleware
                     if (context.Response.StatusCode != StatusCodes.Status200OK)
                     {
                         string apiError = WrapUnsuccessfulError(context.Response.StatusCode);
-                        NoxApiResponse wrappedResponse = new(apiError, $"{context.Request.Method} Request Unsuccessful.", _options.ApiVersion, true, context.Response.StatusCode);
+                        string message = NoxApiResourceService.RequestSuccessful.Format(context.Request.Method);
+                        NoxApiResponse wrappedResponse = new(apiError, message, _options.ApiVersion, true, context.Response.StatusCode);
                         await WriteResponseAsync(context, originalBodyStream, wrappedResponse);
                     }
                     else
@@ -84,12 +90,12 @@ namespace AppyNox.Services.Base.API.Middleware
             }
             catch (NoxException noxException)
             {
-                _logger.LogError(noxException, "Nox Exception is thrown!");
+                _logger.LogError(noxException, NoxApiResourceService.NoxExceptionThrown);
                 await HandleKnownExceptionAsync(context, noxException, originalBodyStream);
             }
             catch (Exception exception)
             {
-                _logger.LogError(exception, "An unexpected error occurred.");
+                _logger.LogError(exception, NoxApiResourceService.UnknownExceptionThrown);
                 await HandleUnknownExceptionAsync(context, exception, originalBodyStream);
             }
         }
@@ -137,14 +143,14 @@ namespace AppyNox.Services.Base.API.Middleware
                 ? new NoxApiValidationExceptionWrapObject(exception, correlationId, fluentException.ValidationResult.Errors.AsEnumerable())
                 : new NoxApiExceptionWrapObject(exception, correlationId);
 
-            var wrappedResponse = new NoxApiResponse(errorResponse, "Nox Exception is thrown!", "1.0", true, exception.StatusCode);
+            var wrappedResponse = new NoxApiResponse(errorResponse, NoxApiResourceService.NoxExceptionThrown, _options.ApiVersion, true, exception.StatusCode);
             await WriteResponseAsync(context, originalBodyStream, wrappedResponse);
         }
 
         private async Task HandleUnknownExceptionAsync(HttpContext context, Exception exception, Stream originalBodyStream)
         {
             var errorResponse = new { Message = exception.Message, exception.StackTrace };
-            var wrappedResponse = new NoxApiResponse(errorResponse, "An unexpected error occurred.", "1.0", true, StatusCodes.Status500InternalServerError);
+            var wrappedResponse = new NoxApiResponse(errorResponse, NoxApiResourceService.UnknownExceptionThrown, _options.ApiVersion, true, StatusCodes.Status500InternalServerError);
             await WriteResponseAsync(context, originalBodyStream, wrappedResponse);
         }
 

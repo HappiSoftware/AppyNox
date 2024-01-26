@@ -10,16 +10,19 @@ using AppyNox.Services.Authentication.WebAPI.Middlewares;
 using AppyNox.Services.Authentication.WebAPI.Permission;
 using AppyNox.Services.Base.API.Constants;
 using AppyNox.Services.Base.API.Extensions;
-using AppyNox.Services.Base.API.Middleware;
+using AppyNox.Services.Base.API.Localization;
 using AppyNox.Services.Base.API.Middleware.Options;
 using AppyNox.Services.Base.API.Permissions;
 using AppyNox.Services.Base.Application.Interfaces.Loggers;
+using AppyNox.Services.Base.Application.Localization;
 using AppyNox.Services.Base.Infrastructure.Extensions;
 using AppyNox.Services.Base.Infrastructure.HostedServices;
+using AppyNox.Services.Base.Infrastructure.Localization;
 using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Localization;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using System.Text.Json;
@@ -172,7 +175,25 @@ noxLogger.LogInformation("Registering JWT Configuration completed.");
 
 #endregion
 
+#region [ Localization Configuration ]
+
+builder.ConfigureLocalization();
+
+#endregion
+
 var app = builder.Build();
+
+#region [ Localization Services ]
+
+using (var scope = app.Services.CreateScope())
+{
+    var localizerFactory = scope.ServiceProvider.GetRequiredService<IStringLocalizerFactory>();
+    NoxApplicationResourceService.Initialize(localizerFactory);
+    NoxInfrastructureResourceService.Initialize(localizerFactory);
+    NoxApiResourceService.Initialize(localizerFactory);
+}
+
+#endregion
 
 #region [ Pipeline ]
 
@@ -181,6 +202,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseRequestLocalization();
 
 app.UseCorrelationContext();
 

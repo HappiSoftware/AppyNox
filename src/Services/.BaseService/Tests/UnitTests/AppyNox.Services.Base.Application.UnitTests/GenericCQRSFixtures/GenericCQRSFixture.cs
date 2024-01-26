@@ -1,5 +1,6 @@
 ﻿using AppyNox.Services.Base.Application.DtoUtilities;
 using AppyNox.Services.Base.Application.Interfaces.Repositories;
+using AppyNox.Services.Base.Application.Localization;
 using AppyNox.Services.Base.Application.MediatR.Commands;
 using AppyNox.Services.Base.Application.MediatR.Handlers;
 using AppyNox.Services.Base.Application.UnitTests.Stubs;
@@ -7,6 +8,7 @@ using AppyNox.Services.Base.Core.Enums;
 using AppyNox.Services.Base.Domain.Interfaces;
 using AutoMapper;
 using MediatR;
+using Microsoft.Extensions.Localization;
 using Moq;
 using System.Linq.Expressions;
 
@@ -116,6 +118,18 @@ namespace AppyNox.Services.Base.Application.UnitTests.GenericCQRSFixtures
 
             MockMediator.Setup(m => m.Send(It.IsAny<DeleteEntityCommand<TEntity>>(), It.IsAny<CancellationToken>()))
                 .Returns((DeleteEntityCommand<TEntity> cmd, CancellationToken ct) => DeleteEntityCommandHandler.Handle(cmd, ct));
+
+            #region [ Localization ]
+
+            var localizer = new Mock<IStringLocalizer>();
+            localizer.Setup(l => l[It.IsAny<string>()]).Returns(new LocalizedString("key", "mock value"));
+
+            var localizerFactory = new Mock<IStringLocalizerFactory>();
+            localizerFactory.Setup(lf => lf.Create(typeof(NoxApplicationResourceService))).Returns(localizer.Object);
+
+            NoxApplicationResourceService.Initialize(localizerFactory.Object);
+
+            #endregion
         }
 
         #endregion
