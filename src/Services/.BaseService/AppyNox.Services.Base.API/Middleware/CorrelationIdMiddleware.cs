@@ -41,7 +41,6 @@ namespace AppyNox.Services.Base.API.Middleware
                 }
 
                 CorrelationContext.CorrelationId = Guid.Parse(correlationId);
-                UserIdContext.UserId = Guid.Empty;
                 context.Response.Headers["X-Correlation-ID"] = correlationId;
 
                 await _next(context);
