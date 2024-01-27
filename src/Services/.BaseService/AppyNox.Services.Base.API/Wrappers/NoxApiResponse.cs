@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace AppyNox.Services.Base.API.Wrappers
 {
@@ -6,18 +6,22 @@ namespace AppyNox.Services.Base.API.Wrappers
     {
         #region [ Properties ]
 
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("message")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public string Message { get; set; } = message;
 
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("version")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public string Version { get; set; } = version;
 
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        [JsonPropertyName("hasError")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public bool HasError { get; set; } = hasError;
 
         [JsonIgnore]
-        public int? Code { get; set; } = code;
+        public int? Code { get; } = code;
 
+        [JsonPropertyName("result")]
         public object Result { get; set; } = result;
 
         #endregion

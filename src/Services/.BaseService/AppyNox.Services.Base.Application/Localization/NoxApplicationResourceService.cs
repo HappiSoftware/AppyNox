@@ -57,6 +57,11 @@ namespace AppyNox.Services.Base.Application.Localization
         /// </summary>
         internal static LocalizedString ValidatorNotFound => GetMessage("ValidatorNotFound");
 
+        /// <summary>
+        /// Unsupported attribute type for detail level mapping. Check DtoMappingRegistry.
+        /// </summary>
+        internal static LocalizedString UnsupportedLevelAttribute => GetMessage("UnsupportedLevelAttribute");
+
         #endregion
 
         #region [ Shared Resources ]

@@ -4,8 +4,8 @@ using System.Net;
 
 namespace AppyNox.Services.Base.API.ExceptionExtensions
 {
-    public class NoxAuthenticationException(string message)
-        : NoxApiException(message, (int)HttpStatusCode.Unauthorized, "Base"), INoxAuthenticationException
+    internal class NoxAuthenticationException(string message, int exceptionCode)
+        : NoxApiException(message, exceptionCode, (int)HttpStatusCode.Unauthorized), INoxAuthenticationException
     {
     }
 }

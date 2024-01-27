@@ -39,7 +39,7 @@ namespace AppyNox.Services.Base.Application.MediatR.Handlers
             catch (Exception ex)
             {
                 Logger.LogError(ex, $"Error fetching entity with ID: {request.Id}.");
-                throw new NoxApplicationException(ex);
+                throw new NoxApplicationException(ex, (int)NoxApplicationExceptionCode.GenericGetByIdQueryError);
             }
         }
 

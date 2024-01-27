@@ -1,4 +1,5 @@
 ﻿using AppyNox.Services.Base.API.ExceptionExtensions;
+using AppyNox.Services.Base.API.ExceptionExtensions.Base;
 using AppyNox.Services.Base.API.Localization;
 using Microsoft.AspNetCore.Authorization;
 
@@ -19,12 +20,12 @@ public class NoxJwtAuthorizationHandler
             }
             else
             {
-                throw new NoxAuthorizationException(NoxApiResourceService.UnauthorizedAccess);
+                throw new NoxAuthorizationException(NoxApiResourceService.UnauthorizedAccess, (int)NoxApiExceptionCode.AuthorizationFailed);
             }
         }
         else
         {
-            throw new NoxAuthorizationException(NoxApiResourceService.InvalidToken);
+            throw new NoxAuthorizationException(NoxApiResourceService.InvalidToken, (int)NoxApiExceptionCode.AuthorizationInvalidToken);
         }
 
         return Task.CompletedTask;

@@ -48,6 +48,7 @@ namespace AppyNox.Services.Base.API.Middleware
             finally
             {
                 CorrelationContext.CorrelationId = Guid.Empty;
+                UserIdContext.UserId = Guid.Empty;
             }
         }
 

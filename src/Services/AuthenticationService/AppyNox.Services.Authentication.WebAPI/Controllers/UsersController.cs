@@ -5,9 +5,12 @@ using AppyNox.Services.Authentication.SharedEvents.Events;
 using AppyNox.Services.Authentication.WebAPI.ControllerDependencies;
 using AppyNox.Services.Authentication.WebAPI.ExceptionExtensions.Base;
 using AppyNox.Services.Authentication.WebAPI.Extensions;
+using AppyNox.Services.Authentication.WebAPI.Localization;
 using AppyNox.Services.Authentication.WebAPI.Permission;
+using AppyNox.Services.Base.API.Localization;
 using AppyNox.Services.Base.Application.ExceptionExtensions;
 using AppyNox.Services.Base.Core.AsyncLocals;
+using AppyNox.Services.Base.Core.Extensions;
 using Asp.Versioning;
 using FluentValidation.Results;
 using MassTransit;
@@ -23,7 +26,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
     [ApiController]
     [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/[controller]")]
-    public class UsersController(UsersControllerBaseDependencies usersControllerBaseDependencies, IPublishEndpoint publishEndpoint, IdentityDatabaseContext conmtext) : ControllerBase
+    public class UsersController(UsersControllerBaseDependencies usersControllerBaseDependencies, IPublishEndpoint publishEndpoint) : ControllerBase
     {
         #region [ Fields ]
 
@@ -39,8 +42,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
         [Authorize(Permissions.Users.View)]
         public async Task<IActionResult> GetAll()
         {
-            //var entities = await _baseDependencies.UserManager.Users.ToListAsync();
-            var entities = await conmtext.Users.ToListAsync();
+            var entities = await _baseDependencies.UserManager.Users.ToListAsync();
             object response = new
             {
                 count = _baseDependencies.UserManager.Users.Count().ToString(),
@@ -58,7 +60,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
 
             if (identityUser == null)
             {
-                throw new NoxAuthenticationApiException("User Not Found", (int)HttpStatusCode.NotFound);
+                throw new NoxSsoApiException(NoxSsoApiResourceService.UserNotFound, statusCode: (int)HttpStatusCode.NotFound);
             }
 
             return Ok(_baseDependencies.Mapper.Map(identityUser, identityUser.GetType(), typeof(ApplicationUserDto)));
@@ -70,11 +72,11 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
         {
             if (id != identityUserUpdateDto.Id)
             {
-                throw new NoxAuthenticationApiException("Ids don't match", (int)HttpStatusCode.UnprocessableEntity);
+                throw new NoxSsoApiException(NoxApiResourceService.IdMismatch, statusCode: (int)HttpStatusCode.UnprocessableEntity);
             }
 
             var existingUser = await _baseDependencies.UserManager.FindByIdAsync(id.ToString())
-                ?? throw new NoxAuthenticationApiException("User Not Found", (int)HttpStatusCode.NotFound);
+                ?? throw new NoxSsoApiException(NoxSsoApiResourceService.UserNotFound, statusCode: (int)HttpStatusCode.NotFound);
 
             var concurrencyStamp = existingUser.ConcurrencyStamp;
             existingUser.UserName = identityUserUpdateDto.UserName;
@@ -85,14 +87,14 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
             try
             {
                 existingUser.ConcurrencyStamp = concurrencyStamp;
-                IdentityResult identityResuls = await _baseDependencies.UserManager.UpdateAsync(existingUser);
-                identityResuls.HandleValidationResult();
+                IdentityResult identityResults = await _baseDependencies.UserManager.UpdateAsync(existingUser);
+                identityResults.HandleValidationResult();
             }
             catch (DbUpdateConcurrencyException)
             {
                 if (!await IdentityUserExists(id))
                 {
-                    throw new NoxAuthenticationApiException("User Not Found", (int)HttpStatusCode.NotFound);
+                    throw new NoxSsoApiException(NoxSsoApiResourceService.UserNotFound, statusCode: (int)HttpStatusCode.NotFound);
                 }
                 else
                 {
@@ -148,10 +150,10 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
         public async Task<IActionResult> GetRoles(Guid uid)
         {
             var user = await _baseDependencies.UserManager.FindByIdAsync(uid.ToString())
-                ?? throw new NoxAuthenticationApiException($"Record with id: {uid} does not exist.", (int)HttpStatusCode.NotFound);
+                ?? throw new NoxSsoApiException(NoxSsoApiResourceService.RecordNotFound.Format(uid), statusCode: (int)HttpStatusCode.NotFound);
 
             IList<string> roleNames = await _baseDependencies.UserManager.GetRolesAsync(user);
-            List<ApplicationRoleDto> roles = new List<ApplicationRoleDto>();
+            List<ApplicationRoleDto> roles = [];
 
             foreach (var item in roleNames)
             {
@@ -171,9 +173,9 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
             var user = await _baseDependencies.UserManager.FindByIdAsync(uid.ToString());
             var role = await _baseDependencies.RoleManager.FindByIdAsync(rid.ToString());
             if (user == null)
-                throw new NoxAuthenticationApiException($"Record with id: {uid} does not exist.", (int)HttpStatusCode.NotFound);
+                throw new NoxSsoApiException(NoxSsoApiResourceService.RecordNotFound.Format(uid), statusCode: (int)HttpStatusCode.NotFound);
             if (role == null || string.IsNullOrEmpty(role.Name))
-                throw new NoxAuthenticationApiException($"Record with id: {rid} does not exist.", (int)HttpStatusCode.NotFound);
+                throw new NoxSsoApiException(NoxSsoApiResourceService.RecordNotFound.Format(rid), statusCode: (int)HttpStatusCode.NotFound);
 
             //Assign the role from user
             IdentityResult response = await _baseDependencies.UserManager.AddToRoleAsync(user, role.Name);
@@ -201,9 +203,9 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
             var user = await _baseDependencies.UserManager.FindByIdAsync(uid.ToString());
             var role = await _baseDependencies.RoleManager.FindByIdAsync(rid.ToString());
             if (user == null)
-                throw new NoxAuthenticationApiException($"Record with id: {uid} does not exist.", (int)HttpStatusCode.NotFound);
+                throw new NoxSsoApiException(NoxSsoApiResourceService.RecordNotFound.Format(uid), statusCode: (int)HttpStatusCode.NotFound);
             if (role == null || string.IsNullOrEmpty(role.Name))
-                throw new NoxAuthenticationApiException($"Record with id: {rid} does not exist.", (int)HttpStatusCode.NotFound);
+                throw new NoxSsoApiException(NoxSsoApiResourceService.RecordNotFound.Format(rid), statusCode: (int)HttpStatusCode.NotFound);
 
             //Withdraw the role from user
             IdentityResult response = await _baseDependencies.UserManager.RemoveFromRoleAsync(user, role.Name);

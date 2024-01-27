@@ -33,7 +33,7 @@ public class ConsulHostedService : IHostedService
         _consulClient = consulClient;
         _logger = logger;
         _consulConfig = configuration.GetSection("consul").Get<ConsulConfiguration>() ??
-            throw new NoxInfrastructureException("Consul configuration is not defined. Service will not be discovered.", (int)HttpStatusCode.ServiceUnavailable);
+            throw new NoxInfrastructureException("Consul configuration is not defined. Service will not be discovered.", (int)NoxInfrastructureExceptionCode.DevelopmentError, (int)HttpStatusCode.ServiceUnavailable);
     }
 
     #endregion

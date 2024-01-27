@@ -8,7 +8,7 @@ namespace AppyNox.Services.Base.Application.ExceptionExtensions
     /// Exception thrown when no validator is found for a given DTO type.
     /// </summary>
     internal class ValidatorNotFoundException(Type dtoType)
-        : NoxApplicationException(NoxApplicationResourceService.ValidatorNotFound.Format(dtoType))
+        : NoxApplicationException(NoxApplicationResourceService.ValidatorNotFound.Format(dtoType), (int)NoxApplicationExceptionCode.ValidatorNotFound)
     {
     }
 }

@@ -424,3 +424,145 @@ namespace AppyNox.Services.Base.API.Middleware
 ```
 
 </details>
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+# Exception Codes
+
+Each ```NoxException``` has it's unique code. NoxException Codes start from **'1000'**. Keep in mind that each layer's exception codes start from '1000', which means you can get '1000' for different exceptions, however you should be aware of the **layer**.
+
+<br>
+<br>
+
+# Nox Application Exception Codes
+
+- **1000-AccessTypeEmpty** : Means that the related Entity type has no access levels. It is a server error. Please contact reach customer service with the related Correlation Id.
+
+- **1001-AccessTypeError** : Means that the related Entity does not have the requested AccessLevel. Please send the request again with correct parameters.
+
+- **1002-DtoDetailLevelNotFoundForDisplay** : Means that the requested DetailLevel is not found. Please send the request again with correct parameters.
+
+- **1003-DtoDetailLevelNotFound** : Means that the requested DetailLevel is not found. Unlike 1002, it is a server error. Please reach customer service with the related Correlation Id. 
+
+- **1004-CommonDtoLevelIsNotFound** : Means that there was an unexpected error in the system. It is a server error. Please reach customer service with the related Correlation Id. 
+
+- **1005-FluentValidationError** : Means that validation rules failed for the request. Please send the request again with correct values.
+
+- **1006-ValidatorNotFound** : Means that no validator found for the request body dto. It is a server error. Please reach customer service with the related Correlation Id.
+
+- **1007-GenericCreateCommandError** : Means that there was an unexpected error while adding a new entity using GenericService. It is a server error. Please reach customer service with the related Correlation Id.
+
+- **1008-GenericGetAllQueryError** : Means that there was an unexpected error while fetching the data from GenericService. It is a server error. Please reach customer service with the related Correlation Id.
+
+- **1009-GenericGetByIdQueryError** : Means that there was an unexpected error while fetching the data from GenericService. It is a server error. Please reach customer service with the related Correlation Id.
+
+- **1010-GenericUpdateCommandError** : Means that there was an unexpected error while updating an entity using GenericService. It is a server error. Please reach customer service with the related Correlation Id.
+
+- **1011-GenericDeleteCommandError** : Means that there was an unexpected error while deleting an entity using GenericService. It is a server error. Please reach customer service with the related Correlation Id.
+
+- **1012-MapEntitiesError** : Means that there fetching data was successful however there was a problem on mapping entities to dto. It is a server error. Please reach customer service with the related Correlation Id.
+
+- **1013-MapEntityError** : Means that there fetching data was successful however there was a problem on mapping singnle entity to dto. It is a server error. Please reach customer service with the related Correlation Id.
+
+- **1014-UnsupportedLevelAttribute** : Means that there is a problem for in the DtoMappingRegistry. Please reach customer service with the related Correlation Id.
+
+<br>
+<br>
+
+# Nox Infrastructure Exception Codes
+
+- **500-DevelopmentError** : Errors indicating there was an error during startup of the project.
+
+- **1000-CommitError** : Means that there was a database error. It is a server error. Please reach customer service with the related Correlation Id.
+
+- **1001-WrongIdError** : Means that the requested Id is not existing in the database. Please correct the id and send the request again.
+
+- **1002-MultipleDataFetchingError** : Means that there was an unexpected error while fetching data from the database for multiple entities. It is a server error. Please reach customer service with the related Correlation Id.
+
+- **1003-DataFetchingError** : Means that there was an unexpected error while fetching data from the database for a single entity. It is a server error. Please reach customer service with the related Correlation Id.
+
+- **1004-AddingDataError** : Means that there was an unexpected error while adding data to the database. It is a server error. Please reach customer service with the related Correlation Id.
+
+- **1005-UpdatingDataError** : Means that there was an unexpected error while updating data on the database. It is a server error. Please reach customer service with the related Correlation Id.
+
+- **1006-DeletingDataError** : Means that there was an unexpected error while deleting data on the database. It is a server error. Please reach customer service with the related Correlation Id.
+
+- **1007-ProjectionError** : Means that there was an unexpected error while creating projection for the entity. It is a server error. Please reach customer service with the related Correlation Id.
+
+<br>
+<br>
+
+# Nox Api Exception Codes
+
+- **500-DevelopmentError** : NoxUnwrapper exceptions. Thrown in integration testing only.
+
+- **1000-CorrelationIdError** : Means that the request caught by NoxApi does not have a CorrelationId. Correlation Id's are required for request consistency. Normally Gateway is handling this operation automatically. If you see this error, please reach customer service immediately.
+
+- **1001-AuthenticationInvalidToken** : Means that the requester has provided an invalid token. Please provide a correct token.
+
+- **1002-AuthenticationNullToken** : Means that the requester did not provide a JWT token. Please provide a token.
+
+- **1003-ExpiredToken** : Means that the requester has provided an expired token. Please refresh your token.
+
+- **1004-AuthorizationFailed** : Means that the requester does not has necessary rights to perform this action. Please reach your Admin if you need to access this action.
+
+- **1005-AuthorizationInvalidToken** : Means that the requester has provided an invalid token. This problem most likely due a server error. Please reach customer service with the related Correlation Id.
+
+<br>
+<br>
+
+# Nox Sso Application Exception Codes
+
+- **1000-CreateUserCommandError** :  Means that there was an unexpected error while creating a new user using Commands. It is a server error. Please reach customer service with the related Correlation Id.
+
+- **1001-DeleteUserCommandError** :  Means that there was an unexpected error while deleting the user using Commands. It is a server error. Please reach customer service with the related Correlation Id.
+
+<br>
+<br>
+
+# Nox Sso Infrastructure Exception Codes
+- **1000-UserCreationSagaCorrelationId** :
+- **1001-UserCreationSagaLicenseIdNull** :
+- **1002-UserCreationSagaCompanyIdNull** :
+- **1003-DeleteUserConsumerError** :
+- **1004-CreateUserConsumerError** :
+
+<br>
+<br>
+
+# Nox Sso Api Exception Codes
+
+- **999-SsoServiceApiError** :
+- **1000-AuthenticationInvalidToken** :
+- **1001-AuthenticationNullToken** :
+- **1002-ExpiredToken** :
+- **1003-AuthorizationFailed** :
+- **1004-AuthorizationInvalidToken** :
+- **1005-InvalidAudience** :
+- **1006-RefreshToken** :
+- **1007-WrongCredentials** :
+- **1008-RefreshTokenNotFound** :
+- **1009-SignInError** :
+- **1010-Teapot** :
+
+<br>
+<br>
+
+# Nox License Application Exception Codes
+
+- **999-LicenseServiceApplicationError** :
+- **1000-AssignKeyCommandError** :
+
+<br>
+<br>
+
+# Nox License Infrastructure Exception Codes
+
+- **999-LicenseServiceInfrastructureError** :

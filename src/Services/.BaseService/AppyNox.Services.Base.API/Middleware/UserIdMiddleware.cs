@@ -23,24 +23,17 @@ namespace AppyNox.Services.Base.API.Middleware
         /// <param name="context">The HTTP context for the current request.</param>
         public async Task Invoke(HttpContext context)
         {
-            try
+            string? userId = context.User.FindFirst("nameid")?.Value;
+            if (!string.IsNullOrEmpty(userId) && Guid.TryParse(userId, out Guid userIdGuid))
             {
-                string? userId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                if (!string.IsNullOrEmpty(userId) && Guid.TryParse(userId, out Guid userIdGuid))
-                {
-                    UserIdContext.UserId = userIdGuid;
-                }
-                else
-                {
-                    _logger.LogWarning("UserId is empty. Could not set to UserIdContext");
-                }
+                UserIdContext.UserId = userIdGuid;
+            }
+            else
+            {
+                _logger.LogWarning("UserId is empty. Could not set to UserIdContext");
+            }
 
-                await _next(context);
-            }
-            finally
-            {
-                UserIdContext.UserId = Guid.Empty;
-            }
+            await _next(context);
         }
 
         #endregion

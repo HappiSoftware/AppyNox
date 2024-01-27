@@ -23,7 +23,8 @@ namespace AppyNox.Services.Base.Application.ExceptionExtensions
         /// <param name="enumType">The enum type being checked.</param>
         internal DtoDetailLevelNotFoundException(string displayName, Type enumType)
             : base(message: NoxApplicationResourceService.EnumValueNotFoundForDisplay.Format(displayName, enumType),
-                   statusCode: (int)HttpStatusCode.BadRequest)
+                  exceptionCode: (int)NoxApplicationExceptionCode.DtoDetailLevelNotFoundForDisplay,
+                  statusCode: (int)HttpStatusCode.BadRequest)
         {
         }
 
@@ -34,7 +35,8 @@ namespace AppyNox.Services.Base.Application.ExceptionExtensions
         /// <param name="entity">The entity type.</param>
         /// <param name="enumValue">The enum value for the detail level.</param>
         internal DtoDetailLevelNotFoundException(Type entity, Enum enumValue)
-            : base(message: NoxApplicationResourceService.LevelNotFoundForEntity.Format(entity.FullName ?? entity.Name, enumValue))
+            : base(message: NoxApplicationResourceService.LevelNotFoundForEntity.Format(entity.FullName ?? entity.Name, enumValue),
+                  exceptionCode: (int)NoxApplicationExceptionCode.DtoDetailLevelNotFoundForDisplay)
         {
         }
 
@@ -44,7 +46,8 @@ namespace AppyNox.Services.Base.Application.ExceptionExtensions
         /// </summary>
         /// <param name="enumVal">The enum value that is not found.</param>
         internal DtoDetailLevelNotFoundException(CommonDtoLevelEnums enumVal)
-            : base(message: NoxApplicationResourceService.CommonDtoLevelNotFound.Format(enumVal))
+            : base(message: NoxApplicationResourceService.CommonDtoLevelNotFound.Format(enumVal),
+                  exceptionCode: (int)NoxApplicationExceptionCode.CommonDtoLevelIsNotFound)
         {
         }
 

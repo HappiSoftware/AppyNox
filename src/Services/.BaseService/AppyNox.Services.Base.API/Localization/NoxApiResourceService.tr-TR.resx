@@ -123,6 +123,9 @@
   <data name="ExpiredToken" xml:space="preserve">
     <value>JWT belirtecinin süresi doldu.</value>
   </data>
+  <data name="IdMismatch" xml:space="preserve">
+    <value>Kimlikler eşleşmiyor.</value>
+  </data>
   <data name="InvalidAccessModifier" xml:space="preserve">
     <value>{0} geçerli bir Erişim parametresi değil.</value>
   </data>
@@ -138,8 +141,17 @@
   <data name="NullToken" xml:space="preserve">
     <value>JWT belirteci boş.</value>
   </data>
+  <data name="RefreshTokenError" xml:space="preserve">
+    <value>Yenileme jetonu kaydedilemedi. Lütfen tekrar deneyin.</value>
+  </data>
+  <data name="RefreshTokenNotFound" xml:space="preserve">
+    <value>Yenileme jetonu bulunamadı. Yeni bir tane almak için lütfen tekrar giriş yapın.</value>
+  </data>
   <data name="RequestSuccessful" xml:space="preserve">
     <value>{0} İsteği Başarılı.</value>
+  </data>
+  <data name="Teapot" xml:space="preserve">
+    <value>Ben bir çaydanlığım.</value>
   </data>
   <data name="UnauthenticatedAccess" xml:space="preserve">
     <value>Kimliği doğrulanmamış erişim. Lütfen önce oturum açın.</value>

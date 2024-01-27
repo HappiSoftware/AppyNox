@@ -3,8 +3,10 @@ using AppyNox.Services.Authentication.Application.Interfaces.Authentication;
 using AppyNox.Services.Authentication.Domain.Entities;
 using AppyNox.Services.Authentication.Infrastructure;
 using AppyNox.Services.Authentication.Infrastructure.Data;
+using AppyNox.Services.Authentication.Infrastructure.Localization;
 using AppyNox.Services.Authentication.WebAPI.Configuration;
 using AppyNox.Services.Authentication.WebAPI.ControllerDependencies;
+using AppyNox.Services.Authentication.WebAPI.Localization;
 using AppyNox.Services.Authentication.WebAPI.Managers;
 using AppyNox.Services.Authentication.WebAPI.Middlewares;
 using AppyNox.Services.Authentication.WebAPI.Permission;
@@ -25,8 +27,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Localization;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
+using System.Runtime.CompilerServices;
 using System.Text.Json;
 
+[assembly: InternalsVisibleTo("AppyNox.Services.Authentication.WebAPI.UnitTest")]
 var builder = WebApplication.CreateBuilder(args);
 
 #region [ Configuration Service ]
@@ -191,6 +195,9 @@ using (var scope = app.Services.CreateScope())
     NoxApplicationResourceService.Initialize(localizerFactory);
     NoxInfrastructureResourceService.Initialize(localizerFactory);
     NoxApiResourceService.Initialize(localizerFactory);
+
+    NoxSsoInfrastructureResourceService.Initialize(localizerFactory);
+    NoxSsoApiResourceService.Initialize(localizerFactory);
 }
 
 #endregion

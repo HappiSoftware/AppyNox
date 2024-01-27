@@ -1,5 +1,6 @@
 ﻿using AppyNox.Services.Authentication.Application.DTOs.ApplicationUserDTOs.Models;
 using AppyNox.Services.Authentication.Application.MediatR.Commands;
+using AppyNox.Services.Authentication.Infrastructure.ExceptionExtensions.Base;
 using AppyNox.Services.Authentication.SharedEvents.Events;
 using MassTransit;
 using MediatR;
@@ -18,21 +19,28 @@ namespace AppyNox.Services.Authentication.Infrastructure.MassTransit.Consumers
 
         public async Task Consume(ConsumeContext<CreateApplicationUserMessage> context)
         {
-            ApplicationUserCreateDto dto = new()
+            try
             {
-                UserName = context.Message.UserName,
-                Password = context.Message.Password,
-                ConfirmPassword = context.Message.ConfirmPassword,
-                Email = context.Message.Email,
-                CompanyId = context.Message.CompanyId
-            };
-            var response = await _mediator.Send(new CreateUserCommand(dto));
+                ApplicationUserCreateDto dto = new()
+                {
+                    UserName = context.Message.UserName,
+                    Password = context.Message.Password,
+                    ConfirmPassword = context.Message.ConfirmPassword,
+                    Email = context.Message.Email,
+                    CompanyId = context.Message.CompanyId
+                };
+                var response = await _mediator.Send(new CreateUserCommand(dto));
 
-            await context.Publish(new ApplicationUserCreatedEvent(
+                await context.Publish(new ApplicationUserCreatedEvent(
 
-                context.Message.CorrelationId,
-                response.id
-            ));
+                    context.Message.CorrelationId,
+                    response.id
+                ));
+            }
+            catch (Exception ex)
+            {
+                throw new NoxSsoInfrastructureException(ex, (int)NoxSsoInfrastructureExceptionCode.CreateUserConsumerError);
+            }
         }
 
         #endregion

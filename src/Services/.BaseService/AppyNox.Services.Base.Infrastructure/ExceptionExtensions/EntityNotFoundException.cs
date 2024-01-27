@@ -6,7 +6,10 @@ using System.Net;
 namespace AppyNox.Services.Base.Infrastructure.ExceptionExtensions
 {
     public class EntityNotFoundException<TEntity>(Guid entityId)
-        : NoxInfrastructureException(NoxInfrastructureResourceService.EntityNotFound.Format(typeof(TEntity).Name, entityId), (int)HttpStatusCode.NotFound)
+        : NoxInfrastructureException(
+            message: NoxInfrastructureResourceService.EntityNotFound.Format(typeof(TEntity).Name, entityId),
+            exceptionCode: (int)NoxInfrastructureExceptionCode.WrongIdError,
+            statusCode: (int)HttpStatusCode.NotFound)
     {
     }
 }

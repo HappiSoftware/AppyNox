@@ -117,31 +117,13 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="CommonDtoLevelNotFound" xml:space="preserve">
-    <value>CommonDtoLevelEnums şunun için bulunamadı: {0}.</value>
+  <data name="UserCreationSagaCompanyIdError" xml:space="preserve">
+    <value>CompanyId can not be null for CreateApplicationUserMessage.</value>
   </data>
-  <data name="EntityHasNoAccessLevel" xml:space="preserve">
-    <value>Bu '{0}' varlığının erişim düzeyi eşlemesi yok.</value>
+  <data name="UserCreationSagaCorrelationIdError" xml:space="preserve">
+    <value>CorrelationId can not be null in UserCreationSaga in Initialization.</value>
   </data>
-  <data name="EntityHasNoAccessLevelForType" xml:space="preserve">
-    <value>Bu '{0}' varlığının '{1}' için erişim düzeyi eşlemesi yok.</value>
-  </data>
-  <data name="EnumValueNotFoundForDisplay" xml:space="preserve">
-    <value>'{1}' içinde displayName '{0}' için numaralandırma değeri bulunamadı.</value>
-  </data>
-  <data name="FluentValidationFailed" xml:space="preserve">
-    <value>İstek, '{0}' için bir veya daha fazla doğrulama hatasıyla yanıtlandı.</value>
-  </data>
-  <data name="LevelNotFoundForEntity" xml:space="preserve">
-    <value>Bu '{0}' düzeyi, '{1}' için dto-varlık eşlemesinde bulunamadı.</value>
-  </data>
-  <data name="UnexpectedError" xml:space="preserve">
-    <value>Beklenmedik hata oluştu.</value>
-  </data>
-  <data name="UnsupportedLevelAttribute" xml:space="preserve">
-    <value>Ayrıntı düzeyinde eşleme için desteklenmeyen özellik türü. DtoMappingRegistry'yi kontrol edin</value>
-  </data>
-  <data name="ValidatorNotFound" xml:space="preserve">
-    <value>'{0}' için doğrulayıcı bulunamadı.</value>
+  <data name="UserCreationSagaLicenseIdError" xml:space="preserve">
+    <value>LicenseId can not be null in LicenseValidatedEvent if IsValid is true.</value>
   </data>
 </root>

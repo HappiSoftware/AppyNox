@@ -8,7 +8,7 @@ namespace AppyNox.Services.Base.API.ExceptionExtensions
     /// Exception thrown when a required correlation ID is missing in an API request.
     /// </summary>
     internal class MissingCorrelationIdException()
-        : NoxApiException(NoxApiResourceService.CorrelationIdIsRequired, (int)HttpStatusCode.BadRequest)
+        : NoxApiException(NoxApiResourceService.CorrelationIdIsRequired, (int)NoxApiExceptionCode.CorrelationIdError, (int)HttpStatusCode.BadRequest)
     {
     }
 }

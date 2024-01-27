@@ -138,6 +138,9 @@
   <data name="UnexpectedError" xml:space="preserve">
     <value>Unexpected Error Occurred.</value>
   </data>
+  <data name="UnsupportedLevelAttribute" xml:space="preserve">
+    <value>Unsupported attribute type for detail level mapping. Check DtoMappingRegistry</value>
+  </data>
   <data name="ValidatorNotFound" xml:space="preserve">
     <value>No validator found for '{0}'.</value>
   </data>

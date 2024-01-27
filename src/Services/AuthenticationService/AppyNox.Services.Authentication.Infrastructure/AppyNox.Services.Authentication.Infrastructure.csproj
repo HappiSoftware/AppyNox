@@ -19,4 +19,10 @@
 	  <ProjectReference Include="..\AppyNox.Services.Authentication.SharedEvents\AppyNox.Services.Authentication.SharedEvents.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <EmbeddedResource Update="Localization\NoxSsoInfrastructureResourceService.resx">
+	    <Generator></Generator>
+	  </EmbeddedResource>
+	</ItemGroup>
+
 </Project>

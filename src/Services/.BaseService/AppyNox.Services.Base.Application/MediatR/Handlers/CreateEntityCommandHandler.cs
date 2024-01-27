@@ -60,7 +60,7 @@ namespace AppyNox.Services.Base.Application.MediatR.Handlers
             }
             catch (Exception ex)
             {
-                throw new NoxApplicationException(ex);
+                throw new NoxApplicationException(ex, (int)NoxApplicationExceptionCode.GenericCreateCommandError);
             }
         }
 

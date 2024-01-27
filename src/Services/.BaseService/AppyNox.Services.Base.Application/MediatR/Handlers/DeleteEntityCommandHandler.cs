@@ -40,7 +40,7 @@ namespace AppyNox.Services.Base.Application.MediatR.Handlers
             catch (Exception ex)
             {
                 Logger.LogError(ex, $"Error deleting entity of type '{typeof(TEntity).Name}' with ID: {request.Id}.");
-                throw new NoxApplicationException(ex);
+                throw new NoxApplicationException(ex, (int)NoxApplicationExceptionCode.GenericDeleteCommandError);
             }
         }
 

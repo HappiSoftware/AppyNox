@@ -1,6 +1,7 @@
 ﻿using AppyNox.Services.Base.Core.AsyncLocals;
 using AppyNox.Services.Base.Core.Extensions;
 using System.Net;
+using System.Text.Json.Serialization;
 
 namespace AppyNox.Services.Base.Core.ExceptionExtensions.Base
 {
@@ -18,6 +19,8 @@ namespace AppyNox.Services.Base.Core.ExceptionExtensions.Base
 
         private readonly int _statusCode;
 
+        private readonly int _exceptionCode;
+
         private readonly Guid _correlationId = CorrelationContext.CorrelationId;
 
         #endregion
@@ -27,6 +30,7 @@ namespace AppyNox.Services.Base.Core.ExceptionExtensions.Base
         /// <summary>
         /// Gets the HTTP status code associated with the exception.
         /// </summary>
+        [JsonIgnore]
         public int StatusCode => _statusCode;
 
         /// <summary>
@@ -43,6 +47,11 @@ namespace AppyNox.Services.Base.Core.ExceptionExtensions.Base
         /// Gets the correlation id of the request
         /// </summary>
         public Guid CorrelationId => _correlationId;
+
+        /// <summary>
+        /// Gets the exception code of the exception
+        /// </summary>
+        public int ExceptionCode => _exceptionCode;
 
         #endregion
 
@@ -64,12 +73,14 @@ namespace AppyNox.Services.Base.Core.ExceptionExtensions.Base
         /// <param name="layer">The layer of the exception, representing the layer where the exception is thrown.</param>
         /// <param name="service">The service of the exception, representing the service where the exception is thrown.</param>
         /// <param name="message">The message that describes the error.</param>
-        protected NoxException(Enum layer, string service, string message)
+        /// <param name="exceptionCode">The code of the associated exception.</param>
+        protected NoxException(Enum layer, string service, string message, int exceptionCode)
             : base(message)
         {
             _layer = layer.GetDisplayName();
             _statusCode = (int)HttpStatusCode.InternalServerError;
             _service = service;
+            _exceptionCode = exceptionCode;
         }
 
         /// <summary>
@@ -79,12 +90,14 @@ namespace AppyNox.Services.Base.Core.ExceptionExtensions.Base
         /// <param name="service">The service of the exception, representing the service where the exception is thrown.</param>
         /// <param name="message">The message that describes the error.</param>
         /// <param name="statusCode">The HTTP status code associated with the exception.</param>
-        protected NoxException(Enum layer, string service, string message, int statusCode)
+        /// <param name="exceptionCode">The code of the associated exception.</param>
+        protected NoxException(Enum layer, string service, string message, int exceptionCode, int statusCode)
             : base(message)
         {
             _layer = layer.GetDisplayName();
             _statusCode = statusCode;
             _service = service;
+            _exceptionCode = exceptionCode;
         }
 
         /// <summary>
@@ -94,13 +107,15 @@ namespace AppyNox.Services.Base.Core.ExceptionExtensions.Base
         /// <param name="layer">The layer of the exception, representing the layer where the exception is thrown.</param>
         /// <param name="service">The service of the exception, representing the service where the exception is thrown.</param>
         /// <param name="message">The error message that explains the reason for the exception.</param>
+        /// <param name="exceptionCode">The code of the associated exception.</param>
         /// <param name="innerException">The exception that is the cause of the current exception.</param>
-        protected NoxException(Enum layer, string service, string message, Exception innerException)
+        protected NoxException(Enum layer, string service, string message, int exceptionCode, Exception innerException)
             : base(message, innerException)
         {
             _layer = layer.GetDisplayName();
             _statusCode = (int)HttpStatusCode.InternalServerError;
             _service = service;
+            _exceptionCode = exceptionCode;
         }
 
         /// <summary>
@@ -109,13 +124,15 @@ namespace AppyNox.Services.Base.Core.ExceptionExtensions.Base
         /// <param name="layer">The layer of the exception, representing the layer where the exception is thrown.</param>
         /// <param name="service">The service of the exception, representing the service where the exception is thrown.</param>
         /// <param name="message">The error message that explains the reason for the exception.</param>
+        /// <param name="exceptionCode">The code of the associated exception.</param>
         /// <param name="innerException">The exception that is the cause of the current exception.</param>
-        protected NoxException(Enum layer, string service, string message, int statusCode, Exception innerException)
+        protected NoxException(Enum layer, string service, string message, int exceptionCode, int statusCode, Exception innerException)
             : base(message, innerException)
         {
             _layer = layer.GetDisplayName();
             _statusCode = statusCode;
             _service = service;
+            _exceptionCode = exceptionCode;
         }
 
         #endregion

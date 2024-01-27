@@ -4,6 +4,31 @@ using AppyNox.Services.Base.Core.ExceptionExtensions.Base;
 
 namespace AppyNox.Services.Base.Infrastructure.ExceptionExtensions.Base
 {
+    #region [ NoxInfrastructureException Code]
+
+    internal enum NoxInfrastructureExceptionCode
+    {
+        DevelopmentError = 500,
+
+        CommitError = 1000,
+
+        WrongIdError = 1001,
+
+        MultipleDataFetchingError = 1002,
+
+        DataFetchingError = 1003,
+
+        AddingDataError = 1004,
+
+        UpdatingDataError = 1005,
+
+        DeletingDataError = 1006,
+
+        ProjectionError = 1007,
+    }
+
+    #endregion
+
     /// <summary>
     /// Represents exceptions specific to the infrastructure layer of the application.
     /// </summary>
@@ -16,9 +41,10 @@ namespace AppyNox.Services.Base.Infrastructure.ExceptionExtensions.Base
         /// HTTP status code is set to 500 (Internal Server Error).
         /// </summary>
         /// <param name="message">The message that describes the error.</param>
+        /// <param name="exceptionCode">The code of the exception.</param>
         /// <param name="service">The service of the exception, representing the service where the exception is thrown.</param>
-        public NoxInfrastructureException(string message, string service = "Base")
-        : base(ExceptionThrownLayer.Infrastructure, service, message)
+        public NoxInfrastructureException(string message, int exceptionCode, string service = "Base")
+        : base(ExceptionThrownLayer.Infrastructure, service, message, exceptionCode)
         {
         }
 
@@ -27,9 +53,10 @@ namespace AppyNox.Services.Base.Infrastructure.ExceptionExtensions.Base
         /// </summary>
         /// <param name="message">The message that describes the error.</param>
         /// <param name="statusCode">The HTTP status code associated with the exception.</param>
+        /// <param name="exceptionCode">The code of the exception.</param>
         /// <param name="service">The service of the exception, representing the service where the exception is thrown.</param>
-        public NoxInfrastructureException(string message, int statusCode, string service = "Base")
-        : base(ExceptionThrownLayer.Infrastructure, service, message, statusCode)
+        public NoxInfrastructureException(string message, int exceptionCode, int statusCode, string service = "Base")
+        : base(ExceptionThrownLayer.Infrastructure, service, message, exceptionCode, statusCode)
         {
         }
 
@@ -38,10 +65,11 @@ namespace AppyNox.Services.Base.Infrastructure.ExceptionExtensions.Base
         /// Http status code is set to 500 (Internal Server Error).
         /// </summary>
         /// <param name="ex">The inner exception.</param>
+        /// <param name="exceptionCode">The code of the exception.</param>
         /// <param name="message">The message that describes the error.</param>
         /// <param name="service">The service of the exception, representing the service where the exception is thrown.</param>
-        public NoxInfrastructureException(Exception ex, string message = "Unexpected error", string service = "Base")
-            : base(ExceptionThrownLayer.Infrastructure, service, message, ex)
+        public NoxInfrastructureException(Exception ex, int exceptionCode, string message = "Unexpected error", string service = "Base")
+            : base(ExceptionThrownLayer.Infrastructure, service, message, exceptionCode, ex)
         {
         }
 
@@ -51,9 +79,10 @@ namespace AppyNox.Services.Base.Infrastructure.ExceptionExtensions.Base
         /// <param name="ex">The inner exception.</param>
         /// <param name="message">The message that describes the error.</param>
         /// <param name="statusCode">The HTTP status code associated with the exception.</param>
+        /// <param name="exceptionCode">The code of the exception.</param>
         /// <param name="service">The service of the exception, representing the service where the exception is thrown.</param>
-        public NoxInfrastructureException(Exception ex, string message, int statusCode, string service = "Base")
-            : base(ExceptionThrownLayer.Infrastructure, service, message, statusCode, ex)
+        public NoxInfrastructureException(Exception ex, string message, int exceptionCode, int statusCode, string service = "Base")
+            : base(ExceptionThrownLayer.Infrastructure, service, message, exceptionCode, statusCode, ex)
         {
         }
 

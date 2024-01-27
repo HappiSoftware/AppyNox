@@ -1,4 +1,5 @@
 ﻿using AppyNox.Services.Base.Application.ExceptionExtensions.Base;
+using AppyNox.Services.Base.Infrastructure.ExceptionExtensions.Base;
 using Consul;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
@@ -51,7 +52,10 @@ namespace AppyNox.Services.Base.Infrastructure.Extensions
                     options.ReloadOnChange = true;
                     options.OnLoadException = exceptionContext =>
                     {
-                        throw new NoxApplicationException(exceptionContext.Exception, $"Failed to load configuration from Consul for '{microServiceName}' in '{environmentName}' environment");
+                        throw new NoxInfrastructureException(
+                            exceptionContext.Exception,
+                            (int)NoxInfrastructureExceptionCode.DevelopmentError,
+                            $"Failed to load configuration from Consul for '{microServiceName}' in '{environmentName}' environment");
                     };
                 });
         }

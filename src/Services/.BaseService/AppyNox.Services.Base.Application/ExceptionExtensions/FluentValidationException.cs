@@ -10,7 +10,10 @@ namespace AppyNox.Services.Base.Application.ExceptionExtensions
     /// Exception thrown when FluentValidation detects validation errors in a DTO.
     /// </summary>
     public class FluentValidationException(Type dtoType, ValidationResult validationResult)
-        : NoxApplicationException(NoxApplicationResourceService.FluentValidationFailed.Format(dtoType), (int)HttpStatusCode.BadRequest)
+        : NoxApplicationException(
+            message: NoxApplicationResourceService.FluentValidationFailed.Format(dtoType),
+            exceptionCode: (int)NoxApplicationExceptionCode.FluentValidationError,
+            statusCode: (int)HttpStatusCode.BadRequest)
     {
         #region [ Properties ]
 
