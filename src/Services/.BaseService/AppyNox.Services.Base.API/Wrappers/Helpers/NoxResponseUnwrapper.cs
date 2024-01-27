@@ -11,7 +11,7 @@ namespace AppyNox.Services.Base.API.Wrappers.Helpers
         {
             var dataElement = ExtractDataElement(jsonResponse, jsonSerializerOptions);
             return JsonSerializer.Deserialize<T>(dataElement.GetRawText(), jsonSerializerOptions)
-                   ?? throw new NoxApiException("Unwrapped Object was null");
+                   ?? throw new NoxApiException("Unwrapped Object was null", (int)NoxApiExceptionCode.DevelopmentException);
         }
 
         public static (Guid, T) UnwrapDataWithId<T>(string jsonResponse, JsonSerializerOptions? jsonSerializerOptions = null)
@@ -19,7 +19,7 @@ namespace AppyNox.Services.Base.API.Wrappers.Helpers
             var dataElement = ExtractDataElement(jsonResponse, jsonSerializerOptions);
             var id = dataElement.GetProperty("id").GetGuid();
             var createdObject = JsonSerializer.Deserialize<T>(dataElement.GetProperty("createdObject").GetRawText(), jsonSerializerOptions)
-                               ?? throw new NoxApiException("Created Object was null");
+                               ?? throw new NoxApiException("Created Object was null", (int)NoxApiExceptionCode.DevelopmentException);
 
             return (id, createdObject);
         }
@@ -37,7 +37,7 @@ namespace AppyNox.Services.Base.API.Wrappers.Helpers
                 return dataElement;
             }
 
-            throw new NoxApiException("Response does not contain expected data.");
+            throw new NoxApiException("Response does not contain expected data.", (int)NoxApiExceptionCode.DevelopmentException);
         }
 
         #endregion

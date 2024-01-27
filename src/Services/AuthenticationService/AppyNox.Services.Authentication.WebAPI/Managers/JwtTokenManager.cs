@@ -1,8 +1,9 @@
 ﻿using AppyNox.Services.Authentication.Application.Interfaces.Authentication;
 using AppyNox.Services.Authentication.Domain.Entities;
 using AppyNox.Services.Authentication.WebAPI.Configuration;
+using AppyNox.Services.Authentication.WebAPI.ExceptionExtensions;
 using AppyNox.Services.Authentication.WebAPI.ExceptionExtensions.Base;
-using AppyNox.Services.Base.API.ExceptionExtensions;
+using AppyNox.Services.Authentication.WebAPI.Localization;
 using AppyNox.Services.Base.API.ExceptionExtensions.Base;
 using AppyNox.Services.Base.API.Localization;
 using AppyNox.Services.Base.Core.Common;
@@ -42,7 +43,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Managers
         /// </summary>
         /// <param name="userId">The user's identifier.</param>
         /// <returns>A JWT token string.</returns>
-        /// <exception cref="NoxAuthenticationApiException">Thrown when user information is not found.</exception>
+        /// <exception cref="NoxSsoApiException">Thrown when user information is not found.</exception>
         public async Task<string> CreateToken(string userId, string audience)
         {
             List<Claim> claims = [];
@@ -50,9 +51,9 @@ namespace AppyNox.Services.Authentication.WebAPI.Managers
 
             var user = await _userManager.FindByIdAsync(userId);
 
-            IList<string> roles = await _userManager.GetRolesAsync(user ?? throw new NoxAuthenticationApiException("Wrong Credentials", (int)HttpStatusCode.NotFound));
+            IList<string> roles = await _userManager.GetRolesAsync(user ?? throw new NoxSsoApiException("Wrong Credentials", (int)HttpStatusCode.NotFound));
 
-            claims.Add(new Claim(ClaimTypes.Name, user.Email ?? throw new NoxAuthenticationApiException("Wrong Credentials", (int)HttpStatusCode.NotFound)));
+            claims.Add(new Claim(ClaimTypes.Name, user.Email ?? throw new NoxSsoApiException("Wrong Credentials", (int)HttpStatusCode.NotFound)));
             claims.Add(new Claim(ClaimTypes.NameIdentifier, userId.ToString()));
             claims.Add(new Claim("company", user.CompanyId.ToString()));
 
@@ -68,7 +69,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Managers
             foreach (var item in roles)
             {
                 var role = await _roleManager.FindByNameAsync(item)
-                    ?? throw new NoxAuthenticationApiException("Wrong Credentials", (int)HttpStatusCode.NotFound);
+                    ?? throw new NoxSsoApiException("Wrong Credentials", (int)HttpStatusCode.NotFound);
                 if (role.Name == "SuperAdmin")
                 {
                     claims.Add(new Claim("superadmin", "true"));
@@ -102,7 +103,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Managers
         /// </summary>
         /// <param name="token">The JWT token.</param>
         /// <returns>Bool value about IsAdmin</returns>
-        /// <exception cref="NoxAuthenticationApiException">Thrown when token is invalid or user information is not found.</exception>
+        /// <exception cref="NoxSsoApiException">Thrown when token is invalid or user information is not found.</exception>
         public bool GetIsAdmin(string token)
         {
             if (string.IsNullOrWhiteSpace(token)) { return false; }
@@ -145,7 +146,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Managers
             }
             catch (Exception)
             {
-                throw new NoxAuthenticationException(NoxApiResourceService.InvalidToken);
+                throw new NoxAuthenticationException(NoxApiResourceService.InvalidToken, (int)NoxSsoApiExceptionCode.AuthenticationInvalidToken);
             }
         }
 
@@ -154,11 +155,11 @@ namespace AppyNox.Services.Authentication.WebAPI.Managers
         /// </summary>
         /// <param name="token">The JWT token.</param>
         /// <returns>User information if token is valid.</returns>
-        /// <exception cref="NoxAuthenticationApiException">Thrown when token is invalid or user information is not found.</exception>
+        /// <exception cref="NoxSsoApiException">Thrown when token is invalid or user information is not found.</exception>
         public string GetUserInfoByToken(string token, string audience)
         {
             var jwtToken = _tokenHandler.ReadToken(token.Replace("\"", string.Empty)) as JwtSecurityToken
-                ?? throw new NoxAuthenticationApiException(NoxApiResourceService.WrongCredentials, (int)HttpStatusCode.NotFound);
+                ?? throw new NoxSsoApiException(NoxApiResourceService.WrongCredentials, (int)HttpStatusCode.NotFound);
 
             var claim = jwtToken.Claims.FirstOrDefault(x => x.Type == "nameid");
             if (claim != null) return claim.Value;
@@ -210,7 +211,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Managers
             }
             else
             {
-                throw new NoxAuthenticationApiException("Invalid or unsupported audience", (int)HttpStatusCode.BadRequest);
+                throw new NoxSsoApiException(NoxSsoApiResourceService.InvalidAudience, (int)NoxSsoApiExceptionCode.InvalidAudience, (int)HttpStatusCode.BadRequest);
             }
         }
 

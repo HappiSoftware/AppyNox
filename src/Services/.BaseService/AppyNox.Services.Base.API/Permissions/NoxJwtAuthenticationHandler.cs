@@ -40,7 +40,7 @@ namespace AppyNox.Services.Base.API.Permissions
             }
 
             string token = Request.Headers.Authorization.FirstOrDefault()?.Split(" ").Last()
-                ?? throw new NoxAuthenticationException(NoxApiResourceService.NullToken);
+                ?? throw new NoxAuthenticationException(NoxApiResourceService.NullToken, (int)NoxApiExceptionCode.AuthenticationNullToken);
 
             if (await _jwtTokenManager.VerifyToken(token))
             {
@@ -55,7 +55,7 @@ namespace AppyNox.Services.Base.API.Permissions
                 return await Task.FromResult(AuthenticateResult.Success(ticket));
             }
 
-            throw new NoxAuthenticationException(NoxApiResourceService.InvalidToken);
+            throw new NoxAuthenticationException(NoxApiResourceService.InvalidToken, (int)NoxApiExceptionCode.AuthenticationInvalidToken);
         }
 
         #endregion

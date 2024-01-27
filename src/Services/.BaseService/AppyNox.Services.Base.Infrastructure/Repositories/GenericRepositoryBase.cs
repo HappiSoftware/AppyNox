@@ -70,7 +70,7 @@ namespace AppyNox.Services.Base.Infrastructure.Repositories
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error retrieving entity with ID: '{id}' Type: '{typeof(TEntity).Name}'.");
-                throw new NoxInfrastructureException(ex);
+                throw new NoxInfrastructureException(ex, (int)NoxInfrastructureExceptionCode.DataFetchingError);
             }
         }
 
@@ -92,7 +92,7 @@ namespace AppyNox.Services.Base.Infrastructure.Repositories
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error retrieving entities. Type: '{typeof(TEntity).Name}'.");
-                throw new NoxInfrastructureException(ex);
+                throw new NoxInfrastructureException(ex, (int)NoxInfrastructureExceptionCode.MultipleDataFetchingError);
             }
         }
 
@@ -114,7 +114,7 @@ namespace AppyNox.Services.Base.Infrastructure.Repositories
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error adding a new entity. Type: '{typeof(TEntity).Name}'.");
-                throw new NoxInfrastructureException(ex);
+                throw new NoxInfrastructureException(ex, (int)NoxInfrastructureExceptionCode.AddingDataError);
             }
         }
 
@@ -140,7 +140,7 @@ namespace AppyNox.Services.Base.Infrastructure.Repositories
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error updating entity with ID: '{entity.Id}' Type: '{typeof(TEntity).Name}'.");
-                throw new NoxInfrastructureException(ex);
+                throw new NoxInfrastructureException(ex, (int)NoxInfrastructureExceptionCode.UpdatingDataError);
             }
         }
 
@@ -160,7 +160,7 @@ namespace AppyNox.Services.Base.Infrastructure.Repositories
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error deleting entity with ID: '{entity.Id}' Type: '{typeof(TEntity).Name}'.");
-                throw new NoxInfrastructureException(ex);
+                throw new NoxInfrastructureException(ex, (int)NoxInfrastructureExceptionCode.DeletingDataError);
             }
         }
 
@@ -200,7 +200,7 @@ namespace AppyNox.Services.Base.Infrastructure.Repositories
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error creating projection for entity properties. Type: '{typeof(TEntity).Name}'.");
-                throw new NoxInfrastructureException(ex);
+                throw new NoxInfrastructureException(ex, (int)NoxInfrastructureExceptionCode.ProjectionError);
             }
         }
 

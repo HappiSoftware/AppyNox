@@ -4,6 +4,7 @@ All notable changes to AppyNox will be documented in this file.
 ## [1.0.5](https://github.com/HappiSoftware/AppyNox/compare/v1.0.4...v1.0.5) - NOT RELEASED
 ### Added
 - Localization ([#146](https://github.com/HappiSoftware/AppyNox/issues/146))
+- Adding Exception Code to NoxException ([#144](https://github.com/HappiSoftware/AppyNox/issues/144))
 
 
 ## [1.0.4](https://github.com/HappiSoftware/AppyNox/compare/v1.0.3...v1.0.4) - 2024.01.22

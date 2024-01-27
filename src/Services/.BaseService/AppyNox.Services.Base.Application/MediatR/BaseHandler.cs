@@ -143,7 +143,7 @@ namespace AppyNox.Services.Base.Application.MediatR
             catch (Exception ex)
             {
                 Logger.LogError(ex, $"Error occurred while mapping entities of type '{typeof(TEntity).Name}' to '{dtoType.Name}' DTOs");
-                throw new NoxApplicationException(ex);
+                throw new NoxApplicationException(ex, (int)NoxApplicationExceptionCode.MapEntitiesError);
             }
         }
 
@@ -177,7 +177,7 @@ namespace AppyNox.Services.Base.Application.MediatR
             catch (Exception ex)
             {
                 Logger.LogError(ex, $"Error occurred while mapping single entity of type {typeof(TEntity).Name} to DTO.");
-                throw new NoxApplicationException(ex);
+                throw new NoxApplicationException(ex, (int)NoxApplicationExceptionCode.MapEntityError);
             }
         }
 

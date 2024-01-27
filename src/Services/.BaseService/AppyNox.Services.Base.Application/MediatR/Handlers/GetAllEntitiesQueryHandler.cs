@@ -40,7 +40,7 @@ namespace AppyNox.Services.Base.Application.MediatR.Handlers
             catch (Exception ex)
             {
                 Logger.LogError(ex, $"Error occurred while fetching entities of type '{typeof(TEntity).Name}'");
-                throw new NoxApplicationException(ex);
+                throw new NoxApplicationException(ex, (int)NoxApplicationExceptionCode.GenericGetAllQueryError);
             }
         }
 

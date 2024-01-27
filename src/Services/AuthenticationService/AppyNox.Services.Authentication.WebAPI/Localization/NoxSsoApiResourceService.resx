@@ -117,31 +117,25 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="CommonDtoLevelNotFound" xml:space="preserve">
-    <value>CommonDtoLevelEnums şunun için bulunamadı: {0}.</value>
+  <data name="AlreadyHasClaim" xml:space="preserve">
+    <value>Role with id {0} already has this claim.</value>
   </data>
-  <data name="EntityHasNoAccessLevel" xml:space="preserve">
-    <value>Bu '{0}' varlığının erişim düzeyi eşlemesi yok.</value>
+  <data name="InvalidAudience" xml:space="preserve">
+    <value>Invalid or unsupported audience.</value>
   </data>
-  <data name="EntityHasNoAccessLevelForType" xml:space="preserve">
-    <value>Bu '{0}' varlığının '{1}' için erişim düzeyi eşlemesi yok.</value>
+  <data name="RecordNotFound" xml:space="preserve">
+    <value>Record with id: {0} does not exist.</value>
   </data>
-  <data name="EnumValueNotFoundForDisplay" xml:space="preserve">
-    <value>'{1}' içinde displayName '{0}' için numaralandırma değeri bulunamadı.</value>
+  <data name="RoleNotFound" xml:space="preserve">
+    <value>Role Not Found.</value>
   </data>
-  <data name="FluentValidationFailed" xml:space="preserve">
-    <value>İstek, '{0}' için bir veya daha fazla doğrulama hatasıyla yanıtlandı.</value>
+  <data name="SignInError" xml:space="preserve">
+    <value>Invalid SignIn attempt.</value>
   </data>
-  <data name="LevelNotFoundForEntity" xml:space="preserve">
-    <value>Bu '{0}' düzeyi, '{1}' için dto-varlık eşlemesinde bulunamadı.</value>
+  <data name="SignInSuccessful" xml:space="preserve">
+    <value>SignIn Successful.</value>
   </data>
-  <data name="UnexpectedError" xml:space="preserve">
-    <value>Beklenmedik hata oluştu.</value>
-  </data>
-  <data name="UnsupportedLevelAttribute" xml:space="preserve">
-    <value>Ayrıntı düzeyinde eşleme için desteklenmeyen özellik türü. DtoMappingRegistry'yi kontrol edin</value>
-  </data>
-  <data name="ValidatorNotFound" xml:space="preserve">
-    <value>'{0}' için doğrulayıcı bulunamadı.</value>
+  <data name="UserNotFound" xml:space="preserve">
+    <value>User Not Found.</value>
   </data>
 </root>

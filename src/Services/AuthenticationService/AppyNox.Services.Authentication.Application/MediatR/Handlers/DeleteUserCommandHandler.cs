@@ -23,12 +23,12 @@ namespace AppyNox.Services.Authentication.Application.MediatR.Handlers
             try
             {
                 var identityUser = await _userManager.FindByIdAsync(request.UserId.ToString())
-                    ?? throw new NoxAuthenticationApplicationException("User Not Found", (int)HttpStatusCode.NotFound);
+                    ?? throw new NoxSsoApplicationException("User Not Found", (int)HttpStatusCode.NotFound);
                 await _userManager.DeleteAsync(identityUser);
             }
             catch (Exception ex)
             {
-                throw new NoxAuthenticationApplicationException(ex);
+                throw new NoxSsoApplicationException(ex, (int)NoxSsoApplicationExceptionCode.DeleteUserCommandError);
             }
         }
 

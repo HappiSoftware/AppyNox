@@ -1,4 +1,5 @@
 ﻿using AppyNox.Services.Authentication.Application.DTOs.ApplicationUserDTOs.Models;
+using AppyNox.Services.Authentication.Application.ExceptionExtensions;
 using AppyNox.Services.Authentication.Application.MediatR.Commands;
 using AppyNox.Services.Authentication.Application.Validators.ApplicationUserValidators;
 using AppyNox.Services.Authentication.Domain.Entities;
@@ -38,42 +39,49 @@ namespace AppyNox.Services.Authentication.Application.MediatR.Handlers
 
         public async Task<(Guid id, ApplicationUserDto dto)> Handle(CreateUserCommand request, CancellationToken cancellationToken)
         {
-            ValidationResult dtoValidationResult = await _identityUserCreateDtoValidator.ValidateAsync(request.IdentityUserCreateDto, cancellationToken);
-            if (!dtoValidationResult.IsValid)
+            try
             {
-                throw new FluentValidationException(typeof(ApplicationUser), dtoValidationResult);
-            }
-
-            ApplicationUser userEntity = _mapper.Map<ApplicationUser>(request.IdentityUserCreateDto);
-            IdentityResult result = await _userValidator.ValidateAsync(_userManager, userEntity);
-            if (!result.Succeeded)
-            {
-                ValidationResult validationResult = new();
-                foreach (var error in result.Errors)
+                ValidationResult dtoValidationResult = await _identityUserCreateDtoValidator.ValidateAsync(request.IdentityUserCreateDto, cancellationToken);
+                if (!dtoValidationResult.IsValid)
                 {
-                    ValidationFailure validationFailure = new(error.Code, error.Description);
-                    validationResult.Errors.Add(validationFailure);
+                    throw new FluentValidationException(typeof(ApplicationUser), dtoValidationResult);
                 }
-                throw new FluentValidationException(typeof(ApplicationUser), validationResult);
-            }
 
-            IdentityResult passwordResult = await _passwordValidator.ValidateAsync(_userManager, userEntity, request.IdentityUserCreateDto.Password);
-
-            if (!passwordResult.Succeeded)
-            {
-                ValidationResult validationResult = new();
-                foreach (IdentityError error in passwordResult.Errors)
+                ApplicationUser userEntity = _mapper.Map<ApplicationUser>(request.IdentityUserCreateDto);
+                IdentityResult result = await _userValidator.ValidateAsync(_userManager, userEntity);
+                if (!result.Succeeded)
                 {
-                    ValidationFailure validationFailure = new(error.Code, error.Description);
-                    validationResult.Errors.Add(validationFailure);
+                    ValidationResult validationResult = new();
+                    foreach (var error in result.Errors)
+                    {
+                        ValidationFailure validationFailure = new(error.Code, error.Description);
+                        validationResult.Errors.Add(validationFailure);
+                    }
+                    throw new FluentValidationException(typeof(ApplicationUser), validationResult);
                 }
-                throw new FluentValidationException(typeof(ApplicationUser), validationResult);
+
+                IdentityResult passwordResult = await _passwordValidator.ValidateAsync(_userManager, userEntity, request.IdentityUserCreateDto.Password);
+
+                if (!passwordResult.Succeeded)
+                {
+                    ValidationResult validationResult = new();
+                    foreach (IdentityError error in passwordResult.Errors)
+                    {
+                        ValidationFailure validationFailure = new(error.Code, error.Description);
+                        validationResult.Errors.Add(validationFailure);
+                    }
+                    throw new FluentValidationException(typeof(ApplicationUser), validationResult);
+                }
+
+                userEntity.PasswordHash = _passwordHasher.HashPassword(userEntity, request.IdentityUserCreateDto.Password);
+                await _userManager.CreateAsync(userEntity);
+
+                return (userEntity.Id, _mapper.Map<ApplicationUserDto>(userEntity));
             }
-
-            userEntity.PasswordHash = _passwordHasher.HashPassword(userEntity, request.IdentityUserCreateDto.Password);
-            await _userManager.CreateAsync(userEntity);
-
-            return (userEntity.Id, _mapper.Map<ApplicationUserDto>(userEntity));
+            catch (Exception ex)
+            {
+                throw new NoxSsoApplicationException(ex, (int)NoxSsoApplicationExceptionCode.CreateUserCommandError);
+            }
         }
 
         #endregion

@@ -1,4 +1,5 @@
 ﻿using AppyNox.Services.Authentication.Infrastructure.ExceptionExtensions.Base;
+using AppyNox.Services.Authentication.Infrastructure.Localization;
 using AppyNox.Services.Authentication.SharedEvents.Events;
 using AppyNox.Services.License.SharedEvents.Events;
 using MassTransit;
@@ -22,7 +23,7 @@ namespace AppyNox.Services.Authentication.Infrastructure.MassTransit.Sagas
                     .Then(context =>
                     {
                         context.Saga.CorrelationId = context.CorrelationId
-                            ?? throw new NoxAuthenticationInfrastructureException("CorrelationId can not be null in UserCreationSaga in Initialization.");
+                            ?? throw new NoxSsoInfrastructureException(NoxSsoInfrastructureResourceService.UserCreationSagaCorrelationIdError, (int)NoxSsoInfrastructureExceptionCode.UserCreationSagaCorrelationId);
 
                         context.Saga.LicenseKey = context.Message.LicenseKey;
                         context.Saga.UserName = context.Message.UserName;
@@ -43,7 +44,7 @@ namespace AppyNox.Services.Authentication.Infrastructure.MassTransit.Sagas
                         .Then(context =>
                         {
                             context.Saga.LicenseId = context.Message.LicenseId
-                            ?? throw new NoxAuthenticationInfrastructureException("LicenseId can not be null in LicenseValidatedEvent if IsValid is true");
+                            ?? throw new NoxSsoInfrastructureException(NoxSsoInfrastructureResourceService.UserCreationSagaCorrelationIdError, (int)NoxSsoInfrastructureExceptionCode.UserCreationSagaLicenseIdNull);
                         })
                         .Send(new Uri("queue:create-user"), context => new CreateApplicationUserMessage
                             (
@@ -53,7 +54,7 @@ namespace AppyNox.Services.Authentication.Infrastructure.MassTransit.Sagas
                                 context.Saga.Password,
                                 context.Saga.ConfirmPassword,
                                 context.Message.CompanyId
-                                    ?? throw new NoxAuthenticationInfrastructureException("CompanyId can not be null for CreateApplicationUserMessage")
+                                    ?? throw new NoxSsoInfrastructureException(NoxSsoInfrastructureResourceService.UserCreationSagaCompanyIdError, (int)NoxSsoInfrastructureExceptionCode.UserCreationSagaLicenseIdNull)
                             ))
                         .TransitionTo(CreatingUser)
                     ));

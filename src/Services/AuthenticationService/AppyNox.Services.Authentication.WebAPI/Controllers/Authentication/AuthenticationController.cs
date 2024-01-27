@@ -1,9 +1,11 @@
 ﻿using AppyNox.Services.Authentication.Application.DTOs.AccountDtos.Models;
 using AppyNox.Services.Authentication.Application.DTOs.RefreshTokenDtos.Models;
 using AppyNox.Services.Authentication.Application.Interfaces.Authentication;
+using AppyNox.Services.Authentication.WebAPI.ExceptionExtensions;
 using AppyNox.Services.Authentication.WebAPI.ExceptionExtensions.Base;
+using AppyNox.Services.Authentication.WebAPI.Localization;
 using AppyNox.Services.Base.API.Constants;
-using AppyNox.Services.Base.API.ExceptionExtensions;
+using AppyNox.Services.Base.API.Localization;
 using AppyNox.Services.Base.API.Wrappers;
 using AppyNox.Services.Base.Application.ExceptionExtensions;
 using Asp.Versioning;
@@ -47,14 +49,14 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers.Authentication
 
             if (string.IsNullOrEmpty(jwtToken) || string.IsNullOrEmpty(refreshToken))
             {
-                throw new NoxAuthenticationApiException("Invalid login attempt", (int)HttpStatusCode.Unauthorized);
+                throw new NoxSsoApiException(NoxSsoApiResourceService.SignInError, (int)NoxSsoApiExceptionCode.SignInError, (int)HttpStatusCode.Unauthorized);
             }
             if (jwtToken == "I am a teapot")
             {
-                throw new NoxAuthenticationApiException("I am a teapot", (int)HttpStatusCode.Locked);
+                throw new NoxSsoApiException(NoxApiResourceService.Teapot, (int)NoxSsoApiExceptionCode.Teapot, (int)HttpStatusCode.Locked);
             }
 
-            return new NoxApiResponse(new { Token = jwtToken, RefreshToken = refreshToken }, "SignIn Successful.");
+            return new NoxApiResponse(new { Token = jwtToken, RefreshToken = refreshToken }, NoxSsoApiResourceService.SignInSuccessful);
         }
 
         [HttpGet]
@@ -81,7 +83,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers.Authentication
 
             if (!_customTokenManager.VerifyRefreshToken(model.RefreshToken, storedRefreshToken))
             {
-                throw new NoxAuthenticationApiException("", (int)HttpStatusCode.Unauthorized);
+                throw new NoxSsoApiException("", (int)HttpStatusCode.Unauthorized);
             }
 
             var newJwtToken = await _customTokenManager.CreateToken(userId, model.Audience);

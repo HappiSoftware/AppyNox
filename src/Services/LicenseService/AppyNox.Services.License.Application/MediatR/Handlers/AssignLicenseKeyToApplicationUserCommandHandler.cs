@@ -29,7 +29,7 @@ namespace AppyNox.Services.License.Application.MediatR.Handlers
             }
             catch (Exception ex)
             {
-                throw new NoxLicenseApplicationException(ex);
+                throw new NoxLicenseApplicationException(ex, (int)NoxLicenseApplicationExceptionCode.AssignKeyCommandError);
             }
         }
 

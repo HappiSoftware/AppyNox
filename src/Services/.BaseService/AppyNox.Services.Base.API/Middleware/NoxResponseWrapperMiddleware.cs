@@ -5,6 +5,7 @@ using AppyNox.Services.Base.API.Wrappers;
 using AppyNox.Services.Base.API.Wrappers.Results;
 using AppyNox.Services.Base.Application.ExceptionExtensions;
 using AppyNox.Services.Base.Application.Interfaces.Loggers;
+using AppyNox.Services.Base.Core.AsyncLocals;
 using AppyNox.Services.Base.Core.ExceptionExtensions.Base;
 using AppyNox.Services.Base.Core.Extensions;
 using Microsoft.AspNetCore.Http;

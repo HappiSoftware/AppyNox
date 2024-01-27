@@ -52,7 +52,7 @@ namespace AppyNox.Services.Base.API.Authentication
             }
             catch (Exception)
             {
-                throw new NoxAuthenticationException(NoxApiResourceService.InvalidToken);
+                throw new NoxAuthenticationException(NoxApiResourceService.InvalidToken, (int)NoxApiExceptionCode.AuthenticationInvalidToken);
             }
         }
 

@@ -12,22 +12,22 @@ namespace AppyNox.Services.Coupon.WebAPI.ExceptionExtensions.Base
 
         #region [ Public Constructors ]
 
-        public NoxCouponApiException(string message) : base(message, _service)
+        public NoxCouponApiException(string message, int exceptionCode) : base(message, exceptionCode, _service)
         {
         }
 
-        public NoxCouponApiException(string message, int statusCode)
-            : base(message, statusCode, _service)
+        public NoxCouponApiException(string message, int statusCode, int exceptionCode)
+            : base(message, statusCode, exceptionCode, _service)
         {
         }
 
-        public NoxCouponApiException(Exception ex, string message = "Unexpected error")
-            : base(ex, message, _service)
+        public NoxCouponApiException(Exception ex, int exceptionCode, string message = "Unexpected error")
+            : base(ex, exceptionCode, message, _service)
         {
         }
 
-        public NoxCouponApiException(Exception ex, string message, int statusCode)
-            : base(ex, message, statusCode, _service)
+        public NoxCouponApiException(Exception ex, string message, int statusCode, int exceptionCode)
+            : base(ex, message, statusCode, exceptionCode, _service)
         {
         }
 

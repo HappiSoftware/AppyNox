@@ -201,6 +201,8 @@ if (!app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseRequestLocalization();
+
 app.UseCorrelationContext();
 
 app.UseNoxResponseWrapper(new NoxResponseWrapperOptions

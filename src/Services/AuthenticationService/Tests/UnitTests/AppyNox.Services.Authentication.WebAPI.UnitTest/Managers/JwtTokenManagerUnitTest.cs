@@ -1,8 +1,6 @@
 ﻿using AppyNox.Services.Authentication.Domain.Entities;
 using AppyNox.Services.Authentication.WebAPI.Managers;
-using AppyNox.Services.Base.API.ExceptionExtensions;
 using AppyNox.Services.Base.API.Localization;
-using AppyNox.Services.Base.Application.Localization;
 using AppyNox.Services.Base.Core.Common;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -12,6 +10,7 @@ using Moq;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Security.Claims;
+using AppyNox.Services.Authentication.WebAPI.ExceptionExtensions;
 
 namespace AppyNox.Services.Authentication.WebAPI.UnitTest.Managers
 {

@@ -9,7 +9,7 @@ namespace AppyNox.Services.Base.API.Wrappers
     {
         #region [ Properties ]
 
-        public int Code { get; set; } = error.StatusCode;
+        public int ExceptionCode { get; set; } = error.ExceptionCode;
 
         public string Title { get; set; } = $"{error.Service} {error.Layer}";
 

@@ -24,7 +24,7 @@ namespace AppyNox.Services.Authentication.Infrastructure.MassTransit.Consumers
             }
             catch (Exception ex)
             {
-                throw new NoxAuthenticationInfrastructureException(ex);
+                throw new NoxSsoInfrastructureException(ex, (int)NoxSsoInfrastructureExceptionCode.DeleteUserConsumerError);
             }
         }
 
