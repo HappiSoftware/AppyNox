@@ -1,7 +1,10 @@
 # Changelog
 All notable changes to AppyNox will be documented in this file.
 
-## [1.0.5](https://github.com/HappiSoftware/AppyNox/compare/v1.0.4...v1.0.5) - NOT RELEASED
+## [1.0.6](https://github.com/HappiSoftware/AppyNox/compare/v1.0.5...v1.0.6) - NOT RELEASED
+
+
+## [1.0.5](https://github.com/HappiSoftware/AppyNox/compare/v1.0.4...v1.0.5) - 2024.01.29
 ### Added
 - Localization ([#146](https://github.com/HappiSoftware/AppyNox/issues/146))
 - Adding Exception Code to NoxException ([#144](https://github.com/HappiSoftware/AppyNox/issues/144))
@@ -15,6 +18,7 @@ All notable changes to AppyNox will be documented in this file.
 
 ### Changed
 - EntityBase Improvement ([#138](https://github.com/HappiSoftware/AppyNox/issues/138))
+
 
 ## [1.0.3](https://github.com/HappiSoftware/AppyNox/compare/v1.0.2...v1.0.3) - 2024.01.19
 ### Added

@@ -8,7 +8,6 @@
 [![Entity Framework Core](https://img.shields.io/badge/Entity%20Framework%20Core-Latest-brightgreen.svg)](https://docs.microsoft.com/en-us/ef/core/)
 [![FluentValidation](https://img.shields.io/badge/FluentValidation-Latest-brightgreen.svg)](https://fluentvalidation.net/)
 [![AutoMapper](https://img.shields.io/badge/AutoMapper-Latest-brightgreen.svg)](https://automapper.org/)
-[![AutoWrapper](https://img.shields.io/badge/AutoWrapper-Latest-brightgreen.svg)](https://github.com/proudmonkey/AutoWrapper)
 [![Docker](https://img.shields.io/badge/Docker-Latest-brightgreen.svg)](https://www.docker.com/)
 [![Docker Compose](https://img.shields.io/badge/Docker_Compose-Latest-brightgreen.svg)](https://docs.docker.com/compose/)
 [![Docker Swarm](https://img.shields.io/badge/Docker_Swarm-Latest-brightgreen.svg)](https://docs.docker.com/engine/swarm/)

@@ -72,17 +72,10 @@ namespace AppyNox.Services.Base.API.Middleware
                 }
                 else
                 {
-                    if (context.Response.StatusCode != StatusCodes.Status200OK)
-                    {
-                        string apiError = WrapUnsuccessfulError(context.Response.StatusCode);
-                        string message = NoxApiResourceService.RequestSuccessful.Format(context.Request.Method);
-                        NoxApiResponse wrappedResponse = new(apiError, message, _options.ApiVersion, true, context.Response.StatusCode);
-                        await WriteResponseAsync(context, originalBodyStream, wrappedResponse);
-                    }
-                    else
-                    {
-                        await newBodyStream.CopyToAsync(originalBodyStream);
-                    }
+                    string apiError = WrapUnsuccessfulError(context.Response.StatusCode);
+                    string message = NoxApiResourceService.RequestUnsuccessful.Format(context.Request.Method);
+                    NoxApiResponse wrappedResponse = new(apiError, message, _options.ApiVersion, true, context.Response.StatusCode);
+                    await WriteResponseAsync(context, originalBodyStream, wrappedResponse);
                 }
             }
             catch (NoxException noxException) when (noxException is INoxAuthenticationException)
@@ -121,6 +114,19 @@ namespace AppyNox.Services.Base.API.Middleware
             {
                 return json.Trim('"');
             }
+        }
+
+        private static string WrapUnsuccessfulError(int statusCode)
+        {
+            return statusCode switch
+            {
+                StatusCodes.Status400BadRequest => NoxApiResourceService.BadRequestWrapper,
+                StatusCodes.Status401Unauthorized => NoxApiResourceService.UnauthorizedWrapper,
+                StatusCodes.Status404NotFound => NoxApiResourceService.NotFoundWrapper,
+                StatusCodes.Status405MethodNotAllowed => NoxApiResourceService.MethodNotAllowedWrapper,
+                StatusCodes.Status415UnsupportedMediaType => NoxApiResourceService.UnsupportedMediaTypeWrapper,
+                _ => NoxApiResourceService.UnknownErrorWrapper
+            };
         }
 
         private (bool, NoxApiResponse?) TryGetNoxApiResponse(string responseBody)
@@ -164,20 +170,6 @@ namespace AppyNox.Services.Base.API.Middleware
             context.Response.StatusCode = response.Code ?? StatusCodes.Status200OK;
             context.Response.Body = originalBodyStream;
             await context.Response.WriteAsync(responseContent);
-        }
-
-        private string WrapUnsuccessfulError(int statusCode)
-        {
-            return statusCode switch
-            {
-                StatusCodes.Status204NoContent => "No content",
-                StatusCodes.Status400BadRequest => "Bad request",
-                StatusCodes.Status401Unauthorized => "Unauthorized",
-                StatusCodes.Status404NotFound => "Not found",
-                StatusCodes.Status405MethodNotAllowed => "Method not allowed",
-                StatusCodes.Status415UnsupportedMediaType => "Unsupported media type",
-                _ => "An unknown error occurred"
-            };
         }
 
         #endregion

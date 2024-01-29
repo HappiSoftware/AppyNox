@@ -2,8 +2,6 @@
 using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
 using AppyNox.Services.Base.IntegrationTests.Helpers;
 using AppyNox.Services.Base.IntegrationTests.URIs;
-using AutoWrapper.Server;
-using AutoWrapper.Wrappers;
 using Ductus.FluentDocker.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
