@@ -46,6 +46,41 @@ namespace AppyNox.Services.Base.API.Localization
         /// </summary>
         internal static LocalizedString RequestSuccessful => GetMessage("RequestSuccessful");
 
+        /// <summary>
+        /// {0} Request Unsuccessful.
+        /// </summary>
+        internal static LocalizedString RequestUnsuccessful => GetMessage("RequestUnsuccessful");
+
+        /// <summary>
+        /// The request is invalid.
+        /// </summary>
+        internal static LocalizedString BadRequestWrapper => GetMessage("BadRequestWrapper");
+
+        /// <summary>
+        /// The request is denied due to unauthorized access.
+        /// </summary>
+        internal static LocalizedString UnauthorizedWrapper => GetMessage("UnauthorizedWrapper");
+
+        /// <summary>
+        /// The requested URI does not exist.
+        /// </summary>
+        internal static LocalizedString NotFoundWrapper => GetMessage("NotFoundWrapper");
+
+        /// <summary>
+        /// The request method is not allowed.
+        /// </summary>
+        internal static LocalizedString MethodNotAllowedWrapper => GetMessage("MethodNotAllowedWrapper");
+
+        /// <summary>
+        /// The media type of the request is unsupported.
+        /// </summary>
+        internal static LocalizedString UnsupportedMediaTypeWrapper => GetMessage("UnsupportedMediaTypeWrapper");
+
+        /// <summary>
+        /// An unknown error occurred that is not mapped in the NoxWrapper.
+        /// </summary>
+        internal static LocalizedString UnknownErrorWrapper => GetMessage("UnknownErrorWrapper");
+
         #endregion
 
         #region [ Shared Resources ]

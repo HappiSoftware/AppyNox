@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="BadRequestWrapper" xml:space="preserve">
+    <value>The request is invalid.</value>
+  </data>
   <data name="CorrelationIdIsRequired" xml:space="preserve">
     <value>Correlation ID is required.</value>
   </data>
@@ -132,8 +135,14 @@
   <data name="InvalidToken" xml:space="preserve">
     <value>Received JWT is invalid.</value>
   </data>
+  <data name="MethodNotAllowedWrapper" xml:space="preserve">
+    <value>The request method is not allowed.</value>
+  </data>
   <data name="MissingCorrelationIdMessage" xml:space="preserve">
     <value>A request with no correlation ID received.</value>
+  </data>
+  <data name="NotFoundWrapper" xml:space="preserve">
+    <value>The requested URI does not exist.</value>
   </data>
   <data name="NoxExceptionThrown" xml:space="preserve">
     <value>Nox Exception is thrown.</value>
@@ -159,11 +168,20 @@
   <data name="UnauthorizedAccess" xml:space="preserve">
     <value>You have no claims to take this action.</value>
   </data>
+  <data name="UnauthorizedWrapper" xml:space="preserve">
+    <value>The request is denied due to unauthorized access.</value>
+  </data>
   <data name="UnexpectedError" xml:space="preserve">
     <value>Unexpected Error Occurred.</value>
   </data>
+  <data name="UnknownErrorWrapper" xml:space="preserve">
+    <value>An unknown error occurred that is not mapped in the NoxWrapper.</value>
+  </data>
   <data name="UnknownExceptionThrown" xml:space="preserve">
     <value>An unexpected error occurred.</value>
+  </data>
+  <data name="UnsupportedMediaTypeWrapper" xml:space="preserve">
+    <value>The media type of the request is unsupported.</value>
   </data>
   <data name="WrongCredentials" xml:space="preserve">
     <value>Wrong Credentials.</value>

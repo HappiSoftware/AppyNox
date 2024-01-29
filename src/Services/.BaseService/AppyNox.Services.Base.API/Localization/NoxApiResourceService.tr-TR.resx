@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="BadRequestWrapper" xml:space="preserve">
+    <value>İstek geçersiz.</value>
+  </data>
   <data name="CorrelationIdIsRequired" xml:space="preserve">
     <value>Korelasyon kimliği gereklidir.</value>
   </data>
@@ -132,8 +135,14 @@
   <data name="InvalidToken" xml:space="preserve">
     <value>Alınan JWT belirteci geçersiz.</value>
   </data>
+  <data name="MethodNotAllowedWrapper" xml:space="preserve">
+    <value>İstek methodu geçersiz.</value>
+  </data>
   <data name="MissingCorrelationIdMessage" xml:space="preserve">
     <value>Korelasyon kimliği olmayan bir istek alındı.</value>
+  </data>
+  <data name="NotFoundWrapper" xml:space="preserve">
+    <value>İstenen URI mevcut değil.</value>
   </data>
   <data name="NoxExceptionThrown" xml:space="preserve">
     <value>Nox hatası oluştu.</value>
@@ -159,11 +168,20 @@
   <data name="UnauthorizedAccess" xml:space="preserve">
     <value>Bu işlemi yapmaya yekiniz bulunmamaktadır.</value>
   </data>
+  <data name="UnauthorizedWrapper" xml:space="preserve">
+    <value>Yetkisiz erişim nedeniyle istek reddedildi.</value>
+  </data>
   <data name="UnexpectedError" xml:space="preserve">
     <value>Beklenmedik hata oluştu.</value>
   </data>
+  <data name="UnknownErrorWrapper" xml:space="preserve">
+    <value>NoxWrapper'da eşlenmeyen bilinmeyen bir hata oluştu.</value>
+  </data>
   <data name="UnknownExceptionThrown" xml:space="preserve">
     <value>Beklenmedik bir hata oluştu.</value>
+  </data>
+  <data name="UnsupportedMediaTypeWrapper" xml:space="preserve">
+    <value>İsteğin medya türü desteklenmiyor.</value>
   </data>
   <data name="WrongCredentials" xml:space="preserve">
     <value>Kimlik Bilgileri Yanlış.</value>

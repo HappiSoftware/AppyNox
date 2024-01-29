@@ -2,7 +2,7 @@
 	<PropertyGroup>
 		<TargetFramework>net8.0</TargetFramework>
 		<PackageId>NoxAPI</PackageId>
-		<Version>1.0.4</Version>
+		<Version>1.0.5</Version>
 		<Authors>Behlül UYSAL, Yasin DERE</Authors>
 		<Company>HappiSoftware</Company>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -22,7 +22,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="AutoWrapper.Core" Version="4.5.0" />
 		<PackageReference Include="Asp.Versioning.Mvc" Version="8.0.0" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.1" />
