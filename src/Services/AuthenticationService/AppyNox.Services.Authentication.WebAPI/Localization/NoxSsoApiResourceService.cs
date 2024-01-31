@@ -53,51 +53,6 @@ namespace AppyNox.Services.Authentication.WebAPI.Localization
         /// </summary>
         internal static LocalizedString SignInSuccessful => GetMessage("SignInSuccessful");
 
-        /// <summary>
-        /// I am a teapot.
-        /// </summary>
-        internal static LocalizedString Teapot => GetMessage("Teapot");
-
-        /// <summary>
-        /// Ids don't match
-        /// </summary>
-        internal static LocalizedString IdMismatch => GetMessage("IdMismatch");
-
-        /// <summary>
-        /// No refresh token found. Please re-login to get a new one.
-        /// </summary>
-        internal static LocalizedString RefreshTokenNotFound => GetMessage("RefreshTokenNotFound");
-
-        /// <summary>
-        /// Wrong Credentials.
-        /// </summary>
-        internal static LocalizedString WrongCredentials => GetMessage("WrongCredentials");
-
-        /// <summary>
-        /// Failed to save the refresh token. Please try again.
-        /// </summary>
-        internal static LocalizedString RefreshTokenError => GetMessage("RefreshTokenError");
-
-        /// <summary>
-        /// Token has expired.
-        /// </summary>
-        internal static LocalizedString ExpiredToken => GetMessage("ExpiredToken");
-
-        /// <summary>
-        /// Received JWT is invalid.
-        /// </summary>
-        internal static LocalizedString InvalidToken => GetMessage("InvalidToken");
-
-        /// <summary>
-        /// You have no claims to take this action.
-        /// </summary>
-        internal static LocalizedString UnauthorizedAccess => GetMessage("UnauthorizedAccess");
-
-        /// <summary>
-        /// JWT is null.
-        /// </summary>
-        internal static LocalizedString NullToken => GetMessage("NullToken");
-
         #endregion
 
         #region [ Private Methods ]

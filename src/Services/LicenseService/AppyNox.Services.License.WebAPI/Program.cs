@@ -181,8 +181,13 @@ var app = builder.Build();
 
 #region [ Localization Services ]
 
-IStringLocalizerFactory localizerFactory = app.Services.GetRequiredService<IStringLocalizerFactory>();
-localizerFactory.AddNoxLocalizationServices();
+using (var scope = app.Services.CreateScope())
+{
+    var localizerFactory = scope.ServiceProvider.GetRequiredService<IStringLocalizerFactory>();
+    NoxApplicationResourceService.Initialize(localizerFactory);
+    NoxInfrastructureResourceService.Initialize(localizerFactory);
+    NoxApiResourceService.Initialize(localizerFactory);
+}
 
 #endregion
 

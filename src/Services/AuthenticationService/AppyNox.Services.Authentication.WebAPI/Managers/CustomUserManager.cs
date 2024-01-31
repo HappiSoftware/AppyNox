@@ -2,7 +2,6 @@
 using AppyNox.Services.Authentication.Application.Interfaces.Authentication;
 using AppyNox.Services.Authentication.Domain.Entities;
 using AppyNox.Services.Authentication.WebAPI.ExceptionExtensions.Base;
-using AppyNox.Services.Authentication.WebAPI.Localization;
 using AppyNox.Services.Base.API.Localization;
 using Microsoft.AspNetCore.Identity;
 using System.Net;
@@ -48,7 +47,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Managers
             var loggedUser = await _userManager.FindByNameAsync(user.UserName);
             if (loggedUser == null || string.IsNullOrEmpty(loggedUser.UserName))
             {
-                throw new NoxSsoApiException(NoxSsoApiResourceService.RefreshTokenNotFound, statusCode: (int)HttpStatusCode.BadRequest);
+                throw new NoxSsoApiException(NoxApiResourceService.RefreshTokenNotFound, statusCode: (int)HttpStatusCode.BadRequest);
             }
 
             //validate credentials !! 3. parameter is for rememberme
@@ -64,8 +63,8 @@ namespace AppyNox.Services.Authentication.WebAPI.Managers
             }
 
             // Account is locked
-            if (result.IsLockedOut) throw new NoxSsoApiException(NoxSsoApiResourceService.Teapot, statusCode: (int)HttpStatusCode.Locked);
-            else throw new NoxSsoApiException(NoxSsoApiResourceService.WrongCredentials, statusCode: (int)HttpStatusCode.BadRequest);
+            if (result.IsLockedOut) throw new NoxSsoApiException(NoxApiResourceService.Teapot, statusCode: (int)HttpStatusCode.Locked);
+            else throw new NoxSsoApiException(NoxApiResourceService.WrongCredentials, statusCode: (int)HttpStatusCode.BadRequest);
         }
 
         /// <summary>
@@ -81,14 +80,14 @@ namespace AppyNox.Services.Authentication.WebAPI.Managers
                 var user = await _userManager.FindByIdAsync(userId);
                 if (user == null)
                 {
-                    throw new NoxSsoApiException(NoxSsoApiResourceService.WrongCredentials, (int)HttpStatusCode.BadRequest);
+                    throw new NoxSsoApiException(NoxApiResourceService.WrongCredentials, (int)HttpStatusCode.BadRequest);
                 }
                 await _userManager.RemoveAuthenticationTokenAsync(user, "RefreshTokenProvider", "RefreshToken");
                 await _userManager.SetAuthenticationTokenAsync(user, "RefreshTokenProvider", "RefreshToken", refreshToken);
             }
             catch (Exception)
             {
-                throw new NoxSsoApiException(NoxSsoApiResourceService.RefreshTokenError, statusCode: (int)NoxSsoApiExceptionCode.RefreshToken);
+                throw new NoxSsoApiException(NoxApiResourceService.RefreshTokenError, statusCode: (int)NoxSsoApiExceptionCode.RefreshToken);
             }
         }
 
@@ -103,15 +102,15 @@ namespace AppyNox.Services.Authentication.WebAPI.Managers
             try
             {
                 var user = await _userManager.FindByIdAsync(userId)
-                    ?? throw new NoxSsoApiException(NoxSsoApiResourceService.WrongCredentials, (int)NoxSsoApiExceptionCode.WrongCredentials, (int)HttpStatusCode.BadRequest);
+                    ?? throw new NoxSsoApiException(NoxApiResourceService.WrongCredentials, (int)NoxSsoApiExceptionCode.WrongCredentials, (int)HttpStatusCode.BadRequest);
 
                 var refreshToken = await _userManager.GetAuthenticationTokenAsync(user, "RefreshTokenProvider", "RefreshToken");
                 return refreshToken
-                    ?? throw new NoxSsoApiException(NoxSsoApiResourceService.RefreshTokenNotFound, (int)NoxSsoApiExceptionCode.RefreshTokenNotFound, (int)HttpStatusCode.BadRequest);
+                    ?? throw new NoxSsoApiException(NoxApiResourceService.RefreshTokenNotFound, (int)NoxSsoApiExceptionCode.RefreshTokenNotFound, (int)HttpStatusCode.BadRequest);
             }
             catch (Exception)
             {
-                throw new NoxSsoApiException(NoxSsoApiResourceService.RefreshTokenNotFound, (int)NoxSsoApiExceptionCode.RefreshTokenNotFound, (int)HttpStatusCode.BadRequest);
+                throw new NoxSsoApiException(NoxApiResourceService.RefreshTokenNotFound, (int)NoxSsoApiExceptionCode.RefreshTokenNotFound, (int)HttpStatusCode.BadRequest);
             }
         }
 

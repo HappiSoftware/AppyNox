@@ -11,7 +11,6 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Security.Claims;
 using AppyNox.Services.Authentication.WebAPI.ExceptionExtensions;
-using AppyNox.Services.Authentication.WebAPI.Localization;
 
 namespace AppyNox.Services.Authentication.WebAPI.UnitTest.Managers
 {
@@ -49,9 +48,9 @@ namespace AppyNox.Services.Authentication.WebAPI.UnitTest.Managers
             localizer.Setup(l => l[It.IsAny<string>()]).Returns(new LocalizedString("key", "mock value"));
 
             var localizerFactory = new Mock<IStringLocalizerFactory>();
-            localizerFactory.Setup(lf => lf.Create(typeof(NoxSsoApiResourceService))).Returns(localizer.Object);
+            localizerFactory.Setup(lf => lf.Create(typeof(NoxApiResourceService))).Returns(localizer.Object);
 
-            NoxSsoApiResourceService.Initialize(localizerFactory.Object);
+            NoxApiResourceService.Initialize(localizerFactory.Object);
         }
 
         #endregion

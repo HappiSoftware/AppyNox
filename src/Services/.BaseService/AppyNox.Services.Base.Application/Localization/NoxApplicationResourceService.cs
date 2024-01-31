@@ -2,7 +2,7 @@
 
 namespace AppyNox.Services.Base.Application.Localization
 {
-    internal static class NoxApplicationResourceService
+    public static class NoxApplicationResourceService
     {
         #region [ Fields ]
 
@@ -62,10 +62,14 @@ namespace AppyNox.Services.Base.Application.Localization
         /// </summary>
         internal static LocalizedString UnsupportedLevelAttribute => GetMessage("UnsupportedLevelAttribute");
 
+        #endregion
+
+        #region [ Shared Resources ]
+
         /// <summary>
         /// Unexpected Error Occurred.
         /// </summary>
-        internal static LocalizedString UnexpectedError => GetMessage("UnexpectedError");
+        public static LocalizedString UnexpectedError => GetMessage("UnexpectedError");
 
         #endregion
 
@@ -83,9 +87,9 @@ namespace AppyNox.Services.Base.Application.Localization
 
         #endregion
 
-        #region [ Internal Methods ]
+        #region [ Public Methods ]
 
-        internal static void Initialize(IStringLocalizerFactory factory)
+        public static void Initialize(IStringLocalizerFactory factory)
         {
             _localizer = factory.Create(typeof(NoxApplicationResourceService));
         }

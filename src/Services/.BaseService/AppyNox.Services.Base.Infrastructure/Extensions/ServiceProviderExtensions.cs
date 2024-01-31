@@ -1,7 +1,5 @@
-﻿using AppyNox.Services.Base.Infrastructure.Localization;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Localization;
 
 namespace AppyNox.Services.Base.Infrastructure.Extensions
 {
@@ -27,11 +25,6 @@ namespace AppyNox.Services.Base.Infrastructure.Extensions
             {
                 _db.Database.Migrate();
             }
-        }
-
-        public static void InitializeNoxInfrastructureLocalizationService(this IStringLocalizerFactory localizerFactory)
-        {
-            NoxInfrastructureResourceService.Initialize(localizerFactory);
         }
 
         #endregion

@@ -120,29 +120,11 @@
   <data name="AlreadyHasClaim" xml:space="preserve">
     <value>{0} kimliğine sahip rolde bu yetki zaten var.</value>
   </data>
-  <data name="ExpiredToken" xml:space="preserve">
-    <value>JWT belirtecinin süresi doldu.</value>
-  </data>
-  <data name="IdMismatch" xml:space="preserve">
-    <value>Kimlikler eşleşmiyor.</value>
-  </data>
   <data name="InvalidAudience" xml:space="preserve">
     <value>Geçersiz veya desteklenmeyen kitle</value>
   </data>
-  <data name="InvalidToken" xml:space="preserve">
-    <value>Alınan JWT belirteci geçersiz.</value>
-  </data>
-  <data name="NullToken" xml:space="preserve">
-    <value>JWT belirteci boş.</value>
-  </data>
   <data name="RecordNotFound" xml:space="preserve">
     <value>{0} kimliğe sahip kayıt mevcut değil.</value>
-  </data>
-  <data name="RefreshTokenError" xml:space="preserve">
-    <value>Yenileme jetonu kaydedilemedi. Lütfen tekrar deneyin.</value>
-  </data>
-  <data name="RefreshTokenNotFound" xml:space="preserve">
-    <value>Yenileme jetonu bulunamadı. Yeni bir tane almak için lütfen tekrar giriş yapın.</value>
   </data>
   <data name="RoleNotFound" xml:space="preserve">
     <value>Rol Bulunamadı.</value>
@@ -153,16 +135,7 @@
   <data name="SignInSuccessful" xml:space="preserve">
     <value>Oturum Açma Başarılı.</value>
   </data>
-  <data name="Teapot" xml:space="preserve">
-    <value>Ben bir çaydanlığım.</value>
-  </data>
-  <data name="UnauthorizedAccess" xml:space="preserve">
-    <value>Bu işlemi yapmaya yekiniz bulunmamaktadır.</value>
-  </data>
   <data name="UserNotFound" xml:space="preserve">
     <value>Kullanıcı bulunamadı.</value>
-  </data>
-  <data name="WrongCredentials" xml:space="preserve">
-    <value>Kimlik Bilgileri Yanlış.</value>
   </data>
 </root>

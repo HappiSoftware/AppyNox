@@ -72,7 +72,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
         {
             if (id != identityUserUpdateDto.Id)
             {
-                throw new NoxSsoApiException(NoxSsoApiResourceService.IdMismatch, statusCode: (int)HttpStatusCode.UnprocessableEntity);
+                throw new NoxSsoApiException(NoxApiResourceService.IdMismatch, statusCode: (int)HttpStatusCode.UnprocessableEntity);
             }
 
             var existingUser = await _baseDependencies.UserManager.FindByIdAsync(id.ToString())

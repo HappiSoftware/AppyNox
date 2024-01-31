@@ -2,8 +2,6 @@
 All notable changes to AppyNox will be documented in this file.
 
 ## [1.0.6](https://github.com/HappiSoftware/AppyNox/compare/v1.0.5...v1.0.6) - NOT RELEASED
-### Changed
-- NoxLocalizations Will Be Marked as Internal ([#154](https://github.com/HappiSoftware/AppyNox/issues/154))
 
 
 ## [1.0.5](https://github.com/HappiSoftware/AppyNox/compare/v1.0.4...v1.0.5) - 2024.01.29

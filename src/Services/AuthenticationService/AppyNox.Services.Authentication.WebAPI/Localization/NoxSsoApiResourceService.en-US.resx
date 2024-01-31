@@ -120,29 +120,11 @@
   <data name="AlreadyHasClaim" xml:space="preserve">
     <value>Role with id {0} already has this claim.</value>
   </data>
-  <data name="ExpiredToken" xml:space="preserve">
-    <value>Token has expired.</value>
-  </data>
-  <data name="IdMismatch" xml:space="preserve">
-    <value>Ids don't match</value>
-  </data>
   <data name="InvalidAudience" xml:space="preserve">
     <value>Invalid or unsupported audience.</value>
   </data>
-  <data name="InvalidToken" xml:space="preserve">
-    <value>Received JWT is invalid.</value>
-  </data>
-  <data name="NullToken" xml:space="preserve">
-    <value>JWT is null.</value>
-  </data>
   <data name="RecordNotFound" xml:space="preserve">
     <value>Record with id: {0} does not exist.</value>
-  </data>
-  <data name="RefreshTokenError" xml:space="preserve">
-    <value>Failed to save the refresh token. Please try again.</value>
-  </data>
-  <data name="RefreshTokenNotFound" xml:space="preserve">
-    <value>No refresh token found. Please re-login to get a new one.</value>
   </data>
   <data name="RoleNotFound" xml:space="preserve">
     <value>Role Not Found.</value>
@@ -153,16 +135,7 @@
   <data name="SignInSuccessful" xml:space="preserve">
     <value>SignIn Successful.</value>
   </data>
-  <data name="Teapot" xml:space="preserve">
-    <value>I am a teapot.</value>
-  </data>
-  <data name="UnauthorizedAccess" xml:space="preserve">
-    <value>You have no claims to take this action.</value>
-  </data>
   <data name="UserNotFound" xml:space="preserve">
     <value>User Not Found.</value>
-  </data>
-  <data name="WrongCredentials" xml:space="preserve">
-    <value>Wrong Credentials.</value>
   </data>
 </root>
