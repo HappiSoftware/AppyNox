@@ -1,5 +1,6 @@
 ﻿using AppyNox.Services.Authentication.Application.Interfaces.Authentication;
 using AppyNox.Services.Authentication.WebAPI.ExceptionExtensions.Base;
+using AppyNox.Services.Authentication.WebAPI.Localization;
 using AppyNox.Services.Base.API.Localization;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -46,7 +47,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Permission
             }
 
             string token = Request.Headers.Authorization.FirstOrDefault()?.Split(" ").Last()
-                ?? throw new NoxSsoApiException(NoxApiResourceService.NullToken, (int)HttpStatusCode.Unauthorized);
+                ?? throw new NoxSsoApiException(NoxSsoApiResourceService.NullToken, (int)HttpStatusCode.Unauthorized);
             string audience = Options.Audience;
 
             if (await _jwtTokenManager.VerifyToken(token, audience))
@@ -62,7 +63,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Permission
                 return await Task.FromResult(AuthenticateResult.Success(ticket));
             }
 
-            throw new NoxSsoApiException(NoxApiResourceService.InvalidToken, (int)HttpStatusCode.Unauthorized);
+            throw new NoxSsoApiException(NoxSsoApiResourceService.InvalidToken, (int)HttpStatusCode.Unauthorized);
         }
 
         #endregion
