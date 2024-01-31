@@ -2,7 +2,7 @@
 
 namespace AppyNox.Services.Base.Infrastructure.Localization
 {
-    public static class NoxInfrastructureResourceService
+    internal static class NoxInfrastructureResourceService
     {
         #region [ Fields ]
 
@@ -31,7 +31,7 @@ namespace AppyNox.Services.Base.Infrastructure.Localization
         /// <summary>
         /// Unexpected Error Occurred.
         /// </summary>
-        public static LocalizedString UnexpectedError => GetMessage("UnexpectedError");
+        internal static LocalizedString UnexpectedError => GetMessage("UnexpectedError");
 
         #endregion
 
@@ -49,9 +49,9 @@ namespace AppyNox.Services.Base.Infrastructure.Localization
 
         #endregion
 
-        #region [ Public Methods ]
+        #region [ Internal Methods ]
 
-        public static void Initialize(IStringLocalizerFactory factory)
+        internal static void Initialize(IStringLocalizerFactory factory)
         {
             _localizer = factory.Create(typeof(NoxInfrastructureResourceService));
         }

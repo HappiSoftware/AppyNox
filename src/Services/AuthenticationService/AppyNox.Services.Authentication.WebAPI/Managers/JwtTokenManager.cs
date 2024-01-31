@@ -142,11 +142,11 @@ namespace AppyNox.Services.Authentication.WebAPI.Managers
             }
             catch (SecurityTokenExpiredException)
             {
-                throw new NoxTokenExpiredException(NoxApiResourceService.ExpiredToken);
+                throw new NoxTokenExpiredException(NoxSsoApiResourceService.ExpiredToken);
             }
             catch (Exception)
             {
-                throw new NoxAuthenticationException(NoxApiResourceService.InvalidToken, (int)NoxSsoApiExceptionCode.AuthenticationInvalidToken);
+                throw new NoxAuthenticationException(NoxSsoApiResourceService.InvalidToken, (int)NoxSsoApiExceptionCode.AuthenticationInvalidToken);
             }
         }
 
@@ -159,7 +159,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Managers
         public string GetUserInfoByToken(string token, string audience)
         {
             var jwtToken = _tokenHandler.ReadToken(token.Replace("\"", string.Empty)) as JwtSecurityToken
-                ?? throw new NoxSsoApiException(NoxApiResourceService.WrongCredentials, (int)HttpStatusCode.NotFound);
+                ?? throw new NoxSsoApiException(NoxSsoApiResourceService.WrongCredentials, (int)HttpStatusCode.NotFound);
 
             var claim = jwtToken.Claims.FirstOrDefault(x => x.Type == "nameid");
             if (claim != null) return claim.Value;

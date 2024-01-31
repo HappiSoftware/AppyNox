@@ -53,7 +53,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers.Authentication
             }
             if (jwtToken == "I am a teapot")
             {
-                throw new NoxSsoApiException(NoxApiResourceService.Teapot, (int)NoxSsoApiExceptionCode.Teapot, (int)HttpStatusCode.Locked);
+                throw new NoxSsoApiException(NoxSsoApiResourceService.Teapot, (int)NoxSsoApiExceptionCode.Teapot, (int)HttpStatusCode.Locked);
             }
 
             return new NoxApiResponse(new { Token = jwtToken, RefreshToken = refreshToken }, NoxSsoApiResourceService.SignInSuccessful);
