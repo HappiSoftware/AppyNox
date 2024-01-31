@@ -79,7 +79,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
         {
             if (id != identityRoleUpdateDto.Id)
             {
-                throw new NoxSsoApiException(NoxApiResourceService.IdMismatch, statusCode: (int)HttpStatusCode.UnprocessableContent);
+                throw new NoxSsoApiException(NoxSsoApiResourceService.IdMismatch, statusCode: (int)HttpStatusCode.UnprocessableContent);
             }
 
             var existingRole = await _roleManager.FindByIdAsync(id.ToString())
