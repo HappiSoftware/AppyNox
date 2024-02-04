@@ -49,7 +49,7 @@ namespace AppyNox.Services.Base.Application.MediatR.Handlers
 
                 TEntity mappedEntity = Mapper.Map(dtoObject, dtoType, entityType);
                 await Repository.AddAsync(mappedEntity);
-                await UnitOfWork.SaveChangesAsync(UserIdContext.UserId.ToString());
+                await UnitOfWork.SaveChangesAsync(NoxContext.UserId.ToString());
                 Type returnDtoType = DtoMappingRegistry.GetDtoType(DtoLevelMappingTypes.DataAccess, entityType, CommonDtoLevelEnums.Simple.GetDisplayName());
                 object createdObject = Mapper.Map(mappedEntity, returnDtoType, returnDtoType);
                 return (guid: mappedEntity.Id, basicDto: createdObject);

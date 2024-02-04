@@ -198,7 +198,7 @@ if (!app.Environment.IsDevelopment())
 
 app.UseRequestLocalization();
 
-app.UseCorrelationContext();
+app.UseNoxContext();
 
 app.UseNoxResponseWrapper(new NoxResponseWrapperOptions
 {
@@ -210,8 +210,6 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 
 app.UseAuthorization();
-
-app.UseUserIdContext();
 
 app.MapControllers();
 

@@ -84,7 +84,7 @@ namespace AppyNox.Services.License.Application.UnitTest.CQRSTests
             }";
             JsonDocument jsonDocument = JsonDocument.Parse(jsonData);
             JsonElement root = jsonDocument.RootElement;
-            UserIdContext.UserId = Guid.Parse("a8bfc75b-2ac3-47e2-b013-8b8a1efba45d");
+            NoxContext.UserId = Guid.Parse("a8bfc75b-2ac3-47e2-b013-8b8a1efba45d");
 
             // Act
             var result = await _fixture.MockMediator.Object
@@ -104,7 +104,7 @@ namespace AppyNox.Services.License.Application.UnitTest.CQRSTests
             JsonDocument jsonDocument = JsonDocument.Parse(jsonData);
             JsonElement root = jsonDocument.RootElement;
             Guid id = Guid.NewGuid();
-            UserIdContext.UserId = Guid.Parse("a8bfc75b-2ac3-47e2-b013-8b8a1efba45d");
+            NoxContext.UserId = Guid.Parse("a8bfc75b-2ac3-47e2-b013-8b8a1efba45d");
 
             // Act
             var result = _fixture.MockMediator.Object

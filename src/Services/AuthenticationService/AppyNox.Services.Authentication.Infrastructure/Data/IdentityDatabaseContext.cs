@@ -107,7 +107,7 @@ namespace AppyNox.Services.Authentication.Infrastructure.Data
 
         private Guid GetCurrentUserId()
         {
-            return UserIdContext.UserId;
+            return NoxContext.UserId;
         }
 
         private bool IsConnectRequest()
