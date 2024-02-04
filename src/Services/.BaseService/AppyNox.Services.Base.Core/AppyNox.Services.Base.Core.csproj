@@ -2,13 +2,13 @@
 	<PropertyGroup>
 		<TargetFramework>net8.0</TargetFramework>
 		<PackageId>NoxCore</PackageId>
-		<Version>1.0.5</Version>
+		<Version>1.1.0</Version>
 		<Authors>Behlül UYSAL, Yasin DERE</Authors>
 		<Company>HappiSoftware</Company>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<RepositoryUrl>https://github.com/HappiSoftware/AppyNox</RepositoryUrl>
 		<PackageTags>microservice; resources; .NET;</PackageTags>
-		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageLicenseExpression>LICENSE.md</PackageLicenseExpression>
 		<Description>
 			The NoxCore package provides foundational services and utilities for Nox MicroService. This package contains common classes accross layers.
 		</Description>
@@ -24,5 +24,9 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Localization" Version="8.0.1" />
   </ItemGroup>
+
+	<ItemGroup>
+		<None Include="..\..\..\..\LICENSE.md" Link="LICENSE.md" Pack="true" PackagePath="" />
+	</ItemGroup>
 
 </Project>

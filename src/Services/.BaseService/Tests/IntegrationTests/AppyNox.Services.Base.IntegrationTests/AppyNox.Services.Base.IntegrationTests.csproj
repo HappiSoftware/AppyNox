@@ -2,15 +2,15 @@
 	<PropertyGroup>
 		<TargetFramework>net8.0</TargetFramework>
 		<PackageId>NoxIntegrationTests</PackageId>
-		<Version>1.0.5</Version>
+		<Version>1.1.0</Version>
 		<Authors>Behlül UYSAL, Yasin DERE</Authors>
 		<Company>HappiSoftware</Company>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<RepositoryUrl>https://github.com/HappiSoftware/AppyNox</RepositoryUrl>
 		<PackageTags>microservice; webapi; integrationtest; .NET;</PackageTags>
-		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageLicenseExpression>LICENSE.md</PackageLicenseExpression>
 		<Description>The NoxIntegrationTests package provides foundational services and utilities for integration tests of Nox MicroServices.</Description>
-		<PackageReleaseNotes>https://github.com/HappiSoftware/AppyNox/releases/tag/v1.0.3</PackageReleaseNotes>
+		<PackageReleaseNotes>https://github.com/HappiSoftware/AppyNox/releases/tag/v1.1.0</PackageReleaseNotes>
 	</PropertyGroup>
 	
   <PropertyGroup>
@@ -36,6 +36,10 @@
 
   <ItemGroup>
     <Folder Include="URIs\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\..\..\..\..\LICENSE.md" Link="LICENSE.md" Pack="true" PackagePath="" />
   </ItemGroup>
 
   <ItemGroup>
