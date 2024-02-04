@@ -21,7 +21,7 @@ namespace AppyNox.Services.Base.Core.ExceptionExtensions.Base
 
         private readonly int _exceptionCode;
 
-        private readonly Guid _correlationId = CorrelationContext.CorrelationId;
+        private readonly Guid _correlationId = NoxContext.CorrelationId;
 
         #endregion
 

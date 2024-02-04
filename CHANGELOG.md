@@ -3,6 +3,7 @@ All notable changes to AppyNox will be documented in this file.
 
 ## [1.0.6](https://github.com/HappiSoftware/AppyNox/compare/v1.0.5...v1.0.6) - NOT RELEASED
 ### Changed
+- UserId Context comes Null in Wrapper Middleware ([#153](https://github.com/HappiSoftware/AppyNox/issues/153))
 - NoxLocalizations Will Be Marked as Internal ([#154](https://github.com/HappiSoftware/AppyNox/issues/154))
 
 

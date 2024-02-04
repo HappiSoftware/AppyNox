@@ -13,14 +13,9 @@ namespace AppyNox.Services.Base.API.Extensions
             return builder.UseMiddleware<NoxResponseWrapperMiddleware>(options);
         }
 
-        public static IApplicationBuilder UseCorrelationContext(this IApplicationBuilder builder)
+        public static IApplicationBuilder UseNoxContext(this IApplicationBuilder builder)
         {
-            return builder.UseMiddleware<CorrelationIdMiddleware>();
-        }
-
-        public static IApplicationBuilder UseUserIdContext(this IApplicationBuilder builder)
-        {
-            return builder.UseMiddleware<UserIdMiddleware>();
+            return builder.UseMiddleware<NoxContextMiddleware>();
         }
 
         #endregion

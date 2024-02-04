@@ -111,7 +111,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
         {
             StartUserCreationMessage startUserCreationEvent = new
             (
-                CorrelationContext.CorrelationId,
+                NoxContext.CorrelationId,
                 registerDto.LicenseKey,
                 registerDto.UserName,
                 registerDto.Email,
@@ -127,7 +127,7 @@ namespace AppyNox.Services.Authentication.WebAPI.Controllers
         [Authorize(Permissions.Users.Delete)]
         public async Task<IActionResult> Delete(Guid id)
         {
-            await _publishEndpoint.Publish(new DeleteApplicationUserMessage(CorrelationContext.CorrelationId, id));
+            await _publishEndpoint.Publish(new DeleteApplicationUserMessage(NoxContext.CorrelationId, id));
             return Accepted();
         }
 

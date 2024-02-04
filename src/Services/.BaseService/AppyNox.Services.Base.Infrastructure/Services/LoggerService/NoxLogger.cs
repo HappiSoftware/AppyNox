@@ -67,8 +67,8 @@ namespace AppyNox.Services.Base.Infrastructure.Services.LoggerService
         protected virtual object CreateLogData(string message, LogLevel logLevel)
         {
             var timeStamp = DateTime.UtcNow;
-            var correlationId = CorrelationContext.CorrelationId;
-            var userId = UserIdContext.UserId;
+            var correlationId = NoxContext.CorrelationId;
+            var userId = NoxContext.UserId;
 
             return new
             {

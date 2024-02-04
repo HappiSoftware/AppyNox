@@ -136,7 +136,6 @@ namespace AppyNox.Services.Base.Infrastructure.Repositories
             {
                 if (disposing)
                 {
-                    _logger.LogInformation("Disposing UnitOfWorkBase.");
                     _transaction?.Dispose();
                 }
 

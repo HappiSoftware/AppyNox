@@ -48,7 +48,7 @@ namespace AppyNox.Services.Base.Application.MediatR.Handlers
                 TEntity mappedEntity = Mapper.Map(dtoObject, dtoType, typeof(TEntity));
                 List<string> propertyList = (dtoObject as object).GetType().GetProperties().Select(x => x.Name).ToList();
                 Repository.Update(mappedEntity, propertyList);
-                await UnitOfWork.SaveChangesAsync(UserIdContext.UserId.ToString());
+                await UnitOfWork.SaveChangesAsync(NoxContext.UserId.ToString());
             }
             catch (Exception ex) when (ex is INoxException)
             {

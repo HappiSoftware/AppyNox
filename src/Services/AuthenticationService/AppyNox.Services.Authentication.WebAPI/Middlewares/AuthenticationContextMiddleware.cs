@@ -78,20 +78,6 @@ namespace AppyNox.Services.Authentication.WebAPI.Middlewares
 
                 #endregion
 
-                #region [ UserId ]
-
-                string? userId = context.User.FindFirst("nameid")?.Value;
-                if (!string.IsNullOrEmpty(userId) && Guid.TryParse(userId, out Guid userIdGuid))
-                {
-                    UserIdContext.UserId = userIdGuid;
-                }
-                else if(!isConnectRequest)
-                {
-                    _logger.LogWarning("UserId is empty. Could not set to UserIdContext");
-                }
-
-                #endregion
-
                 await _next(context);
             }
             finally
@@ -100,7 +86,6 @@ namespace AppyNox.Services.Authentication.WebAPI.Middlewares
                 AuthenticationContext.CompanyId = Guid.Empty;
                 AuthenticationContext.IsAdmin = false;
                 AuthenticationContext.IsSuperAdmin = false;
-                UserIdContext.UserId = Guid.Empty;
                 AuthenticationContext.IsConnectRequest = false;
             }
         }

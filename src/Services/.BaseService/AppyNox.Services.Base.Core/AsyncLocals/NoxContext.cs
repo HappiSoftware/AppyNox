@@ -3,11 +3,13 @@
     /// <summary>
     /// Provides a context for storing and retrieving the current request's correlation ID.
     /// </summary>
-    public static class CorrelationContext
+    public static class NoxContext
     {
         #region [ Fields ]
 
         private static readonly AsyncLocal<Guid> _correlationId = new();
+
+        private static readonly AsyncLocal<Guid> _userId = new();
 
         #endregion
 
@@ -20,6 +22,15 @@
         {
             get => _correlationId.Value;
             set => _correlationId.Value = value;
+        }
+
+        /// <summary>
+        /// Gets or sets the User ID for the current request.
+        /// </summary>
+        public static Guid UserId
+        {
+            get => _userId.Value;
+            set => _userId.Value = value;
         }
 
         #endregion
