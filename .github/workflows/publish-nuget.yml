@@ -96,5 +96,5 @@ jobs:
 
      # Publish both regular NuGet packages and symbol packages
       - name: Publish to GitHub Packages
-        run: dotnet nuget push ./nupkgs/*.nupkg ./nupkgs/*.snupkg --source "https://nuget.pkg.github.com/HappiSoftware/index.json" --api-key ${{ secrets.NUGET_API_KEY_ORG }}
+        run: dotnet nuget push ./nupkgs/*.nupkg ./nupkgs/*.snupkg --source "https://nuget.pkg.github.com/HappiSoftware/index.json" --api-key ${{ secrets.NUGET_API_KEY_ORG }} --skip-duplicate
 
