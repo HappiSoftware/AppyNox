@@ -2,7 +2,7 @@
 	<PropertyGroup>
 		<TargetFramework>net8.0</TargetFramework>
 		<PackageId>NoxIntegrationTests</PackageId>
-		<Version>1.1.1</Version>
+		<Version>1.1.2</Version>
 		<Authors>Behlül UYSAL, Yasin DERE</Authors>
 		<Company>HappiSoftware</Company>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -10,7 +10,7 @@
 		<PackageTags>microservice; webapi; integrationtest; .NET;</PackageTags>
 		<PackageLicenseFile>LICENSE.md</PackageLicenseFile>
 		<Description>The NoxIntegrationTests package provides foundational services and utilities for integration tests of Nox MicroServices.</Description>
-		<PackageReleaseNotes>https://github.com/HappiSoftware/AppyNox/releases/tag/v1.1.0</PackageReleaseNotes>
+		<PackageReleaseNotes>https://github.com/HappiSoftware/AppyNox/releases/tag/v1.1.2</PackageReleaseNotes>
 	</PropertyGroup>
 	
   <PropertyGroup>
