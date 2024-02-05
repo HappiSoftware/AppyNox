@@ -4,7 +4,7 @@ All notable changes to AppyNox will be documented in this file.
 ## [1.2.0](https://github.com/HappiSoftware/AppyNox/compare/v1.1.3...v1.2.0) - NOT RELEASED
 
 
-## [1.1.2](https://github.com/HappiSoftware/AppyNox/compare/v1.1.2...v1.1.3) - 2024.02.05
+## [1.1.3](https://github.com/HappiSoftware/AppyNox/compare/v1.1.2...v1.1.3) - 2024.02.05
 ### Added
 - PackageRequireLicenseAcceptance added to Nox Packages
 
