@@ -2,17 +2,17 @@
 	<PropertyGroup>
 		<TargetFramework>net8.0</TargetFramework>
 		<PackageId>NoxDomain</PackageId>
-		<Version>1.0.5</Version>
+		<Version>1.1.0</Version>
 		<Authors>Behlül UYSAL, Yasin DERE</Authors>
 		<Company>HappiSoftware</Company>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<RepositoryUrl>https://github.com/HappiSoftware/AppyNox</RepositoryUrl>
 		<PackageTags>microservice; domain; .NET;</PackageTags>
-		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageLicenseExpression>LICENSE.md</PackageLicenseExpression>
 		<Description>
 			The NoxDomain package provides foundational services and utilities for Nox MicroService Domain Layer.
 		</Description>
-		<PackageReleaseNotes>https://github.com/HappiSoftware/AppyNox/releases/tag/v1.0.3</PackageReleaseNotes>
+		<PackageReleaseNotes>https://github.com/HappiSoftware/AppyNox/releases/tag/v1.1.0</PackageReleaseNotes>
 	</PropertyGroup>
 	
   <PropertyGroup>
@@ -21,5 +21,9 @@
     <Nullable>enable</Nullable>
     <LangVersion>preview</LangVersion>
   </PropertyGroup>
+
+	<ItemGroup>
+		<None Include="..\..\..\..\LICENSE.md" Link="LICENSE.md" Pack="true" PackagePath="" />
+	</ItemGroup>
 
 </Project>
