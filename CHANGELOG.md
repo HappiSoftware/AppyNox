@@ -1,16 +1,26 @@
 # Changelog
 All notable changes to AppyNox will be documented in this file.
 
-## [1.2.0](https://github.com/HappiSoftware/AppyNox/compare/v1.1.2...v1.2.0) - NOT RELEASED
+## [1.2.0](https://github.com/HappiSoftware/AppyNox/compare/v1.1.3...v1.2.0) - NOT RELEASED
+
+
+## [1.1.2](https://github.com/HappiSoftware/AppyNox/compare/v1.1.2...v1.1.3) - 2024.02.05
+### Added
+- PackageRequireLicenseAcceptance added to Nox Packages
+
+### Changed
+- Symbols removed from nuget packages
 
 
 ## [1.1.2](https://github.com/HappiSoftware/AppyNox/compare/v1.1.1...v1.1.2) - 2024.02.05
 ### Added
 - Symbols added to nuget packages
-- 
+
+
 ## [1.1.1](https://github.com/HappiSoftware/AppyNox/compare/v1.1.0...v1.1.1) - 2024.02.05
 ### Added
 - Licenses added to nuget packages
+
 
 ## [1.1.0](https://github.com/HappiSoftware/AppyNox/compare/v1.0.5...v1.1.0) - 2024.02.04
 ### Changed
