@@ -1,4 +1,5 @@
-﻿using AppyNox.Services.Base.Domain.Interfaces;
+﻿using AppyNox.Services.Base.Domain;
+using AppyNox.Services.Base.Domain.Interfaces;
 using System.Linq.Expressions;
 
 namespace AppyNox.Services.Base.Application.Interfaces.Repositories
@@ -7,7 +8,7 @@ namespace AppyNox.Services.Base.Application.Interfaces.Repositories
     /// Defines a generic repository interface for CRUD operations.
     /// </summary>
     /// <typeparam name="TEntity">The type of entity the repository manages.</typeparam>
-    public interface IGenericRepositoryBase<TEntity> where TEntity : class, IEntityWithGuid
+    public interface IGenericRepositoryBase<TEntity> where TEntity : class, IEntityTypeId
     {
         #region [ CRUD Methods ]
 

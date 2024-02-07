@@ -1,5 +1,6 @@
 ﻿using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Application.Interfaces.Repositories;
+using AppyNox.Services.Base.Domain;
 using AppyNox.Services.Base.Domain.Interfaces;
 using AppyNox.Services.Base.Infrastructure.ExceptionExtensions;
 using AppyNox.Services.Base.Infrastructure.ExceptionExtensions.Base;
@@ -14,7 +15,7 @@ namespace AppyNox.Services.Base.Infrastructure.Repositories
     /// Defines a generic repository abstract class for CRUD operations.
     /// </summary>
     /// <typeparam name="TEntity">The type of entity the repository manages.</typeparam>
-    public abstract class GenericRepositoryBase<TEntity> : IGenericRepositoryBase<TEntity> where TEntity : class, IEntityWithGuid
+    public abstract class GenericRepositoryBase<TEntity> : IGenericRepositoryBase<TEntity> where TEntity : class, IEntityTypeId
     {
         #region [ Fields ]
 
@@ -52,7 +53,7 @@ namespace AppyNox.Services.Base.Infrastructure.Repositories
             try
             {
                 _logger.LogInformation($"Attempting to retrieve entity with ID: '{id}' Type: '{typeof(TEntity).Name}'.");
-                var entity = await _dbSet.Where(item => item.Id == id).Select(selectedColumns).FirstOrDefaultAsync();
+                var entity = await _dbSet.Where(item => EF.Property<Guid>(item, "Id") == id).Select(selectedColumns).FirstOrDefaultAsync();
 
                 if (entity == null)
                 {
@@ -128,18 +129,20 @@ namespace AppyNox.Services.Base.Infrastructure.Repositories
         {
             try
             {
-                _logger.LogInformation($"Attempting to update entity with ID: '{entity.Id}' Type: '{typeof(TEntity).Name}'.");
+                _logger.LogInformation($"Attempting to update entity with ID: '{entity.GetTypedId}' Type: '{typeof(TEntity).Name}'.");
                 _context.Set<TEntity>().Entry(entity).State = EntityState.Unchanged;
-                properties = properties.Where(p => p != nameof(entity.Id)).ToList();
+
+                // TODO With Value Objects, direct usage of "Id" can cause problems.
+                properties = properties.Where(p => p != "Id").ToList();
                 foreach (var property in properties)
                 {
                     _context.Entry(entity).Property(property).IsModified = true;
                 }
-                _logger.LogInformation($"Successfully updated entity with ID: '{entity.Id}' Type: '{typeof(TEntity).Name}'.");
+                _logger.LogInformation($"Successfully updated entity with ID: '{entity.GetTypedId}' Type: '{typeof(TEntity).Name}'.");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error updating entity with ID: '{entity.Id}' Type: '{typeof(TEntity).Name}'.");
+                _logger.LogError(ex, $"Error updating entity with ID: '{entity.GetTypedId}' Type: '{typeof(TEntity).Name}'.");
                 throw new NoxInfrastructureException(ex, (int)NoxInfrastructureExceptionCode.UpdatingDataError);
             }
         }
@@ -153,13 +156,13 @@ namespace AppyNox.Services.Base.Infrastructure.Repositories
         {
             try
             {
-                _logger.LogInformation($"Attempting to delete entity with ID: '{entity.Id}' Type: '{typeof(TEntity).Name}'.");
+                _logger.LogInformation($"Attempting to delete entity with ID: '{entity.GetTypedId}' Type: '{typeof(TEntity).Name}'.");
                 _dbSet.Remove(entity);
-                _logger.LogInformation($"Successfully deleted entity with ID: '{entity.Id}' Type: '{typeof(TEntity).Name}'.");
+                _logger.LogInformation($"Successfully deleted entity with ID: '{entity.GetTypedId}' Type: '{typeof(TEntity).Name}'.");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error deleting entity with ID: '{entity.Id}' Type: '{typeof(TEntity).Name}'.");
+                _logger.LogError(ex, $"Error deleting entity with ID: '{entity.GetTypedId}' Type: '{typeof(TEntity).Name}'.");
                 throw new NoxInfrastructureException(ex, (int)NoxInfrastructureExceptionCode.DeletingDataError);
             }
         }
@@ -185,6 +188,9 @@ namespace AppyNox.Services.Base.Infrastructure.Repositories
 
                 foreach (var propertyName in propertyNames)
                 {
+                    if (propertyName.Equals(nameof(EntityBase.DomainEvents)))
+                        continue;
+
                     var entityProperty = Expression.Property(entityParameter, propertyName);
                     var conversion = Expression.Convert(entityProperty, entityProperty.Type);
                     var memberBinding = Expression.Bind(entityProperty.Member, conversion);

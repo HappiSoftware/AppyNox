@@ -1,5 +1,6 @@
 ﻿using AppyNox.Services.Base.Application.MediatR.Commands;
 using AppyNox.Services.Base.Application.MediatR.Handlers;
+using AppyNox.Services.Base.Domain;
 using AppyNox.Services.Base.Domain.Interfaces;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,7 +23,7 @@ namespace AppyNox.Services.Base.Application.Extensions
         /// getting all entities, getting an entity by ID, creating, updating, and deleting an entity.
         /// </remarks>
         public static IServiceCollection AddEntityCommandHandlers<TEntity>(this IServiceCollection services)
-        where TEntity : class, IEntityWithGuid
+        where TEntity : class, IEntityTypeId
         {
             // Register GetAllEntitiesQueryHandler
             services.AddTransient<IRequestHandler<GetAllEntitiesQuery<TEntity>, IEnumerable<object>>,
