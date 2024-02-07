@@ -1,5 +1,4 @@
-﻿using AppyNox.Services.Base.Application.Extensions;
-using AppyNox.Services.Base.Application.MediatR.Commands;
+﻿using AppyNox.Services.Base.Application.MediatR.Commands;
 using AppyNox.Services.Base.Application.UnitTests.GenericCQRSFixtures;
 using AppyNox.Services.Base.Core.AsyncLocals;
 using AppyNox.Services.Base.Core.Enums;
@@ -121,7 +120,7 @@ namespace AppyNox.Services.Coupon.Application.UnitTest.CQRSTests
         {
             // Act
             var result = _fixture.MockMediator.Object
-                .Send(new DeleteEntityCommand<CouponEntity>(It.IsAny<Guid>()));
+                .Send(new DeleteEntityCommand<CouponEntity>(new CouponEntity()));
 
             // Assert
             Assert.NotNull(result);

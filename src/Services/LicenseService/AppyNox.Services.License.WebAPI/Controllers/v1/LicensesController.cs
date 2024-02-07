@@ -74,7 +74,8 @@ namespace AppyNox.Services.License.WebAPI.Controllers.v1
         {
             await _mediator.Send(new GetEntityByIdQuery<LicenseEntity>(id, QueryParameters.CreateForIdOnly()));
 
-            await _mediator.Send(new DeleteEntityCommand<LicenseEntity>(id));
+            LicenseEntity entityToDelete = new() { Id = id };
+            await _mediator.Send(new DeleteEntityCommand<LicenseEntity>(entityToDelete));
             return NoContent();
         }
 

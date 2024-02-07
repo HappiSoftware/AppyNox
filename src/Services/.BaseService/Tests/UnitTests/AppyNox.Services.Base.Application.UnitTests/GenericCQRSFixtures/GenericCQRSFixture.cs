@@ -15,7 +15,7 @@ using System.Linq.Expressions;
 namespace AppyNox.Services.Base.Application.UnitTests.GenericCQRSFixtures
 {
     public class GenericCQRSFixture<TEntity> : IDisposable
-        where TEntity : class, IEntityWithGuid
+        where TEntity : class, IEntityTypeId
     {
         #region [ Fields ]
 

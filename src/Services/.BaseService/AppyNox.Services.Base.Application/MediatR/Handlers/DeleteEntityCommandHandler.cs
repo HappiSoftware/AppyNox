@@ -4,6 +4,7 @@ using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Application.Interfaces.Repositories;
 using AppyNox.Services.Base.Application.MediatR.Commands;
 using AppyNox.Services.Base.Core.ExceptionExtensions.Base;
+using AppyNox.Services.Base.Domain;
 using AppyNox.Services.Base.Domain.Interfaces;
 using AutoMapper;
 using MediatR;
@@ -19,7 +20,7 @@ namespace AppyNox.Services.Base.Application.MediatR.Handlers
         IUnitOfWorkBase unitOfWork)
         : BaseHandler<TEntity>(repository, mapper, dtoMappingRegistry, serviceProvider, logger, unitOfWork),
         IRequestHandler<DeleteEntityCommand<TEntity>>
-        where TEntity : class, IEntityWithGuid
+        where TEntity : class, IEntityTypeId
     {
         #region [ Public Methods ]
 
@@ -27,10 +28,8 @@ namespace AppyNox.Services.Base.Application.MediatR.Handlers
         {
             try
             {
-                Logger.LogInformation($"Deleting entity of type '{typeof(TEntity).Name}' with ID: {request.Id}.");
-                TEntity newEntity = Activator.CreateInstance<TEntity>();
-                newEntity.Id = request.Id;
-                Repository.Remove(newEntity);
+                Logger.LogInformation($"Deleting entity of type '{typeof(TEntity).Name}' with ID: {request.Entity.GetTypedId}.");
+                Repository.Remove(request.Entity);
                 await UnitOfWork.SaveChangesAsync();
             }
             catch (Exception ex) when (ex is INoxException)
@@ -39,7 +38,7 @@ namespace AppyNox.Services.Base.Application.MediatR.Handlers
             }
             catch (Exception ex)
             {
-                Logger.LogError(ex, $"Error deleting entity of type '{typeof(TEntity).Name}' with ID: {request.Id}.");
+                Logger.LogError(ex, $"Error deleting entity of type '{typeof(TEntity).Name}' with ID: {request.Entity.GetTypedId}.");
                 throw new NoxApplicationException(ex, (int)NoxApplicationExceptionCode.GenericDeleteCommandError);
             }
         }

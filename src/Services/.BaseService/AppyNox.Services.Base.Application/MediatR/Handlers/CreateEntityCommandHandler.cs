@@ -7,6 +7,7 @@ using AppyNox.Services.Base.Core.AsyncLocals;
 using AppyNox.Services.Base.Core.Enums;
 using AppyNox.Services.Base.Core.ExceptionExtensions.Base;
 using AppyNox.Services.Base.Core.Extensions;
+using AppyNox.Services.Base.Domain;
 using AppyNox.Services.Base.Domain.Interfaces;
 using AutoMapper;
 using MediatR;
@@ -23,7 +24,7 @@ namespace AppyNox.Services.Base.Application.MediatR.Handlers
         IUnitOfWorkBase unitOfWork)
         : BaseHandler<TEntity>(repository, mapper, dtoMappingRegistry, serviceProvider, logger, unitOfWork),
         IRequestHandler<CreateEntityCommand<TEntity>, (Guid guid, object basicDto)>
-        where TEntity : class, IEntityWithGuid
+        where TEntity : class, IEntityTypeId
     {
         #region [ Public Methods ]
 
@@ -52,7 +53,7 @@ namespace AppyNox.Services.Base.Application.MediatR.Handlers
                 await UnitOfWork.SaveChangesAsync(NoxContext.UserId.ToString());
                 Type returnDtoType = DtoMappingRegistry.GetDtoType(DtoLevelMappingTypes.DataAccess, entityType, CommonDtoLevelEnums.Simple.GetDisplayName());
                 object createdObject = Mapper.Map(mappedEntity, returnDtoType, returnDtoType);
-                return (guid: mappedEntity.Id, basicDto: createdObject);
+                return (guid: mappedEntity.GetTypedId, basicDto: createdObject);
             }
             catch (Exception ex) when (ex is INoxException)
             {

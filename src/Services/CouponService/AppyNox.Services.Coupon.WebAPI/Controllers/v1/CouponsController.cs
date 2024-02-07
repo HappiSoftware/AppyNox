@@ -74,7 +74,8 @@ namespace AppyNox.Services.Coupon.WebAPI.Controllers.v1
         {
             await _mediator.Send(new GetEntityByIdQuery<CouponEntity>(id, QueryParameters.CreateForIdOnly()));
 
-            await _mediator.Send(new DeleteEntityCommand<CouponEntity>(id));
+            CouponEntity entityToDelete = new() { Id = id };
+            await _mediator.Send(new DeleteEntityCommand<CouponEntity>(entityToDelete));
             return NoContent();
         }
 
