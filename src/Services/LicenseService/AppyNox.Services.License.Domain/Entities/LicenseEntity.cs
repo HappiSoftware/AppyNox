@@ -1,11 +1,14 @@
-﻿using AppyNox.Services.Base.Domain;
-using AppyNox.Services.Base.Domain.Interfaces;
+﻿using AppyNox.Services.Base.Domain.Interfaces;
 
 namespace AppyNox.Services.License.Domain.Entities
 {
-    public class LicenseEntity : EntityBase
+    public class LicenseEntity : IEntityTypeId, IHasCode
     {
         #region [ Properties ]
+
+        public Guid Id { get; set; }
+
+        public string Code { get; set; } = string.Empty;
 
         public string Description { get; set; } = string.Empty;
 
@@ -28,6 +31,12 @@ namespace AppyNox.Services.License.Domain.Entities
         public Guid ProductId { get; set; }
 
         public virtual ProductEntity Product { get; set; } = default!;
+
+        #endregion
+
+        #region [ IEntityTypeId ]
+
+        Guid IEntityTypeId.GetTypedId => Id;
 
         #endregion
     }

@@ -1,15 +1,31 @@
-﻿using AppyNox.Services.Base.Domain.Interfaces;
+﻿namespace AppyNox.Services.Base.Domain;
 
-namespace AppyNox.Services.Base.Domain
+public abstract class EntityBase
 {
-    public abstract class EntityBase : IEntityWithGuid
+    #region [ Fields ]
+
+    private readonly List<IDomainEvent> _domainEvents = [];
+
+    #endregion
+
+    #region [ Properties ]
+
+    public string Code { get; set; } = string.Empty;
+
+    public List<IDomainEvent> DomainEvents => [.. _domainEvents];
+
+    #endregion
+
+    #region [ Protected Methods ]
+
+    protected void Raise(IDomainEvent domainEvent)
     {
-        #region [ Properties ]
-
-        public Guid Id { get; set; }
-
-        public string Code { get; set; } = string.Empty;
-
-        #endregion
+        _domainEvents.Add(domainEvent);
     }
+
+    #endregion
+}
+
+public interface IDomainEvent
+{
 }

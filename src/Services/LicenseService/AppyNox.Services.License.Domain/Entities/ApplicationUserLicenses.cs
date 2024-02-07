@@ -2,7 +2,7 @@
 
 namespace AppyNox.Services.License.Domain.Entities
 {
-    public class ApplicationUserLicenses : IEntityWithGuid
+    public class ApplicationUserLicenses : IEntityTypeId
     {
         #region [ Properties ]
 
@@ -19,6 +19,12 @@ namespace AppyNox.Services.License.Domain.Entities
         public virtual LicenseEntity License { get; set; } = default!;
 
         public virtual ICollection<ApplicationUserLicenseMacAddress>? MacAddresses { get; set; }
+
+        #endregion
+
+        #region [ IEntityTypeId ]
+
+        Guid IEntityTypeId.GetTypedId => Id;
 
         #endregion
     }

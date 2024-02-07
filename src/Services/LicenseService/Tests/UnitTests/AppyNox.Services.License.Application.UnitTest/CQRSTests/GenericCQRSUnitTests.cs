@@ -120,7 +120,7 @@ namespace AppyNox.Services.License.Application.UnitTest.CQRSTests
         {
             // Act
             var result = _fixture.MockMediator.Object
-                .Send(new DeleteEntityCommand<LicenseEntity>(It.IsAny<Guid>()));
+                .Send(new DeleteEntityCommand<LicenseEntity>(new LicenseEntity()));
 
             // Assert
             Assert.NotNull(result);

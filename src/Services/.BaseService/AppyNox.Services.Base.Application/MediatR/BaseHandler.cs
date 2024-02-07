@@ -6,6 +6,7 @@ using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Application.Interfaces.Repositories;
 using AppyNox.Services.Base.Core.Enums;
 using AppyNox.Services.Base.Core.Extensions;
+using AppyNox.Services.Base.Domain;
 using AppyNox.Services.Base.Domain.Interfaces;
 using AutoMapper;
 using FluentValidation;
@@ -24,7 +25,7 @@ namespace AppyNox.Services.Base.Application.MediatR
         IServiceProvider serviceProvider,
         INoxApplicationLogger logger,
         IUnitOfWorkBase unitOfWork)
-        where TEntity : class, IEntityWithGuid
+        where TEntity : class, IEntityTypeId
     {
         #region [ Fields ]
 
