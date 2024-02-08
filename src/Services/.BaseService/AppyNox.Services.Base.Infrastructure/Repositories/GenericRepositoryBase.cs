@@ -53,7 +53,7 @@ namespace AppyNox.Services.Base.Infrastructure.Repositories
             try
             {
                 _logger.LogInformation($"Attempting to retrieve entity with ID: '{id}' Type: '{typeof(TEntity).Name}'.");
-                var entity = await _dbSet.Where(item => EF.Property<Guid>(item, "Id") == id).Select(selectedColumns).FirstOrDefaultAsync();
+                var entity = await _dbSet.Where(item => EF.Property<Guid>(item, "Id") == id).Select(selectedColumns).AsNoTracking().FirstOrDefaultAsync();
 
                 if (entity == null)
                 {
@@ -82,6 +82,7 @@ namespace AppyNox.Services.Base.Infrastructure.Repositories
                 _logger.LogInformation($"Attempting to retrieve entities. Type: '{typeof(TEntity).Name}'.");
                 var entities = await _dbSet
                     .AsQueryable()
+                    .AsNoTracking()
                     .Select(selectedColumns)
                     .Skip((queryParameters.PageNumber - 1) * queryParameters.PageSize)
                     .Take(queryParameters.PageSize)
