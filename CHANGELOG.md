@@ -1,7 +1,14 @@
 # Changelog
 All notable changes to AppyNox will be documented in this file.
 
-## [1.2.0](https://github.com/HappiSoftware/AppyNox/compare/v1.1.4...v1.2.0) - NOT RELEASED
+## [1.2.0](https://github.com/HappiSoftware/AppyNox/compare/v1.1.5...v1.2.0) - NOT RELEASED
+
+
+## [1.1.5](https://github.com/HappiSoftware/AppyNox/compare/v1.1.4...v1.1.5) - 2024.02.08
+### Added
+- NoxContextMiddleware Should Allow Swagger ([#161](https://github.com/HappiSoftware/AppyNox/issues/161))
+- NoxResponseWrapperMiddleware WriteResponseAsync should be able to handle Exception in Body ([#163](https://github.com/HappiSoftware/AppyNox/issues/163))
+- GenericRepositoryBase Get Methods Should Have AsNoTracking ([#165](https://github.com/HappiSoftware/AppyNox/issues/165))
 
 
 ## [1.1.4](https://github.com/HappiSoftware/AppyNox/compare/v1.1.3...v1.1.4) - 2024.02.07
