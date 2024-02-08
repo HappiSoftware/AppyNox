@@ -37,7 +37,7 @@ namespace AppyNox.Services.Base.API.Permissions
             }
 
             string requestPath = Context.Request.Path.ToString();
-            var bypassAuthPaths = new[] { "/api/health", "/swagger" };
+            string[] bypassAuthPaths = ["/api/health", "/swagger"];
             if (endpoint?.Metadata?.GetMetadata<IAllowAnonymous>() != null || bypassAuthPaths.Contains(requestPath))
             {
                 // Bypass authentication for this request
