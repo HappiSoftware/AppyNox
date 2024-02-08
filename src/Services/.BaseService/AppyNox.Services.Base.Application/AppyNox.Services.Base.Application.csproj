@@ -2,7 +2,7 @@
 	<PropertyGroup>
 		<TargetFramework>net8.0</TargetFramework>
 		<PackageId>NoxApplication</PackageId>
-		<Version>1.1.4</Version>
+		<Version>1.1.5</Version>
 		<Authors>Behlül UYSAL, Yasin DERE</Authors>
 		<Company>HappiSoftware</Company>
 		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
