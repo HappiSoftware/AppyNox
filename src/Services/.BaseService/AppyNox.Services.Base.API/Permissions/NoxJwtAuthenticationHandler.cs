@@ -30,10 +30,15 @@ namespace AppyNox.Services.Base.API.Permissions
 
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
         {
-            var endpoint = Context.GetEndpoint();
-            var requestPath = Context.Request.Path.ToString();
-            bool healthEndpoint = requestPath.Equals("/api/health");
-            if (endpoint?.Metadata?.GetMetadata<IAllowAnonymous>() != null || healthEndpoint)
+            Endpoint? endpoint = Context.GetEndpoint();
+            if (endpoint == null)
+            {
+                return AuthenticateResult.NoResult();
+            }
+
+            string requestPath = Context.Request.Path.ToString();
+            var bypassAuthPaths = new[] { "/api/health", "/swagger" };
+            if (endpoint?.Metadata?.GetMetadata<IAllowAnonymous>() != null || bypassAuthPaths.Contains(requestPath))
             {
                 // Bypass authentication for this request
                 return AuthenticateResult.NoResult();

@@ -32,7 +32,14 @@ namespace AppyNox.Services.Base.API.Middleware
         {
             try
             {
+                if (context.Request.Path.StartsWithSegments("/swagger"))
+                {
+                    await _next(context);
+                    return;
+                }
+
                 string? correlationId = context.Request.Headers["X-Correlation-ID"].FirstOrDefault();
+
                 if (string.IsNullOrEmpty(correlationId) || !Guid.TryParse(correlationId, out Guid parsedCorrelationId))
                 {
                     _logger.LogCritical(new MissingCorrelationIdException(), NoxApiResourceService.MissingCorrelationIdMessage);
