@@ -5,7 +5,6 @@ using AppyNox.Services.Base.API.Wrappers;
 using AppyNox.Services.Base.API.Wrappers.Results;
 using AppyNox.Services.Base.Application.ExceptionExtensions;
 using AppyNox.Services.Base.Application.Interfaces.Loggers;
-using AppyNox.Services.Base.Core.AsyncLocals;
 using AppyNox.Services.Base.Core.ExceptionExtensions.Base;
 using AppyNox.Services.Base.Core.Extensions;
 using Microsoft.AspNetCore.Http;
@@ -40,13 +39,13 @@ namespace AppyNox.Services.Base.API.Middleware
 
             try
             {
-                using var newBodyStream = new MemoryStream();
+                using MemoryStream newBodyStream = new();
                 context.Response.Body = newBodyStream;
 
                 await _next(context);
 
                 context.Response.Body.Seek(0, SeekOrigin.Begin);
-                var bodyAsText = await new StreamReader(newBodyStream).ReadToEndAsync();
+                string bodyAsText = await new StreamReader(newBodyStream).ReadToEndAsync();
                 context.Response.Body.Seek(0, SeekOrigin.Begin);
 
                 if (context.Response.StatusCode >= 200 && context.Response.StatusCode < 300)
@@ -133,7 +132,7 @@ namespace AppyNox.Services.Base.API.Middleware
         {
             try
             {
-                var response = JsonSerializer.Deserialize<NoxApiResponse>(responseBody, _jsonSerializeOptions);
+                NoxApiResponse? response = JsonSerializer.Deserialize<NoxApiResponse>(responseBody, _jsonSerializeOptions);
                 return (response != null && response.Result != null, response);
             }
             catch
@@ -145,26 +144,26 @@ namespace AppyNox.Services.Base.API.Middleware
 
         private async Task HandleKnownExceptionAsync(HttpContext context, NoxException exception, Stream originalBodyStream)
         {
-            var correlationId = exception.CorrelationId;
+            Guid correlationId = exception.CorrelationId;
             object errorResponse = exception is FluentValidationException fluentException
                 ? new NoxApiValidationExceptionWrapObject(exception, correlationId, fluentException.ValidationResult.Errors.AsEnumerable())
                 : new NoxApiExceptionWrapObject(exception, correlationId);
 
-            var wrappedResponse = new NoxApiResponse(errorResponse, NoxApiResourceService.NoxExceptionThrown, _options.ApiVersion, true, exception.StatusCode);
+            NoxApiResponse wrappedResponse = new(errorResponse, NoxApiResourceService.NoxExceptionThrown, _options.ApiVersion, true, exception.StatusCode);
             await WriteResponseAsync(context, originalBodyStream, wrappedResponse);
         }
 
         private async Task HandleUnknownExceptionAsync(HttpContext context, Exception exception, Stream originalBodyStream)
         {
-            var errorResponse = new { Message = exception.Message, exception.StackTrace };
-            var wrappedResponse = new NoxApiResponse(errorResponse, NoxApiResourceService.UnknownExceptionThrown, _options.ApiVersion, true, StatusCodes.Status500InternalServerError);
+            var errorResponse = new { exception.Message, exception.StackTrace };
+            NoxApiResponse wrappedResponse = new(errorResponse, NoxApiResourceService.UnknownExceptionThrown, _options.ApiVersion, true, StatusCodes.Status500InternalServerError);
             await WriteResponseAsync(context, originalBodyStream, wrappedResponse);
         }
 
         private async Task WriteResponseAsync(HttpContext context, Stream originalBodyStream, NoxApiResponse response)
         {
             response.Result = !response.HasError ? new NoxApiResultObject(response.Result, null) : new NoxApiResultObject(null, response.Result);
-            var responseContent = JsonSerializer.Serialize(response, _jsonSerializeOptions);
+            string responseContent = JsonSerializer.Serialize(response, _jsonSerializeOptions);
 
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = response.Code ?? StatusCodes.Status200OK;
