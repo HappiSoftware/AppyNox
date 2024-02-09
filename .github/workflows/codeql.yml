@@ -87,10 +87,10 @@ jobs:
         echo '${{ secrets.GATEWAY_APPSETTINGS_STAGING }}' > ./src/Gateways/AppyNox.Gateway.OcelotGateway/appsettings.Staging.json
         echo '${{ secrets.GATEWAY_APPSETTINGS_PRODUCTION }}' > ./src/Gateways/AppyNox.Gateway.OcelotGateway/appsettings.Production.json
 
-    - name: Create Authentication Service appsettings
+    - name: Create Sso Service appsettings
       run: |
-        echo '${{ secrets.AUTHENTICATION_APPSETTINGS_STAGING }}' > ./src/Services/AuthenticationService/AppyNox.Services.Authentication.WebAPI/appsettings.Staging.json
-        echo '${{ secrets.AUTHENTICATION_APPSETTINGS_PRODUCTION }}' > ./src/Services/AuthenticationService/AppyNox.Services.Authentication.WebAPI/appsettings.Production.json
+        echo '${{ secrets.AUTHENTICATION_APPSETTINGS_STAGING }}' > ./src/Services/SsoService/AppyNox.Services.Sso.WebAPI/appsettings.Staging.json
+        echo '${{ secrets.AUTHENTICATION_APPSETTINGS_PRODUCTION }}' > ./src/Services/SsoService/AppyNox.Services.Sso.WebAPI/appsettings.Production.json
 
     - name: Create Coupon Service appsettings
       run: |

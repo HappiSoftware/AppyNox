@@ -7,6 +7,7 @@ networks:
 volumes:
   app_data:
 
+
 services:
   appynox-rabbitmq-service:
     environment:
@@ -37,15 +38,15 @@ services:
     networks:
       - nox_network
 
-  appynox-authentication-db:
+  appynox-sso-db:
     networks:
       - nox_network
 
-  appynox-authentication-saga-db:
+  appynox-sso-saga-db:
     networks:
       - nox_network
 
-  appynox-services-authentication-webapi:
+  appynox-services-sso-webapi:
     deploy:
       replicas: 2
       update_config:

@@ -174,11 +174,11 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
 
 </details>
 
-<!-- Below is Authentication Service -->
+<!-- Below is Sso Service -->
 <br>
 
 <details>
-    <summary>Authentication Service</summary>
+    <summary>Sso Service</summary>
 
 <details>
     <summary>appsettings.Development.json Example</summary>
@@ -204,10 +204,10 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
     "Enrich": ["FromLogContext"]
   },
   "ConnectionStrings": {
-    "DevelopmentConnection": "User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_Authentication",
-    "DefaultConnection": "User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_Authentication",
+    "DevelopmentConnection": "User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_Sso",
+    "DefaultConnection": "User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_Sso",
     "TestConnection": "",
-    "SagaConnection": "User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_Authentication_Saga"
+    "SagaConnection": "User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_Sso_Saga"
   },
   "JwtSettings": {
     "AppyNox": {
@@ -227,12 +227,12 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
     "Address": "http://localhost:8500"
   },
   "Consul": {
-    "ServiceId": "AuthenticationService",
-    "ServiceName": "AuthenticationService",
+    "ServiceId": "SsoService",
+    "ServiceName": "SsoService",
     "Scheme": "http",
     "ServiceHost": "localhost",
     "ServicePort": "7001",
-    "Tags": ["Authentication", "SSO"],
+    "Tags": ["Sso", "SSO"],
     "HealthCheckUrl": "health-check",
     "HealthCheckIntervalSeconds": 30,
     "HealthCheckTimeoutSeconds": 5
@@ -274,10 +274,10 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
     "Enrich": ["FromLogContext"]
   },
   "ConnectionStrings": {
-    "StagingConnection": "User ID=postgres;Password=auth_password;Server=appynox-authentication-db;Port=5432;Database=AppyNox_Authentication_Test",
-    "DefaultConnection": "User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_Authentication",
+    "StagingConnection": "User ID=postgres;Password=auth_password;Server=appynox-sso-db;Port=5432;Database=AppyNox_Sso_Test",
+    "DefaultConnection": "User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_Sso",
     "TestConnection": "",
-    "SagaConnection": "User ID=postgres;Password=auth_saga_password;Server=appynox-authentication-saga-db;Port=5432;Database=AppyNox_Authentication_Saga_Test"
+    "SagaConnection": "User ID=postgres;Password=auth_saga_password;Server=appynox-sso-saga-db;Port=5432;Database=AppyNox_Sso_Saga_Test"
   },
   "JwtSettings": {
     "AppyNox": {
@@ -297,12 +297,12 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
     "Address": "http://appynox-consul:8500"
   },
   "Consul": {
-    "ServiceId": "AuthenticationService",
-    "ServiceName": "AuthenticationService",
+    "ServiceId": "SsoService",
+    "ServiceName": "SsoService",
     "Scheme": "http",
-    "ServiceHost": "appynox-services-authentication-webapi",
+    "ServiceHost": "appynox-services-sso-webapi",
     "ServicePort": "7001",
-    "Tags": ["Authentication", "SSO"],
+    "Tags": ["Sso", "SSO"],
     "HealthCheckUrl": "health-check",
     "HealthCheckIntervalSeconds": 30,
     "HealthCheckTimeoutSeconds": 5
@@ -344,9 +344,9 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
     "Enrich": ["FromLogContext"]
   },
   "ConnectionStrings": {
-    "ProductionConnection": "User ID=postgres;Password=auth_password;Server=appynox-authentication-db;Port=5432;Database=AppyNox_Authentication",
-    "DefaultConnection": "User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_Authentication;Pooling=true",
-    "SagaConnection": "User ID=postgres;Password=auth_saga_password;Server=appynox-authentication-saga-db;Port=5432;Database=AppyNox_Authentication_Saga"
+    "ProductionConnection": "User ID=postgres;Password=auth_password;Server=appynox-sso-db;Port=5432;Database=AppyNox_Sso",
+    "DefaultConnection": "User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_Sso;Pooling=true",
+    "SagaConnection": "User ID=postgres;Password=auth_saga_password;Server=appynox-sso-saga-db;Port=5432;Database=AppyNox_Sso_Saga"
   },
   "JwtSettings": {
     "AppyNox": {
@@ -366,12 +366,12 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
     "Address": "http://appynox-consul:8500"
   },
   "Consul": {
-    "ServiceId": "AuthenticationService",
-    "ServiceName": "AuthenticationService",
+    "ServiceId": "SsoService",
+    "ServiceName": "SsoService",
     "Scheme": "http",
-    "ServiceHost": "appynox-services-authentication-webapi",
+    "ServiceHost": "appynox-services-sso-webapi",
     "ServicePort": "7001",
-    "Tags": ["Authentication", "SSO"],
+    "Tags": ["Sso", "SSO"],
     "HealthCheckUrl": "health-check",
     "HealthCheckIntervalSeconds": 30,
     "HealthCheckTimeoutSeconds": 5
@@ -429,12 +429,12 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
       },
       {
         "UseServiceDiscovery": true,
-        "ServiceName": "AuthenticationService",
+        "ServiceName": "SsoService",
 
         "DownstreamPathTemplate": "/api/{everything}",
         "DownstreamScheme": "http",
 
-        "UpstreamPathTemplate": "/authentication-service/{everything}",
+        "UpstreamPathTemplate": "/sso-service/{everything}",
         "UpstreamHttpMethod": ["Get", "Post", "Delete", "Put"],
         "UpstreamScheme": "https",
 
@@ -526,12 +526,12 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
       },
       {
         "UseServiceDiscovery": true,
-        "ServiceName": "AuthenticationService",
+        "ServiceName": "SsoService",
 
         "DownstreamPathTemplate": "/api/{everything}",
         "DownstreamScheme": "http",
 
-        "UpstreamPathTemplate": "/authentication-service/{everything}",
+        "UpstreamPathTemplate": "/sso-service/{everything}",
         "UpstreamHttpMethod": ["Get", "Post", "Delete", "Put"],
         "UpstreamScheme": "https",
 
@@ -623,12 +623,12 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
       },
       {
         "UseServiceDiscovery": true,
-        "ServiceName": "AuthenticationService",
+        "ServiceName": "SsoService",
 
         "DownstreamPathTemplate": "/api/{everything}",
         "DownstreamScheme": "http",
 
-        "UpstreamPathTemplate": "/authentication-service/{everything}",
+        "UpstreamPathTemplate": "/sso-service/{everything}",
         "UpstreamHttpMethod": ["Get", "Post", "Delete", "Put"],
         "UpstreamScheme": "https",
 

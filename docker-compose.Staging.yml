@@ -7,6 +7,7 @@ networks:
 volumes:
   app_data:
 
+
 services:
   appynox-rabbitmq-service:
     environment:
@@ -15,14 +16,14 @@ services:
     networks:
       - integration-test
     healthcheck:
-      test: ["CMD-SHELL", "rabbitmq-diagnostics -q ping"]
+      test: [ "CMD-SHELL", "rabbitmq-diagnostics -q ping" ]
       interval: 5s
       timeout: 5s
-      retries: 20 
+      retries: 20
 
-  appynox-authentication-db:
+  appynox-sso-db:
     environment:
-      POSTGRES_DB: AppyNox_Authentication_Test
+      POSTGRES_DB: AppyNox_Sso_Test
       POSTGRES_PASSWORD: auth_password
     restart: always
     ports:
@@ -30,14 +31,14 @@ services:
     networks:
       - integration-test
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 5s
       timeout: 5s
       retries: 20
 
-  appynox-authentication-saga-db:
+  appynox-sso-saga-db:
     environment:
-      POSTGRES_DB: AppyNox_Authentication_Saga_Test
+      POSTGRES_DB: AppyNox_Sso_Saga_Test
       POSTGRES_PASSWORD: auth_saga_password
     restart: always
     ports:
@@ -45,7 +46,7 @@ services:
     networks:
       - integration-test
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 5s
       timeout: 5s
       retries: 20
@@ -60,7 +61,7 @@ services:
     networks:
       - integration-test
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 5s
       timeout: 5s
       retries: 20
@@ -75,7 +76,7 @@ services:
     networks:
       - integration-test
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 5s
       timeout: 5s
       retries: 20
@@ -84,7 +85,7 @@ services:
     networks:
       - integration-test
     healthcheck:
-      test: ["CMD", "consul", "info"]
+      test: [ "CMD", "consul", "info" ]
       interval: 5s
       timeout: 5s
       retries: 20
@@ -101,7 +102,11 @@ services:
       - integration-test
     restart: always
     healthcheck:
-      test: ["CMD-SHELL", "curl --fail https://appynox-gateway-ocelotgateway:7000/health || exit 1"]
+      test:
+        [
+          "CMD-SHELL",
+          "curl --fail https://appynox-gateway-ocelotgateway:7000/health || exit 1"
+        ]
       interval: 5s
       timeout: 5s
       retries: 20
@@ -112,18 +117,26 @@ services:
     networks:
       - integration-test
     healthcheck:
-      test: ["CMD-SHELL", "curl --fail https://appynox-gateway-coupon:7002/health || exit 1"]
+      test:
+        [
+          "CMD-SHELL",
+          "curl --fail https://appynox-gateway-coupon:7002/health || exit 1"
+        ]
       interval: 5s
       timeout: 5s
       retries: 20
 
-  appynox-services-authentication-webapi:
+  appynox-services-sso-webapi:
     environment:
       - ASPNETCORE_ENVIRONMENT=Staging
     networks:
       - integration-test
     healthcheck:
-      test: ["CMD-SHELL", "curl --fail https://appynox-gateway-authentication:7001/health || exit 1"]
+      test:
+        [
+          "CMD-SHELL",
+          "curl --fail https://appynox-gateway-so:7001/health || exit 1"
+        ]
       interval: 5s
       timeout: 5s
       retries: 20
@@ -134,7 +147,11 @@ services:
     networks:
       - integration-test
     healthcheck:
-      test: ["CMD-SHELL", "curl --fail https://appynox-gateway-license:7003/health || exit 1"]
+      test:
+        [
+          "CMD-SHELL",
+          "curl --fail https://appynox-gateway-license:7003/health || exit 1"
+        ]
       interval: 5s
       timeout: 5s
-      retries: 20 
+      retries: 20

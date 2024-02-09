@@ -7,7 +7,7 @@
     <ProjectGuid>1a4309a8-d26e-4684-9717-b2af2d6a1bef</ProjectGuid>
     <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
     <DockerServiceUrl>{Scheme}://localhost:{ServicePort}/swagger</DockerServiceUrl>
-    <DockerServiceName>appynox.services.authentication.webapi</DockerServiceName>
+    <DockerServiceName>appynox.services.sso.webapi</DockerServiceName>
   </PropertyGroup>
   <ItemGroup>
     <None Include="docker-compose.Development.yml">
