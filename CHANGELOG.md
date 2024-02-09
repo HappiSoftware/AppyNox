@@ -2,6 +2,8 @@
 All notable changes to AppyNox will be documented in this file.
 
 ## [1.2.0](https://github.com/HappiSoftware/AppyNox/compare/v1.1.5...v1.2.0) - NOT RELEASED
+### Added
+- Renaming Authentication Service ([#169](https://github.com/HappiSoftware/AppyNox/issues/169))
 
 
 ## [1.1.5](https://github.com/HappiSoftware/AppyNox/compare/v1.1.4...v1.1.5) - 2024.02.08
