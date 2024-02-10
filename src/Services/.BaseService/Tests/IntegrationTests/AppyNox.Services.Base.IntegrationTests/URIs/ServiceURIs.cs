@@ -13,9 +13,9 @@
 
         public string CouponServiceHealthURI { get; set; } = string.Empty;
 
-        public string AuthenticationServiceURI { get; set; } = string.Empty;
+        public string SsoServiceURI { get; set; } = string.Empty;
 
-        public string AuthenticationServiceHealthURI { get; set; } = string.Empty;
+        public string SsoServiceHealthURI { get; set; } = string.Empty;
 
         public string LicenseServiceURI { get; set; } = string.Empty;
 

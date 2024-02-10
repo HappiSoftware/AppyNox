@@ -7,12 +7,13 @@ networks:
 volumes:
   app_data:
 
+
 services:
   appynox-rabbitmq-service:
     networks:
       - nox_network
     healthcheck:
-      test: ["CMD", "rabbitmqctl", "status"]
+      test: [ "CMD", "rabbitmqctl", "status" ]
       interval: 5s
       timeout: 5s
       retries: 20
@@ -25,7 +26,7 @@ services:
     networks:
       - nox_network
     healthcheck:
-      test: ["CMD", "consul", "info"]
+      test: [ "CMD", "consul", "info" ]
       interval: 5s
       timeout: 5s
       retries: 20
@@ -43,40 +44,48 @@ services:
     networks:
       - nox_network
     healthcheck:
-      test: ["CMD-SHELL", "curl --fail https://appynox-gateway-ocelotgateway:7000/health || exit 1"]
+      test:
+        [
+          "CMD-SHELL",
+          "curl --fail https://appynox-gateway-ocelotgateway:7000/health || exit 1"
+        ]
       interval: 5s
       timeout: 5s
       retries: 20
     restart: always
 
-  appynox-authentication-db:
-    restart: always
-    networks:
-      - nox_network
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 5s
-      timeout: 5s
-      retries: 20
-
-  appynox-authentication-saga-db:
+  appynox-sso-db:
     restart: always
     networks:
       - nox_network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 5s
       timeout: 5s
       retries: 20
 
-  appynox-services-authentication-webapi:
+  appynox-sso-saga-db:
+    restart: always
+    networks:
+      - nox_network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  appynox-services-sso-webapi:
     build:
       context: .
-      dockerfile: src/Services/AuthenticationService/AppyNox.Services.Authentication.WebAPI/Dockerfile
+      dockerfile: src/Services/SsoService/AppyNox.Services.Sso.WebAPI/Dockerfile
     networks:
       - nox_network
     healthcheck:
-      test: ["CMD-SHELL", "curl --fail http://appynox-services-authentication-webapi:7001/api/health || exit 1"]
+      test:
+        [
+          "CMD-SHELL",
+          "curl --fail http://appynox-services-sso-webapi:7001/api/health || exit 1"
+        ]
       interval: 5s
       timeout: 5s
       retries: 20
@@ -86,7 +95,7 @@ services:
     networks:
       - nox_network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 5s
       timeout: 5s
       retries: 20
@@ -98,7 +107,11 @@ services:
     networks:
       - nox_network
     healthcheck:
-      test: ["CMD-SHELL", "curl --fail http://appynox-services-coupon-webapi:7002/api/health || exit 1"]
+      test:
+        [
+          "CMD-SHELL",
+          "curl --fail http://appynox-services-coupon-webapi:7002/api/health || exit 1"
+        ]
       interval: 5s
       timeout: 5s
       retries: 20
@@ -108,7 +121,7 @@ services:
     networks:
       - nox_network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 5s
       timeout: 5s
       retries: 20
@@ -120,7 +133,11 @@ services:
     networks:
       - nox_network
     healthcheck:
-      test: ["CMD-SHELL", "curl --fail http://appynox-services-license-webapi:7003/api/health || exit 1"]
+      test:
+        [
+          "CMD-SHELL",
+          "curl --fail http://appynox-services-license-webapi:7003/api/health || exit 1"
+        ]
       interval: 5s
       timeout: 5s
       retries: 20

@@ -59,7 +59,7 @@ namespace AppyNox.Services.Base.Core.ExceptionExtensions.Base
         public string Layer => _layer;
 
         /// <summary>
-        /// Gets the Service of the exception, typically representing the service where the exception is thrown. Ex: Base or Authentication
+        /// Gets the Service of the exception, typically representing the service where the exception is thrown. Ex: Base or Sso
         /// </summary>
         public string Service => _service;
 
@@ -505,9 +505,9 @@ Each ```NoxException``` has it's unique code. NoxException Codes start from **'1
 
 - **1000-CorrelationIdError** : Means that the request caught by NoxApi does not have a CorrelationId. Correlation Id's are required for request consistency. Normally Gateway is handling this operation automatically. If you see this error, please reach customer service immediately.
 
-- **1001-AuthenticationInvalidToken** : Means that the requester has provided an invalid token. Please provide a correct token.
+- **1001-SsoInvalidToken** : Means that the requester has provided an invalid token. Please provide a correct token.
 
-- **1002-AuthenticationNullToken** : Means that the requester did not provide a JWT token. Please provide a token.
+- **1002-SsoNullToken** : Means that the requester did not provide a JWT token. Please provide a token.
 
 - **1003-ExpiredToken** : Means that the requester has provided an expired token. Please refresh your token.
 
@@ -540,8 +540,8 @@ Each ```NoxException``` has it's unique code. NoxException Codes start from **'1
 # Nox Sso Api Exception Codes
 
 - **999-SsoServiceApiError** :
-- **1000-AuthenticationInvalidToken** :
-- **1001-AuthenticationNullToken** :
+- **1000-SsoInvalidToken** :
+- **1001-SsoNullToken** :
 - **1002-ExpiredToken** :
 - **1003-AuthorizationFailed** :
 - **1004-AuthorizationInvalidToken** :

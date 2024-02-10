@@ -3,6 +3,7 @@ version: '3.8'
 volumes:
   app_data:
 
+
 services:
   appynox-rabbitmq-service:
     image: rabbitmq:management
@@ -11,7 +12,12 @@ services:
       RABBITMQ_DEFAULT_PASS: guest
     volumes:
       - ./rabbitmq-data:/var/lib/rabbitmq
-    command: ["bash", "-c", "chmod 400 /var/lib/rabbitmq/.erlang.cookie; rabbitmq-server"] 
+    command:
+      [
+        "bash",
+        "-c",
+        "chmod 400 /var/lib/rabbitmq/.erlang.cookie; rabbitmq-server"
+      ]
     restart: on-failure
 
   appynox-consul:
@@ -30,35 +36,35 @@ services:
     ports:
       - "7000:443"
 
-  appynox-authentication-db:
+  appynox-sso-db:
     image: postgres:latest
     environment:
-      POSTGRES_DB: AppyNox_Authentication
+      POSTGRES_DB: AppyNox_Sso
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: auth_password
     volumes:
-      - app_data:/var/lib/authenticationdb/data
+      - app_data:/var/lib/ssodb/data
 
-  appynox-authentication-saga-db:
+  appynox-sso-saga-db:
     image: postgres:latest
     environment:
-      POSTGRES_DB: AppyNox_Authentication_Saga
+      POSTGRES_DB: AppyNox_Sso_Saga
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: auth_saga_password
     volumes:
-      - app_data:/var/lib/authenticationdb/data 
+      - app_data:/var/lib/ssodb/data
 
-  appynox-services-authentication-webapi:
-    image: ${DOCKER_REGISTRY-}appynoxservicesauthenticationwebapi
+  appynox-services-sso-webapi:
+    image: ${DOCKER_REGISTRY-}appynoxservicesssowebapi
     depends_on:
       - appynox-rabbitmq-service
       - appynox-consul
-      - appynox-authentication-db
-      - appynox-authentication-saga-db
+      - appynox-sso-db
+      - appynox-sso-saga-db
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://+:7001
-      - WAIT_HOSTS=appynox-authentication-db:5432,appynox-authentication-saga-db:5432,appynox-rabbitmq-service:5672
+      - WAIT_HOSTS=appynox-sso-db:5432,appynox-sso-saga-db:5432,appynox-rabbitmq-service:5672
       - WAIT_TIMEOUT=300
       - WAIT_SLEEP_INTERVAL=30
       - WAIT_HOST_CONNECT_TIMEOUT=30

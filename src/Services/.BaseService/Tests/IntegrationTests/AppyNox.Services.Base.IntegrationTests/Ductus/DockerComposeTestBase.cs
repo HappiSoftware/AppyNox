@@ -55,8 +55,14 @@ namespace AppyNox.Services.Base.IntegrationTests.Ductus
             var logger = loggerFactory.CreateLogger<INoxLogger>();
             Logger = new NoxLogger(logger, "DockerComposeTestBase");
 
-            ServiceURIs = IntegrationTestHelpers.GetConfiguration("serviceuris").GetSection("ServiceUris").Get<ServiceURIs>()
-                          ?? throw new InvalidOperationException("Service URIs configuration section is missing or invalid.");
+            ServiceURIs =
+                IntegrationTestHelpers
+                    .GetConfiguration("serviceuris")
+                    .GetSection("ServiceUris")
+                    .Get<ServiceURIs>()
+                ?? throw new InvalidOperationException(
+                    "Service URIs configuration section is missing or invalid."
+                );
 
             Client = new HttpClient { BaseAddress = new(ServiceURIs.GatewayURI) };
 
@@ -95,8 +101,7 @@ namespace AppyNox.Services.Base.IntegrationTests.Ductus
         /// Performs additional container teardown operations when disposing.
         /// </summary>
         protected virtual void OnContainerTearDown()
-        {
-        }
+        { }
 
         /// <summary>
         /// Initializes the Docker Compose environment for testing.
@@ -105,8 +110,8 @@ namespace AppyNox.Services.Base.IntegrationTests.Ductus
         {
             #region [ Logger ]
 
-            Log.Logger = new LoggerConfiguration()
-                .ReadFrom.Configuration(configurationRoot)
+            Log.Logger = new LoggerConfiguration().ReadFrom
+                .Configuration(configurationRoot)
                 .CreateLogger();
 
             var loggerFactory = LoggerFactory.Create(builder =>
@@ -187,16 +192,24 @@ namespace AppyNox.Services.Base.IntegrationTests.Ductus
             string userName = "admin",
             string password = "Admin@123",
             string audience = "AppyNox",
-            string authenticationEndpoint = "/v1.0/authentication/connect/token")
+            string ssoEndpoint = "/v1.0/authentication/connect/token"
+        )
         {
-            var authenticationUri = ServiceURIs.AuthenticationServiceURI + authenticationEndpoint;
+            var ssoUri = ServiceURIs.SsoServiceURI + ssoEndpoint;
             var content = new StringContent(
-                JsonSerializer.Serialize(new { userName, password, audience }),
+                JsonSerializer.Serialize(
+                    new
+                    {
+                        userName,
+                        password,
+                        audience
+                    }
+                ),
                 Encoding.UTF8,
                 "application/json"
             );
 
-            var response = await Client.PostAsync(authenticationUri, content);
+            var response = await Client.PostAsync(ssoUri, content);
             response.EnsureSuccessStatusCode();
 
             var responseString = await response.Content.ReadAsStringAsync();
@@ -216,8 +229,10 @@ namespace AppyNox.Services.Base.IntegrationTests.Ductus
                 BearerToken = token;
             }
 
-            Client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", BearerToken);
+            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
+                "Bearer",
+                BearerToken
+            );
         }
 
         #endregion
@@ -238,21 +253,27 @@ namespace AppyNox.Services.Base.IntegrationTests.Ductus
 
         private void EnsureDockerHost()
         {
-            if (DockerHost?.State == ServiceRunningState.Running) return;
+            if (DockerHost?.State == ServiceRunningState.Running)
+                return;
 
             var hosts = new Hosts().Discover();
-            DockerHost = hosts.FirstOrDefault(x => x.IsNative) ?? hosts.FirstOrDefault(x => x.Name == "default");
+            DockerHost =
+                hosts.FirstOrDefault(x => x.IsNative)
+                ?? hosts.FirstOrDefault(x => x.Name == "default");
 
             if (DockerHost != null)
             {
-                if (DockerHost.State != ServiceRunningState.Running) DockerHost.Start();
+                if (DockerHost.State != ServiceRunningState.Running)
+                    DockerHost.Start();
 
                 return;
             }
 
-            if (hosts.Count == 0) DockerHost = hosts[0];
+            if (hosts.Count == 0)
+                DockerHost = hosts[0];
 
-            if (DockerHost != null) return;
+            if (DockerHost != null)
+                return;
 
             EnsureDockerHost();
         }

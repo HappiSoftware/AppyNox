@@ -28,7 +28,7 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTest.Fixtures
 
             Task.WhenAll(
                 WaitForServicesHealth(ServiceURIs.CouponServiceHealthURI),
-                WaitForServicesHealth(ServiceURIs.AuthenticationServiceHealthURI)
+                WaitForServicesHealth(ServiceURIs.SsoServiceHealthURI)
             ).GetAwaiter().GetResult();
             AuthenticateAndGetToken().GetAwaiter().GetResult();
 
@@ -75,9 +75,9 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTest.Fixtures
                         "appynox-gateway-ocelotgateway",
                         "appynox-coupon-db",
                         "appynox-services-coupon-webapi",
-                        "appynox-authentication-db",
-                        "appynox-authentication-saga-db",
-                        "appynox-services-authentication-webapi"
+                        "appynox-sso-db",
+                        "appynox-sso-saga-db",
+                        "appynox-services-sso-webapi"
                     ]
                 });
         }

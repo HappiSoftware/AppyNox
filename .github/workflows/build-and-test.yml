@@ -54,10 +54,10 @@ jobs:
           echo '${{ secrets.GATEWAY_APPSETTINGS_STAGING }}' > ./src/Gateways/AppyNox.Gateway.OcelotGateway/appsettings.Staging.json
           echo '${{ secrets.GATEWAY_APPSETTINGS_PRODUCTION }}' > ./src/Gateways/AppyNox.Gateway.OcelotGateway/appsettings.Production.json
 
-      - name: Create Authentication Service appsettings
+      - name: Create Sso Service appsettings
         run: |
-          echo '${{ secrets.AUTHENTICATION_APPSETTINGS_STAGING }}' > ./src/Services/AuthenticationService/AppyNox.Services.Authentication.WebAPI/appsettings.Staging.json
-          echo '${{ secrets.AUTHENTICATION_APPSETTINGS_PRODUCTION }}' > ./src/Services/AuthenticationService/AppyNox.Services.Authentication.WebAPI/appsettings.Production.json
+          echo '${{ secrets.AUTHENTICATION_APPSETTINGS_STAGING }}' > ./src/Services/SsoService/AppyNox.Services.Sso.WebAPI/appsettings.Staging.json
+          echo '${{ secrets.AUTHENTICATION_APPSETTINGS_PRODUCTION }}' > ./src/Services/SsoService/AppyNox.Services.Sso.WebAPI/appsettings.Production.json
 
       - name: Create Coupon Service appsettings
         run: |
@@ -97,11 +97,11 @@ jobs:
       - name: Run Unit Tests (LicenseService - Application)
         run: dotnet test ./src/Services/LicenseService/Tests/UnitTests/AppyNox.Services.License.Application.UnitTest/ --no-restore
 
-      - name: Run Unit Tests (AuthenticationService - Application)
-        run: dotnet test ./src/Services/AuthenticationService/Tests/UnitTests/AppyNox.Services.Authentication.Application.UnitTest/ --no-restore
+      - name: Run Unit Tests (SsoService - Application)
+        run: dotnet test ./src/Services/SsoService/Tests/UnitTests/AppyNox.Services.Sso.Application.UnitTest/ --no-restore
 
-      - name: Run Unit Tests (AuthenticationService - WebAPI)
-        run: dotnet test ./src/Services/AuthenticationService/Tests/UnitTests/AppyNox.Services.Authentication.WebAPI.UnitTest/ --no-restore 
+      - name: Run Unit Tests (SsoService - WebAPI)
+        run: dotnet test ./src/Services/SsoService/Tests/UnitTests/AppyNox.Services.Sso.WebAPI.UnitTest/ --no-restore 
 
       - name: Trust self-signed certificate
         run: |

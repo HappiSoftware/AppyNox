@@ -27,7 +27,7 @@ namespace AppyNox.Services.License.WebAPI.IntegrationTest.Fixtures
             Initialize(appsettings, "LicenseIntegrationTestHost");
 
             Task.WhenAll(
-                WaitForServicesHealth(ServiceURIs.AuthenticationServiceHealthURI),
+                WaitForServicesHealth(ServiceURIs.SsoServiceHealthURI),
                 WaitForServicesHealth(ServiceURIs.LicenseServiceHealthURI)
             ).GetAwaiter().GetResult();
             AuthenticateAndGetToken().GetAwaiter().GetResult();
@@ -76,8 +76,8 @@ namespace AppyNox.Services.License.WebAPI.IntegrationTest.Fixtures
                         "appynox-gateway-ocelotgateway",
                         "appynox-license-db",
                         "appynox-services-license-webapi",
-                        "appynox-authentication-db",
-                        "appynox-services-authentication-webapi"
+                        "appynox-sso-db",
+                        "appynox-services-sso-webapi"
                     ],
                 });
         }
