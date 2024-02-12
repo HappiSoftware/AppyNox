@@ -3,7 +3,7 @@ using AppyNox.Services.Base.Domain.Interfaces;
 
 namespace AppyNox.Services.Coupon.Domain.Entities
 {
-    public class CouponEntity : EntityBase, IEntityTypeId, IAuditableData
+    public class CouponEntity : EntityBase, IEntityTypeId, IAuditableData, IHasCode
     {
         #region [ Properties ]
 
@@ -28,6 +28,12 @@ namespace AppyNox.Services.Coupon.Domain.Entities
         public string UpdatedBy { get; set; } = string.Empty;
 
         public DateTime? UpdateDate { get; set; }
+
+        #endregion
+
+        #region [ IHasCode ]
+
+        public string Code { get; set; } = string.Empty;
 
         #endregion
 

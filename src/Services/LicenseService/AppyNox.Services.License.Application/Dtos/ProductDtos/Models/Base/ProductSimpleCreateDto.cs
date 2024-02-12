@@ -1,15 +1,20 @@
-﻿using AppyNox.Services.Base.Application.Dtos;
+﻿using AppyNox.Services.Base.Domain.Interfaces;
 using AppyNox.Services.License.Application.Dtos.ProductDtos.DetailLevel;
 
-namespace AppyNox.Services.License.Application.Dtos.ProductDtos.Models.Base
+namespace AppyNox.Services.License.Application.Dtos.ProductDtos.Models.Base;
+
+[ProductDetailLevel(ProductCreateDetailLevel.Simple)]
+public class ProductSimpleCreateDto : IHasCode
 {
-    [ProductDetailLevel(ProductCreateDetailLevel.Simple)]
-    public class ProductSimpleCreateDto : DtoBase
-    {
-        #region [ Properties ]
+    #region [ Properties ]
 
-        public string? Name { get; set; }
+    public string? Name { get; set; }
 
-        #endregion
-    }
+    #endregion
+
+    #region [ IHasCode ]
+
+    public string Code { get; set; } = string.Empty;
+
+    #endregion
 }

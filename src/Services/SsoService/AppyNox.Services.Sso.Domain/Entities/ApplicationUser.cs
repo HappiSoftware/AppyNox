@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using AppyNox.Services.Base.Domain.Interfaces;
+using Microsoft.AspNetCore.Identity;
 
 namespace AppyNox.Services.Sso.Domain.Entities
 {
-    public class ApplicationUser : IdentityUser<Guid>, ICompanyScopedEntity
+    public class ApplicationUser : IdentityUser<Guid>, ICompanyScopedEntity, IHasCode
     {
         #region [ Properties ]
 

@@ -10,10 +10,6 @@ namespace AppyNox.Services.License.Application.Validators.License.Create
 
         public LicenseSimpleCreateValidator()
         {
-            RuleFor(license => license.Code)
-                .NotNull().NotEmpty().WithMessage("Code cannot be null")
-                .MaximumLength(5).WithMessage("Code cannot be longer than 5 characters");
-
             RuleFor(license => license.Description)
                 .NotNull().NotEmpty().WithMessage("Description is mandatory")
                 .MaximumLength(60).WithMessage("Description cannot be longer than 60 characters");

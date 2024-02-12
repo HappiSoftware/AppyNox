@@ -1,18 +1,23 @@
-﻿using AppyNox.Services.Base.Application.Dtos;
+﻿using AppyNox.Services.Base.Domain.Interfaces;
 
-namespace AppyNox.Services.Sso.Application.DTOs.ApplicationRoleDTOs.Models
+namespace AppyNox.Services.Sso.Application.DTOs.ApplicationRoleDTOs.Models;
+
+/// <summary>
+/// Data transfer object for creating a new identity role.
+/// </summary>
+public class ApplicationRoleCreateDto : IHasCode
 {
-    /// <summary>
-    /// Data transfer object for creating a new identity role.
-    /// </summary>
-    public class ApplicationRoleCreateDto : DtoBase
-    {
-        #region [ Properties ]
+    #region [ Properties ]
 
-        public string Name { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
 
-        public string? Description { get; set; }
+    public string? Description { get; set; }
 
-        #endregion
-    }
+    #endregion
+
+    #region [ IHasCode ]
+
+    public string Code { get; set; } = string.Empty;
+
+    #endregion
 }

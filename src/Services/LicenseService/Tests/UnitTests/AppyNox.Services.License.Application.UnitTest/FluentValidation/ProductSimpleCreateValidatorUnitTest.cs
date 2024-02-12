@@ -16,6 +16,21 @@ namespace AppyNox.Services.License.Application.UnitTest.FluentValidation
         [Theory]
         [InlineData(null, false)]
         [InlineData("", false)]
+        [InlineData("ABCDEF", false)]
+        [InlineData("ABCDE", true)]
+        public async Task Validate_Code_ShouldMatchExpected(string? code, bool expectedIsValid)
+        {
+            var dto = CreateValidDto();
+            dto.Code = code;
+
+            var result = await _validator.ValidateAsync(dto);
+
+            Assert.Equal(expectedIsValid, result.IsValid);
+        }
+
+        [Theory]
+        [InlineData(null, false)]
+        [InlineData("", false)]
         [InlineData("ValidName", true)]
         [InlineData("Shor", false)]
         [InlineData("ThisIsAReallyLongNameThatExceedsTheMaximumLengthAllowed", false)]

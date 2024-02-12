@@ -1,10 +1,10 @@
-﻿using AppyNox.Services.Base.Application.Dtos;
+﻿using AppyNox.Services.Base.Domain.Interfaces;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.DetailLevel;
 
 namespace AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base
 {
     [CouponDetailLevel(CouponCreateDetailLevel.Simple)]
-    public class CouponSimpleCreateDto : DtoBase
+    public class CouponSimpleCreateDto : IHasCode
     {
         #region [ Properties ]
 
@@ -15,6 +15,12 @@ namespace AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base
         public string Description { get; set; } = string.Empty;
 
         public Guid CouponDetailEntityId { get; set; }
+
+        #endregion
+
+        #region [ IHasCode ]
+
+        public string Code { get; set; } = string.Empty;
 
         #endregion
     }

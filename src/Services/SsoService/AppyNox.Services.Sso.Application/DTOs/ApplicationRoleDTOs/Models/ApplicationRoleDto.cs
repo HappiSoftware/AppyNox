@@ -1,18 +1,23 @@
-﻿using AppyNox.Services.Base.Application.Dtos;
+﻿using AppyNox.Services.Base.Domain.Interfaces;
 
-namespace AppyNox.Services.Sso.Application.DTOs.ApplicationRoleDTOs.Models
+namespace AppyNox.Services.Sso.Application.DTOs.ApplicationRoleDTOs.Models;
+
+/// <summary>
+/// Data transfer object representing an identity role.
+/// </summary>
+public class ApplicationRoleDto : IHasCode
 {
-    /// <summary>
-    /// Data transfer object representing an identity role.
-    /// </summary>
-    public class ApplicationRoleDto : DtoBase
-    {
-        #region [ Properties ]
+    #region [ Properties ]
 
-        public Guid Id { get; set; }
+    public Guid Id { get; set; }
 
-        public string Name { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
 
-        #endregion
-    }
+    #endregion
+
+    #region [ IHasCode ]
+
+    public string Code { get; set; } = string.Empty;
+
+    #endregion
 }

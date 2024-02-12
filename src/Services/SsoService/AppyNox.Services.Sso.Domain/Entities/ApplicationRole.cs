@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using AppyNox.Services.Base.Domain.Interfaces;
+using Microsoft.AspNetCore.Identity;
 
 namespace AppyNox.Services.Sso.Domain.Entities
 {
-    public class ApplicationRole : IdentityRole<Guid>, ICompanyScopedEntity
+    public class ApplicationRole : IdentityRole<Guid>, ICompanyScopedEntity, IHasCode
     {
         #region [ Relations ]
 

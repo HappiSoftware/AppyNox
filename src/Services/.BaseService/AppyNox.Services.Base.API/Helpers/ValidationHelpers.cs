@@ -37,7 +37,7 @@ namespace AppyNox.Services.Base.API.Helpers
         /// <returns>The extracted 'Id' value as a Guid.</returns>
         public static Guid GetIdFromDynamicDto(dynamic dto)
         {
-            var dtoObject = JsonSerializer.Deserialize<BaseUpdateDto>(dto, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            var dtoObject = JsonSerializer.Deserialize<UpdateDtoBase>(dto, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
             return (Guid)dtoObject.Id;
         }
 
