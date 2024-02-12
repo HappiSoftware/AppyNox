@@ -1,5 +1,6 @@
 ﻿using AppyNox.Services.Base.Application.Dtos;
 using AppyNox.Services.Base.Application.Validators.SharedRules;
+using AppyNox.Services.Base.Domain.Interfaces;
 using FluentValidation;
 
 namespace AppyNox.Services.Base.Application.Validators
@@ -18,10 +19,10 @@ namespace AppyNox.Services.Base.Application.Validators
         /// </summary>
         public DtoValidatorBase()
         {
-            if (typeof(DtoBase).IsAssignableFrom(typeof(T)))
+            if (typeof(IHasCode).IsAssignableFrom(typeof(T)))
             {
                 RuleFor(dto => dto).NotNull().WithMessage("Dto cannot be null.");
-                RuleFor(dto => (dto as DtoBase)!.Code).ValidateCode();
+                RuleFor(dto => (dto as IHasCode)!.Code).ValidateCode();
             }
 
             if (typeof(IUpdateDto).IsAssignableFrom(typeof(T)))

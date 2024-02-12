@@ -3,13 +3,19 @@ using AppyNox.Services.Base.Domain.Interfaces;
 
 namespace AppyNox.Services.License.Domain.Entities
 {
-    public class ProductEntity : EntityBase, IEntityTypeId
+    public class ProductEntity : EntityBase, IEntityTypeId, IHasCode
     {
         #region [ Properties ]
 
         public Guid Id { get; set; }
 
         public string Name { get; set; } = string.Empty;
+
+        #endregion
+
+        #region [ IHasCode ]
+
+        public string Code { get; set; } = string.Empty;
 
         #endregion
 
