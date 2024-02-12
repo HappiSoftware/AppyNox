@@ -551,6 +551,7 @@ Each ```NoxException``` has it's unique code. NoxException Codes start from **'1
 - **1008-RefreshTokenNotFound** :
 - **1009-SignInError** :
 - **1010-Teapot** :
+- **1011-RefreshTokenInvalid** :
 
 <br>
 <br>
