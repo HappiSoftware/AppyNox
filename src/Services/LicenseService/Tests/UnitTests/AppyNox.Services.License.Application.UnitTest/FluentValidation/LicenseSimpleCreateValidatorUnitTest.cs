@@ -17,6 +17,7 @@ namespace AppyNox.Services.License.Application.UnitTest.FluentValidation
         [InlineData(null, false)]
         [InlineData("", false)]
         [InlineData("ABCDEF", false)]
+        [InlineData("ABCDE", true)]
         public async Task Validate_Code_ShouldMatchExpected(string? code, bool expectedIsValid)
         {
             var dto = CreateValidDto();
