@@ -137,7 +137,7 @@ namespace AppyNox.Services.Sso.WebAPI.Managers
 
             try
             {
-                _tokenHandler.ValidateToken(token, validationParameters, out SecurityToken test);
+                _tokenHandler.ValidateToken(token, validationParameters, out SecurityToken sToken);
                 return await Task.FromResult(true);
             }
             catch (SecurityTokenExpiredException)

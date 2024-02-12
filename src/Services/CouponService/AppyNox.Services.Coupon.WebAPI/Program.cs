@@ -94,7 +94,7 @@ noxLogger.LogInformation("Registering DI's for layers completed.");
 #region [ JWT Configuration ]
 
 noxLogger.LogInformation("Registering JWT Configuration.");
-var jwtConfiguration = new JwtConfiguration();
+JwtConfiguration jwtConfiguration = new();
 configuration.GetSection("JwtSettings").Bind(jwtConfiguration);
 builder.Services.AddSingleton(jwtConfiguration);
 

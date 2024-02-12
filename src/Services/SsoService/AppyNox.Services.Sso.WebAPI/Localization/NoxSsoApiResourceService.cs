@@ -44,6 +44,11 @@ namespace AppyNox.Services.Sso.WebAPI.Localization
         /// </summary>
         internal static LocalizedString UserNotFound => GetMessage("UserNotFound");
 
+        /// <summary>
+        /// Refresh token could not be verified.
+        /// </summary>
+        internal static LocalizedString RefreshTokenInvalid => GetMessage("RefreshTokenInvalid");
+
         #endregion
 
         #region [ Common Resources ]

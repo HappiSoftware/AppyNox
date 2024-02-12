@@ -78,11 +78,9 @@ namespace AppyNox.Services.Sso.WebAPI.Managers
         {
             try
             {
-                var user = await _userManager.FindByIdAsync(userId);
-                if (user == null)
-                {
-                    throw new NoxSsoApiException(NoxSsoApiResourceService.WrongCredentials, (int)HttpStatusCode.BadRequest);
-                }
+                var user = await _userManager.FindByIdAsync(userId)
+                    ?? throw new NoxSsoApiException(NoxSsoApiResourceService.WrongCredentials, (int)HttpStatusCode.BadRequest);
+
                 await _userManager.RemoveAuthenticationTokenAsync(user, "RefreshTokenProvider", "RefreshToken");
                 await _userManager.SetAuthenticationTokenAsync(user, "RefreshTokenProvider", "RefreshToken", refreshToken);
             }

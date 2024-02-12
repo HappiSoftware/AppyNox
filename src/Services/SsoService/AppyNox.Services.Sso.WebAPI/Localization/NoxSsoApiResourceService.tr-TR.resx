@@ -141,6 +141,9 @@
   <data name="RefreshTokenError" xml:space="preserve">
     <value>Yenileme jetonu kaydedilemedi. Lütfen tekrar deneyin.</value>
   </data>
+  <data name="RefreshTokenInvalid" xml:space="preserve">
+    <value>Yenileme jetonu geçersiz.</value>
+  </data>
   <data name="RefreshTokenNotFound" xml:space="preserve">
     <value>Yenileme jetonu bulunamadı. Yeni bir tane almak için lütfen tekrar giriş yapın.</value>
   </data>
