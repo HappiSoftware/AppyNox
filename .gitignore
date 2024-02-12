@@ -381,3 +381,14 @@ FodyWeavers.xsd
 # Docker
 **/docker-compose.override.yml
 
+# Redis
+*.acl
+
+# RabbitMq
+**/rabbitmq-data/
+
+# NuGet
+**/nupkgs/
+
+# General
+*.txt

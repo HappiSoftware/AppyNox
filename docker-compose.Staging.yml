@@ -4,10 +4,6 @@ networks:
   integration-test:
     driver: bridge
 
-volumes:
-  app_data:
-
-
 services:
   appynox-rabbitmq-service:
     environment:
@@ -20,6 +16,18 @@ services:
       interval: 5s
       timeout: 5s
       retries: 20
+
+  appynox-redis:
+    networks:
+      - integration-test
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: always
+    ports:
+      - "6379:6379"
 
   appynox-sso-db:
     environment:

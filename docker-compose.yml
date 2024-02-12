@@ -1,7 +1,14 @@
 version: '3.8'
 
 volumes:
-  app_data:
+  rabbitmq_data: 
+  consul_data: 
+  redis_data: 
+  redisinsight_data: 
+  sso_db_data: 
+  sso_saga_db_data: 
+  coupon_db_data: 
+  license_db_data: 
 
 
 services:
@@ -11,7 +18,7 @@ services:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
     volumes:
-      - ./rabbitmq-data:/var/lib/rabbitmq
+      - rabbitmq_data:/var/lib/rabbitmq
     command:
       [
         "bash",
@@ -22,6 +29,18 @@ services:
 
   appynox-consul:
     image: "hashicorp/consul:latest"
+
+  appynox-redis:
+    image: redis:latest
+    volumes:
+      - redis_data:/data
+      - ./redis.acl:/etc/redis/redis.acl
+    command: ["redis-server", "--aclfile", "/etc/redis/redis.acl"] 
+
+  appynox-redisinsight:
+    image: redislabs/redisinsight
+    volumes:
+      - redisinsight_data:/db
 
   appynox-gateway-ocelotgateway:
     image: ${DOCKER_REGISTRY-}appynoxgatewayocelotgateway
@@ -43,7 +62,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: auth_password
     volumes:
-      - app_data:/var/lib/ssodb/data
+      - sso_db_data:/var/lib/ssodb/data
 
   appynox-sso-saga-db:
     image: postgres:latest
@@ -52,7 +71,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: auth_saga_password
     volumes:
-      - app_data:/var/lib/ssodb/data
+      - sso_saga_db_data:/var/lib/ssodb/data
 
   appynox-services-sso-webapi:
     image: ${DOCKER_REGISTRY-}appynoxservicesssowebapi
@@ -79,7 +98,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: coupon_password
     volumes:
-      - app_data:/var/lib/coupondb/data
+      - coupon_db_data:/var/lib/coupondb/data
 
   appynox-services-coupon-webapi:
     image: ${DOCKER_REGISTRY-}appynoxservicescouponwebapi
@@ -104,7 +123,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: license_password
     volumes:
-      - app_data:/var/lib/licensedb/data
+      - license_db_data:/var/lib/licensedb/data
 
   appynox-services-license-webapi:
     image: ${DOCKER_REGISTRY-}appynoxserviceslicensewebapi
