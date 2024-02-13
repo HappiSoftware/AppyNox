@@ -1,4 +1,6 @@
-﻿using AppyNox.Services.Base.Domain;
+﻿using AppyNox.Services.Base.Application.Dtos;
+using AppyNox.Services.Base.Application.Interfaces.Caches;
+using AppyNox.Services.Base.Domain;
 using AppyNox.Services.Base.Domain.Interfaces;
 using System.Linq.Expressions;
 
@@ -31,7 +33,7 @@ namespace AppyNox.Services.Base.Application.Interfaces.Repositories
         /// <param name="queryParameters">The query parameters for filtering and pagination.</param>
         /// <param name="selectedColumns">The columns to include in the result. Created by CreateProjection. See more in <see cref="CreateProjection"/> </param>
         /// <returns>A collection of entities.</returns>
-        Task<IEnumerable<object>> GetAllAsync(IQueryParameters queryParameters, Expression<Func<TEntity, dynamic>> selectedColumns);
+        Task<PaginatedList> GetAllAsync(IQueryParameters queryParameters, Expression<Func<TEntity, dynamic>> selectedColumns, ICacheService cacheService);
 
         /// <summary>
         /// Retrieves an entity of type TEntity by its ID, selecting specific columns based on the provided expression.

@@ -1,5 +1,6 @@
 ﻿using AppyNox.Services.Base.API.Constants;
 using AppyNox.Services.Base.API.Wrappers.Helpers;
+using AppyNox.Services.Base.Application.Dtos;
 using AppyNox.Services.Base.IntegrationTests.URIs;
 using AppyNox.Services.License.Application.Dtos.LicenseDtos.Models.Base;
 using AppyNox.Services.License.WebAPI.IntegrationTest.Fixtures;
@@ -36,12 +37,12 @@ namespace AppyNox.Services.License.WebAPI.IntegrationTest.Controllers
 
             var jsonResponse = await response.Content.ReadAsStringAsync();
 
-            var licenses = NoxResponseUnwrapper.UnwrapData<IList<LicenseSimpleDto>>(jsonResponse, jsonSerializerOptions: _jsonSerializerOptions);
+            var licenses = NoxResponseUnwrapper.UnwrapData<PaginatedList>(jsonResponse, jsonSerializerOptions: _jsonSerializerOptions);
 
             // Assert
             response.EnsureSuccessStatusCode();
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.NotNull(licenses);
+            Assert.NotNull(licenses.Items);
         }
 
         [Fact]

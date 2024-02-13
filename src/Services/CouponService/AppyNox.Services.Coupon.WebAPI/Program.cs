@@ -80,6 +80,8 @@ builder.Services.AddApiVersioning(options =>
     options.ApiVersionReader = new UrlSegmentApiVersionReader();
 });
 
+builder.ConfigureRedis(configuration);
+
 #endregion
 
 #region [ Dependency Injection For Layers ]

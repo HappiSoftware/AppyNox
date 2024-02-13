@@ -1,8 +1,10 @@
 ﻿using AppyNox.Services.Base.Infrastructure.Localization;
+using AppyNox.Services.Base.Infrastructure.Services.RedisCacheService;
 using AppyNox.Services.Base.Infrastructure.UnitTests.Stubs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using Moq;
+using StackExchange.Redis;
 
 namespace AppyNox.Services.Base.Infrastructure.UnitTests.Fixtures
 {
@@ -12,11 +14,13 @@ namespace AppyNox.Services.Base.Infrastructure.UnitTests.Fixtures
 
         public readonly NoxInfrastructureLoggerStub NoxLoggerStub = new();
 
+        public readonly Mock<RedisCacheService> RedisCacheService;
+
         private bool _disposed = false;
 
         #endregion
 
-        #region Public Constructors
+        #region [ Public Constructors ]
 
         public RepositoryFixture()
         {
@@ -27,6 +31,11 @@ namespace AppyNox.Services.Base.Infrastructure.UnitTests.Fixtures
             localizerFactory.Setup(lf => lf.Create(typeof(NoxInfrastructureResourceService))).Returns(localizer.Object);
 
             NoxInfrastructureResourceService.Initialize(localizerFactory.Object);
+
+            RedisCacheService = new Mock<RedisCacheService>(It.IsAny<IConnectionMultiplexer>());
+            RedisCacheService.Setup(rcs => rcs.GetCachedValueAsync(It.IsAny<string>())).ReturnsAsync((string key) => null);
+            RedisCacheService.Setup(rcs => rcs.SetCachedValueAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<TimeSpan?>()))
+                .Returns(Task.CompletedTask);
         }
 
         #endregion

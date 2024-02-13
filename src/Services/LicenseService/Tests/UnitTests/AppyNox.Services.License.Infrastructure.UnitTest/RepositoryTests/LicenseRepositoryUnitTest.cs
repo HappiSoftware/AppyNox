@@ -1,4 +1,6 @@
-﻿using AppyNox.Services.Base.Infrastructure.ExceptionExtensions;
+﻿using AppyNox.Services.Base.Application.Dtos;
+using AppyNox.Services.Base.Application.Interfaces.Caches;
+using AppyNox.Services.Base.Infrastructure.ExceptionExtensions;
 using AppyNox.Services.Base.Infrastructure.Repositories.Common;
 using AppyNox.Services.Base.Infrastructure.UnitTests.Fixtures;
 using AppyNox.Services.Base.Infrastructure.UnitTests.Stubs;
@@ -7,6 +9,7 @@ using AppyNox.Services.License.Infrastructure.Data;
 using AppyNox.Services.License.Infrastructure.Repositories;
 using AppyNox.Services.License.Infrastructure.UnitTest.Seeds.LicenseSeeds;
 using Microsoft.EntityFrameworkCore;
+using Moq;
 
 namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
 {
@@ -23,6 +26,8 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
             .Select(p => p.Name)
             .Where(name => name != "Product")
             .ToList();
+
+        private readonly ICacheService _cacheService = fixture.RedisCacheService.Object;
 
         #endregion
 
@@ -45,10 +50,10 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
                 PageSize = 1,
             };
             var projection = repository.CreateProjection(_propertyNames);
-            IEnumerable<object> result = await repository.GetAllAsync(queryParameters, projection);
+            PaginatedList result = await repository.GetAllAsync(queryParameters, projection, _cacheService);
 
             Assert.NotNull(result);
-            Assert.Single(result);
+            Assert.Single(result.Items);
         }
 
         [Fact]
@@ -67,10 +72,10 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
             };
 
             var projection = repository.CreateProjection(_propertyNames);
-            IEnumerable<object> result = await repository.GetAllAsync(queryParameters, projection);
+            PaginatedList result = await repository.GetAllAsync(queryParameters, projection, _cacheService);
 
             Assert.NotNull(result);
-            Assert.Equal(2, result.Count());
+            Assert.Equal(2, result.ItemsCount);
         }
 
         [Fact]
@@ -90,12 +95,12 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
                 PageSize = 1,
             };
             var projection = repository.CreateProjection(_propertyNames);
-            IEnumerable<object> result = await repository.GetAllAsync(queryParameters, projection);
+            PaginatedList result = await repository.GetAllAsync(queryParameters, projection, _cacheService);
 
             Assert.NotNull(result);
-            Assert.Single(result);
-            Assert.Equal(licenses.Last().Id, ((LicenseEntity)result.First()).Id);
-            Assert.Equal(licenses.Last().Code, ((LicenseEntity)result.First()).Code);
+            Assert.Single(result.Items);
+            Assert.Equal(licenses.Last().Id, ((LicenseEntity)result.Items.First()).Id);
+            Assert.Equal(licenses.Last().Code, ((LicenseEntity)result.Items.First()).Code);
         }
 
         [Fact]
@@ -113,10 +118,10 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
                 PageSize = 50,
             };
             var projection = repository.CreateProjection(_propertyNames);
-            IEnumerable<object> result = await repository.GetAllAsync(queryParameters, projection);
+            PaginatedList result = await repository.GetAllAsync(queryParameters, projection, _cacheService);
 
             Assert.NotNull(result);
-            Assert.Equal(50, result.Count());
+            Assert.Equal(50, result.Items.Count());
         }
 
         [Fact]
@@ -135,13 +140,13 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
                 PageSize = 5,
             };
             var projection = repository.CreateProjection(_propertyNames);
-            IEnumerable<object> result = await repository.GetAllAsync(queryParameters, projection);
+            PaginatedList result = await repository.GetAllAsync(queryParameters, projection, _cacheService);
 
             List<LicenseEntity> expectedLicenses = licenses.Skip(20).Take(5).ToList();
-            List<object> resultList = result.ToList();
+            List<object> resultList = result.Items.ToList();
 
             Assert.NotNull(result);
-            Assert.Equal(expectedLicenses.Count, result.Count());
+            Assert.Equal(expectedLicenses.Count, result.ItemsCount);
 
             for (int i = 0; i < expectedLicenses.Count; i++)
             {

@@ -1,4 +1,6 @@
-﻿using AppyNox.Services.Base.Application.Interfaces.Loggers;
+﻿using AppyNox.Services.Base.Application.Dtos;
+using AppyNox.Services.Base.Application.Interfaces.Caches;
+using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Application.Interfaces.Repositories;
 using AppyNox.Services.Base.Domain;
 using AppyNox.Services.Base.Domain.Interfaces;
@@ -24,6 +26,8 @@ namespace AppyNox.Services.Base.Infrastructure.Repositories
         private readonly DbSet<TEntity> _dbSet;
 
         private readonly INoxInfrastructureLogger _logger;
+
+        private readonly string _countCacheKey = $"total-count-{typeof(TEntity).Name}";
 
         #endregion
 
@@ -75,11 +79,23 @@ namespace AppyNox.Services.Base.Infrastructure.Repositories
             }
         }
 
-        public async Task<IEnumerable<object>> GetAllAsync(IQueryParameters queryParameters, Expression<Func<TEntity, dynamic>> selectedColumns)
+        public async Task<PaginatedList> GetAllAsync(IQueryParameters queryParameters,
+                                                           Expression<Func<TEntity, dynamic>> selectedColumns,
+                                                           ICacheService cacheService)
         {
             try
             {
                 _logger.LogInformation($"Attempting to retrieve entities. Type: '{typeof(TEntity).Name}'.");
+
+                // Try to get the count from cache
+                var cachedCount = await cacheService.GetCachedValueAsync(_countCacheKey);
+                if (!int.TryParse(cachedCount, out int totalCount))
+                {
+                    // Count not in cache or invalid, so retrieve from database and cache it
+                    totalCount = await _dbSet.CountAsync();
+                    await cacheService.SetCachedValueAsync(_countCacheKey, totalCount.ToString(), TimeSpan.FromMinutes(10));
+                }
+
                 var entities = await _dbSet
                     .AsQueryable()
                     .AsNoTracking()
@@ -89,7 +105,14 @@ namespace AppyNox.Services.Base.Infrastructure.Repositories
                     .ToListAsync();
 
                 _logger.LogInformation($"Successfully retrieved entities. Type: '{typeof(TEntity).Name}'.");
-                return entities;
+                return new PaginatedList
+                {
+                    Items = entities,
+                    ItemsCount = entities.Count,
+                    TotalCount = totalCount,
+                    CurrentPage = queryParameters.PageNumber,
+                    PageSize = queryParameters.PageSize
+                };
             }
             catch (Exception ex)
             {

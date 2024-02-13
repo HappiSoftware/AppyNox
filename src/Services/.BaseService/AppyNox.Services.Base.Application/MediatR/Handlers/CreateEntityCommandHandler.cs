@@ -1,5 +1,6 @@
 ﻿using AppyNox.Services.Base.Application.DtoUtilities;
 using AppyNox.Services.Base.Application.ExceptionExtensions.Base;
+using AppyNox.Services.Base.Application.Interfaces.Caches;
 using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Application.Interfaces.Repositories;
 using AppyNox.Services.Base.Application.MediatR.Commands;
@@ -21,11 +22,18 @@ namespace AppyNox.Services.Base.Application.MediatR.Handlers
         IDtoMappingRegistryBase dtoMappingRegistry,
         IServiceProvider serviceProvider,
         INoxApplicationLogger logger,
-        IUnitOfWorkBase unitOfWork)
+        IUnitOfWorkBase unitOfWork,
+        ICacheService cacheService)
         : BaseHandler<TEntity>(repository, mapper, dtoMappingRegistry, serviceProvider, logger, unitOfWork),
         IRequestHandler<CreateEntityCommand<TEntity>, (Guid guid, object basicDto)>
         where TEntity : class, IEntityTypeId
     {
+        #region Fields
+
+        private readonly ICacheService _cacheService = cacheService;
+
+        #endregion
+
         #region [ Public Methods ]
 
         public async Task<(Guid guid, object basicDto)> Handle(CreateEntityCommand<TEntity> request, CancellationToken cancellationToken)
@@ -51,6 +59,7 @@ namespace AppyNox.Services.Base.Application.MediatR.Handlers
                 TEntity mappedEntity = Mapper.Map(dtoObject, dtoType, entityType);
                 await Repository.AddAsync(mappedEntity);
                 await UnitOfWork.SaveChangesAsync(NoxContext.UserId.ToString());
+                await UpdateTotalCountOnCache(_cacheService, $"total-count-{typeof(TEntity).Name}", true);
                 Type returnDtoType = DtoMappingRegistry.GetDtoType(DtoLevelMappingTypes.DataAccess, entityType, CommonDtoLevelEnums.Simple.GetDisplayName());
                 object createdObject = Mapper.Map(mappedEntity, returnDtoType, returnDtoType);
                 return (guid: mappedEntity.GetTypedId, basicDto: createdObject);

@@ -1,3 +1,11 @@
+using AppyNox.Services.Base.API.Constants;
+using AppyNox.Services.Base.API.Extensions;
+using AppyNox.Services.Base.API.Middleware.Options;
+using AppyNox.Services.Base.API.Permissions;
+using AppyNox.Services.Base.Application.Interfaces.Loggers;
+using AppyNox.Services.Base.Infrastructure.Extensions;
+using AppyNox.Services.Base.Infrastructure.HostedServices;
+using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
 using AppyNox.Services.Sso.Application;
 using AppyNox.Services.Sso.Application.Interfaces.Authentication;
 using AppyNox.Services.Sso.Domain.Entities;
@@ -10,17 +18,6 @@ using AppyNox.Services.Sso.WebAPI.Localization;
 using AppyNox.Services.Sso.WebAPI.Managers;
 using AppyNox.Services.Sso.WebAPI.Middlewares;
 using AppyNox.Services.Sso.WebAPI.Permission;
-using AppyNox.Services.Base.API.Constants;
-using AppyNox.Services.Base.API.Extensions;
-using AppyNox.Services.Base.API.Localization;
-using AppyNox.Services.Base.API.Middleware.Options;
-using AppyNox.Services.Base.API.Permissions;
-using AppyNox.Services.Base.Application.Interfaces.Loggers;
-using AppyNox.Services.Base.Application.Localization;
-using AppyNox.Services.Base.Infrastructure.Extensions;
-using AppyNox.Services.Base.Infrastructure.HostedServices;
-using AppyNox.Services.Base.Infrastructure.Localization;
-using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -108,6 +105,8 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 builder.Services.AddHealthChecks();
+
+builder.ConfigureRedis(configuration);
 
 #endregion
 

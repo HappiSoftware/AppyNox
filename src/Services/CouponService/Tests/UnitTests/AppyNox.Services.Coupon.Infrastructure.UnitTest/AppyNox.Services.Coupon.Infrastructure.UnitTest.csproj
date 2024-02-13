@@ -24,7 +24,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\.BaseService\Tests\UnitTests\AppyNox.Services.Base.Infrastructure.UnitTests\AppyNox.Services.Base.Infrastructure.UnitTests.csproj" />
-    <ProjectReference Include="..\..\..\..\.BaseService\Tests\UnitTests\AppyNox.Services.Base.Infrastructure.UnitTest\AppyNox.Services.Base.Infrastructure.UnitTest.csproj" />
     <ProjectReference Include="..\..\..\AppyNox.Services.Coupon.Infrastructure\AppyNox.Services.Coupon.Infrastructure.csproj" />
   </ItemGroup>
 

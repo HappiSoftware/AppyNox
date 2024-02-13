@@ -77,7 +77,8 @@ namespace AppyNox.Services.License.WebAPI.IntegrationTest.Fixtures
                         "appynox-license-db",
                         "appynox-services-license-webapi",
                         "appynox-sso-db",
-                        "appynox-services-sso-webapi"
+                        "appynox-services-sso-webapi",
+                        "appynox-redis"
                     ],
                 });
         }

@@ -54,6 +54,7 @@
 		<PackageReference Include="Serilog.Sinks.Console" Version="5.0.1" />
 		<PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
 		<PackageReference Include="Winton.Extensions.Configuration.Consul" Version="3.4.0" />
+		<PackageReference Include="StackExchange.Redis" Version="2.7.17" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -1,4 +1,5 @@
-﻿using AppyNox.Services.Base.Application.MediatR.Commands;
+﻿using AppyNox.Services.Base.Application.Dtos;
+using AppyNox.Services.Base.Application.MediatR.Commands;
 using AppyNox.Services.Base.Application.MediatR.Handlers;
 using AppyNox.Services.Base.Domain;
 using AppyNox.Services.Base.Domain.Interfaces;
@@ -26,7 +27,7 @@ namespace AppyNox.Services.Base.Application.Extensions
         where TEntity : class, IEntityTypeId
         {
             // Register GetAllEntitiesQueryHandler
-            services.AddTransient<IRequestHandler<GetAllEntitiesQuery<TEntity>, IEnumerable<object>>,
+            services.AddTransient<IRequestHandler<GetAllEntitiesQuery<TEntity>, PaginatedList>,
                 GetAllEntitiesQueryHandler<TEntity>>();
 
             // Register GetEntityByIdQueryHandler
