@@ -43,8 +43,8 @@ namespace AppyNox.Services.Base.API.Authentication
 
             try
             {
-                await _tokenHandler.ValidateTokenAsync(token, validationParameters);
-                return true;
+                _tokenHandler.ValidateToken(token, validationParameters, out SecurityToken sToken);
+                return await Task.FromResult(true);
             }
             catch (SecurityTokenExpiredException)
             {

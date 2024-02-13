@@ -1,5 +1,5 @@
-﻿using AppyNox.Services.Sso.Domain.Entities;
-using AppyNox.Services.Sso.WebAPI.Managers;
+﻿using AppyNox.Services.Base.API.Authentication;
+using AppyNox.Services.Base.API.ExceptionExtensions;
 using AppyNox.Services.Base.API.Localization;
 using AppyNox.Services.Base.Core.Common;
 using Microsoft.AspNetCore.Identity;
@@ -7,19 +7,22 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Localization;
 using Microsoft.IdentityModel.Tokens;
 using Moq;
+using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Net;
 using System.Security.Claims;
-using AppyNox.Services.Sso.WebAPI.ExceptionExtensions;
-using AppyNox.Services.Sso.WebAPI.Localization;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace AppyNox.Services.Sso.WebAPI.UnitTest.Managers
+namespace AppyNox.Services.Base.Api.UnitTest.Managers
 {
-    public class JwtTokenManagerUnitTest
+    public class NoxTokenManagerUnitTest
     {
         #region [ Fields ]
 
-        private readonly JwtTokenManager _jwtTokenManager;
+        private readonly NoxTokenManager _noxTokenManager;
 
         private readonly JwtConfiguration _jwtConfiguration;
 
@@ -27,31 +30,31 @@ namespace AppyNox.Services.Sso.WebAPI.UnitTest.Managers
 
         #region [ Public Constructors ]
 
-        public JwtTokenManagerUnitTest()
+        public NoxTokenManagerUnitTest()
         {
             var inMemorySettings = new Dictionary<string, string>
             {
-                {"JwtSettings:AppyNox:Issuer", "YourIssuer"},
-                {"JwtSettings:AppyNox:Audience", "YourAudience"},
-                {"JwtSettings:AppyNox:SecretKey", "ThisIsCompletelyAValidSecretKeyOrMaybeNot"},
-                {"JwtSettings:AppyNox:TokenLifetimeMinutes", "1"},
+                {"JwtSettings:Issuer", "YourIssuer"},
+                {"JwtSettings:Audience", "YourAudience"},
+                {"JwtSettings:SecretKey", "ThisIsCompletelyAValidSecretKeyOrMaybeNot"},
+                {"JwtSettings:TokenLifetimeMinutes", "1"},
             };
 
             IConfiguration configuration = new ConfigurationBuilder()
                 .AddInMemoryCollection(inMemorySettings!)
                 .Build();
             _jwtConfiguration = new();
-            configuration.GetSection("JwtSettings:AppyNox").Bind(_jwtConfiguration);
+            configuration.GetSection("JwtSettings").Bind(_jwtConfiguration);
 
-            _jwtTokenManager = new(It.IsAny<UserManager<ApplicationUser>>(), It.IsAny<RoleManager<ApplicationRole>>(), configuration);
+            _noxTokenManager = new(_jwtConfiguration);
 
             var localizer = new Mock<IStringLocalizer>();
             localizer.Setup(l => l[It.IsAny<string>()]).Returns(new LocalizedString("key", "mock value"));
 
             var localizerFactory = new Mock<IStringLocalizerFactory>();
-            localizerFactory.Setup(lf => lf.Create(typeof(NoxSsoApiResourceService))).Returns(localizer.Object);
+            localizerFactory.Setup(lf => lf.Create(typeof(NoxApiResourceService))).Returns(localizer.Object);
 
-            NoxSsoApiResourceService.Initialize(localizerFactory.Object);
+            NoxApiResourceService.Initialize(localizerFactory.Object);
         }
 
         #endregion
@@ -63,7 +66,7 @@ namespace AppyNox.Services.Sso.WebAPI.UnitTest.Managers
             var securityKey = new SymmetricSecurityKey(_jwtConfiguration.GetSecretKeyBytes());
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
-            var claims = new List<Claim> { new Claim(JwtRegisteredClaimNames.Sub, "testUser") };
+            var claims = new List<Claim> { new(JwtRegisteredClaimNames.Sub, "testUser") };
 
             var notBefore = expired ? DateTime.UtcNow.AddMinutes(-10) : DateTime.UtcNow;
             var expires = expired ? DateTime.UtcNow.AddMinutes(-5) : DateTime.UtcNow.AddMinutes(30);
@@ -94,7 +97,7 @@ namespace AppyNox.Services.Sso.WebAPI.UnitTest.Managers
             string token = GenerateTestToken();
 
             // Act
-            bool result = await _jwtTokenManager.VerifyToken(token, "AppyNox");
+            bool result = await _noxTokenManager.VerifyToken(token);
 
             // Assert
             Assert.True(result);
@@ -107,7 +110,7 @@ namespace AppyNox.Services.Sso.WebAPI.UnitTest.Managers
             string token = GenerateTestToken(expired: true);
 
             // Act & Assert
-            var exception = await Assert.ThrowsAsync<NoxTokenExpiredException>(() => _jwtTokenManager.VerifyToken(token, "AppyNox"));
+            var exception = await Assert.ThrowsAsync<NoxTokenExpiredException>(() => _noxTokenManager.VerifyToken(token));
             Assert.Equal((int)HttpStatusCode.Unauthorized, exception.StatusCode);
         }
 
@@ -118,7 +121,7 @@ namespace AppyNox.Services.Sso.WebAPI.UnitTest.Managers
             string token = "invalidTokenString";
 
             // Act
-            var exception = await Assert.ThrowsAsync<NoxAuthenticationException>(() => _jwtTokenManager.VerifyToken(token, "AppyNox"));
+            var exception = await Assert.ThrowsAsync<NoxAuthenticationException>(() => _noxTokenManager.VerifyToken(token));
 
             // Assert
             Assert.Equal((int)HttpStatusCode.Unauthorized, exception.StatusCode);

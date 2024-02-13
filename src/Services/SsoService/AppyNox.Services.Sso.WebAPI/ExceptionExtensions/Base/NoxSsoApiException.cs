@@ -30,6 +30,8 @@ namespace AppyNox.Services.Sso.WebAPI.ExceptionExtensions.Base
         SignInError = 1009,
 
         Teapot = 1010,
+
+        RefreshTokenInvalid = 1011,
     }
 
     #endregion
