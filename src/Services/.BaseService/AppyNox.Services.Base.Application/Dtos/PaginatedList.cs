@@ -4,8 +4,6 @@ public class PaginatedList
 {
     #region [ Properties ]
 
-    public IEnumerable<object> Items { get; set; } = [];
-
     public int ItemsCount { get; set; }
 
     public int TotalCount { get; set; }
@@ -15,6 +13,8 @@ public class PaginatedList
     public int PageSize { get; set; }
 
     public int TotalPages => (int)Math.Ceiling(TotalCount / (double)PageSize);
+
+    public IEnumerable<object> Items { get; set; } = [];
 
     #endregion
 }
