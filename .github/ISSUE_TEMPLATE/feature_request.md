@@ -4,7 +4,6 @@ about: Suggest an idea for this project
 title: ''
 labels: development
 assignees: behluluysal
-projects: AppyNox
 
 ---
 
