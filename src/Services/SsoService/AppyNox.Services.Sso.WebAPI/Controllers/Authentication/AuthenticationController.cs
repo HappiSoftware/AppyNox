@@ -61,9 +61,9 @@ namespace AppyNox.Services.Sso.WebAPI.Controllers.Authentication
 
         [HttpGet]
         [Route("verify-token/{token}")]
-        public IActionResult Verify(string token, string audience)
+        public async Task<IActionResult> Verify(string token, string audience)
         {
-            return Ok(_customTokenManager.VerifyToken(token, audience));
+            return Ok(await _customTokenManager.VerifyToken(token, audience));
         }
 
         [HttpPost("refresh")]
@@ -77,13 +77,17 @@ namespace AppyNox.Services.Sso.WebAPI.Controllers.Authentication
             {
                 throw;
             }
+            catch (NoxTokenExpiredException)
+            {
+                // expected, do not take action
+            }
 
             var userId = _customTokenManager.GetUserInfoByToken(model.Token, model.Audience);
             var storedRefreshToken = await _customUserManager.RetrieveStoredRefreshToken(userId);
 
             if (!_customTokenManager.VerifyRefreshToken(model.RefreshToken, storedRefreshToken))
             {
-                throw new NoxSsoApiException("", (int)HttpStatusCode.Unauthorized);
+                throw new NoxSsoApiException(NoxSsoApiResourceService.RefreshTokenInvalid, (int)NoxSsoApiExceptionCode.RefreshTokenInvalid, (int)HttpStatusCode.Forbidden);
             }
 
             var newJwtToken = await _customTokenManager.CreateToken(userId, model.Audience);

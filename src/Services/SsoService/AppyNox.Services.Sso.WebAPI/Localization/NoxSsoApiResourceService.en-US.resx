@@ -141,6 +141,9 @@
   <data name="RefreshTokenError" xml:space="preserve">
     <value>Failed to save the refresh token. Please try again.</value>
   </data>
+  <data name="RefreshTokenInvalid" xml:space="preserve">
+    <value>Refresh token could not be verified.</value>
+  </data>
   <data name="RefreshTokenNotFound" xml:space="preserve">
     <value>No refresh token found. Please re-login to get a new one.</value>
   </data>
