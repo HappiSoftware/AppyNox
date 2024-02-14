@@ -4,6 +4,7 @@ All notable changes to AppyNox will be documented in this file.
 ## [1.3.0](https://github.com/HappiSoftware/AppyNox/compare/v1.2.0...v1.3.0) - NOT RELEASED
 ### Fixed
 - NoxJwtAuthenticationHandler Should Validate Token Time ([#179](https://github.com/HappiSoftware/AppyNox/issues/179))
+- Failed C.I. Runs ([#186](https://github.com/HappiSoftware/AppyNox/issues/186))
 
 ### Added
 - Pagination Data Should be Returned in Response ([#173](https://github.com/HappiSoftware/AppyNox/issues/173))

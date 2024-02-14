@@ -56,8 +56,8 @@ jobs:
 
       - name: Create Sso Service appsettings
         run: |
-          echo '${{ secrets.AUTHENTICATION_APPSETTINGS_STAGING }}' > ./src/Services/SsoService/AppyNox.Services.Sso.WebAPI/appsettings.Staging.json
-          echo '${{ secrets.AUTHENTICATION_APPSETTINGS_PRODUCTION }}' > ./src/Services/SsoService/AppyNox.Services.Sso.WebAPI/appsettings.Production.json
+          echo '${{ secrets.SSO_APPSETTINGS_STAGING }}' > ./src/Services/SsoService/AppyNox.Services.Sso.WebAPI/appsettings.Staging.json
+          echo '${{ secrets.SSO_APPSETTINGS_PRODUCTION }}' > ./src/Services/SsoService/AppyNox.Services.Sso.WebAPI/appsettings.Production.json
 
       - name: Create Coupon Service appsettings
         run: |
