@@ -112,6 +112,9 @@ jobs:
           sudo cp appynox_staging.crt /usr/local/share/ca-certificates/
           sudo update-ca-certificates
 
+      - name: Create Redis ACL file
+        run: echo '${{ secrets.REDIS_ACL }}' > ./redis.acl
+
       - name: Build Docker Images
         run: docker-compose -f docker-compose.yml -f docker-compose.Development.yml build
 
