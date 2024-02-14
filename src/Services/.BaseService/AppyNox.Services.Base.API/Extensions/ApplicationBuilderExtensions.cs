@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Builder;
 
 namespace AppyNox.Services.Base.API.Extensions
 {
-    public static class WebApplicationExtensions
+    public static class ApplicationBuilderExtensions
     {
         #region [ Public Methods ]
 

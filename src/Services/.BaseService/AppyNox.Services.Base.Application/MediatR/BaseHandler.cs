@@ -2,6 +2,7 @@
 using AppyNox.Services.Base.Application.DtoUtilities;
 using AppyNox.Services.Base.Application.ExceptionExtensions;
 using AppyNox.Services.Base.Application.ExceptionExtensions.Base;
+using AppyNox.Services.Base.Application.Interfaces.Caches;
 using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Application.Interfaces.Repositories;
 using AppyNox.Services.Base.Core.Enums;
@@ -179,6 +180,24 @@ namespace AppyNox.Services.Base.Application.MediatR
             {
                 Logger.LogError(ex, $"Error occurred while mapping single entity of type {typeof(TEntity).Name} to DTO.");
                 throw new NoxApplicationException(ex, (int)NoxApplicationExceptionCode.MapEntityError);
+            }
+        }
+
+        /// <summary>
+        /// Increase or decrease the value of TEntity TotalCount on Cache service.
+        /// </summary>
+        /// <param name="cacheService">Cache Service</param>
+        /// <param name="countCacheKey">Cache Key used for Count for TEntity</param>
+        /// <param name="isCreate">True for increasing the value, false for decreasing the value of Cache Count Item</param>
+        /// <returns></returns>
+        protected async Task UpdateTotalCountOnCache(ICacheService cacheService, string countCacheKey, bool isCreate)
+        {
+            // Try to get the count from cache
+            var cachedCount = await cacheService.GetCachedValueAsync(countCacheKey);
+            if (int.TryParse(cachedCount, out int totalCount))
+            {
+                totalCount = isCreate ? totalCount + 1 : totalCount - 1;
+                await cacheService.SetCachedValueAsync(countCacheKey, totalCount.ToString(), TimeSpan.FromMinutes(10));
             }
         }
 

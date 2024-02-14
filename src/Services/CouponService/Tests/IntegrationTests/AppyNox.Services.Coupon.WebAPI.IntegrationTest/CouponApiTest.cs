@@ -1,5 +1,6 @@
 using AppyNox.Services.Base.API.Constants;
 using AppyNox.Services.Base.API.Wrappers.Helpers;
+using AppyNox.Services.Base.Application.Dtos;
 using AppyNox.Services.Base.IntegrationTests.URIs;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
 using AppyNox.Services.Coupon.WebAPI.IntegrationTest.Fixtures;
@@ -33,12 +34,12 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTest
 
             var jsonResponse = await response.Content.ReadAsStringAsync();
 
-            var coupons = NoxResponseUnwrapper.UnwrapData<IList<CouponSimpleDto>>(jsonResponse, _jsonSerializerOptions);
+            var coupons = NoxResponseUnwrapper.UnwrapData<PaginatedList>(jsonResponse, _jsonSerializerOptions);
 
             // Assert
             response.EnsureSuccessStatusCode();
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.NotNull(coupons);
+            Assert.NotNull(coupons.Items);
         }
 
         [Fact]

@@ -1,4 +1,5 @@
-﻿using AppyNox.Services.Base.Infrastructure.ExceptionExtensions;
+﻿using AppyNox.Services.Base.Application.Interfaces.Caches;
+using AppyNox.Services.Base.Infrastructure.ExceptionExtensions;
 using AppyNox.Services.Base.Infrastructure.Repositories.Common;
 using AppyNox.Services.Base.Infrastructure.UnitTests.Fixtures;
 using AppyNox.Services.Base.Infrastructure.UnitTests.Stubs;
@@ -6,16 +7,19 @@ using AppyNox.Services.Coupon.Domain.Entities;
 using AppyNox.Services.Coupon.Infrastructure.Data;
 using AppyNox.Services.Coupon.Infrastructure.Repositories;
 using AppyNox.Services.Coupon.Infrastructure.UnitTest.Seeds.CouponSeeds;
+using Moq;
 
 namespace AppyNox.Services.Coupon.Infrastructure.UnitTest.RepositoryTests
 {
-    public class GenericRepositoryTests(RepositoryFixture fixture) : IClassFixture<RepositoryFixture>
+    public class CouponRepositoryUnitTest(RepositoryFixture fixture) : IClassFixture<RepositoryFixture>
     {
         #region [ Fields ]
 
         private readonly RepositoryFixture _fixture = fixture;
 
         private readonly NoxInfrastructureLoggerStub _noxLoggerStub = fixture.NoxLoggerStub;
+
+        private readonly ICacheService _cacheService = fixture.RedisCacheService.Object;
 
         #endregion
 
@@ -38,10 +42,10 @@ namespace AppyNox.Services.Coupon.Infrastructure.UnitTest.RepositoryTests
             };
             var propertyNames = typeof(CouponEntity).GetProperties().Select(p => p.Name).ToList();
             var projection = repository.CreateProjection(propertyNames);
-            var result = await repository.GetAllAsync(queryParameters, projection);
+            var result = await repository.GetAllAsync(queryParameters, projection, _cacheService);
 
             Assert.NotNull(result);
-            Assert.Single(result);
+            Assert.Single(result.Items);
         }
 
         [Fact]
@@ -59,10 +63,10 @@ namespace AppyNox.Services.Coupon.Infrastructure.UnitTest.RepositoryTests
             };
             var propertyNames = typeof(CouponEntity).GetProperties().Select(p => p.Name).ToList();
             var projection = repository.CreateProjection(propertyNames);
-            var result = await repository.GetAllAsync(queryParameters, projection);
+            var result = await repository.GetAllAsync(queryParameters, projection, _cacheService);
 
             Assert.NotNull(result);
-            Assert.Equal(2, result.Count());
+            Assert.Equal(2, result.ItemsCount);
         }
 
         [Fact]
@@ -82,14 +86,14 @@ namespace AppyNox.Services.Coupon.Infrastructure.UnitTest.RepositoryTests
             };
             var propertyNames = typeof(CouponEntity).GetProperties().Select(p => p.Name).ToList();
             var projection = repository.CreateProjection(propertyNames);
-            var result = await repository.GetAllAsync(queryParameters, projection);
+            var result = await repository.GetAllAsync(queryParameters, projection, _cacheService);
 
             var test = context.Coupons.ToList();
 
             Assert.NotNull(result);
-            Assert.Single(result);
-            Assert.Equal(coupons.Last().Id, ((CouponEntity)result.First()).Id);
-            Assert.Equal(coupons.Last().Code, ((CouponEntity)result.First()).Code);
+            Assert.Single(result.Items);
+            Assert.Equal(coupons.Last().Id, ((CouponEntity)result.Items.First()).Id);
+            Assert.Equal(coupons.Last().Code, ((CouponEntity)result.Items.First()).Code);
         }
 
         [Fact]
@@ -107,10 +111,10 @@ namespace AppyNox.Services.Coupon.Infrastructure.UnitTest.RepositoryTests
             };
             var propertyNames = typeof(CouponEntity).GetProperties().Select(p => p.Name).ToList();
             var projection = repository.CreateProjection(propertyNames);
-            var result = await repository.GetAllAsync(queryParameters, projection);
+            var result = await repository.GetAllAsync(queryParameters, projection, _cacheService);
 
             Assert.NotNull(result);
-            Assert.Equal(50, result.Count());
+            Assert.Equal(50, result.ItemsCount);
         }
 
         [Fact]
@@ -130,13 +134,13 @@ namespace AppyNox.Services.Coupon.Infrastructure.UnitTest.RepositoryTests
             };
             var propertyNames = typeof(CouponEntity).GetProperties().Select(p => p.Name).ToList();
             var projection = repository.CreateProjection(propertyNames);
-            var result = await repository.GetAllAsync(queryParameters, projection);
+            var result = await repository.GetAllAsync(queryParameters, projection, _cacheService);
 
             var expectedCoupons = coupons.Skip(20).Take(5).ToList();
-            var resultList = result.ToList();
+            var resultList = result.Items.ToList();
 
             Assert.NotNull(result);
-            Assert.Equal(expectedCoupons.Count, result.Count());
+            Assert.Equal(expectedCoupons.Count, result.ItemsCount);
 
             for (int i = 0; i < expectedCoupons.Count; i++)
             {

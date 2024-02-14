@@ -4,10 +4,6 @@ networks:
   nox_network:
     driver: bridge
 
-volumes:
-  app_data:
-
-
 services:
   appynox-rabbitmq-service:
     networks:
@@ -21,6 +17,25 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
+
+  appynox-redis:
+    networks:
+      - nox_network
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: always
+    ports:
+      - "6379:6379"
+
+  appynox-redisinsight:
+    networks:
+      - nox_network
+    restart: always
+    ports:
+      - "8001:8001"
 
   appynox-consul:
     networks:

@@ -10,5 +10,6 @@
   - [SSL Certificate](certificate.md)
   - [Appsettings Configurations](appsettings.md)
   - [GitHub Configurations](github.md)
+  - [Redis](redis.md)
 - DevOps Documentations
   - [Docker Swarm](dockerswarm.md)

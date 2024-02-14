@@ -77,7 +77,8 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTest.Fixtures
                         "appynox-services-coupon-webapi",
                         "appynox-sso-db",
                         "appynox-sso-saga-db",
-                        "appynox-services-sso-webapi"
+                        "appynox-services-sso-webapi",
+                        "appynox-redis"
                     ]
                 });
         }

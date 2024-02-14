@@ -1,4 +1,5 @@
-﻿using AppyNox.Services.Base.Application.MediatR.Commands;
+﻿using AppyNox.Services.Base.Application.Dtos;
+using AppyNox.Services.Base.Application.MediatR.Commands;
 using AppyNox.Services.Base.Application.UnitTests.GenericCQRSFixtures;
 using AppyNox.Services.Base.Core.AsyncLocals;
 using AppyNox.Services.Base.Core.Enums;
@@ -62,7 +63,7 @@ namespace AppyNox.Services.Coupon.Application.UnitTest.CQRSTests
 
             // Assert
             Assert.NotNull(result);
-            Assert.True(result is IEnumerable<dynamic>);
+            Assert.True(result is PaginatedList);
         }
 
         [Fact]

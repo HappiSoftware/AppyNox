@@ -57,6 +57,9 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
     "HealthCheckUrl": "health-check",
     "HealthCheckIntervalSeconds": 30,
     "HealthCheckTimeoutSeconds": 5
+  },
+  "Redis": {
+    "ConnectionString": "localhost:6379"
   }
 }
 ```
@@ -112,6 +115,9 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
     "HealthCheckUrl": "health-check",
     "HealthCheckIntervalSeconds": 30,
     "HealthCheckTimeoutSeconds": 5
+  },
+  "Redis": {
+    "ConnectionString": "appynox-redis"
   }
 }
 ```
@@ -166,6 +172,9 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
     "HealthCheckUrl": "health-check",
     "HealthCheckIntervalSeconds": 30,
     "HealthCheckTimeoutSeconds": 5
+  },
+  "Redis": {
+    "ConnectionString": "appynox-redis"
   }
 }
 ```
@@ -241,6 +250,9 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
     "Host": "rabbitmq://localhost",
     "Username": "guest",
     "Password": "guest"
+  },
+  "Redis": {
+    "ConnectionString": "localhost:6379"
   }
 }
 ```
@@ -311,6 +323,9 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
     "Host": "rabbitmq://appynox-rabbitmq-service",
     "Username": "HappiCorp",
     "Password": "HappiCorp"
+  },
+  "Redis": {
+    "ConnectionString": "appynox-redis"
   }
 }
 ```
@@ -380,6 +395,9 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
     "Host": "rabbitmq://appynox-rabbitmq-service",
     "Username": "HappiCorp",
     "Password": "HappiCorp"
+  },
+  "Redis": {
+    "ConnectionString": "appynox-redis"
   }
 }
 ```
@@ -863,6 +881,9 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
     "Host": "rabbitmq://localhost",
     "Username": "guest",
     "Password": "guest"
+  },
+  "Redis": {
+    "ConnectionString": "localhost:6379"
   }
 }
 ```
@@ -923,6 +944,9 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
     "Host": "rabbitmq://appynox-rabbitmq-service",
     "Username": "HappiCorp",
     "Password": "HappiCorp"
+  },
+  "Redis": {
+    "ConnectionString": "appynox-redis"
   }
 }
 ```
@@ -982,6 +1006,9 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
     "Host": "rabbitmq://appynox-rabbitmq-service",
     "Username": "HappiCorp",
     "Password": "HappiCorp"
+  },
+  "Redis": {
+    "ConnectionString": "appynox-redis"
   }
 }
 ```

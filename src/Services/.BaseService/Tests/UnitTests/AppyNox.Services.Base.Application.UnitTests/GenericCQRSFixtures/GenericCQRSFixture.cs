@@ -1,4 +1,6 @@
-﻿using AppyNox.Services.Base.Application.DtoUtilities;
+﻿using AppyNox.Services.Base.Application.Dtos;
+using AppyNox.Services.Base.Application.DtoUtilities;
+using AppyNox.Services.Base.Application.Interfaces.Caches;
 using AppyNox.Services.Base.Application.Interfaces.Repositories;
 using AppyNox.Services.Base.Application.Localization;
 using AppyNox.Services.Base.Application.MediatR.Commands;
@@ -24,6 +26,8 @@ namespace AppyNox.Services.Base.Application.UnitTests.GenericCQRSFixtures
         public readonly Mock<IServiceProvider> MockServiceProvider;
 
         public readonly Mock<IQueryParameters> MockQueryParameters;
+
+        public readonly Mock<ICacheService> _cacheService;
 
         private readonly Mock<IGenericRepositoryBase<TEntity>> _mockRepository;
 
@@ -62,6 +66,7 @@ namespace AppyNox.Services.Base.Application.UnitTests.GenericCQRSFixtures
             MockServiceProvider = new();
             _noxApplicationLogger = new();
             MockMediator = new();
+            _cacheService = new();
 
             #region [ QueryParameter Mocks ]
 
@@ -77,8 +82,8 @@ namespace AppyNox.Services.Base.Application.UnitTests.GenericCQRSFixtures
 
             #region [ Repository Mocks ]
 
-            _mockRepository.Setup(repo => repo.GetAllAsync(It.IsAny<IQueryParameters>(), It.IsAny<Expression<Func<TEntity, dynamic>>>()))
-                .ReturnsAsync(new Mock<List<dynamic>>().Object);
+            _mockRepository.Setup(repo => repo.GetAllAsync(It.IsAny<IQueryParameters>(), It.IsAny<Expression<Func<TEntity, dynamic>>>(), It.IsAny<ICacheService>()))
+                .ReturnsAsync(new Mock<PaginatedList>().Object);
 
             _mockRepository.Setup(repo => repo.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<Expression<Func<TEntity, dynamic>>>()))
                 .ReturnsAsync(new Mock<TEntity>().Object);
@@ -96,11 +101,15 @@ namespace AppyNox.Services.Base.Application.UnitTests.GenericCQRSFixtures
 
             #region [ Handlers ]
 
-            GetAllEntitiesCommandHandler = new GetAllEntitiesQueryHandler<TEntity>(_mockRepository.Object, _mockMapper.Object, MockDtoMappingRegistry.Object, MockServiceProvider.Object, _noxApplicationLogger, _mockUnitOfWork.Object);
+            _cacheService.Setup(rcs => rcs.GetCachedValueAsync(It.IsAny<string>())).ReturnsAsync((string key) => null);
+            _cacheService.Setup(rcs => rcs.SetCachedValueAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<TimeSpan?>()))
+                .Returns(Task.CompletedTask);
+
+            GetAllEntitiesCommandHandler = new GetAllEntitiesQueryHandler<TEntity>(_mockRepository.Object, _mockMapper.Object, MockDtoMappingRegistry.Object, MockServiceProvider.Object, _noxApplicationLogger, _mockUnitOfWork.Object, _cacheService.Object);
             GetEntityByIdCommandHandler = new GetEntityByIdQueryHandler<TEntity>(_mockRepository.Object, _mockMapper.Object, MockDtoMappingRegistry.Object, MockServiceProvider.Object, _noxApplicationLogger, _mockUnitOfWork.Object);
-            CreateEntityCommandHandler = new CreateEntityCommandHandler<TEntity>(_mockRepository.Object, _mockMapper.Object, MockDtoMappingRegistry.Object, MockServiceProvider.Object, _noxApplicationLogger, _mockUnitOfWork.Object);
+            CreateEntityCommandHandler = new CreateEntityCommandHandler<TEntity>(_mockRepository.Object, _mockMapper.Object, MockDtoMappingRegistry.Object, MockServiceProvider.Object, _noxApplicationLogger, _mockUnitOfWork.Object, _cacheService.Object);
             UpdateEntityCommandHandler = new UpdateEntityCommandHandler<TEntity>(_mockRepository.Object, _mockMapper.Object, MockDtoMappingRegistry.Object, MockServiceProvider.Object, _noxApplicationLogger, _mockUnitOfWork.Object);
-            DeleteEntityCommandHandler = new DeleteEntityCommandHandler<TEntity>(_mockRepository.Object, _mockMapper.Object, MockDtoMappingRegistry.Object, MockServiceProvider.Object, _noxApplicationLogger, _mockUnitOfWork.Object);
+            DeleteEntityCommandHandler = new DeleteEntityCommandHandler<TEntity>(_mockRepository.Object, _mockMapper.Object, MockDtoMappingRegistry.Object, MockServiceProvider.Object, _noxApplicationLogger, _mockUnitOfWork.Object, _cacheService.Object);
 
             #endregion
 

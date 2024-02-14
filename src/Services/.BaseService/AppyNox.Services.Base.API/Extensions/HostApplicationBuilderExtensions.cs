@@ -1,11 +1,16 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using AppyNox.Services.Base.API.Configuration;
+using AppyNox.Services.Base.Application.Interfaces.Caches;
+using AppyNox.Services.Base.Infrastructure.Services.RedisCacheService;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Localization;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using StackExchange.Redis;
 
 namespace AppyNox.Services.Base.API.Extensions
 {
-    public static class WebApplicationBuilderExtensions
+    public static class HostApplicationBuilderExtensions
     {
         #region [ Public Methods ]
 
@@ -41,6 +46,18 @@ namespace AppyNox.Services.Base.API.Extensions
                     return Task.FromResult<ProviderCultureResult?>(result);
                 }));
             });
+        }
+
+        public static void ConfigureRedis(this IHostApplicationBuilder builder, IConfiguration configuration)
+        {
+            RedisConfiguration? redisConfig = configuration.GetSection("Redis").Get<RedisConfiguration>();
+            if (redisConfig == null || string.IsNullOrWhiteSpace(redisConfig.ConnectionString))
+            {
+                throw new InvalidOperationException("Redis configuration is missing or invalid.");
+            }
+
+            builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(redisConfig.ConnectionString));
+            builder.Services.AddSingleton<ICacheService, RedisCacheService>();
         }
 
         #endregion

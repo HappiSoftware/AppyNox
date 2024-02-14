@@ -1,5 +1,6 @@
 ﻿using AppyNox.Services.Base.API.Constants;
 using AppyNox.Services.Base.API.Wrappers.Helpers;
+using AppyNox.Services.Base.Application.Dtos;
 using AppyNox.Services.Base.IntegrationTests.URIs;
 using AppyNox.Services.License.Application.Dtos.LicenseDtos.Models.Base;
 using AppyNox.Services.License.Application.Dtos.ProductDtos.Models.Base;
@@ -37,12 +38,12 @@ namespace AppyNox.Services.License.WebAPI.IntegrationTest.Controllers
 
             var jsonResponse = await response.Content.ReadAsStringAsync();
 
-            var products = NoxResponseUnwrapper.UnwrapData<IList<ProductSimpleDto>>(jsonResponse, jsonSerializerOptions: _jsonSerializerOptions);
+            var products = NoxResponseUnwrapper.UnwrapData<PaginatedList>(jsonResponse, jsonSerializerOptions: _jsonSerializerOptions);
 
             // Assert
             response.EnsureSuccessStatusCode();
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.NotNull(products);
+            Assert.NotNull(products.Items);
         }
 
         [Fact]

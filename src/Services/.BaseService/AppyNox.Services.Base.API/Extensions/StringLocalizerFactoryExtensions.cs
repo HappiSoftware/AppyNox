@@ -5,7 +5,7 @@ using Microsoft.Extensions.Localization;
 
 namespace AppyNox.Services.Base.API.Extensions
 {
-    public static class ServiceProviderExtensions
+    public static class StringLocalizerFactoryExtensions
     {
         #region [ Public Methods ]
 

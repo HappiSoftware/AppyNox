@@ -2,7 +2,7 @@
 
 <br>
 
-#### <a id="add-pfx-secrets-to-github-for-workflow" ></a> 1. Add pfx Secrets to Github for Workflow
+## Add pfx Secrets to Github for Workflow
 
 <details>
    <summary><b>Click to Expand</b></summary>
@@ -43,7 +43,7 @@ $fileContentBytes = Get-Content '{pfx-full-path}\appynox.pfx' -Encoding Byte
 <br>
 <br>
 
-#### <a id="add-appsetting-secrets-to-github-for-workflow" ></a> 2. Add appsetting Secrets to Github for Workflow
+## Add appsetting Secrets to Github for Workflow
 
 <details>
    <summary><b>Click to Expand</b></summary>
@@ -79,3 +79,41 @@ $fileContentBytes = Get-Content '{pfx-full-path}\appynox.pfx' -Encoding Byte
 ```
 
 </details>
+
+<br>
+<br>
+
+## Add .acl to Github for Workflow
+
+<details>
+   <summary><b>Click to Expand</b></summary>
+
+1.  **Extract The .pfx to Base64**
+
+```bash
+$fileContentBytes = Get-Content '.\redis.acl' -Encoding Byte
+[System.Convert]::ToBase64String($fileContentBytes) | Out-File '.\redis.txt'
+```
+
+<br>
+
+2. **Create Secrets In Repository**
+
+   Navigate to repository > `Secrets and variables` > Actions and create repository secret called `REDIS_ACL` then copy the content of ```redis.txt``` to the secret.
+
+<br>
+
+3. **Modify workflow**
+
+   Add the following content to workflow before docker build step.
+
+```yml
+- name: Create Redis ACL file
+  run: |
+    echo '${{ secrets.REDIS_ACL }}' | base64 --decode > redis.acl
+```
+
+</details>
+
+<br>
+<br>
