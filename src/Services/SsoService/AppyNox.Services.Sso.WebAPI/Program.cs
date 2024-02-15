@@ -28,6 +28,7 @@ using System.Runtime.CompilerServices;
 using System.Text.Json;
 
 [assembly: InternalsVisibleTo("AppyNox.Services.Sso.WebAPI.UnitTest")]
+[assembly: InternalsVisibleTo("AppyNox.Services.Sso.WebAPI.IntegrationTest")]
 var builder = WebApplication.CreateBuilder(args);
 
 #region [ Configuration Service ]

@@ -8,6 +8,7 @@ All notable changes to AppyNox will be documented in this file.
 
 ### Added
 - Pagination Data Should be Returned in Response ([#173](https://github.com/HappiSoftware/AppyNox/issues/173))
+- SSO Service Integration Tests ([#78](https://github.com/HappiSoftware/AppyNox/issues/78))
 
 
 ## [1.2.1](https://github.com/HappiSoftware/AppyNox/compare/v1.2.0...v1.2.1) - 2024.02.15

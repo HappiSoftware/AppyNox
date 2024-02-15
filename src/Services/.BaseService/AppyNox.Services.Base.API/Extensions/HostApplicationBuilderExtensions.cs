@@ -1,6 +1,6 @@
 ﻿using AppyNox.Services.Base.API.Configuration;
 using AppyNox.Services.Base.Application.Interfaces.Caches;
-using AppyNox.Services.Base.Infrastructure.Services.RedisCacheService;
+using AppyNox.Services.Base.Infrastructure.Services.CacheServices;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Configuration;

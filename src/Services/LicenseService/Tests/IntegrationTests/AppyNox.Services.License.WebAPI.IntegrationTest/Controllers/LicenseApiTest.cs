@@ -1,7 +1,7 @@
 ﻿using AppyNox.Services.Base.API.Constants;
-using AppyNox.Services.Base.API.Wrappers.Helpers;
 using AppyNox.Services.Base.Application.Dtos;
 using AppyNox.Services.Base.IntegrationTests.URIs;
+using AppyNox.Services.Base.IntegrationTests.Wrapper.Helpers;
 using AppyNox.Services.License.Application.Dtos.LicenseDtos.Models.Base;
 using AppyNox.Services.License.WebAPI.IntegrationTest.Fixtures;
 using System.Net;

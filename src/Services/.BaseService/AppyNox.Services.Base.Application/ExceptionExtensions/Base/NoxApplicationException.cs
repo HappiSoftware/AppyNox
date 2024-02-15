@@ -4,7 +4,7 @@ using AppyNox.Services.Base.Core.ExceptionExtensions.Base;
 
 namespace AppyNox.Services.Base.Application.ExceptionExtensions.Base
 {
-    #region [ NoxApplicationException Code]
+    #region [ NoxApplicationException Code ]
 
     internal enum NoxApplicationExceptionCode
     {
