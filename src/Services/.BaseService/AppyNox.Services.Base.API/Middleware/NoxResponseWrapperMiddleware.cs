@@ -10,167 +10,169 @@ using AppyNox.Services.Base.Core.Extensions;
 using Microsoft.AspNetCore.Http;
 using System.Text.Json;
 
-namespace AppyNox.Services.Base.API.Middleware
-{
-    public class NoxResponseWrapperMiddleware(RequestDelegate next,
+namespace AppyNox.Services.Base.API.Middleware;
+
+public class NoxResponseWrapperMiddleware(RequestDelegate next,
         INoxApiLogger logger,
         NoxResponseWrapperOptions options)
+{
+    #region [ Fields ]
+
+    private readonly RequestDelegate _next = next;
+
+    private readonly INoxApiLogger _logger = logger;
+
+    private readonly JsonSerializerOptions _jsonSerializeOptions = new()
     {
-        #region [ Fields ]
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+    };
 
-        private readonly RequestDelegate _next = next;
+    private readonly NoxResponseWrapperOptions _options = options;
 
-        private readonly INoxApiLogger _logger = logger;
+    #endregion
 
-        private readonly JsonSerializerOptions _jsonSerializeOptions = new()
+    #region [ Public Methods ]
+
+    public async Task Invoke(HttpContext context)
+    {
+        var originalBodyStream = context.Response.Body;
+
+        try
         {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-        };
+            using MemoryStream newBodyStream = new();
+            context.Response.Body = newBodyStream;
 
-        private readonly NoxResponseWrapperOptions _options = options;
+            await _next(context);
 
-        #endregion
+            context.Response.Body.Seek(0, SeekOrigin.Begin);
+            string bodyAsText = await new StreamReader(newBodyStream).ReadToEndAsync();
+            context.Response.Body.Seek(0, SeekOrigin.Begin);
 
-        #region [ Public Methods ]
-
-        public async Task Invoke(HttpContext context)
-        {
-            var originalBodyStream = context.Response.Body;
-
-            try
+            if (context.Response.StatusCode >= 200 && context.Response.StatusCode < 300)
             {
-                using MemoryStream newBodyStream = new();
-                context.Response.Body = newBodyStream;
+                var (isNoxResponse, noxApiResponse) = TryGetNoxApiResponse(bodyAsText);
 
-                await _next(context);
-
-                context.Response.Body.Seek(0, SeekOrigin.Begin);
-                string bodyAsText = await new StreamReader(newBodyStream).ReadToEndAsync();
-                context.Response.Body.Seek(0, SeekOrigin.Begin);
-
-                if (context.Response.StatusCode >= 200 && context.Response.StatusCode < 300)
+                if (isNoxResponse)
                 {
-                    var (isNoxResponse, noxApiResponse) = TryGetNoxApiResponse(bodyAsText);
-
-                    if (isNoxResponse)
+                    if (string.IsNullOrEmpty(noxApiResponse?.Message))
                     {
-                        if (string.IsNullOrEmpty(noxApiResponse?.Message))
-                        {
-                            noxApiResponse!.Message = NoxApiResourceService.RequestSuccessful.Format(context.Request.Method);
-                        }
-                        await WriteResponseAsync(context, originalBodyStream, noxApiResponse);
+                        noxApiResponse!.Message = NoxApiResourceService.RequestSuccessful.Format(context.Request.Method);
                     }
-                    else
-                    {
-                        object? result = DeserializeJson(bodyAsText, _jsonSerializeOptions);
-
-                        string message = NoxApiResourceService.RequestSuccessful.Format(context.Request.Method);
-                        NoxApiResponse wrappedResponse = new(result!, message, _options.ApiVersion, false, context.Response.StatusCode);
-                        await WriteResponseAsync(context, originalBodyStream, wrappedResponse);
-                    }
+                    await WriteResponseAsync(context, originalBodyStream, noxApiResponse);
                 }
                 else
                 {
-                    string apiError = WrapUnsuccessfulError(context.Response.StatusCode);
-                    string message = NoxApiResourceService.RequestUnsuccessful.Format(context.Request.Method);
-                    NoxApiResponse wrappedResponse = new(apiError, message, _options.ApiVersion, true, context.Response.StatusCode);
+                    object? resultBody = DeserializeJson(bodyAsText);
+                    NoxApiResultObject result = new(resultBody, null);
+                    string message = NoxApiResourceService.RequestSuccessful.Format(context.Request.Method);
+                    NoxApiResponse wrappedResponse = new(result, message, _options.ApiVersion, false, context.Response.StatusCode);
                     await WriteResponseAsync(context, originalBodyStream, wrappedResponse);
                 }
             }
-            catch (NoxException noxException) when (noxException is INoxAuthenticationException)
-            {
-                await HandleKnownExceptionAsync(context, noxException, originalBodyStream);
-            }
-            catch (NoxException noxException)
-            {
-                _logger.LogError(noxException, NoxApiResourceService.NoxExceptionThrown);
-                await HandleKnownExceptionAsync(context, noxException, originalBodyStream);
-            }
-            catch (Exception exception)
-            {
-                _logger.LogError(exception, NoxApiResourceService.UnknownExceptionThrown);
-                await HandleUnknownExceptionAsync(context, exception, originalBodyStream);
-            }
-        }
-
-        #endregion
-
-        #region [ Private Methods ]
-
-        private static object? DeserializeJson(string json, JsonSerializerOptions options)
-        {
-            if (string.IsNullOrEmpty(json))
-            {
-                return null;
-            }
-
-            // Check if the JSON is an object/array or a simple value
-            if (json.StartsWith("{") || json.StartsWith("["))
-            {
-                return JsonSerializer.Deserialize<object>(json, options);
-            }
             else
             {
-                return json.Trim('"');
+                string apiError = WrapUnsuccessfulError(context.Response.StatusCode);
+                string message = NoxApiResourceService.RequestUnsuccessful.Format(context.Request.Method);
+                NoxApiResultObject errorResponse = new(null, apiError);
+                NoxApiResponse wrappedResponse = new(errorResponse, message, _options.ApiVersion, true, context.Response.StatusCode);
+                await WriteResponseAsync(context, originalBodyStream, wrappedResponse);
             }
         }
-
-        private static string WrapUnsuccessfulError(int statusCode)
+        catch (NoxException noxException) when (noxException is INoxAuthenticationException)
         {
-            return statusCode switch
-            {
-                StatusCodes.Status400BadRequest => NoxApiResourceService.BadRequestWrapper,
-                StatusCodes.Status401Unauthorized => NoxApiResourceService.UnauthorizedWrapper,
-                StatusCodes.Status404NotFound => NoxApiResourceService.NotFoundWrapper,
-                StatusCodes.Status405MethodNotAllowed => NoxApiResourceService.MethodNotAllowedWrapper,
-                StatusCodes.Status415UnsupportedMediaType => NoxApiResourceService.UnsupportedMediaTypeWrapper,
-                _ => NoxApiResourceService.UnknownErrorWrapper
-            };
+            await HandleKnownExceptionAsync(context, noxException, originalBodyStream);
         }
-
-        private (bool, NoxApiResponse?) TryGetNoxApiResponse(string responseBody)
+        catch (NoxException noxException)
         {
-            try
-            {
-                NoxApiResponse? response = JsonSerializer.Deserialize<NoxApiResponse>(responseBody, _jsonSerializeOptions);
-                return (response != null && response.Result != null, response);
-            }
-            catch
-            {
-                // If deserialization fails, it's not a NoxApiResponse
-                return (false, null);
-            }
+            _logger.LogError(noxException, NoxApiResourceService.NoxExceptionThrown);
+            await HandleKnownExceptionAsync(context, noxException, originalBodyStream);
         }
-
-        private async Task HandleKnownExceptionAsync(HttpContext context, NoxException exception, Stream originalBodyStream)
+        catch (Exception exception)
         {
-            Guid correlationId = exception.CorrelationId;
-            object errorResponse = exception is FluentValidationException fluentException
-                ? new NoxApiValidationExceptionWrapObject(exception, correlationId, fluentException.ValidationResult.Errors.AsEnumerable())
-                : new NoxApiExceptionWrapObject(exception, correlationId);
-
-            NoxApiResponse wrappedResponse = new(errorResponse, NoxApiResourceService.NoxExceptionThrown, _options.ApiVersion, true, exception.StatusCode);
-            await WriteResponseAsync(context, originalBodyStream, wrappedResponse);
+            _logger.LogError(exception, NoxApiResourceService.UnknownExceptionThrown);
+            await HandleUnknownExceptionAsync(context, exception, originalBodyStream);
         }
-
-        private async Task HandleUnknownExceptionAsync(HttpContext context, Exception exception, Stream originalBodyStream)
-        {
-            var errorResponse = new { exception.Message, exception.StackTrace };
-            NoxApiResponse wrappedResponse = new(errorResponse, NoxApiResourceService.UnknownExceptionThrown, _options.ApiVersion, true, StatusCodes.Status500InternalServerError);
-            await WriteResponseAsync(context, originalBodyStream, wrappedResponse);
-        }
-
-        private async Task WriteResponseAsync(HttpContext context, Stream originalBodyStream, NoxApiResponse response)
-        {
-            response.Result = !response.HasError ? new NoxApiResultObject(response.Result, null) : new NoxApiResultObject(null, response.Result);
-            string responseContent = JsonSerializer.Serialize(response, _jsonSerializeOptions);
-
-            context.Response.ContentType = "application/json";
-            context.Response.StatusCode = response.Code ?? StatusCodes.Status200OK;
-            context.Response.Body = originalBodyStream;
-            await context.Response.WriteAsync(responseContent);
-        }
-
-        #endregion
     }
+
+    #endregion
+
+    #region [ Private Methods ]
+
+    private static string WrapUnsuccessfulError(int statusCode)
+    {
+        return statusCode switch
+        {
+            StatusCodes.Status400BadRequest => NoxApiResourceService.BadRequestWrapper,
+            StatusCodes.Status401Unauthorized => NoxApiResourceService.UnauthorizedWrapper,
+            StatusCodes.Status404NotFound => NoxApiResourceService.NotFoundWrapper,
+            StatusCodes.Status405MethodNotAllowed => NoxApiResourceService.MethodNotAllowedWrapper,
+            StatusCodes.Status415UnsupportedMediaType => NoxApiResourceService.UnsupportedMediaTypeWrapper,
+            _ => NoxApiResourceService.UnknownErrorWrapper
+        };
+    }
+
+    private object? DeserializeJson(string json)
+    {
+        if (string.IsNullOrEmpty(json))
+        {
+            return null;
+        }
+
+        // Check if the JSON is an object/array or a simple value
+        if (json.StartsWith("{") || json.StartsWith("["))
+        {
+            return JsonSerializer.Deserialize<object>(json, _jsonSerializeOptions);
+        }
+        else
+        {
+            return json.Trim('"');
+        }
+    }
+
+    private (bool, NoxApiResponse?) TryGetNoxApiResponse(string responseBody)
+    {
+        try
+        {
+            NoxApiResponsePOCO? response = JsonSerializer.Deserialize<NoxApiResponsePOCO>(responseBody, _jsonSerializeOptions);
+            return (response != null && response.Result != null, new NoxApiResponse(response!.Result!, response.Message, response.Version, response.HasError, response.Code));
+        }
+        catch
+        {
+            // If deserialization fails, it's not a NoxApiResponse
+            return (false, null);
+        }
+    }
+
+    private async Task HandleKnownExceptionAsync(HttpContext context, NoxException exception, Stream originalBodyStream)
+    {
+        Guid correlationId = exception.CorrelationId;
+        object errorResponseBody = exception is FluentValidationException fluentException
+            ? new NoxApiValidationExceptionWrapObject(exception, correlationId, fluentException.ValidationResult.Errors.AsEnumerable())
+            : new NoxApiExceptionWrapObject(exception, correlationId);
+
+        NoxApiResultObject errorResponse = new(null, errorResponseBody);
+        NoxApiResponse wrappedResponse = new(errorResponse, NoxApiResourceService.NoxExceptionThrown, _options.ApiVersion, true, exception.StatusCode);
+        await WriteResponseAsync(context, originalBodyStream, wrappedResponse);
+    }
+
+    private async Task HandleUnknownExceptionAsync(HttpContext context, Exception exception, Stream originalBodyStream)
+    {
+        var errorResponseBody = new { exception.Message, exception.StackTrace };
+        NoxApiResultObject errorResponse = new(null, errorResponseBody);
+        NoxApiResponse wrappedResponse = new(errorResponse, NoxApiResourceService.UnknownExceptionThrown, _options.ApiVersion, true, StatusCodes.Status500InternalServerError);
+        await WriteResponseAsync(context, originalBodyStream, wrappedResponse);
+    }
+
+    private async Task WriteResponseAsync(HttpContext context, Stream originalBodyStream, NoxApiResponse response)
+    {
+        context.Response.StatusCode = response.Code;
+        response.Code = 0; // will be ignored in response body
+        string responseContent = JsonSerializer.Serialize(response, _jsonSerializeOptions);
+
+        context.Response.ContentType = "application/json";
+        context.Response.Body = originalBodyStream;
+        await context.Response.WriteAsync(responseContent);
+    }
+
+    #endregion
 }
