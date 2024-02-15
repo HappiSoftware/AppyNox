@@ -80,51 +80,6 @@ namespace AppyNox.Services.License.WebAPI.IntegrationTest.Controllers
 
         [Fact]
         [Order(3)]
-        public async Task Create_ShouldAddNewLicense()
-        {
-            #region [ Create License ]
-
-            // Arrange
-            var requestUri = $"{_serviceURIs.LicenseServiceURI}/v{NoxVersions.v1_0}/licenses";
-            var uniqueCode = "ffff2";
-            var requestBody = new
-            {
-                code = uniqueCode,
-                description = "string",
-                licenseKey = "4547a28a-ce2c-4d84-b791-466d7aedd2bb",
-                expirationDate = "2025-01-03T20:30:02.928Z",
-                maxUsers = 2,
-                maxMacAddresses = 3,
-                productId = "9991492a-118c-4f20-ac8c-76410d57957c"
-            };
-            var jsonRequest = JsonSerializer.Serialize(requestBody);
-            var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
-
-            // Act
-            HttpResponseMessage response = await _client.PostAsync(requestUri, content);
-            string jsonResponse = await response.Content.ReadAsStringAsync();
-            (Guid id, LicenseSimpleDto createdObject) = NoxResponseUnwrapper.UnwrapDataWithId<LicenseSimpleDto>(jsonResponse, _jsonSerializerOptions);
-
-            // Assert
-            response.EnsureSuccessStatusCode();
-            Assert.Equal(HttpStatusCode.Created, response.StatusCode);
-            Assert.NotNull(createdObject);
-
-            #endregion
-
-            #region [ Get Licenses ]
-
-            // Act
-            var license = _licenseApiTestFixture.DbContext.Licenses.SingleOrDefault(x => x.Id == id);
-
-            // Assert
-            Assert.NotNull(license);
-
-            #endregion
-        }
-
-        [Fact]
-        [Order(4)]
         public async Task Update_ShouldUpdateEntity()
         {
             #region [ Get License ]
@@ -185,6 +140,51 @@ namespace AppyNox.Services.License.WebAPI.IntegrationTest.Controllers
             Assert.Equal(newDescription, license.Description);
             Assert.Equal(newMaxUsers, license.MaxUsers);
             Assert.Equal(newmaxMacAddresses, license.MaxMacAddresses);
+
+            #endregion
+        }
+
+        [Fact]
+        [Order(4)]
+        public async Task Create_ShouldAddNewLicense()
+        {
+            #region [ Create License ]
+
+            // Arrange
+            var requestUri = $"{_serviceURIs.LicenseServiceURI}/v{NoxVersions.v1_0}/licenses";
+            var uniqueCode = "ffff2";
+            var requestBody = new
+            {
+                code = uniqueCode,
+                description = "string",
+                licenseKey = "4547a28a-ce2c-4d84-b791-466d7aedd2bb",
+                expirationDate = "2025-01-03T20:30:02.928Z",
+                maxUsers = 2,
+                maxMacAddresses = 3,
+                productId = "9991492a-118c-4f20-ac8c-76410d57957c"
+            };
+            var jsonRequest = JsonSerializer.Serialize(requestBody);
+            var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+
+            // Act
+            HttpResponseMessage response = await _client.PostAsync(requestUri, content);
+            string jsonResponse = await response.Content.ReadAsStringAsync();
+            (Guid id, LicenseSimpleDto createdObject) = NoxResponseUnwrapper.UnwrapDataWithId<LicenseSimpleDto>(jsonResponse, _jsonSerializerOptions);
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+            Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+            Assert.NotNull(createdObject);
+
+            #endregion
+
+            #region [ Get Licenses ]
+
+            // Act
+            var license = _licenseApiTestFixture.DbContext.Licenses.SingleOrDefault(x => x.Id == id);
+
+            // Assert
+            Assert.NotNull(license);
 
             #endregion
         }
