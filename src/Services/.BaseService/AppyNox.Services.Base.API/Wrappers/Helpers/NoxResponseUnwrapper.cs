@@ -7,6 +7,12 @@ namespace AppyNox.Services.Base.API.Wrappers.Helpers
     {
         #region [ Public Methods ]
 
+        public static NoxApiResponse UnwrapResponse(string jsonResponse, JsonSerializerOptions? jsonSerializerOptions = null)
+        {
+            return JsonSerializer.Deserialize<NoxApiResponse>(jsonResponse, jsonSerializerOptions)
+                ?? throw new NoxApiException("Response was null", (int)NoxApiExceptionCode.DevelopmentException);
+        }
+
         public static T UnwrapData<T>(string jsonResponse, JsonSerializerOptions? jsonSerializerOptions = null)
         {
             var dataElement = ExtractDataElement(jsonResponse, jsonSerializerOptions);
@@ -30,9 +36,9 @@ namespace AppyNox.Services.Base.API.Wrappers.Helpers
 
         private static JsonElement ExtractDataElement(string jsonResponse, JsonSerializerOptions? jsonSerializerOptions = null)
         {
-            var apiResponse = JsonSerializer.Deserialize<NoxApiResponse>(jsonResponse, jsonSerializerOptions);
-            if (apiResponse?.Result is JsonElement resultElement &&
-                resultElement.TryGetProperty("data", out JsonElement dataElement))
+            var apiResponse = JsonSerializer.Deserialize<NoxApiResponsePOCO>(jsonResponse, jsonSerializerOptions);
+            if (apiResponse?.Result != null &&
+                apiResponse.Result.Data is JsonElement dataElement)
             {
                 return dataElement;
             }

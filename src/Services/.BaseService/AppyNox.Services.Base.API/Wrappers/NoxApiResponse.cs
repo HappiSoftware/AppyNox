@@ -1,29 +1,49 @@
-﻿using System.Text.Json.Serialization;
+﻿using AppyNox.Services.Base.API.Wrappers.Results;
+using System.Net;
+using System.Text.Json.Serialization;
 
-namespace AppyNox.Services.Base.API.Wrappers
+namespace AppyNox.Services.Base.API.Wrappers;
+
+public class NoxApiResponse
 {
-    public class NoxApiResponse(object result, string message = "", string version = "1.0", bool hasError = false, int? code = null)
+    #region [ Properties ]
+
+    [JsonPropertyName("message")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public string Message { get; set; }
+
+    [JsonPropertyName("version")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public string Version { get; set; }
+
+    [JsonPropertyName("hasError")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public bool HasError { get; set; }
+
+    [JsonPropertyName("code")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public int Code { get; internal set; }
+
+    [JsonPropertyName("result")]
+    public NoxApiResultObject Result { get; set; }
+
+    #endregion
+
+    #region [ Constructors ]
+
+    public NoxApiResponse(object result, string message = "", string version = "1.0", bool hasError = false, int code = (int)HttpStatusCode.OK)
+        : this(new NoxApiResultObject(result, null), message, version, hasError, code)
     {
-        #region [ Properties ]
-
-        [JsonPropertyName("message")]
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public string Message { get; set; } = message;
-
-        [JsonPropertyName("version")]
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public string Version { get; set; } = version;
-
-        [JsonPropertyName("hasError")]
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public bool HasError { get; set; } = hasError;
-
-        [JsonIgnore]
-        public int? Code { get; } = code;
-
-        [JsonPropertyName("result")]
-        public object Result { get; set; } = result;
-
-        #endregion
     }
+
+    internal NoxApiResponse(NoxApiResultObject result, string message = "", string version = "1.0", bool hasError = false, int code = (int)HttpStatusCode.OK)
+    {
+        Result = result;
+        Message = message;
+        Version = version;
+        HasError = hasError;
+        Code = code;
+    }
+
+    #endregion
 }
