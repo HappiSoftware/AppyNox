@@ -1,10 +1,15 @@
 # Changelog
 All notable changes to AppyNox will be documented in this file.
 
-## [1.3.0](https://github.com/HappiSoftware/AppyNox/compare/v1.2.0...v1.3.0) - NOT RELEASED
+## [1.4.0](https://github.com/HappiSoftware/AppyNox/compare/v1.3.0...v1.4.0) - NOT RELEASED
+
+
+## [1.3.0](https://github.com/HappiSoftware/AppyNox/compare/v1.2.0...v1.3.0) - 2024.02.16
 ### Fixed
 - NoxJwtAuthenticationHandler Should Validate Token Time ([#179](https://github.com/HappiSoftware/AppyNox/issues/179))
 - Failed C.I. Runs ([#186](https://github.com/HappiSoftware/AppyNox/issues/186))
+- Bug Report: Generic CQRS/Repository Methods Incompatibility with DDD Classes and Deep Navigation Property Fetching Issues ([#195](https://github.com/HappiSoftware/AppyNox/issues/195))
+- Bug Report: NoxApiResponse Not Setting Response Code ([#192](https://github.com/HappiSoftware/AppyNox/issues/192))
 
 ### Added
 - Pagination Data Should be Returned in Response ([#173](https://github.com/HappiSoftware/AppyNox/issues/173))

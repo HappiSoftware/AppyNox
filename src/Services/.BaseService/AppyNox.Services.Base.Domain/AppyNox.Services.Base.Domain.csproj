@@ -2,7 +2,7 @@
 	<PropertyGroup>
 		<TargetFramework>net8.0</TargetFramework>
 		<PackageId>NoxDomain</PackageId>
-		<Version>1.2.0</Version>
+		<Version>1.3.0</Version>
 		<Authors>Behlül UYSAL, Yasin DERE</Authors>
 		<Company>HappiSoftware</Company>
 		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
@@ -12,7 +12,7 @@
 		<Description>
 			The NoxDomain package provides foundational services and utilities for Nox MicroService Domain Layer.
 		</Description>
-		<PackageReleaseNotes>https://github.com/HappiSoftware/AppyNox/releases/tag/v1.2.0</PackageReleaseNotes>
+		<PackageReleaseNotes>https://github.com/HappiSoftware/AppyNox/releases/tag/v1.3.0</PackageReleaseNotes>
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
 		<PackageIcon>icon.png</PackageIcon>
 	</PropertyGroup>
