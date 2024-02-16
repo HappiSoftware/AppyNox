@@ -1,12 +1,11 @@
-﻿using AppyNox.Services.Sso.Application.Interfaces.Authentication;
+﻿using AppyNox.Services.Base.API.ExceptionExtensions.Base;
+using AppyNox.Services.Base.Core.Common;
+using AppyNox.Services.Sso.Application.Interfaces.Authentication;
 using AppyNox.Services.Sso.Domain.Entities;
 using AppyNox.Services.Sso.WebAPI.Configuration;
 using AppyNox.Services.Sso.WebAPI.ExceptionExtensions;
 using AppyNox.Services.Sso.WebAPI.ExceptionExtensions.Base;
 using AppyNox.Services.Sso.WebAPI.Localization;
-using AppyNox.Services.Base.API.ExceptionExtensions.Base;
-using AppyNox.Services.Base.API.Localization;
-using AppyNox.Services.Base.Core.Common;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;

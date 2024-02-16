@@ -1,7 +1,7 @@
 ﻿using AppyNox.Services.Base.Application.Interfaces.Caches;
 using StackExchange.Redis;
 
-namespace AppyNox.Services.Base.Infrastructure.Services.RedisCacheService;
+namespace AppyNox.Services.Base.Infrastructure.Services.CacheServices;
 
 public class RedisCacheService : ICacheService
 {

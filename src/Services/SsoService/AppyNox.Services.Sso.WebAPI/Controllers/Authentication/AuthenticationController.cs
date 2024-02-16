@@ -21,7 +21,7 @@ namespace AppyNox.Services.Sso.WebAPI.Controllers.Authentication
     [Route("api/v{version:apiVersion}/[controller]")]
     [AllowAnonymous]
     public class AuthenticationController(ICustomUserManager customUserManager,
-        ICustomTokenManager customTokenManager, IValidator<LoginDto> loginDtoValidator) : Controller
+        ICustomTokenManager customTokenManager, IValidator<LoginDto> loginDtoValidator, IValidator<RefreshTokenDto> refreshTokenDtoValidator) : Controller
     {
         #region [ Fields ]
 
@@ -30,6 +30,8 @@ namespace AppyNox.Services.Sso.WebAPI.Controllers.Authentication
         private readonly ICustomTokenManager _customTokenManager = customTokenManager;
 
         private readonly IValidator<LoginDto> _loginDtoValidator = loginDtoValidator;
+
+        private readonly IValidator<RefreshTokenDto> _refreshTokenDtoValidator = refreshTokenDtoValidator;
 
         #endregion
 
@@ -51,7 +53,7 @@ namespace AppyNox.Services.Sso.WebAPI.Controllers.Authentication
             {
                 throw new NoxSsoApiException(NoxSsoApiResourceService.SignInError, (int)NoxSsoApiExceptionCode.SignInError, (int)HttpStatusCode.Unauthorized);
             }
-            if (jwtToken == "I am a teapot")
+            if (jwtToken.Equals(NoxSsoApiResourceService.Teapot))
             {
                 throw new NoxSsoApiException(NoxSsoApiResourceService.Teapot, (int)NoxSsoApiExceptionCode.Teapot, (int)HttpStatusCode.Locked);
             }
@@ -63,12 +65,19 @@ namespace AppyNox.Services.Sso.WebAPI.Controllers.Authentication
         [Route("verify-token/{token}")]
         public async Task<IActionResult> Verify(string token, string audience)
         {
-            return Ok(await _customTokenManager.VerifyToken(token, audience));
+            await _customTokenManager.VerifyToken(token, audience);
+            return NoContent();
         }
 
         [HttpPost("refresh")]
         public async Task<IActionResult> Refresh([FromBody] RefreshTokenDto model)
         {
+            var validationResult = await _refreshTokenDtoValidator.ValidateAsync(model);
+            if (!validationResult.IsValid)
+            {
+                throw new FluentValidationException(typeof(RefreshTokenDto), validationResult);
+            }
+
             try
             {
                 await _customTokenManager.VerifyToken(model.Token, model.Audience);
@@ -87,7 +96,7 @@ namespace AppyNox.Services.Sso.WebAPI.Controllers.Authentication
 
             if (!_customTokenManager.VerifyRefreshToken(model.RefreshToken, storedRefreshToken))
             {
-                throw new NoxSsoApiException(NoxSsoApiResourceService.RefreshTokenInvalid, (int)NoxSsoApiExceptionCode.RefreshTokenInvalid, (int)HttpStatusCode.Forbidden);
+                throw new NoxSsoApiException(NoxSsoApiResourceService.RefreshTokenInvalid, (int)NoxSsoApiExceptionCode.RefreshTokenInvalid, (int)HttpStatusCode.Unauthorized);
             }
 
             var newJwtToken = await _customTokenManager.CreateToken(userId, model.Audience);

@@ -1,12 +1,13 @@
 using AppyNox.Services.Base.API.Constants;
-using AppyNox.Services.Base.API.Wrappers.Helpers;
 using AppyNox.Services.Base.Application.Dtos;
 using AppyNox.Services.Base.IntegrationTests.URIs;
+using AppyNox.Services.Base.IntegrationTests.Wrapper.Helpers;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
 using AppyNox.Services.Coupon.WebAPI.IntegrationTest.Fixtures;
 using System.Net;
 using System.Text;
 using System.Text.Json;
+using Xunit.Extensions.Ordering;
 
 namespace AppyNox.Services.Coupon.WebAPI.IntegrationTest
 {
@@ -27,6 +28,7 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTest
         #region [ Public Methods ]
 
         [Fact]
+        [Order(1)]
         public async Task GetAll_ShouldReturnSuccessStatusCode()
         {
             // Act
@@ -43,6 +45,7 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTest
         }
 
         [Fact]
+        [Order(2)]
         public async Task GetById_ShouldReturnSuccessStatusCode()
         {
             #region [ Get Coupon ]
@@ -75,48 +78,7 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTest
         }
 
         [Fact]
-        public async Task Create_ShouldAddNewCoupon()
-        {
-            #region [ Create Coupon ]
-
-            // Arrange
-            var requestUri = $"{_serviceURIs.CouponServiceURI}/v{NoxVersions.v1_0}/coupons";
-            var uniqueCode = "ffff2";
-            var requestBody = new
-            {
-                code = uniqueCode,
-                discountAmount = 2,
-                minAmount = 12,
-                description = "string",
-                couponDetailEntityId = "ec80532f-58f0-4690-b40c-2133b067d5f2"
-            };
-            var jsonRequest = JsonSerializer.Serialize(requestBody);
-            var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
-
-            // Act
-            HttpResponseMessage response = await _client.PostAsync(requestUri, content);
-            string jsonResponse = await response.Content.ReadAsStringAsync();
-            (Guid id, CouponSimpleDto createdObject) = NoxResponseUnwrapper.UnwrapDataWithId<CouponSimpleDto>(jsonResponse, _jsonSerializerOptions);
-
-            // Assert
-            response.EnsureSuccessStatusCode();
-            Assert.Equal(HttpStatusCode.Created, response.StatusCode);
-            Assert.NotNull(createdObject);
-
-            #endregion
-
-            #region [ Get Coupons ]
-
-            // Act
-            var coupon = _couponApiTestFixture.DbContext.Coupons.SingleOrDefault(x => x.Id == id);
-
-            // Assert
-            Assert.NotNull(coupon);
-
-            #endregion
-        }
-
-        [Fact]
+        [Order(3)]
         public async Task Update_ShouldUpdateEntity()
         {
             #region [ Get Coupon ]
@@ -175,6 +137,50 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTest
         }
 
         [Fact]
+        [Order(4)]
+        public async Task Create_ShouldAddNewCoupon()
+        {
+            #region [ Create Coupon ]
+
+            // Arrange
+            var requestUri = $"{_serviceURIs.CouponServiceURI}/v{NoxVersions.v1_0}/coupons";
+            var uniqueCode = "ffff2";
+            var requestBody = new
+            {
+                code = uniqueCode,
+                discountAmount = 2,
+                minAmount = 12,
+                description = "string",
+                couponDetailEntityId = "ec80532f-58f0-4690-b40c-2133b067d5f2"
+            };
+            var jsonRequest = JsonSerializer.Serialize(requestBody);
+            var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+
+            // Act
+            HttpResponseMessage response = await _client.PostAsync(requestUri, content);
+            string jsonResponse = await response.Content.ReadAsStringAsync();
+            (Guid id, CouponSimpleDto createdObject) = NoxResponseUnwrapper.UnwrapDataWithId<CouponSimpleDto>(jsonResponse, _jsonSerializerOptions);
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+            Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+            Assert.NotNull(createdObject);
+
+            #endregion
+
+            #region [ Get Coupons ]
+
+            // Act
+            var coupon = _couponApiTestFixture.DbContext.Coupons.SingleOrDefault(x => x.Id == id);
+
+            // Assert
+            Assert.NotNull(coupon);
+
+            #endregion
+        }
+
+        [Fact]
+        [Order(5)]
         public async Task Delete_ShouldDeleteEntity()
         {
             #region [ Get Coupon ]

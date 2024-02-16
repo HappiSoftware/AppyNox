@@ -36,13 +36,22 @@ public class NoxApiResponse
     {
     }
 
-    internal NoxApiResponse(NoxApiResultObject result, string message = "", string version = "1.0", bool hasError = false, int code = (int)HttpStatusCode.OK)
+    internal NoxApiResponse(NoxApiResultObject result, string message, string version, bool hasError, int code)
     {
         Result = result;
         Message = message;
         Version = version;
         HasError = hasError;
         Code = code;
+    }
+
+    internal NoxApiResponse(NoxApiResponsePOCO noxApiResponsePOCO)
+    {
+        Result = noxApiResponsePOCO.Result;
+        Message = noxApiResponsePOCO.Message;
+        Version = noxApiResponsePOCO.Version;
+        HasError = noxApiResponsePOCO.HasError;
+        Code = noxApiResponsePOCO.Code;
     }
 
     #endregion

@@ -1,5 +1,6 @@
 ﻿using AppyNox.Services.Base.Core.ExceptionExtensions.Base;
 using FluentValidation.Results;
+using System.Text.Json.Serialization;
 
 namespace AppyNox.Services.Base.API.Wrappers;
 
@@ -11,6 +12,7 @@ internal class NoxApiValidationExceptionWrapObject(NoxException error, Guid corr
 {
     #region [ Properties ]
 
+    [JsonPropertyOrder(6)]
     public IEnumerable<ValidationFailure> ValidationErrors { get; set; } = validationErrors;
 
     #endregion

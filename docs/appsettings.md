@@ -532,7 +532,7 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
       {
         "DownstreamPathTemplate": "/health",
         "UpstreamPathTemplate": "/health",
-        "UpstreamHttpMethod": ["Get"],
+        "UpstreamHttpMethod": [ "Get" ],
         "DownstreamScheme": "https",
         "DownstreamHostAndPorts": [
           {
@@ -550,12 +550,12 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
         "DownstreamScheme": "http",
 
         "UpstreamPathTemplate": "/sso-service/{everything}",
-        "UpstreamHttpMethod": ["Get", "Post", "Delete", "Put"],
+        "UpstreamHttpMethod": [ "Get", "Post", "Delete", "Put" ],
         "UpstreamScheme": "https",
 
         "RateLimitOptions": {
           "ClientWhitelist": [],
-          "EnableRateLimiting": true,
+          "EnableRateLimiting": false,
           "Period": "3s",
           "PeriodTimespan": 3,
           "Limit": 3
@@ -569,12 +569,12 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
         "DownstreamScheme": "http",
 
         "UpstreamPathTemplate": "/coupon-service/{everything}",
-        "UpstreamHttpMethod": ["Get", "Post", "Delete", "Put"],
+        "UpstreamHttpMethod": [ "Get", "Post", "Delete", "Put" ],
         "UpstreamScheme": "https",
 
         "RateLimitOptions": {
           "ClientWhitelist": [],
-          "EnableRateLimiting": true,
+          "EnableRateLimiting": false,
           "Period": "3s",
           "PeriodTimespan": 3,
           "Limit": 5
@@ -588,12 +588,12 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
         "DownstreamScheme": "http",
 
         "UpstreamPathTemplate": "/license-service/{everything}",
-        "UpstreamHttpMethod": ["Get", "Post", "Delete", "Put"],
+        "UpstreamHttpMethod": [ "Get", "Post", "Delete", "Put" ],
         "UpstreamScheme": "https",
 
         "RateLimitOptions": {
           "ClientWhitelist": [],
-          "EnableRateLimiting": true,
+          "EnableRateLimiting": false,
           "Period": "3s",
           "PeriodTimespan": 3,
           "Limit": 5

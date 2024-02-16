@@ -74,6 +74,7 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTest.Fixtures
                         "appynox-consul",
                         "appynox-gateway-ocelotgateway",
                         "appynox-coupon-db",
+                        "appynox-redis",
                         "appynox-services-coupon-webapi",
                         "appynox-sso-db",
                         "appynox-sso-saga-db",

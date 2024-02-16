@@ -1,4 +1,5 @@
 ﻿using AppyNox.Services.Base.Core.ExceptionExtensions.Base;
+using System.Text.Json.Serialization;
 
 namespace AppyNox.Services.Base.API.Wrappers;
 
@@ -9,14 +10,19 @@ internal class NoxApiExceptionWrapObject(NoxException error, Guid correlationId)
 {
     #region [ Properties ]
 
-    public int ExceptionCode { get; set; } = error.ExceptionCode;
-
+    [JsonPropertyOrder(1)]
     public string Title { get; set; } = $"{error.Service} {error.Layer}";
 
+    [JsonPropertyOrder(2)]
+    public int ExceptionCode { get; set; } = error.ExceptionCode;
+
+    [JsonPropertyOrder(3)]
     public string Message { get; set; } = error.Message;
 
+    [JsonPropertyOrder(4)]
     public Guid CorrelationId { get; set; } = correlationId;
 
+    [JsonPropertyOrder(5)]
     public NoxSimpleExceptionData? InnerException { get; set; } = error.InnerException != null ? new NoxSimpleExceptionData(error.InnerException) : null;
 
     #endregion

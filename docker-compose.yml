@@ -80,6 +80,7 @@ services:
       - appynox-consul
       - appynox-sso-db
       - appynox-sso-saga-db
+      - appynox-redis
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://+:7001
@@ -105,6 +106,7 @@ services:
     depends_on:
       - appynox-consul
       - appynox-coupon-db
+      - appynox-redis
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://+:7002
@@ -130,6 +132,7 @@ services:
     depends_on:
       - appynox-consul
       - appynox-license-db
+      - appynox-redis
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://+:7003

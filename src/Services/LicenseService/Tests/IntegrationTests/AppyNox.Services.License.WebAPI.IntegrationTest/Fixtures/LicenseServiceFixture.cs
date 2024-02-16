@@ -65,7 +65,7 @@ namespace AppyNox.Services.License.WebAPI.IntegrationTest.Fixtures
             return new DockerComposeCompositeService(DockerHost,
                 new Ductus.FluentDocker.Model.Compose.DockerComposeConfig
                 {
-                    ComposeFilePath = new List<string> { file, fileStaging },
+                    ComposeFilePath = [file, fileStaging],
                     ForceRecreate = true,
                     RemoveOrphans = true,
                     StopOnDispose = true,
@@ -75,10 +75,11 @@ namespace AppyNox.Services.License.WebAPI.IntegrationTest.Fixtures
                         "appynox-consul",
                         "appynox-gateway-ocelotgateway",
                         "appynox-license-db",
+                        "appynox-redis",
                         "appynox-services-license-webapi",
                         "appynox-sso-db",
-                        "appynox-services-sso-webapi",
-                        "appynox-redis"
+                        "appynox-sso-saga-db",
+                        "appynox-services-sso-webapi"
                     ],
                 });
         }

@@ -1,0 +1,46 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" Version="6.0.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+    <PackageReference Include="xunit" Version="2.5.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.5.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+	<ItemGroup>
+		<Content Include="..\..\..\..\.BaseService\Tests\IntegrationTests\AppyNox.Services.Base.IntegrationTests\serviceuris.json" Link="serviceuris.json" />
+		<Content Include="..\..\..\AppyNox.Services.Sso.WebAPI\appsettings.Staging.json" Link="appsettings.Staging.json" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="..\..\..\..\..\..\docker-compose.Staging.yml" Link="docker-compose.Staging.yml">
+			<DependentUpon>docker-compose.yml</DependentUpon>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Include="..\..\..\..\..\..\docker-compose.yml" Link="docker-compose.yml">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Include="..\..\..\..\..\Gateways\AppyNox.Gateway.OcelotGateway\ssl\appynox.pfx" Link="ssl\appynox.pfx">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\.BaseService\Tests\IntegrationTests\AppyNox.Services.Base.IntegrationTests\AppyNox.Services.Base.IntegrationTests.csproj" />
+    <ProjectReference Include="..\..\..\AppyNox.Services.Sso.WebAPI\AppyNox.Services.Sso.WebAPI.csproj" />
+  </ItemGroup>
+
+</Project>

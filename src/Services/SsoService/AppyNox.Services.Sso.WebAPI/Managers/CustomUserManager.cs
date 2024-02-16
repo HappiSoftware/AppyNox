@@ -48,7 +48,7 @@ namespace AppyNox.Services.Sso.WebAPI.Managers
             var loggedUser = await _userManager.FindByNameAsync(user.UserName);
             if (loggedUser == null || string.IsNullOrEmpty(loggedUser.UserName))
             {
-                throw new NoxSsoApiException(NoxSsoApiResourceService.RefreshTokenNotFound, statusCode: (int)HttpStatusCode.BadRequest);
+                throw new NoxSsoApiException(NoxSsoApiResourceService.WrongCredentials, (int)NoxSsoApiExceptionCode.WrongCredentials, statusCode: (int)HttpStatusCode.BadRequest);
             }
 
             //validate credentials !! 3. parameter is for rememberme
@@ -65,7 +65,7 @@ namespace AppyNox.Services.Sso.WebAPI.Managers
 
             // Account is locked
             if (result.IsLockedOut) throw new NoxSsoApiException(NoxSsoApiResourceService.Teapot, statusCode: (int)HttpStatusCode.Locked);
-            else throw new NoxSsoApiException(NoxSsoApiResourceService.WrongCredentials, statusCode: (int)HttpStatusCode.BadRequest);
+            else throw new NoxSsoApiException(NoxSsoApiResourceService.WrongCredentials, (int)NoxSsoApiExceptionCode.WrongCredentials, (int)HttpStatusCode.BadRequest);
         }
 
         /// <summary>
@@ -103,8 +103,7 @@ namespace AppyNox.Services.Sso.WebAPI.Managers
                 var user = await _userManager.FindByIdAsync(userId)
                     ?? throw new NoxSsoApiException(NoxSsoApiResourceService.WrongCredentials, (int)NoxSsoApiExceptionCode.WrongCredentials, (int)HttpStatusCode.BadRequest);
 
-                var refreshToken = await _userManager.GetAuthenticationTokenAsync(user, "RefreshTokenProvider", "RefreshToken");
-                return refreshToken
+                return await _userManager.GetAuthenticationTokenAsync(user, "RefreshTokenProvider", "RefreshToken")
                     ?? throw new NoxSsoApiException(NoxSsoApiResourceService.RefreshTokenNotFound, (int)NoxSsoApiExceptionCode.RefreshTokenNotFound, (int)HttpStatusCode.BadRequest);
             }
             catch (Exception)

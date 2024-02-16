@@ -1,5 +1,5 @@
 ﻿using AppyNox.Services.Base.Infrastructure.Localization;
-using AppyNox.Services.Base.Infrastructure.Services.RedisCacheService;
+using AppyNox.Services.Base.Infrastructure.Services.CacheServices;
 using AppyNox.Services.Base.Infrastructure.UnitTests.Stubs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;

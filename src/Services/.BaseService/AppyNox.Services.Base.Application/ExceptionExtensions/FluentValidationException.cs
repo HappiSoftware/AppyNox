@@ -1,8 +1,8 @@
 ﻿using AppyNox.Services.Base.Application.ExceptionExtensions.Base;
 using AppyNox.Services.Base.Application.Localization;
+using AppyNox.Services.Base.Core.Extensions;
 using FluentValidation.Results;
 using System.Net;
-using AppyNox.Services.Base.Core.Extensions;
 
 namespace AppyNox.Services.Base.Application.ExceptionExtensions
 {
@@ -13,7 +13,7 @@ namespace AppyNox.Services.Base.Application.ExceptionExtensions
         : NoxApplicationException(
             message: NoxApplicationResourceService.FluentValidationFailed.Format(dtoType),
             exceptionCode: (int)NoxApplicationExceptionCode.FluentValidationError,
-            statusCode: (int)HttpStatusCode.BadRequest)
+            statusCode: (int)HttpStatusCode.UnprocessableContent)
     {
         #region [ Properties ]
 
