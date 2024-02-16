@@ -22,8 +22,9 @@ namespace AppyNox.Services.License.Infrastructure.Data.Configurations
 
             builder.HasKey(c => c.Id);
 
-            builder.Property(c => c.Id)
-                .ValueGeneratedOnAdd();
+            builder.Property(o => o.Id).HasConversion(
+            licenseId => licenseId.Value,
+            value => new LicenseId(value));
 
             builder.HasMany(l => l.ApplicationUserLicenses)
                 .WithOne(aul => aul.License)
@@ -50,7 +51,7 @@ namespace AppyNox.Services.License.Infrastructure.Data.Configurations
             builder.HasData(
                 new LicenseEntity
                 {
-                    Id = _licenseId,
+                    Id = new LicenseId(_licenseId),
                     Code = "LK001",
                     Description = "License Description",
                     LicenseKey = "7f033381-fbf7-4929-b5f7-c64261b20bf3",
@@ -58,7 +59,7 @@ namespace AppyNox.Services.License.Infrastructure.Data.Configurations
                     ExpirationDate = DateTime.UtcNow.AddDays(365),
                     MaxUsers = 3,
                     MaxMacAddresses = 1,
-                    ProductId = _productId
+                    ProductId = new ProductId(_productId)
                 });
 
             #endregion

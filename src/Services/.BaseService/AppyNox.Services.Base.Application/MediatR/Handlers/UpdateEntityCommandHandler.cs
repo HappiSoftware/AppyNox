@@ -10,11 +10,13 @@ using AppyNox.Services.Base.Domain;
 using AppyNox.Services.Base.Domain.Interfaces;
 using AutoMapper;
 using MediatR;
+using System.Dynamic;
+using System.Security.Cryptography;
 using System.Text.Json;
 
 namespace AppyNox.Services.Base.Application.MediatR.Handlers
 {
-    public class UpdateEntityCommandHandler<TEntity>(
+    public class UpdateEntityCommandHandler<TEntity, TId>(
         IGenericRepositoryBase<TEntity> repository,
         IMapper mapper,
         IDtoMappingRegistryBase dtoMappingRegistry,
@@ -22,12 +24,13 @@ namespace AppyNox.Services.Base.Application.MediatR.Handlers
         INoxApplicationLogger logger,
         IUnitOfWorkBase unitOfWork)
         : BaseHandler<TEntity>(repository, mapper, dtoMappingRegistry, serviceProvider, logger, unitOfWork),
-        IRequestHandler<UpdateEntityCommand<TEntity>>
+        IRequestHandler<UpdateEntityCommand<TEntity, TId>>
         where TEntity : class, IEntityTypeId
+        where TId : IHasGuidId
     {
         #region [ Public Methods ]
 
-        public async Task Handle(UpdateEntityCommand<TEntity> request, CancellationToken cancellationToken)
+        public async Task Handle(UpdateEntityCommand<TEntity, TId> request, CancellationToken cancellationToken)
         {
             try
             {
@@ -35,8 +38,7 @@ namespace AppyNox.Services.Base.Application.MediatR.Handlers
 
                 Type dtoType = DtoMappingRegistry.GetDtoType(DtoLevelMappingTypes.Update, typeof(TEntity), request.DetailLevel);
                 dynamic dtoObject = JsonSerializer.Deserialize(request.Dto, dtoType, options: JsonSerializerOptions);
-
-                Logger.LogInformation($"Updating entity ID: '{request.Id}' type '{typeof(TEntity).Name}'");
+                Logger.LogInformation($"Updating entity ID: '{request.Id.GetGuidValue()}' type '{typeof(TEntity).Name}'");
 
                 #endregion
 
@@ -57,7 +59,7 @@ namespace AppyNox.Services.Base.Application.MediatR.Handlers
             }
             catch (Exception ex)
             {
-                Logger.LogError(ex, $"Error updating entity of type '{typeof(TEntity).Name}' with ID: {request.Id}.");
+                Logger.LogError(ex, $"Error updating entity of type '{typeof(TEntity).Name}' with ID: {request.Id.GetGuidValue()}.");
                 throw new NoxApplicationException(ex, (int)NoxApplicationExceptionCode.GenericUpdateCommandError);
             }
         }

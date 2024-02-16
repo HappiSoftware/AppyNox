@@ -20,8 +20,9 @@ namespace AppyNox.Services.License.Infrastructure.Data.Configurations
 
             builder.HasKey(c => c.Id);
 
-            builder.Property(c => c.Id)
-                .ValueGeneratedOnAdd();
+            builder.Property(o => o.Id).HasConversion(
+            productId => productId.Value,
+            value => new ProductId(value));
 
             builder.HasMany(p => p.Licenses)
                 .WithOne(l => l.Product)
@@ -39,7 +40,7 @@ namespace AppyNox.Services.License.Infrastructure.Data.Configurations
             builder.HasData(
                 new ProductEntity
                 {
-                    Id = _productId,
+                    Id = new ProductId(_productId),
                     Code = "PROD1",
                     Name = "AppyNox"
                 });

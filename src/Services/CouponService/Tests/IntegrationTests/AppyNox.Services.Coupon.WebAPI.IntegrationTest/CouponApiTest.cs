@@ -3,7 +3,10 @@ using AppyNox.Services.Base.Application.Dtos;
 using AppyNox.Services.Base.IntegrationTests.URIs;
 using AppyNox.Services.Base.IntegrationTests.Wrapper.Helpers;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
+using AppyNox.Services.Coupon.Domain.Entities;
 using AppyNox.Services.Coupon.WebAPI.IntegrationTest.Fixtures;
+using Microsoft.EntityFrameworkCore;
+using System.Linq.Dynamic.Core;
 using System.Net;
 using System.Text;
 using System.Text.Json;
@@ -61,7 +64,7 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTest
             #region [ Get Coupon By Id ]
 
             // Arrange
-            var id = coupon.Id;
+            var id = coupon.Id.Value;
             var requestUri = $"{_serviceURIs.CouponServiceURI}/v{NoxVersions.v1_0}/coupons/{id}";
 
             // Act
@@ -94,11 +97,10 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTest
             #region [ Update Coupon ]
 
             // Arrange
-            var id = coupon.Id;
             var newDiscountAmount = coupon.DiscountAmount + 1;
             var newMinAmount = coupon.MinAmount + 1;
             var newDescription = "new description";
-            var requestUri = $"{_serviceURIs.CouponServiceURI}/v{NoxVersions.v1_0}/coupons/{id}";
+            var requestUri = $"{_serviceURIs.CouponServiceURI}/v{NoxVersions.v1_0}/coupons/{coupon.Id.Value}";
             var requestBody = new
             {
                 code = coupon.Code,
@@ -106,7 +108,10 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTest
                 minAmount = newMinAmount,
                 description = newDescription,
                 couponDetailEntityId = coupon.CouponDetailEntityId,
-                id = coupon.Id
+                id = new
+                {
+                    value = coupon.Id.Value
+                }
             };
             var jsonRequest = JsonSerializer.Serialize(requestBody);
             var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
@@ -171,7 +176,7 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTest
             #region [ Get Coupons ]
 
             // Act
-            var coupon = _couponApiTestFixture.DbContext.Coupons.SingleOrDefault(x => x.Id == id);
+            var coupon = _couponApiTestFixture.DbContext.Coupons.Where("Id == @0", new CouponId(id)).FirstOrDefault();
 
             // Assert
             Assert.NotNull(coupon);
@@ -197,7 +202,7 @@ namespace AppyNox.Services.Coupon.WebAPI.IntegrationTest
 
             // Arrange
             var id = coupon.Id;
-            var requestUri = $"{_serviceURIs.CouponServiceURI}/v{NoxVersions.v1_0}/coupons/{id}";
+            var requestUri = $"{_serviceURIs.CouponServiceURI}/v{NoxVersions.v1_0}/coupons/{id.Value}";
 
             // Act
             var response = await _client.DeleteAsync(requestUri);

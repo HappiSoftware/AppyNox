@@ -33,6 +33,14 @@ namespace AppyNox.Services.License.Infrastructure.Data
 
         #region [ Protected Methods ]
 
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            base.OnConfiguring(optionsBuilder);
+            optionsBuilder.UseLazyLoadingProxies();
+
+            //optionsBuilder.UseNpgsql("User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_License;Pooling=true");
+        }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

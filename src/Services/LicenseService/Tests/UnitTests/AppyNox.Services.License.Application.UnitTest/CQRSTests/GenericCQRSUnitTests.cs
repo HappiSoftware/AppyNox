@@ -14,17 +14,17 @@ using System.Text.Json;
 
 namespace AppyNox.Services.License.Application.UnitTest.CQRSTests
 {
-    public class GenericCQRSUnitTests : IClassFixture<GenericCQRSFixture<LicenseEntity>>
+    public class GenericCQRSUnitTests : IClassFixture<GenericCQRSFixture<LicenseEntity, LicenseId>>
     {
         #region [ Fields ]
 
-        private readonly GenericCQRSFixture<LicenseEntity> _fixture;
+        private readonly GenericCQRSFixture<LicenseEntity, LicenseId> _fixture;
 
         #endregion
 
         #region [ Public Constructors ]
 
-        public GenericCQRSUnitTests(GenericCQRSFixture<LicenseEntity> fixture)
+        public GenericCQRSUnitTests(GenericCQRSFixture<LicenseEntity, LicenseId> fixture)
         {
             _fixture = fixture;
             _fixture.MockDtoMappingRegistry.Setup(registry => registry.GetDtoType(DtoLevelMappingTypes.DataAccess, typeof(LicenseEntity), CommonDtoLevelEnums.Simple.GetDisplayName()))
@@ -70,7 +70,7 @@ namespace AppyNox.Services.License.Application.UnitTest.CQRSTests
         public async void GetEntityByIdQuery_ShouldSuccess()
         {
             // Act
-            var result = await _fixture.MockMediator.Object.Send(new GetEntityByIdQuery<LicenseEntity>(It.IsAny<Guid>(), _fixture.MockQueryParameters.Object));
+            var result = await _fixture.MockMediator.Object.Send(new GetEntityByIdQuery<LicenseEntity, LicenseId>(It.IsAny<LicenseId>(), _fixture.MockQueryParameters.Object));
 
             // Assert
             Assert.NotNull(result);
@@ -109,7 +109,7 @@ namespace AppyNox.Services.License.Application.UnitTest.CQRSTests
 
             // Act
             var result = _fixture.MockMediator.Object
-                .Send(new UpdateEntityCommand<LicenseEntity>(id, root, LicenseCreateDetailLevel.Simple.GetDisplayName()));
+                .Send(new UpdateEntityCommand<LicenseEntity, LicenseId>(new LicenseId(id), root, LicenseCreateDetailLevel.Simple.GetDisplayName()));
 
             // Assert
             Assert.NotNull(result);

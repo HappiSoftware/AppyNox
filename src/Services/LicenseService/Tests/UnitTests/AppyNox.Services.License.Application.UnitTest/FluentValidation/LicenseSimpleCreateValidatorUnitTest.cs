@@ -102,7 +102,7 @@ namespace AppyNox.Services.License.Application.UnitTest.FluentValidation
         public async Task Validate_ProductId_ShouldMatchExpected(string? productId, bool expectedIsValid)
         {
             var dto = CreateValidDto();
-            dto.ProductId = string.IsNullOrEmpty(productId) ? default : Guid.Parse(productId);
+            dto.ProductId = string.IsNullOrEmpty(productId) ? default! : new Domain.Entities.ProductId(Guid.Parse(productId));
 
             var result = await _validator.ValidateAsync(dto);
 
@@ -123,7 +123,7 @@ namespace AppyNox.Services.License.Application.UnitTest.FluentValidation
                 ExpirationDate = DateTime.Now.AddYears(1),
                 MaxUsers = 10,
                 MaxMacAddresses = 5,
-                ProductId = Guid.NewGuid()
+                ProductId = new Domain.Entities.ProductId(Guid.NewGuid())
             };
         }
 

@@ -7,7 +7,7 @@ namespace AppyNox.Services.License.Application.Dtos.ProductDtos.Models.Base
     {
         #region [ Properties ]
 
-        public Guid Id { get; set; }
+        public ProductIdDto Id { get; set; } = default!;
 
         #endregion
     }

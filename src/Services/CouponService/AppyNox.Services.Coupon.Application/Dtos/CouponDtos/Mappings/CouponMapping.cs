@@ -23,6 +23,8 @@ namespace AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Mappings
             CreateMap<CouponEntity, CouponSimpleDto>().MapAuditInfo().ReverseMap();
 
             CreateMap<CouponEntity, CouponWithAllRelationsDto>();
+
+            CreateMap<CouponId, CouponIdDto>().ReverseMap();
         }
 
         #endregion

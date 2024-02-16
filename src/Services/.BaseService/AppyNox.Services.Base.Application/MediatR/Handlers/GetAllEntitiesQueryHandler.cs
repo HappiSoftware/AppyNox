@@ -38,8 +38,8 @@ namespace AppyNox.Services.Base.Application.MediatR.Handlers
             try
             {
                 Logger.LogInformation($"Fetching entities of type '{typeof(TEntity).Name}'");
-                var (expression, dtoType) = CreateProjection(request.QueryParameters);
-                PaginatedList paginatedList = await Repository.GetAllAsync(request.QueryParameters, expression, _cacheService);
+                var dtoType = GetDtoType(request.QueryParameters);
+                PaginatedList paginatedList = await Repository.GetAllAsync(request.QueryParameters, _cacheService);
                 paginatedList.Items = MapEntitiesToDto(paginatedList.Items, dtoType, request.QueryParameters);
                 return paginatedList;
             }

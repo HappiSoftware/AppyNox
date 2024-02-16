@@ -17,6 +17,8 @@ namespace AppyNox.Services.Coupon.Domain.Entities
 
         public virtual ICollection<CouponEntity>? Coupons { get; set; }
 
+        public virtual ICollection<CouponDetailTag>? CouponDetailTags { get; set; }
+
         #endregion
 
         #region [ IHasCode ]

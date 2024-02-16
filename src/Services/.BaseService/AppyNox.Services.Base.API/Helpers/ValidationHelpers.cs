@@ -30,17 +30,6 @@ namespace AppyNox.Services.Base.API.Helpers
             actionContext.ModelState.Merge(modelState);
         }
 
-        /// <summary>
-        /// Extracts the 'Id' value from a dynamic DTO object.
-        /// </summary>
-        /// <param name="dto">The dynamic DTO object.</param>
-        /// <returns>The extracted 'Id' value as a Guid.</returns>
-        public static Guid GetIdFromDynamicDto(dynamic dto)
-        {
-            var dtoObject = JsonSerializer.Deserialize<UpdateDtoBase>(dto, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-            return (Guid)dtoObject.Id;
-        }
-
         #endregion
     }
 }

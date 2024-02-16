@@ -32,7 +32,7 @@ namespace AppyNox.Services.License.WebAPI.Controllers.v1
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(Guid id, [FromQuery] QueryParametersViewModel queryParameters)
         {
-            return Ok(await _mediator.Send(new GetEntityByIdQuery<ProductEntity>(id, queryParameters)));
+            return Ok(await _mediator.Send(new GetEntityByIdQuery<ProductEntity, ProductId>(new ProductId(id), queryParameters)));
         }
 
         [HttpPost]
@@ -50,23 +50,18 @@ namespace AppyNox.Services.License.WebAPI.Controllers.v1
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(Guid id, [FromBody] dynamic productDto, string detailLevel = "Simple")
         {
-            if (id != ValidationHelpers.GetIdFromDynamicDto(productDto))
-            {
-                return BadRequest();
-            }
+            await _mediator.Send(new GetEntityByIdQuery<ProductEntity, ProductId>(new ProductId(id), QueryParameters.CreateForIdOnly()));
 
-            await _mediator.Send(new GetEntityByIdQuery<ProductEntity>(id, QueryParameters.CreateForIdOnly()));
-
-            await _mediator.Send(new UpdateEntityCommand<ProductEntity>(id, productDto, detailLevel));
+            await _mediator.Send(new UpdateEntityCommand<ProductEntity, ProductId>(new ProductId(id), productDto, detailLevel));
             return NoContent();
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            await _mediator.Send(new GetEntityByIdQuery<ProductEntity>(id, QueryParameters.CreateForIdOnly()));
+            await _mediator.Send(new GetEntityByIdQuery<ProductEntity, ProductId>(new ProductId(id), QueryParameters.CreateForIdOnly()));
 
-            ProductEntity entityToDelete = new() { Id = id };
+            ProductEntity entityToDelete = new() { Id = new ProductId(id) };
             await _mediator.Send(new DeleteEntityCommand<ProductEntity>(entityToDelete));
             return NoContent();
         }

@@ -1,43 +1,47 @@
 ﻿using AppyNox.Services.Base.Domain.Interfaces;
 
-namespace AppyNox.Services.License.Domain.Entities
+namespace AppyNox.Services.License.Domain.Entities;
+
+public class LicenseEntity : IEntityTypeId, IHasCode
 {
-    public class LicenseEntity : IEntityTypeId, IHasCode
-    {
-        #region [ Properties ]
+    #region [ Properties ]
 
-        public Guid Id { get; set; }
+    public LicenseId Id { get; set; } = new LicenseId(Guid.NewGuid());
 
-        public string Code { get; set; } = string.Empty;
+    public string Code { get; set; } = string.Empty;
 
-        public string Description { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
 
-        public string LicenseKey { get; set; } = string.Empty;
+    public string LicenseKey { get; set; } = string.Empty;
 
-        public DateTime ExpirationDate { get; set; }
+    public DateTime ExpirationDate { get; set; }
 
-        public int MaxUsers { get; set; }
+    public int MaxUsers { get; set; }
 
-        public int MaxMacAddresses { get; set; }
+    public int MaxMacAddresses { get; set; }
 
-        #endregion
+    #endregion
 
-        #region [ Relations ]
+    #region [ Relations ]
 
-        public Guid? CompanyId { get; set; }
+    public Guid? CompanyId { get; set; }
 
-        public virtual ICollection<ApplicationUserLicenses>? ApplicationUserLicenses { get; set; }
+    public virtual ICollection<ApplicationUserLicenses>? ApplicationUserLicenses { get; set; }
 
-        public Guid ProductId { get; set; }
+    public ProductId ProductId { get; set; }
 
-        public virtual ProductEntity Product { get; set; } = default!;
+    public virtual ProductEntity Product { get; set; } = default!;
 
-        #endregion
+    #endregion
 
-        #region [ IEntityTypeId ]
+    #region [ IEntityTypeId ]
 
-        Guid IEntityTypeId.GetTypedId => Id;
+    Guid IEntityTypeId.GetTypedId => Id.Value;
 
-        #endregion
-    }
+    #endregion
+}
+
+public sealed record LicenseId(Guid Value) : IHasGuidId
+{
+    public Guid GetGuidValue() => Value;
 }

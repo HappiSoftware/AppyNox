@@ -14,17 +14,17 @@ using System.Text.Json;
 
 namespace AppyNox.Services.Coupon.Application.UnitTest.CQRSTests
 {
-    public class GenericCQRSUnitTest : IClassFixture<GenericCQRSFixture<CouponEntity>>
+    public class GenericCQRSUnitTest : IClassFixture<GenericCQRSFixture<CouponEntity, CouponId>>
     {
         #region [ Fields ]
 
-        private readonly GenericCQRSFixture<CouponEntity> _fixture;
+        private readonly GenericCQRSFixture<CouponEntity, CouponId> _fixture;
 
         #endregion
 
         #region [ Public Constructors ]
 
-        public GenericCQRSUnitTest(GenericCQRSFixture<CouponEntity> fixture)
+        public GenericCQRSUnitTest(GenericCQRSFixture<CouponEntity, CouponId> fixture)
         {
             _fixture = fixture;
             _fixture.MockDtoMappingRegistry.Setup(registry => registry.GetDtoType(DtoLevelMappingTypes.DataAccess, typeof(CouponEntity), CommonDtoLevelEnums.Simple.GetDisplayName()))
@@ -70,7 +70,7 @@ namespace AppyNox.Services.Coupon.Application.UnitTest.CQRSTests
         public async void GetEntityByIdQuery_ShouldSuccess()
         {
             // Act
-            var result = await _fixture.MockMediator.Object.Send(new GetEntityByIdQuery<CouponEntity>(It.IsAny<Guid>(), _fixture.MockQueryParameters.Object));
+            var result = await _fixture.MockMediator.Object.Send(new GetEntityByIdQuery<CouponEntity, CouponId>(It.IsAny<CouponId>(), _fixture.MockQueryParameters.Object));
 
             // Assert
             Assert.NotNull(result);
@@ -109,7 +109,7 @@ namespace AppyNox.Services.Coupon.Application.UnitTest.CQRSTests
 
             // Act
             var result = _fixture.MockMediator.Object
-                .Send(new UpdateEntityCommand<CouponEntity>(id, root, CouponCreateDetailLevel.Simple.GetDisplayName()));
+                .Send(new UpdateEntityCommand<CouponEntity, CouponId>(new CouponId(id), root, CouponCreateDetailLevel.Simple.GetDisplayName()));
 
             // Assert
             Assert.NotNull(result);

@@ -24,16 +24,6 @@ namespace AppyNox.Services.Base.Application.Validators
                 RuleFor(dto => dto).NotNull().WithMessage("Dto cannot be null.");
                 RuleFor(dto => (dto as IHasCode)!.Code).ValidateCode();
             }
-
-            if (typeof(IUpdateDto).IsAssignableFrom(typeof(T)))
-            {
-                // (IUpdateDto)updateDto might be null, first check that
-                RuleFor(updateDto => updateDto).NotNull().WithMessage("Update Dto cannot be null.");
-
-                // After check for id
-                RuleFor(updateDto => ((IUpdateDto)updateDto).Id).ValidateId()
-                    .When(updateDto => updateDto is IUpdateDto);
-            }
         }
 
         #endregion

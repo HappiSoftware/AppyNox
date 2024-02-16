@@ -1,5 +1,7 @@
 ﻿using AppyNox.Services.Base.Domain.Interfaces;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDetailDtos.DetailLevel;
+using AppyNox.Services.Coupon.Application.Dtos.CouponDetailTagDtos.Models.Basic;
+using AppyNox.Services.Coupon.Domain.Entities;
 
 namespace AppyNox.Services.Coupon.Application.Dtos.CouponDetailDtos.Models.Basic
 {
@@ -17,6 +19,12 @@ namespace AppyNox.Services.Coupon.Application.Dtos.CouponDetailDtos.Models.Basic
         #region [ IHasCode ]
 
         public string Code { get; set; } = string.Empty;
+
+        #endregion
+
+        #region [ Relations ]
+
+        public virtual ICollection<CouponDetailTagSimpleDto>? CouponDetailTags { get; set; }
 
         #endregion
     }

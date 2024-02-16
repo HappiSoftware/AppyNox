@@ -37,7 +37,7 @@ namespace AppyNox.Services.Coupon.WebAPI.Controllers.v1
         [Authorize(Coupons.View)]
         public async Task<IActionResult> GetById(Guid id, [FromQuery] QueryParametersViewModel queryParameters)
         {
-            return Ok(await _mediator.Send(new GetEntityByIdQuery<CouponEntity>(id, queryParameters)));
+            return Ok(await _mediator.Send(new GetEntityByIdQuery<CouponEntity, CouponId>(new CouponId(id), queryParameters)));
         }
 
         [HttpPost]
@@ -57,14 +57,14 @@ namespace AppyNox.Services.Coupon.WebAPI.Controllers.v1
         [Authorize(Coupons.Edit)]
         public async Task<IActionResult> Update(Guid id, [FromBody] dynamic couponDto, string detailLevel = "Simple")
         {
-            if (id != ValidationHelpers.GetIdFromDynamicDto(couponDto))
-            {
-                return BadRequest();
-            }
+            //if (id != ValidationHelpers.GetIdFromDynamicDto(couponDto))
+            //{
+            //    return BadRequest();
+            //}
 
-            await _mediator.Send(new GetEntityByIdQuery<CouponEntity>(id, QueryParameters.CreateForIdOnly()));
+            await _mediator.Send(new GetEntityByIdQuery<CouponEntity, CouponId>(new CouponId(id), QueryParameters.CreateForIdOnly()));
 
-            await _mediator.Send(new UpdateEntityCommand<CouponEntity>(id, couponDto, detailLevel));
+            await _mediator.Send(new UpdateEntityCommand<CouponEntity, CouponId>(new CouponId(id), couponDto, detailLevel));
             return NoContent();
         }
 
@@ -72,9 +72,9 @@ namespace AppyNox.Services.Coupon.WebAPI.Controllers.v1
         [Authorize(Coupons.Delete)]
         public async Task<IActionResult> Delete(Guid id)
         {
-            await _mediator.Send(new GetEntityByIdQuery<CouponEntity>(id, QueryParameters.CreateForIdOnly()));
+            await _mediator.Send(new GetEntityByIdQuery<CouponEntity, CouponId>(new CouponId(id), QueryParameters.CreateForIdOnly()));
 
-            CouponEntity entityToDelete = new() { Id = id };
+            CouponEntity entityToDelete = new() { Id = new CouponId(id) };
             await _mediator.Send(new DeleteEntityCommand<CouponEntity>(entityToDelete));
             return NoContent();
         }

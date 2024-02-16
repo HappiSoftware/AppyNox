@@ -29,6 +29,12 @@ namespace AppyNox.Services.Coupon.Infrastructure.Data.Configurations
                 .IsRequired(false)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            builder.HasMany(cd => cd.CouponDetailTags)
+                .WithOne(c => c.CouponDetailEntity)
+                .HasForeignKey(c => c.CouponDetailEntityId)
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.Cascade);
+
             #endregion
 
             #region [ Seeds ]

@@ -5,7 +5,7 @@ namespace AppyNox.Services.Sso.Application.DTOs.ApplicationRoleDTOs.Models
     /// <summary>
     /// Data transfer object for updating an existing identity role.
     /// </summary>
-    public class ApplicationRoleUpdateDto : ApplicationRoleCreateDto, IUpdateDto
+    public class ApplicationRoleUpdateDto : ApplicationRoleCreateDto
     {
         #region [ Properties ]
 

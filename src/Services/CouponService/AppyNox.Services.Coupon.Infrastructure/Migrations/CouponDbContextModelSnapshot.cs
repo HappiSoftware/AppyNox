@@ -48,10 +48,37 @@ namespace AppyNox.Services.Coupon.Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("AppyNox.Services.Coupon.Domain.Entities.CouponEntity", b =>
+            modelBuilder.Entity("AppyNox.Services.Coupon.Domain.Entities.CouponDetailTag", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CouponDetailEntityId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Tag")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CouponDetailEntityId");
+
+                    b.ToTable("CouponDetailTags");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("b6bcfe76-83c7-4a4a-b088-13b14751fce8"),
+                            CouponDetailEntityId = new Guid("ec80532f-58f0-4690-b40c-2133b067d5f2"),
+                            Tag = "Tag Description"
+                        });
+                });
+
+            modelBuilder.Entity("AppyNox.Services.Coupon.Domain.Entities.CouponEntity", b =>
+                {
+                    b.Property<Guid>("Id")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Code")
@@ -105,27 +132,40 @@ namespace AppyNox.Services.Coupon.Infrastructure.Migrations
                             Id = new Guid("594cf045-3a2b-46f5-99c9-1eb59f035db2"),
                             Code = "EXF50",
                             CouponDetailEntityId = new Guid("ec80532f-58f0-4690-b40c-2133b067d5f2"),
-                            CreatedBy = "",
-                            CreationDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "admin",
+                            CreationDate = new DateTime(2024, 2, 16, 2, 20, 24, 302, DateTimeKind.Utc).AddTicks(7049),
                             Description = "Description",
                             Detail = "Detail1",
                             DiscountAmount = 10.65,
                             MinAmount = 100,
-                            UpdatedBy = ""
+                            UpdateDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            UpdatedBy = "admin"
                         },
                         new
                         {
                             Id = new Guid("c386aec2-dfd2-4ea5-b878-8fe5632e2e40"),
                             Code = "EXF60",
                             CouponDetailEntityId = new Guid("ec80532f-58f0-4690-b40c-2133b067d5f2"),
-                            CreatedBy = "",
-                            CreationDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "admin",
+                            CreationDate = new DateTime(2024, 2, 16, 2, 20, 24, 302, DateTimeKind.Utc).AddTicks(7084),
                             Description = "Description2",
                             Detail = "Detail2",
                             DiscountAmount = 20.550000000000001,
                             MinAmount = 200,
-                            UpdatedBy = ""
+                            UpdateDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            UpdatedBy = "admin"
                         });
+                });
+
+            modelBuilder.Entity("AppyNox.Services.Coupon.Domain.Entities.CouponDetailTag", b =>
+                {
+                    b.HasOne("AppyNox.Services.Coupon.Domain.Entities.CouponDetailEntity", "CouponDetailEntity")
+                        .WithMany("CouponDetailTags")
+                        .HasForeignKey("CouponDetailEntityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CouponDetailEntity");
                 });
 
             modelBuilder.Entity("AppyNox.Services.Coupon.Domain.Entities.CouponEntity", b =>
@@ -140,6 +180,8 @@ namespace AppyNox.Services.Coupon.Infrastructure.Migrations
 
             modelBuilder.Entity("AppyNox.Services.Coupon.Domain.Entities.CouponDetailEntity", b =>
                 {
+                    b.Navigation("CouponDetailTags");
+
                     b.Navigation("Coupons");
                 });
 #pragma warning restore 612, 618

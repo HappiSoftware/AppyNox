@@ -12,12 +12,12 @@ using AutoMapper;
 using MediatR;
 using Microsoft.Extensions.Localization;
 using Moq;
-using System.Linq.Expressions;
 
 namespace AppyNox.Services.Base.Application.UnitTests.GenericCQRSFixtures
 {
-    public class GenericCQRSFixture<TEntity> : IDisposable
+    public class GenericCQRSFixture<TEntity, TId> : IDisposable
         where TEntity : class, IEntityTypeId
+        where TId : IHasGuidId
     {
         #region [ Fields ]
 
@@ -45,11 +45,11 @@ namespace AppyNox.Services.Base.Application.UnitTests.GenericCQRSFixtures
 
         public GetAllEntitiesQueryHandler<TEntity> GetAllEntitiesCommandHandler { get; set; }
 
-        public GetEntityByIdQueryHandler<TEntity> GetEntityByIdCommandHandler { get; set; }
+        public GetEntityByIdQueryHandler<TEntity, TId> GetEntityByIdCommandHandler { get; set; }
 
         public CreateEntityCommandHandler<TEntity> CreateEntityCommandHandler { get; set; }
 
-        public UpdateEntityCommandHandler<TEntity> UpdateEntityCommandHandler { get; set; }
+        public UpdateEntityCommandHandler<TEntity, TId> UpdateEntityCommandHandler { get; set; }
 
         public DeleteEntityCommandHandler<TEntity> DeleteEntityCommandHandler { get; set; }
 
@@ -82,10 +82,10 @@ namespace AppyNox.Services.Base.Application.UnitTests.GenericCQRSFixtures
 
             #region [ Repository Mocks ]
 
-            _mockRepository.Setup(repo => repo.GetAllAsync(It.IsAny<IQueryParameters>(), It.IsAny<Expression<Func<TEntity, dynamic>>>(), It.IsAny<ICacheService>()))
+            _mockRepository.Setup(repo => repo.GetAllAsync(It.IsAny<IQueryParameters>(), It.IsAny<ICacheService>()))
                 .ReturnsAsync(new Mock<PaginatedList>().Object);
 
-            _mockRepository.Setup(repo => repo.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<Expression<Func<TEntity, dynamic>>>()))
+            _mockRepository.Setup(repo => repo.GetByIdAsync(It.IsAny<TId>()))
                 .ReturnsAsync(new Mock<TEntity>().Object);
 
             _mockRepository.Setup(repo => repo.AddAsync(It.IsAny<TEntity>()))
@@ -106,15 +106,15 @@ namespace AppyNox.Services.Base.Application.UnitTests.GenericCQRSFixtures
                 .Returns(Task.CompletedTask);
 
             GetAllEntitiesCommandHandler = new GetAllEntitiesQueryHandler<TEntity>(_mockRepository.Object, _mockMapper.Object, MockDtoMappingRegistry.Object, MockServiceProvider.Object, _noxApplicationLogger, _mockUnitOfWork.Object, _cacheService.Object);
-            GetEntityByIdCommandHandler = new GetEntityByIdQueryHandler<TEntity>(_mockRepository.Object, _mockMapper.Object, MockDtoMappingRegistry.Object, MockServiceProvider.Object, _noxApplicationLogger, _mockUnitOfWork.Object);
+            GetEntityByIdCommandHandler = new GetEntityByIdQueryHandler<TEntity, TId>(_mockRepository.Object, _mockMapper.Object, MockDtoMappingRegistry.Object, MockServiceProvider.Object, _noxApplicationLogger, _mockUnitOfWork.Object);
             CreateEntityCommandHandler = new CreateEntityCommandHandler<TEntity>(_mockRepository.Object, _mockMapper.Object, MockDtoMappingRegistry.Object, MockServiceProvider.Object, _noxApplicationLogger, _mockUnitOfWork.Object, _cacheService.Object);
-            UpdateEntityCommandHandler = new UpdateEntityCommandHandler<TEntity>(_mockRepository.Object, _mockMapper.Object, MockDtoMappingRegistry.Object, MockServiceProvider.Object, _noxApplicationLogger, _mockUnitOfWork.Object);
+            UpdateEntityCommandHandler = new UpdateEntityCommandHandler<TEntity, TId>(_mockRepository.Object, _mockMapper.Object, MockDtoMappingRegistry.Object, MockServiceProvider.Object, _noxApplicationLogger, _mockUnitOfWork.Object);
             DeleteEntityCommandHandler = new DeleteEntityCommandHandler<TEntity>(_mockRepository.Object, _mockMapper.Object, MockDtoMappingRegistry.Object, MockServiceProvider.Object, _noxApplicationLogger, _mockUnitOfWork.Object, _cacheService.Object);
 
             #endregion
 
-            MockMediator.Setup(m => m.Send(It.IsAny<GetEntityByIdQuery<TEntity>>(), It.IsAny<CancellationToken>()))
-                .Returns((GetEntityByIdQuery<TEntity> cmd, CancellationToken ct) => GetEntityByIdCommandHandler.Handle(cmd, ct));
+            MockMediator.Setup(m => m.Send(It.IsAny<GetEntityByIdQuery<TEntity, TId>>(), It.IsAny<CancellationToken>()))
+                .Returns((GetEntityByIdQuery<TEntity, TId> cmd, CancellationToken ct) => GetEntityByIdCommandHandler.Handle(cmd, ct));
 
             MockMediator.Setup(m => m.Send(It.IsAny<GetAllEntitiesQuery<TEntity>>(), It.IsAny<CancellationToken>()))
                 .Returns((GetAllEntitiesQuery<TEntity> cmd, CancellationToken ct) => GetAllEntitiesCommandHandler.Handle(cmd, ct));
@@ -122,8 +122,8 @@ namespace AppyNox.Services.Base.Application.UnitTests.GenericCQRSFixtures
             MockMediator.Setup(m => m.Send(It.IsAny<CreateEntityCommand<TEntity>>(), It.IsAny<CancellationToken>()))
                 .Returns((CreateEntityCommand<TEntity> cmd, CancellationToken ct) => CreateEntityCommandHandler.Handle(cmd, ct));
 
-            MockMediator.Setup(m => m.Send(It.IsAny<UpdateEntityCommand<TEntity>>(), It.IsAny<CancellationToken>()))
-                .Returns((UpdateEntityCommand<TEntity> cmd, CancellationToken ct) => UpdateEntityCommandHandler.Handle(cmd, ct));
+            MockMediator.Setup(m => m.Send(It.IsAny<UpdateEntityCommand<TEntity, TId>>(), It.IsAny<CancellationToken>()))
+                .Returns((UpdateEntityCommand<TEntity, TId> cmd, CancellationToken ct) => UpdateEntityCommandHandler.Handle(cmd, ct));
 
             MockMediator.Setup(m => m.Send(It.IsAny<DeleteEntityCommand<TEntity>>(), It.IsAny<CancellationToken>()))
                 .Returns((DeleteEntityCommand<TEntity> cmd, CancellationToken ct) => DeleteEntityCommandHandler.Handle(cmd, ct));

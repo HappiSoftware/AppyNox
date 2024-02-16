@@ -24,7 +24,9 @@ namespace AppyNox.Services.Coupon.Application
             {
                 cfg.RegisterServicesFromAssembly(applicationAssembly);
             });
-            services.AddGenericEntityCommandHandlers(typeof(CouponEntity), typeof(CouponDetailEntity));
+            services.AddGenericEntityCommandHandlers(
+                (typeof(CouponEntity), typeof(CouponId))
+                );
 
             #endregion
 

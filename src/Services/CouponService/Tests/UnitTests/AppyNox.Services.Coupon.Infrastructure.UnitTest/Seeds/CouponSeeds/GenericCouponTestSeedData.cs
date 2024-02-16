@@ -66,7 +66,7 @@ namespace AppyNox.Services.Coupon.Infrastructure.UnitTest.Seeds.CouponSeeds
             {
                 var couponEntity = new CouponEntity
                 {
-                    Id = Guid.NewGuid(),
+                    Id = new CouponId(Guid.NewGuid()),
                     Code = $"EXF{codeIdentifier}",
                     Description = $"DescriptionCoupon{codeIdentifier++}",
                     DiscountAmount = discountAmount,
