@@ -4,6 +4,7 @@ using AppyNox.Services.Base.Infrastructure.ExceptionExtensions;
 using AppyNox.Services.Base.Infrastructure.Repositories.Common;
 using AppyNox.Services.Base.Infrastructure.UnitTests.Fixtures;
 using AppyNox.Services.Base.Infrastructure.UnitTests.Stubs;
+using AppyNox.Services.License.Application.Dtos.ProductDtos.Models.Base;
 using AppyNox.Services.License.Domain.Entities;
 using AppyNox.Services.License.Infrastructure.Data;
 using AppyNox.Services.License.Infrastructure.Repositories;
@@ -19,12 +20,6 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
         private readonly RepositoryFixture _fixture = fixture;
 
         private readonly NoxInfrastructureLoggerStub _noxLoggerStub = fixture.NoxLoggerStub;
-
-        private readonly List<string> _propertyNames = typeof(ProductEntity)
-            .GetProperties()
-            .Select(p => p.Name)
-            .Where(name => name != "Licenses")
-            .ToList();
 
         private readonly ICacheService _cacheService = fixture.RedisCacheService.Object;
 
@@ -47,8 +42,7 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
                 PageNumber = 1,
                 PageSize = 1,
             };
-            var projection = repository.CreateProjection(_propertyNames);
-            PaginatedList result = await repository.GetAllAsync(queryParameters, projection, _cacheService);
+            PaginatedList result = await repository.GetAllAsync(queryParameters, _cacheService);
 
             Assert.NotNull(result);
             Assert.Single(result.Items);
@@ -68,8 +62,7 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
                 PageSize = 2,
             };
 
-            var projection = repository.CreateProjection(_propertyNames);
-            PaginatedList result = await repository.GetAllAsync(queryParameters, projection, _cacheService);
+            PaginatedList result = await repository.GetAllAsync(queryParameters, _cacheService);
 
             Assert.NotNull(result);
             Assert.Equal(2, result.ItemsCount);
@@ -90,8 +83,7 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
                 PageNumber = 2,
                 PageSize = 1,
             };
-            var projection = repository.CreateProjection(_propertyNames);
-            PaginatedList result = await repository.GetAllAsync(queryParameters, projection, _cacheService);
+            PaginatedList result = await repository.GetAllAsync(queryParameters, _cacheService);
 
             Assert.NotNull(result);
             Assert.Single(result.Items);
@@ -112,8 +104,7 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
                 PageNumber = 1,
                 PageSize = 50,
             };
-            var projection = repository.CreateProjection(_propertyNames);
-            PaginatedList result = await repository.GetAllAsync(queryParameters, projection, _cacheService);
+            PaginatedList result = await repository.GetAllAsync(queryParameters, _cacheService);
 
             Assert.NotNull(result);
             Assert.Equal(50, result.ItemsCount);
@@ -134,8 +125,7 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
                 PageNumber = 5,
                 PageSize = 5,
             };
-            var projection = repository.CreateProjection(_propertyNames);
-            PaginatedList result = await repository.GetAllAsync(queryParameters, projection, _cacheService);
+            PaginatedList result = await repository.GetAllAsync(queryParameters, _cacheService);
 
             List<ProductEntity> expectedProducts = products.Skip(20).Take(5).ToList();
             List<object> resultList = result.Items.ToList();
@@ -158,8 +148,7 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
             Assert.NotNull(existingProducts);
 
             ProductRepository repository = new(context, _noxLoggerStub);
-            var projection = repository.CreateProjection(_propertyNames);
-            ProductEntity result = await repository.GetByIdAsync(existingProducts.Id, projection);
+            ProductEntity result = await repository.GetByIdAsync(existingProducts.Id);
 
             Assert.NotNull(result);
         }
@@ -173,8 +162,7 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
             UnitOfWork unitOfWork = new(context, _noxLoggerStub);
 
             ProductRepository repository = new(context, _noxLoggerStub);
-            var projection = repository.CreateProjection(_propertyNames);
-            ProductEntity result = await repository.GetByIdAsync(existingProducts.Id, projection);
+            ProductEntity result = await repository.GetByIdAsync(existingProducts.Id);
 
             Assert.NotNull(result);
             Assert.Equal(existingProducts.Code, result.Code);
@@ -200,9 +188,8 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
             await repository.AddAsync(product);
             await unitOfWork.SaveChangesAsync();
 
-            var projection = repository.CreateProjection(_propertyNames);
             var asd = context.Licenses.ToList();
-            var result = await repository.GetByIdAsync(product.Id, projection);
+            var result = await repository.GetByIdAsync(product.Id);
 
             // Assert
             Assert.NotNull(result);
@@ -232,8 +219,7 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
             repository.Update(existingProduct, propertyList);
             await unitOfWork.SaveChangesAsync();
 
-            var projection = repository.CreateProjection(_propertyNames);
-            var result = await repository.GetByIdAsync(existingProduct.Id, projection);
+            var result = await repository.GetByIdAsync(existingProduct.Id);
 
             Assert.NotNull(result);
             Assert.Equal(existingProduct.Id, result.Id);
@@ -258,11 +244,9 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
             repository.Remove(existingProduct);
             await unitOfWork.SaveChangesAsync();
 
-            var projection = repository.CreateProjection(_propertyNames);
-
             var exception = await Assert.ThrowsAsync<EntityNotFoundException<ProductEntity>>(async () =>
             {
-                var result = await repository.GetByIdAsync(existingProduct.Id, projection);
+                var result = await repository.GetByIdAsync(existingProduct.Id);
             });
 
             Assert.NotNull(exception);

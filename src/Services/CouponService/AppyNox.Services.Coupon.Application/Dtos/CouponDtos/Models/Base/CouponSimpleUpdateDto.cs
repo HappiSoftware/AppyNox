@@ -4,11 +4,11 @@ using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.DetailLevel;
 namespace AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base
 {
     [CouponDetailLevel(CouponUpdateDetailLevel.Simple)]
-    public class CouponSimpleUpdateDto : CouponSimpleCreateDto, IUpdateDto
+    public class CouponSimpleUpdateDto : CouponSimpleCreateDto
     {
         #region [ Properties ]
 
-        public Guid Id { get; set; }
+        public CouponIdDto Id { get; set; }
 
         #endregion
     }

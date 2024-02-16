@@ -60,28 +60,21 @@ namespace AppyNox.Services.Base.Application.MediatR
         /// <returns>A tuple conatining the projection expression and the DTO type</returns>
         /// <exception cref="DtoDetailLevelNotFoundException">Thrown if queryParameters.CommonDtoLevel is not fully covered in switch statements.
         /// It's not an expected case.</exception>
-        protected (Expression<Func<TEntity, dynamic>> expression, Type dtoType) CreateProjection(IQueryParameters queryParameters)
+        protected Type GetDtoType(IQueryParameters queryParameters)
         {
             Type dtoType;
-            List<string> properties = [];
-            PropertyInfo[] propertyInformations;
 
             switch (queryParameters.CommonDtoLevel)
             {
                 case CommonDtoLevelEnums.None:
                     dtoType = DtoMappingRegistry.GetDtoType(queryParameters.AccessType, EntityType, queryParameters.DetailLevel);
-                    propertyInformations = dtoType.GetProperties();
-                    properties = AdjustAuditInfoProperties(propertyInformations).Select(p => p.Name).ToList();
                     break;
 
                 case CommonDtoLevelEnums.Simple:
                     dtoType = DtoMappingRegistry.GetDtoType(queryParameters.AccessType, EntityType, CommonDtoLevelEnums.Simple.GetDisplayName());
-                    propertyInformations = dtoType.GetProperties();
-                    properties = AdjustAuditInfoProperties(propertyInformations).Select(p => p.Name).ToList();
                     break;
 
                 case CommonDtoLevelEnums.IdOnly:
-                    properties.Add("Id");
                     dtoType = typeof(ExpandoObject);
                     break;
 
@@ -89,7 +82,7 @@ namespace AppyNox.Services.Base.Application.MediatR
                     throw new DtoDetailLevelNotFoundException(queryParameters.CommonDtoLevel);
             }
 
-            return (Repository.CreateProjection(properties), dtoType);
+            return dtoType;
         }
 
         /// <summary>
@@ -199,18 +192,6 @@ namespace AppyNox.Services.Base.Application.MediatR
                 totalCount = isCreate ? totalCount + 1 : totalCount - 1;
                 await cacheService.SetCachedValueAsync(countCacheKey, totalCount.ToString(), TimeSpan.FromMinutes(10));
             }
-        }
-
-        #endregion
-
-        #region [ Private Methods ]
-
-        private PropertyInfo[] AdjustAuditInfoProperties(PropertyInfo[] propertyInformations)
-        {
-            return propertyInformations
-                .SelectMany(property => property.PropertyType == typeof(AuditInfo)
-                            ? typeof(AuditInfo).GetProperties()
-                            : [property]).ToArray();
         }
 
         #endregion

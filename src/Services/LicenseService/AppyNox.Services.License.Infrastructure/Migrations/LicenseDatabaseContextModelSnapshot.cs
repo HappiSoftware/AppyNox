@@ -67,7 +67,6 @@ namespace AppyNox.Services.License.Infrastructure.Migrations
             modelBuilder.Entity("AppyNox.Services.License.Domain.Entities.LicenseEntity", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<string>("Code")
@@ -113,7 +112,7 @@ namespace AppyNox.Services.License.Infrastructure.Migrations
                             Code = "LK001",
                             CompanyId = new Guid("221e8b2c-59d5-4e5b-b010-86c239b66738"),
                             Description = "License Description",
-                            ExpirationDate = new DateTime(2025, 1, 16, 10, 50, 13, 898, DateTimeKind.Utc).AddTicks(442),
+                            ExpirationDate = new DateTime(2025, 2, 15, 4, 53, 32, 725, DateTimeKind.Utc).AddTicks(8870),
                             LicenseKey = "7f033381-fbf7-4929-b5f7-c64261b20bf3",
                             MaxMacAddresses = 1,
                             MaxUsers = 3,
@@ -124,7 +123,6 @@ namespace AppyNox.Services.License.Infrastructure.Migrations
             modelBuilder.Entity("AppyNox.Services.License.Domain.Entities.ProductEntity", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<string>("Code")

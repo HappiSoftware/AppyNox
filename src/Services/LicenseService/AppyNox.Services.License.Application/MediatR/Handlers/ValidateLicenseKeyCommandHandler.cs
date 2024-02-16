@@ -1,5 +1,6 @@
 ﻿using AppyNox.Services.License.Application.Interfaces;
 using AppyNox.Services.License.Application.MediatR.Commands;
+using AppyNox.Services.License.Domain.Entities;
 using MediatR;
 
 namespace AppyNox.Services.License.Application.MediatR.Handlers
@@ -22,9 +23,9 @@ namespace AppyNox.Services.License.Application.MediatR.Handlers
             if (license == null) return (false, null, null);
 
             // Check MaxUsers constraint
-            var userCount = await _repository.GetUserCountForLicenseKeyAsync(license.Id, cancellationToken);
+            var userCount = await _repository.GetUserCountForLicenseKeyAsync(license.Id.Value, cancellationToken);
 
-            return (userCount < license.MaxUsers, license.CompanyId, license.Id);
+            return (userCount < license.MaxUsers, license.CompanyId, license.Id.Value);
         }
 
         #endregion

@@ -3,7 +3,9 @@ using AppyNox.Services.Base.Application.Dtos;
 using AppyNox.Services.Base.IntegrationTests.URIs;
 using AppyNox.Services.Base.IntegrationTests.Wrapper.Helpers;
 using AppyNox.Services.License.Application.Dtos.LicenseDtos.Models.Base;
+using AppyNox.Services.License.Domain.Entities;
 using AppyNox.Services.License.WebAPI.IntegrationTest.Fixtures;
+using System.Linq.Dynamic.Core;
 using System.Net;
 using System.Text;
 using System.Text.Json;
@@ -62,7 +64,7 @@ namespace AppyNox.Services.License.WebAPI.IntegrationTest.Controllers
             #region [ Get License By Id ]
 
             // Arrange
-            var id = license.Id;
+            Guid id = license.Id.Value;
             var requestUri = $"{_serviceURIs.LicenseServiceURI}/v{NoxVersions.v1_0}/licenses/{id}";
 
             // Act
@@ -95,7 +97,7 @@ namespace AppyNox.Services.License.WebAPI.IntegrationTest.Controllers
             #region [ Update License ]
 
             // Arrange
-            Guid id = license.Id;
+            Guid id = license.Id.Value;
             DateTime newExpirationDate = license.ExpirationDate.AddDays(5);
             string newLicenseKey = Guid.NewGuid().ToString();
             string newDescription = "new description";
@@ -112,7 +114,10 @@ namespace AppyNox.Services.License.WebAPI.IntegrationTest.Controllers
                 maxUsers = newMaxUsers,
                 maxMacAddresses = newmaxMacAddresses,
                 productId = license.ProductId,
-                id = license.Id
+                id = new
+                {
+                    value = id
+                }
             };
             var jsonRequest = JsonSerializer.Serialize(requestBody);
             var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
@@ -161,7 +166,10 @@ namespace AppyNox.Services.License.WebAPI.IntegrationTest.Controllers
                 expirationDate = "2025-01-03T20:30:02.928Z",
                 maxUsers = 2,
                 maxMacAddresses = 3,
-                productId = "9991492a-118c-4f20-ac8c-76410d57957c"
+                productId = new
+                {
+                    value = "9991492a-118c-4f20-ac8c-76410d57957c"
+                }
             };
             var jsonRequest = JsonSerializer.Serialize(requestBody);
             var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
@@ -181,7 +189,7 @@ namespace AppyNox.Services.License.WebAPI.IntegrationTest.Controllers
             #region [ Get Licenses ]
 
             // Act
-            var license = _licenseApiTestFixture.DbContext.Licenses.SingleOrDefault(x => x.Id == id);
+            var license = _licenseApiTestFixture.DbContext.Licenses.Where("Id == @0", new LicenseId(id)).FirstOrDefault();
 
             // Assert
             Assert.NotNull(license);
@@ -206,7 +214,7 @@ namespace AppyNox.Services.License.WebAPI.IntegrationTest.Controllers
             #region [ Delete License ]
 
             // Arrange
-            var id = license.Id;
+            Guid id = license.Id.Value;
             var requestUri = $"{_serviceURIs.LicenseServiceURI}/v{NoxVersions.v1_0}/licenses/{id}";
 
             // Act
@@ -221,7 +229,7 @@ namespace AppyNox.Services.License.WebAPI.IntegrationTest.Controllers
             #region [ Get License ]
 
             // Act
-            var getLicense = _licenseApiTestFixture.DbContext.Licenses.SingleOrDefault(x => x.Id == id);
+            var getLicense = _licenseApiTestFixture.DbContext.Licenses.SingleOrDefault(x => x.Id == license.Id);
 
             // Assert
             Assert.Null(getLicense);

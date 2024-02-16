@@ -37,7 +37,7 @@ namespace AppyNox.Services.License.WebAPI.Controllers.v1
         [Authorize(Permissions.Licenses.View)]
         public async Task<IActionResult> GetById(Guid id, [FromQuery] QueryParametersViewModel queryParameters)
         {
-            return Ok(await _mediator.Send(new GetEntityByIdQuery<LicenseEntity>(id, queryParameters)));
+            return Ok(await _mediator.Send(new GetEntityByIdQuery<LicenseEntity, LicenseId>(new LicenseId(id), queryParameters)));
         }
 
         [HttpPost]
@@ -57,14 +57,9 @@ namespace AppyNox.Services.License.WebAPI.Controllers.v1
         [Authorize(Permissions.Licenses.Edit)]
         public async Task<IActionResult> Update(Guid id, [FromBody] dynamic licenseDto, string detailLevel = "Simple")
         {
-            if (id != ValidationHelpers.GetIdFromDynamicDto(licenseDto))
-            {
-                return BadRequest();
-            }
+            await _mediator.Send(new GetEntityByIdQuery<LicenseEntity, LicenseId>(new LicenseId(id), QueryParameters.CreateForIdOnly()));
 
-            await _mediator.Send(new GetEntityByIdQuery<LicenseEntity>(id, QueryParameters.CreateForIdOnly()));
-
-            await _mediator.Send(new UpdateEntityCommand<LicenseEntity>(id, licenseDto, detailLevel));
+            await _mediator.Send(new UpdateEntityCommand<LicenseEntity, LicenseId>(new LicenseId(id), licenseDto, detailLevel));
             return NoContent();
         }
 
@@ -72,9 +67,9 @@ namespace AppyNox.Services.License.WebAPI.Controllers.v1
         [Authorize(Permissions.Licenses.Delete)]
         public async Task<IActionResult> Delete(Guid id)
         {
-            await _mediator.Send(new GetEntityByIdQuery<LicenseEntity>(id, QueryParameters.CreateForIdOnly()));
+            await _mediator.Send(new GetEntityByIdQuery<LicenseEntity, LicenseId>(new LicenseId(id), QueryParameters.CreateForIdOnly()));
 
-            LicenseEntity entityToDelete = new() { Id = id };
+            LicenseEntity entityToDelete = new() { Id = new LicenseId(id) };
             await _mediator.Send(new DeleteEntityCommand<LicenseEntity>(entityToDelete));
             return NoContent();
         }

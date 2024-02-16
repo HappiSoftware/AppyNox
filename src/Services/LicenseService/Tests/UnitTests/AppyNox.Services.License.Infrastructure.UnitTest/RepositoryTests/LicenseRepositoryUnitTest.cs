@@ -4,12 +4,11 @@ using AppyNox.Services.Base.Infrastructure.ExceptionExtensions;
 using AppyNox.Services.Base.Infrastructure.Repositories.Common;
 using AppyNox.Services.Base.Infrastructure.UnitTests.Fixtures;
 using AppyNox.Services.Base.Infrastructure.UnitTests.Stubs;
+using AppyNox.Services.License.Application.Dtos.LicenseDtos.Models.Base;
 using AppyNox.Services.License.Domain.Entities;
 using AppyNox.Services.License.Infrastructure.Data;
 using AppyNox.Services.License.Infrastructure.Repositories;
 using AppyNox.Services.License.Infrastructure.UnitTest.Seeds.LicenseSeeds;
-using Microsoft.EntityFrameworkCore;
-using Moq;
 
 namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
 {
@@ -20,12 +19,6 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
         private readonly RepositoryFixture _fixture = fixture;
 
         private readonly NoxInfrastructureLoggerStub _noxLoggerStub = fixture.NoxLoggerStub;
-
-        private readonly List<string> _propertyNames = typeof(LicenseEntity)
-            .GetProperties()
-            .Select(p => p.Name)
-            .Where(name => name != "Product")
-            .ToList();
 
         private readonly ICacheService _cacheService = fixture.RedisCacheService.Object;
 
@@ -49,8 +42,8 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
                 PageNumber = 1,
                 PageSize = 1,
             };
-            var projection = repository.CreateProjection(_propertyNames);
-            PaginatedList result = await repository.GetAllAsync(queryParameters, projection, _cacheService);
+
+            PaginatedList result = await repository.GetAllAsync(queryParameters, _cacheService);
 
             Assert.NotNull(result);
             Assert.Single(result.Items);
@@ -71,8 +64,7 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
                 PageSize = 2,
             };
 
-            var projection = repository.CreateProjection(_propertyNames);
-            PaginatedList result = await repository.GetAllAsync(queryParameters, projection, _cacheService);
+            PaginatedList result = await repository.GetAllAsync(queryParameters, _cacheService);
 
             Assert.NotNull(result);
             Assert.Equal(2, result.ItemsCount);
@@ -94,8 +86,8 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
                 PageNumber = 2,
                 PageSize = 1,
             };
-            var projection = repository.CreateProjection(_propertyNames);
-            PaginatedList result = await repository.GetAllAsync(queryParameters, projection, _cacheService);
+
+            PaginatedList result = await repository.GetAllAsync(queryParameters, _cacheService);
 
             Assert.NotNull(result);
             Assert.Single(result.Items);
@@ -117,8 +109,8 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
                 PageNumber = 1,
                 PageSize = 50,
             };
-            var projection = repository.CreateProjection(_propertyNames);
-            PaginatedList result = await repository.GetAllAsync(queryParameters, projection, _cacheService);
+
+            PaginatedList result = await repository.GetAllAsync(queryParameters, _cacheService);
 
             Assert.NotNull(result);
             Assert.Equal(50, result.Items.Count());
@@ -139,8 +131,8 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
                 PageNumber = 5,
                 PageSize = 5,
             };
-            var projection = repository.CreateProjection(_propertyNames);
-            PaginatedList result = await repository.GetAllAsync(queryParameters, projection, _cacheService);
+
+            PaginatedList result = await repository.GetAllAsync(queryParameters, _cacheService);
 
             List<LicenseEntity> expectedLicenses = licenses.Skip(20).Take(5).ToList();
             List<object> resultList = result.Items.ToList();
@@ -164,8 +156,8 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
             UnitOfWork unitOfWork = new(context, _noxLoggerStub);
 
             LicenseRepository repository = new(context, _noxLoggerStub, unitOfWork);
-            var projection = repository.CreateProjection(_propertyNames);
-            LicenseEntity result = await repository.GetByIdAsync(existingLicense.Id, projection);
+
+            LicenseEntity result = await repository.GetByIdAsync(existingLicense.Id);
 
             Assert.NotNull(result);
         }
@@ -179,8 +171,7 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
             UnitOfWork unitOfWork = new(context, _noxLoggerStub);
 
             LicenseRepository repository = new(context, _noxLoggerStub, unitOfWork);
-            var projection = repository.CreateProjection(_propertyNames);
-            LicenseEntity result = await repository.GetByIdAsync(existingLicense.Id, projection);
+            LicenseEntity result = await repository.GetByIdAsync(existingLicense.Id);
 
             Assert.NotNull(result);
             Assert.Equal(existingLicense.Code, result.Code);
@@ -208,15 +199,13 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
                 LicenseKey = Guid.NewGuid().ToString(),
                 ExpirationDate = DateTime.UtcNow.AddDays(2),
                 MaxUsers = 1,
-                ProductId = Guid.NewGuid()
+                ProductId = new ProductId(Guid.NewGuid())
             };
 
             await repository.AddAsync(license);
             await unitOfWork.SaveChangesAsync();
 
-            var projection = repository.CreateProjection(_propertyNames);
-            var asd = context.Licenses.ToList();
-            var result = await repository.GetByIdAsync(license.Id, projection);
+            var result = await repository.GetByIdAsync(license.Id);
 
             // Assert
             Assert.NotNull(result);
@@ -252,8 +241,7 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
             repository.Update(existingLicense, propertyList);
             await unitOfWork.SaveChangesAsync();
 
-            var projection = repository.CreateProjection(_propertyNames);
-            var result = await repository.GetByIdAsync(existingLicense.Id, projection);
+            var result = await repository.GetByIdAsync(existingLicense.Id);
 
             Assert.NotNull(result);
             Assert.Equal(existingLicense.Id, result.Id);
@@ -281,11 +269,9 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
             repository.Remove(existingLicense);
             await unitOfWork.SaveChangesAsync();
 
-            var projection = repository.CreateProjection(_propertyNames);
-
             var exception = await Assert.ThrowsAsync<EntityNotFoundException<LicenseEntity>>(async () =>
             {
-                var result = await repository.GetByIdAsync(existingLicense.Id, projection);
+                var result = await repository.GetByIdAsync(existingLicense.Id);
             });
 
             Assert.NotNull(exception);
@@ -328,10 +314,10 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
             for (int index = 0; index < userCount; index++)
             {
                 Guid mockUserId = Guid.NewGuid();
-                await repository.AssignLicenseToApplicationUserAsync(entity.Id, mockUserId);
+                await repository.AssignLicenseToApplicationUserAsync(entity.Id.Value, mockUserId);
             }
 
-            int result = await repository.GetUserCountForLicenseKeyAsync(entity.Id, CancellationToken.None);
+            int result = await repository.GetUserCountForLicenseKeyAsync(entity.Id.Value, CancellationToken.None);
             Assert.Equal(result, userCount);
         }
 
@@ -347,7 +333,7 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
             Assert.NotNull(entity);
             Guid mockUserId = Guid.NewGuid();
 
-            await repository.AssignLicenseToApplicationUserAsync(entity.Id, mockUserId);
+            await repository.AssignLicenseToApplicationUserAsync(entity.Id.Value, mockUserId);
             ApplicationUserLicenses? applicationUserLicense = context.ApplicationUserLicenses.Where(aul => aul.LicenseId == entity.Id && aul.UserId == mockUserId).FirstOrDefault();
             Assert.NotNull(applicationUserLicense);
         }

@@ -3,7 +3,9 @@ using AppyNox.Services.Base.Application.Dtos;
 using AppyNox.Services.Base.IntegrationTests.URIs;
 using AppyNox.Services.Base.IntegrationTests.Wrapper.Helpers;
 using AppyNox.Services.License.Application.Dtos.ProductDtos.Models.Base;
+using AppyNox.Services.License.Domain.Entities;
 using AppyNox.Services.License.WebAPI.IntegrationTest.Fixtures;
+using System.Linq.Dynamic.Core;
 using System.Net;
 using System.Text;
 using System.Text.Json;
@@ -62,7 +64,7 @@ namespace AppyNox.Services.License.WebAPI.IntegrationTest.Controllers
             #region [ Get Product By Id ]
 
             // Arrange
-            var id = product.Id;
+            Guid id = product.Id.Value;
             var requestUri = $"{_serviceURIs.LicenseServiceURI}/v{NoxVersions.v1_0}/products/{id}";
 
             // Act
@@ -95,7 +97,7 @@ namespace AppyNox.Services.License.WebAPI.IntegrationTest.Controllers
             #region [ Update Product ]
 
             // Arrange
-            Guid id = product.Id;
+            Guid id = product.Id.Value;
             string newName = "NameUpdated";
             string newCode = "drop2";
 
@@ -104,7 +106,10 @@ namespace AppyNox.Services.License.WebAPI.IntegrationTest.Controllers
             {
                 name = newName,
                 code = newCode,
-                id = id,
+                id = new
+                {
+                    value = id
+                },
             };
             var jsonRequest = JsonSerializer.Serialize(requestBody);
             var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
@@ -164,7 +169,7 @@ namespace AppyNox.Services.License.WebAPI.IntegrationTest.Controllers
             #region [ Get Products ]
 
             // Act
-            var product = _licenseApiTestFixture.DbContext.Products.SingleOrDefault(x => x.Id == id);
+            var product = _licenseApiTestFixture.DbContext.Products.Where("Id == @0", new ProductId(id)).FirstOrDefault();
 
             // Assert
             Assert.NotNull(product);
@@ -189,7 +194,7 @@ namespace AppyNox.Services.License.WebAPI.IntegrationTest.Controllers
             #region [ Delete Product ]
 
             // Arrange
-            var id = product.Id;
+            Guid id = product.Id.Value;
             var requestUri = $"{_serviceURIs.LicenseServiceURI}/v{NoxVersions.v1_0}/products/{id}";
 
             // Act
@@ -204,7 +209,7 @@ namespace AppyNox.Services.License.WebAPI.IntegrationTest.Controllers
             #region [ Get Product ]
 
             // Act
-            var getProduct = _licenseApiTestFixture.DbContext.Products.SingleOrDefault(x => x.Id == id);
+            var getProduct = _licenseApiTestFixture.DbContext.Products.SingleOrDefault(x => x.Id == product.Id);
 
             // Assert
             Assert.Null(getProduct);

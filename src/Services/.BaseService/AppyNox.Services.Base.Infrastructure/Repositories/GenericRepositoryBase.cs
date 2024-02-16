@@ -8,6 +8,8 @@ using AppyNox.Services.Base.Infrastructure.ExceptionExtensions;
 using AppyNox.Services.Base.Infrastructure.ExceptionExtensions.Base;
 using AppyNox.Services.Base.Infrastructure.Repositories.Common;
 using Microsoft.EntityFrameworkCore;
+using System.Collections;
+using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
 
@@ -52,17 +54,19 @@ namespace AppyNox.Services.Base.Infrastructure.Repositories
         /// <returns>The entity of type TEntity</returns>
         /// <exception cref="EntityNotFoundException{TEntity}">Thrown when TEntity is not found by given ID</exception>
         /// <exception cref="NoxInfrastructureException">Thrown if an unexpected error occurs.</exception>
-        public async Task<TEntity> GetByIdAsync(Guid id, Expression<Func<TEntity, dynamic>> selectedColumns)
+        public async Task<TEntity> GetByIdAsync<TId>(TId id)
+            where TId : IHasGuidId
         {
             try
             {
                 _logger.LogInformation($"Attempting to retrieve entity with ID: '{id}' Type: '{typeof(TEntity).Name}'.");
-                var entity = await _dbSet.Where(item => EF.Property<Guid>(item, "Id") == id).Select(selectedColumns).AsNoTracking().FirstOrDefaultAsync();
+                var entity = await _dbSet.Where("Id == @0", id).AsNoTracking().FirstOrDefaultAsync();
 
                 if (entity == null)
                 {
                     _logger.LogWarning($"Entity with ID: {id} not found.");
-                    throw new EntityNotFoundException<TEntity>(id);
+
+                    throw new EntityNotFoundException<TEntity>(((IHasGuidId)id).GetGuidValue());
                 }
 
                 _logger.LogInformation($"Successfully retrieved entity with ID: '{id}' Type: '{typeof(TEntity).Name}'.");
@@ -79,9 +83,7 @@ namespace AppyNox.Services.Base.Infrastructure.Repositories
             }
         }
 
-        public async Task<PaginatedList> GetAllAsync(IQueryParameters queryParameters,
-                                                           Expression<Func<TEntity, dynamic>> selectedColumns,
-                                                           ICacheService cacheService)
+        public async Task<PaginatedList> GetAllAsync(IQueryParameters queryParameters, ICacheService cacheService)
         {
             try
             {
@@ -99,7 +101,6 @@ namespace AppyNox.Services.Base.Infrastructure.Repositories
                 var entities = await _dbSet
                     .AsQueryable()
                     .AsNoTracking()
-                    .Select(selectedColumns)
                     .Skip((queryParameters.PageNumber - 1) * queryParameters.PageSize)
                     .Take(queryParameters.PageSize)
                     .ToListAsync();
@@ -188,49 +189,6 @@ namespace AppyNox.Services.Base.Infrastructure.Repositories
             {
                 _logger.LogError(ex, $"Error deleting entity with ID: '{entity.GetTypedId}' Type: '{typeof(TEntity).Name}'.");
                 throw new NoxInfrastructureException(ex, (int)NoxInfrastructureExceptionCode.DeletingDataError);
-            }
-        }
-
-        #endregion
-
-        #region [ Public Helper Methods ]
-
-        /// <summary>
-        /// Creates a projection expression for an entity of type TEntity based on a list of property names.
-        /// </summary>
-        /// <param name="propertyNames">A list of property names to include in the projection.</param>
-        /// <returns>An expression used for selecting specific properties of the entity.</returns>
-        /// <exception cref="NoxInfrastructureException">Thrown if an unexpected error occurs.</exception>
-        public Expression<Func<TEntity, dynamic>> CreateProjection(List<string> propertyNames)
-        {
-            try
-            {
-                _logger.LogInformation($"Creating projection for entity properties. Type: '{typeof(TEntity).Name}'.");
-
-                var entityParameter = Expression.Parameter(typeof(TEntity), "entity");
-                var memberBindings = new List<MemberBinding>();
-
-                foreach (var propertyName in propertyNames)
-                {
-                    if (propertyName.Equals(nameof(EntityBase.DomainEvents)))
-                        continue;
-
-                    var entityProperty = Expression.Property(entityParameter, propertyName);
-                    var conversion = Expression.Convert(entityProperty, entityProperty.Type);
-                    var memberBinding = Expression.Bind(entityProperty.Member, conversion);
-                    memberBindings.Add(memberBinding);
-                }
-
-                var memberInit = Expression.MemberInit(Expression.New(typeof(TEntity)), memberBindings);
-                var selector = Expression.Lambda<Func<TEntity, dynamic>>(memberInit, entityParameter);
-
-                _logger.LogInformation($"Successfully created projection for entity properties. Type: '{typeof(TEntity).Name}'.");
-                return selector;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Error creating projection for entity properties. Type: '{typeof(TEntity).Name}'.");
-                throw new NoxInfrastructureException(ex, (int)NoxInfrastructureExceptionCode.ProjectionError);
             }
         }
 

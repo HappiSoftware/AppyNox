@@ -6,6 +6,7 @@ using AppyNox.Services.Base.Domain.Interfaces;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
+using System.Security.Cryptography;
 
 namespace AppyNox.Services.Base.Application.Extensions
 {
@@ -23,24 +24,25 @@ namespace AppyNox.Services.Base.Application.Extensions
         /// This method registers handlers for various entity-related operations like
         /// getting all entities, getting an entity by ID, creating, updating, and deleting an entity.
         /// </remarks>
-        public static IServiceCollection AddEntityCommandHandlers<TEntity>(this IServiceCollection services)
+        public static IServiceCollection AddEntityCommandHandlers<TEntity, TId>(this IServiceCollection services)
         where TEntity : class, IEntityTypeId
+        where TId : IHasGuidId
         {
             // Register GetAllEntitiesQueryHandler
             services.AddTransient<IRequestHandler<GetAllEntitiesQuery<TEntity>, PaginatedList>,
                 GetAllEntitiesQueryHandler<TEntity>>();
 
             // Register GetEntityByIdQueryHandler
-            services.AddTransient<IRequestHandler<GetEntityByIdQuery<TEntity>, object>,
-                GetEntityByIdQueryHandler<TEntity>>();
+            services.AddTransient<IRequestHandler<GetEntityByIdQuery<TEntity, TId>, object>,
+                GetEntityByIdQueryHandler<TEntity, TId>>();
 
             // Register CreateEntityCommandHandler
             services.AddTransient<IRequestHandler<CreateEntityCommand<TEntity>, (Guid id, object dto)>,
                 CreateEntityCommandHandler<TEntity>>();
 
             // Register UpdateEntityCommandHandler
-            services.AddTransient<IRequestHandler<UpdateEntityCommand<TEntity>>,
-                UpdateEntityCommandHandler<TEntity>>();
+            services.AddTransient<IRequestHandler<UpdateEntityCommand<TEntity, TId>>,
+                UpdateEntityCommandHandler<TEntity, TId>>();
 
             // Register DeleteEntityCommandHandler
             services.AddTransient<IRequestHandler<DeleteEntityCommand<TEntity>>,
@@ -59,13 +61,13 @@ namespace AppyNox.Services.Base.Application.Extensions
         /// This method dynamically registers command handlers for a variety of entity types.
         /// It leverages <see cref="AddEntityCommandHandlers{TEntity}"/> for each specified entity type.
         /// </remarks>
-        public static IServiceCollection AddGenericEntityCommandHandlers(this IServiceCollection services, params Type[] entityTypes)
+        public static IServiceCollection AddGenericEntityCommandHandlers(this IServiceCollection services, params (Type entityType, Type idType)[] entityTypes)
         {
-            foreach (var entityType in entityTypes)
+            foreach (var (entityType, idType) in entityTypes)
             {
                 var addMethod = typeof(ServiceCollectionExtensions)
                     .GetMethod(nameof(AddEntityCommandHandlers), BindingFlags.Static | BindingFlags.Public)
-                    ?.MakeGenericMethod(entityType);
+                    ?.MakeGenericMethod(entityType, idType);
 
                 addMethod?.Invoke(null, [services]);
             }

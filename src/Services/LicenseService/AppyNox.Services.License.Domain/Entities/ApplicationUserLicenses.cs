@@ -14,7 +14,7 @@ namespace AppyNox.Services.License.Domain.Entities
 
         #region [ Relations ]
 
-        public Guid LicenseId { get; set; }
+        public LicenseId LicenseId { get; set; }
 
         public virtual LicenseEntity License { get; set; } = default!;
 

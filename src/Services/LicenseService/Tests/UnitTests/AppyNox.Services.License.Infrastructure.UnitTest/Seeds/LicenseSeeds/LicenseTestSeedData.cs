@@ -35,14 +35,14 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.Seeds.LicenseSeeds
             {
                 LicenseEntity licenseEntity = new()
                 {
-                    Id = Guid.NewGuid(),
+                    Id = new LicenseId(Guid.NewGuid()),
                     Code = $"LK{codeIdentifier:D3}",
                     Description = $"DescriptionCoupon{codeIdentifier++}",
                     LicenseKey = Guid.NewGuid().ToString(),
                     ExpirationDate = DateTime.UtcNow.AddDays(10),
                     MaxUsers = 3,
                     MaxMacAddresses = 3,
-                    ProductId = Guid.NewGuid(),
+                    ProductId = new ProductId(Guid.NewGuid()),
                     CompanyId = Guid.NewGuid()
                 };
                 licenses.Add(licenseEntity);

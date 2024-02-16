@@ -4,11 +4,11 @@ using AppyNox.Services.License.Application.Dtos.LicenseDtos.DetailLevel;
 namespace AppyNox.Services.License.Application.Dtos.LicenseDtos.Models.Base
 {
     [LicenseDetailLevel(LicenseUpdateDetailLevel.Simple)]
-    public class LicenseSimpleUpdateDto : LicenseSimpleCreateDto, IUpdateDto
+    public class LicenseSimpleUpdateDto : LicenseSimpleCreateDto
     {
         #region [ Properties ]
 
-        public Guid Id { get; set; }
+        public LicenseIdDto Id { get; set; } = default!;
 
         #endregion
     }

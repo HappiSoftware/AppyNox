@@ -1,17 +1,14 @@
-﻿using AppyNox.Services.Base.Application.Dtos;
-using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.DetailLevel;
-using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.DetailLevel;
+using AppyNox.Services.Coupon.Domain.Entities;
 
-namespace AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Extended
+namespace AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Extended;
+
+[CouponDetailLevel(CouponUpdateDetailLevel.Extended)]
+public class CouponExtendedUpdateDto : CouponExtendedCreateDto
 {
-    [CouponDetailLevel(CouponUpdateDetailLevel.Extended)]
-    public class CouponExtendedUpdateDto : CouponExtendedCreateDto, IUpdateDto
-    {
-        public Guid Id { get; set; }
-    }
+    #region Properties
+
+    public CouponId Id { get; set; } = default!;
+
+    #endregion
 }

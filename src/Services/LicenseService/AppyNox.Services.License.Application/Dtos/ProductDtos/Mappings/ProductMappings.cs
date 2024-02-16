@@ -15,6 +15,8 @@ namespace AppyNox.Services.License.Application.Dtos.ProductDtos.Mappings
             CreateMap<ProductSimpleUpdateDto, ProductEntity>().ReverseMap();
 
             CreateMap<ProductEntity, ProductSimpleDto>();
+
+            CreateMap<ProductId, ProductIdDto>().ReverseMap();
         }
 
         #endregion

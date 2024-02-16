@@ -2,6 +2,7 @@
 using AppyNox.Services.Base.Application.Localization;
 using AppyNox.Services.Base.Core.Enums;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDetailDtos.DetailLevel;
+using AppyNox.Services.Coupon.Application.Dtos.CouponDetailTagDtos.DetailLevel;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.DetailLevel;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
 using AppyNox.Services.Coupon.Domain.Entities;
@@ -42,6 +43,16 @@ namespace AppyNox.Services.Coupon.Application.Dtos.DtoUtilities
                     _ => couponDetailDetailAttribute.DataAccessDetailLevel
                 };
             }
+            else if (attribute is CouponDetailTagDetailLevelAttribute couponDetailTagDetailAttribute)
+            {
+                return mappingType switch
+                {
+                    DtoLevelMappingTypes.DataAccess => couponDetailTagDetailAttribute.DataAccessDetailLevel,
+                    DtoLevelMappingTypes.Create => couponDetailTagDetailAttribute.CreateDetailLevel,
+                    DtoLevelMappingTypes.Update => couponDetailTagDetailAttribute.UpdateDetailLevel,
+                    _ => couponDetailTagDetailAttribute.DataAccessDetailLevel
+                };
+            }
 
             throw new ArgumentException("Unsupported attribute type for detail level mapping.");
         }
@@ -68,6 +79,14 @@ namespace AppyNox.Services.Coupon.Application.Dtos.DtoUtilities
                     if (attribute is CouponDetailLevelAttribute couponAttribute)
                     {
                         RegisterMapping(typeof(CouponEntity), dtoType, couponAttribute);
+                    }
+                    else if (attribute is CouponDetailDetailLevelAttribute couponDetailAttribute)
+                    {
+                        RegisterMapping(typeof(CouponDetailEntity), dtoType, couponDetailAttribute);
+                    }
+                    else if (attribute is CouponDetailTagDetailLevelAttribute couponDetailTagAttribute)
+                    {
+                        RegisterMapping(typeof(CouponDetailTag), dtoType, couponDetailTagAttribute);
                     }
                 }
             }

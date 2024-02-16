@@ -1,54 +1,58 @@
 ﻿using AppyNox.Services.Base.Domain;
 using AppyNox.Services.Base.Domain.Interfaces;
 
-namespace AppyNox.Services.Coupon.Domain.Entities
+namespace AppyNox.Services.Coupon.Domain.Entities;
+
+public class CouponEntity : EntityBase, IEntityTypeId, IAuditableData, IHasCode
 {
-    public class CouponEntity : EntityBase, IEntityTypeId, IAuditableData, IHasCode
-    {
-        #region [ Properties ]
+    #region [ Properties ]
 
-        public Guid Id { get; set; }
+    public CouponId Id { get; set; } = new CouponId(Guid.NewGuid());
 
-        public string Description { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
 
-        public double DiscountAmount { get; set; }
+    public double DiscountAmount { get; set; }
 
-        public int MinAmount { get; set; }
+    public int MinAmount { get; set; }
 
-        public string? Detail { get; set; }
+    public string? Detail { get; set; }
 
-        #endregion
+    #endregion
 
-        #region [ IAuditableData ]
+    #region [ IAuditableData ]
 
-        public string CreatedBy { get; set; } = string.Empty;
+    public string CreatedBy { get; set; } = string.Empty;
 
-        public DateTime CreationDate { get; set; }
+    public DateTime CreationDate { get; set; }
 
-        public string UpdatedBy { get; set; } = string.Empty;
+    public string UpdatedBy { get; set; } = string.Empty;
 
-        public DateTime? UpdateDate { get; set; }
+    public DateTime? UpdateDate { get; set; }
 
-        #endregion
+    #endregion
 
-        #region [ IHasCode ]
+    #region [ IHasCode ]
 
-        public string Code { get; set; } = string.Empty;
+    public string Code { get; set; } = string.Empty;
 
-        #endregion
+    #endregion
 
-        #region [ Relations ]
+    #region [ Relations ]
 
-        public Guid CouponDetailEntityId { get; set; }
+    public Guid CouponDetailEntityId { get; set; }
 
-        public virtual CouponDetailEntity CouponDetailEntity { get; set; } = null!;
+    public virtual CouponDetailEntity CouponDetailEntity { get; set; } = null!;
 
-        #endregion
+    #endregion
 
-        #region [ IEntityTypeId ]
+    #region [ IEntityTypeId ]
 
-        Guid IEntityTypeId.GetTypedId => Id;
+    Guid IEntityTypeId.GetTypedId => Id.Value;
 
-        #endregion
-    }
+    #endregion
+}
+
+public sealed record CouponId(Guid Value) : IHasGuidId
+{
+    public Guid GetGuidValue() => Value;
 }

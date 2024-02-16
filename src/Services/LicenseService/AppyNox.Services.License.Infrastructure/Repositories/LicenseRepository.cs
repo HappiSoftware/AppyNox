@@ -31,7 +31,7 @@ namespace AppyNox.Services.License.Infrastructure.Repositories
         public async Task<int> GetUserCountForLicenseKeyAsync(Guid licenseId, CancellationToken cancellationToken)
         {
             return await _context.ApplicationUserLicenses
-                                          .CountAsync(ul => ul.LicenseId == licenseId, cancellationToken);
+                                          .CountAsync(ul => ul.LicenseId.Value == licenseId, cancellationToken);
         }
 
         public async Task AssignLicenseToApplicationUserAsync(Guid licenseId, Guid applicationUserId)
@@ -40,7 +40,7 @@ namespace AppyNox.Services.License.Infrastructure.Repositories
             {
                 ApplicationUserLicenses entity = new()
                 {
-                    LicenseId = licenseId,
+                    LicenseId = new LicenseId(licenseId),
                     UserId = applicationUserId
                 };
                 _context.ApplicationUserLicenses.Add(entity);

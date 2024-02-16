@@ -33,7 +33,7 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.Seeds.ProductSeeds
             {
                 ProductEntity productEntity = new()
                 {
-                    Id = Guid.NewGuid(),
+                    Id = new ProductId(Guid.NewGuid()),
                     Code = $"PRO{codeIdentifier:D3}",
                     Name = $"ProductName{codeIdentifier++}",
                 };

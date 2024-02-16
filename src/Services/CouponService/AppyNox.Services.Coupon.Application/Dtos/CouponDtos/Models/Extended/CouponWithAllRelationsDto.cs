@@ -14,7 +14,7 @@ namespace AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Extended
     {
         #region [ Relations ]
 
-        public Guid Id { get; set; }
+        public CouponIdDto Id { get; set; }
 
         public virtual CouponDetailSimpleDto CouponDetailEntity { get; set; } = null!;
 
