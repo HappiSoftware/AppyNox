@@ -1,7 +1,7 @@
 ---
 name: Patch request
 about: Propose a patch or bug fix for this project
-title: Publishing [v1.0.1]
+title: 'Patch request: '
 labels: patch
 assignees: behluluysal
 

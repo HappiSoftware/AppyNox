@@ -1,7 +1,7 @@
 ---
 name: Documentation request
 about: Suggest improvements or additions to the documentation
-title: Documentation Update for [Your need]
+title: 'Documentation request: '
 labels: documentation, good first issue
 assignees: behluluysal
 

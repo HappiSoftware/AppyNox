@@ -1,7 +1,7 @@
 ---
 name: Refactoring request
 about: Suggest a code refactoring to improve the codebase
-title: Code Refactoring Proposal
+title: 'Refactoring request:'
 labels: good first issue, refactor
 assignees: behluluysal
 
