@@ -1,15 +1,13 @@
-﻿using AppyNox.Services.Base.Application.Dtos;
-using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.DetailLevel;
+﻿using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.DetailLevel;
 
-namespace AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base
+namespace AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
+
+[CouponDetailLevel(CouponUpdateDetailLevel.Simple)]
+public class CouponSimpleUpdateDto : CouponSimpleCreateDto
 {
-    [CouponDetailLevel(CouponUpdateDetailLevel.Simple)]
-    public class CouponSimpleUpdateDto : CouponSimpleCreateDto
-    {
-        #region [ Properties ]
+    #region [ Properties ]
 
-        public CouponIdDto Id { get; set; }
+    public CouponIdDto Id { get; set; } = default!;
 
-        #endregion
-    }
+    #endregion
 }

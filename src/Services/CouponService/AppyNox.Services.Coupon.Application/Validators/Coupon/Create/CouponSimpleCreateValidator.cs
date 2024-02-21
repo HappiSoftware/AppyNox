@@ -10,13 +10,16 @@ namespace AppyNox.Services.Coupon.Application.Validators.Coupon.Create
 
         public CouponSimpleCreateValidator()
         {
-            RuleFor(coupon => coupon.DiscountAmount)
-                .NotNull().WithMessage("Discount Amount cannot be null")
-                .NotEqual(0).WithMessage("Discount Amount cannot be equal to 0.");
+            RuleFor(coupon => coupon.Amount.DiscountAmount)
+                .NotNull().WithMessage("Discount Amount can not be null")
+                .GreaterThan(0).WithMessage("Discount Amount can not be equal or less then 0.");
 
-            RuleFor(coupon => coupon.MinAmount)
+            RuleFor(coupon => coupon.Amount.MinAmount)
                 .NotNull().WithMessage("MinAmount cannot be null")
-                .NotEqual(0).WithMessage("MinAmount cannot be equal to 0.");
+                .GreaterThan(0).WithMessage("MinAmount can not be equal equal or less then 0.");
+
+            RuleFor(coupon => coupon.Description)
+                .NotNull().WithMessage("Description can not be null");
         }
 
         #endregion

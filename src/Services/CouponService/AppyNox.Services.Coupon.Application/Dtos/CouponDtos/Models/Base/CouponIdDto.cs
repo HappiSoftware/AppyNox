@@ -1,6 +1,4 @@
-﻿using AppyNox.Services.Base.Application.Dtos;
-
-namespace AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
+﻿namespace AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
 
 public class CouponIdDto
 {

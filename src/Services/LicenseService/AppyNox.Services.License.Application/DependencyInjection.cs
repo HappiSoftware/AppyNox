@@ -25,10 +25,9 @@ namespace AppyNox.Services.License.Application
             {
                 cfg.RegisterServicesFromAssembly(applicationAssembly);
             });
-            services.AddGenericEntityCommandHandlers(
-                (typeof(LicenseEntity), typeof(LicenseId)),
-                (typeof(ProductEntity), typeof(ProductId))
-                );
+
+            services.AddNoxEntityCommands<LicenseEntity, LicenseId>();
+            services.AddNoxEntityCommands<ProductEntity, ProductId>();
 
             #endregion
 

@@ -18,3 +18,19 @@ public class PaginatedList
 
     #endregion
 }
+
+public class TypedPaginatedList<T> : PaginatedList
+{
+    #region [ Properties ]
+
+    private IEnumerable<T> _items = [];
+
+    public new IEnumerable<T> Items
+    {
+        get => _items;
+
+        set => _items = value;
+    }
+
+    #endregion
+}

@@ -1,4 +1,4 @@
-﻿using AppyNox.Services.Coupon.Domain.Entities;
+﻿using AppyNox.Services.Coupon.Domain.Coupons;
 using AppyNox.Services.Coupon.Infrastructure.Data;
 
 namespace AppyNox.Services.Coupon.Infrastructure.UnitTest.Seeds.CouponSeeds
@@ -17,12 +17,12 @@ namespace AppyNox.Services.Coupon.Infrastructure.UnitTest.Seeds.CouponSeeds
 
         #region [ Protected Methods ]
 
-        internal static CouponEntity SeedOneCoupon(this CouponDbContext context)
+        internal static Domain.Coupons.Coupon SeedOneCoupon(this CouponDbContext context)
         {
             return SeedMultipleCoupons(context, 1, 1).First();
         }
 
-        internal static IEnumerable<CouponEntity> SeedMultipleCoupons(this CouponDbContext context, int couponSize, int couponDetailSize)
+        internal static IEnumerable<Domain.Coupons.Coupon> SeedMultipleCoupons(this CouponDbContext context, int couponSize, int couponDetailSize)
         {
             if (couponSize <= 0)
             {
@@ -33,9 +33,9 @@ namespace AppyNox.Services.Coupon.Infrastructure.UnitTest.Seeds.CouponSeeds
                 throw new ArgumentException("CouponDetail size must be greater than 0.", nameof(couponDetailSize));
             }
 
-            var couponDetails = new List<CouponDetailEntity>();
-            var coupons = new List<CouponEntity>();
-            var random = new Random();
+            var couponDetails = new List<CouponDetail>();
+            var coupons = new List<Domain.Coupons.Coupon>();
+            Random random = new();
 
             #region [ CouponDetails ]
 
@@ -43,13 +43,8 @@ namespace AppyNox.Services.Coupon.Infrastructure.UnitTest.Seeds.CouponSeeds
 
             for (int i = 0; i < couponDetailSize; i++)
             {
-                var couponEntity = new CouponDetailEntity
-                {
-                    Id = Guid.NewGuid(),
-                    Code = $"EXD{codeIdentifier}",
-                    Detail = $"DescriptionCouponDetail{codeIdentifier++}"
-                }; ;
-                couponDetails.Add(couponEntity);
+                CouponDetail couponDetail = CouponDetail.Create($"EXD{codeIdentifier}", $"DescriptionCouponDetail{codeIdentifier++}");
+                couponDetails.Add(couponDetail);
             }
             context.CouponDetails.AddRange(couponDetails);
             context.SaveChanges();
@@ -64,15 +59,11 @@ namespace AppyNox.Services.Coupon.Infrastructure.UnitTest.Seeds.CouponSeeds
 
             for (int i = 0; i < couponSize; i++)
             {
-                var couponEntity = new CouponEntity
-                {
-                    Id = new CouponId(Guid.NewGuid()),
-                    Code = $"EXF{codeIdentifier}",
-                    Description = $"DescriptionCoupon{codeIdentifier++}",
-                    DiscountAmount = discountAmount,
-                    MinAmount = minAmount++,
-                    CouponDetailEntityId = couponDetails[random.Next(couponDetails.Count)].Id
-                };
+                Amount amount = new(discountAmount, minAmount);
+                Domain.Coupons.Coupon couponEntity = Domain.Coupons.Coupon.Create($"EXF{codeIdentifier}", $"DescriptionCoupon{codeIdentifier++}", "test detail", amount, new CouponDetailId(couponDetails[0].Id.Value));
+                couponEntity.AddAuditInformation("admin", DateTime.UtcNow);
+                couponEntity.UpdateAuditInformation("admin", DateTime.UtcNow);
+                minAmount++;
                 discountAmount += 0.1;
                 coupons.Add(couponEntity);
             }

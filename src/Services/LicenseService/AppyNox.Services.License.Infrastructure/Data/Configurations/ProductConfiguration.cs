@@ -33,12 +33,21 @@ namespace AppyNox.Services.License.Infrastructure.Data.Configurations
             builder.Property(x => x.Code).IsRequired().HasMaxLength(5);
             builder.Property(x => x.Name).HasMaxLength(20).IsUnicode().IsRequired();
 
+            builder.OwnsOne(o => o.Audit, auditableDataBuilder =>
+            {
+                auditableDataBuilder.Property(c => c.CreatedBy);
+                auditableDataBuilder.Property(c => c.CreationDate);
+                auditableDataBuilder.Property(c => c.UpdatedBy);
+                auditableDataBuilder.Property(c => c.UpdateDate);
+                auditableDataBuilder.WithOwner();
+            });
+
             #endregion
 
             #region [ Seeds ]
 
             builder.HasData(
-                new ProductEntity
+                new
                 {
                     Id = new ProductId(_productId),
                     Code = "PROD1",

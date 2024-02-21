@@ -1,4 +1,4 @@
-﻿using AppyNox.Services.Coupon.Domain.Entities;
+﻿using AppyNox.Services.Coupon.Domain.Coupons;
 using AppyNox.Services.Coupon.Infrastructure.Data.Configurations;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,9 +21,9 @@ namespace AppyNox.Services.Coupon.Infrastructure.Data
 
         #region [ Properties ]
 
-        public DbSet<CouponEntity> Coupons { get; set; }
+        public DbSet<Domain.Coupons.Coupon> Coupons { get; set; }
 
-        public DbSet<CouponDetailEntity> CouponDetails { get; set; }
+        public DbSet<CouponDetail> CouponDetails { get; set; }
 
         public DbSet<CouponDetailTag> CouponDetailTags { get; set; }
 
@@ -34,8 +34,6 @@ namespace AppyNox.Services.Coupon.Infrastructure.Data
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             base.OnConfiguring(optionsBuilder);
-            optionsBuilder
-            .UseLazyLoadingProxies();
 
             //optionsBuilder.UseNpgsql("User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_Coupon;Pooling=true");
         }

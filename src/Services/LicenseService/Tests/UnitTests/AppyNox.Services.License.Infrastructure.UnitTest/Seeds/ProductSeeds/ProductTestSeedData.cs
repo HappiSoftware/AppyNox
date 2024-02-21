@@ -31,12 +31,9 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.Seeds.ProductSeeds
 
             for (int i = 0; i < productSize; i++)
             {
-                ProductEntity productEntity = new()
-                {
-                    Id = new ProductId(Guid.NewGuid()),
-                    Code = $"PRO{codeIdentifier:D3}",
-                    Name = $"ProductName{codeIdentifier++}",
-                };
+                ProductEntity productEntity = ProductEntity.Create($"ProductName{codeIdentifier++}");
+                productEntity.AddAuditInformation("admin", DateTime.UtcNow);
+                productEntity.UpdateAuditInformation("admin", DateTime.UtcNow);
                 products.Add(productEntity);
             }
             context.Products.AddRange(products);

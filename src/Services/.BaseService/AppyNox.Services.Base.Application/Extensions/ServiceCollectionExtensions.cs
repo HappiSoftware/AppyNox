@@ -1,80 +1,87 @@
 ﻿using AppyNox.Services.Base.Application.Dtos;
 using AppyNox.Services.Base.Application.MediatR.Commands;
-using AppyNox.Services.Base.Application.MediatR.Handlers;
-using AppyNox.Services.Base.Domain;
+using AppyNox.Services.Base.Application.MediatR.Handlers.Anemic;
+using AppyNox.Services.Base.Application.MediatR.Handlers.DDD;
 using AppyNox.Services.Base.Domain.Interfaces;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
-using System.Security.Cryptography;
 
-namespace AppyNox.Services.Base.Application.Extensions
+namespace AppyNox.Services.Base.Application.Extensions;
+
+public static class ServiceCollectionExtensions
 {
-    public static class ServiceCollectionExtensions
+    #region [ Generic Service Methods ]
+
+    /// <summary>
+    /// Registers MediatR command handlers for Anemic Domain Entities.
+    /// Used for Anemic Domain Modeling. If you are using Domain Driven Design, use
+    /// <see cref="AddNoxEntityCommands"/> for entities with typed identifiers.
+    /// </summary>
+    /// <typeparam name="TEntity"></typeparam>
+    /// <param name="services"></param>
+    /// <returns>The updated <see cref="IServiceCollection"/> after registration.</returns>
+    private static IServiceCollection AddAnemicEntityCommands<TEntity>(this IServiceCollection services)
+    where TEntity : class, IEntityWithGuid
     {
-        #region [ Public Methods ]
+        // Register GetAllEntitiesQueryHandler
+        services.AddTransient<IRequestHandler<GetAllEntitiesQuery<TEntity>, PaginatedList>,
+            GetAllEntitiesQueryHandler<TEntity>>();
 
-        /// <summary>
-        /// Registers MediatR command handlers specific to a given entity type.
-        /// </summary>
-        /// <typeparam name="TEntity">The entity type for which to register command handlers.</typeparam>
-        /// <param name="services">The <see cref="IServiceCollection"/> to add the services to.</param>
-        /// <returns>The updated <see cref="IServiceCollection"/> after registration.</returns>
-        /// <remarks>
-        /// This method registers handlers for various entity-related operations like
-        /// getting all entities, getting an entity by ID, creating, updating, and deleting an entity.
-        /// </remarks>
-        public static IServiceCollection AddEntityCommandHandlers<TEntity, TId>(this IServiceCollection services)
-        where TEntity : class, IEntityTypeId
-        where TId : IHasGuidId
-        {
-            // Register GetAllEntitiesQueryHandler
-            services.AddTransient<IRequestHandler<GetAllEntitiesQuery<TEntity>, PaginatedList>,
-                GetAllEntitiesQueryHandler<TEntity>>();
+        // Register GetEntityByIdQueryHandler
+        services.AddTransient<IRequestHandler<GetEntityByIdQuery<TEntity>, object>,
+            GetEntityByIdQueryHandler<TEntity>>();
 
-            // Register GetEntityByIdQueryHandler
-            services.AddTransient<IRequestHandler<GetEntityByIdQuery<TEntity, TId>, object>,
-                GetEntityByIdQueryHandler<TEntity, TId>>();
+        // Register CreateEntityCommandHandler
+        services.AddTransient<IRequestHandler<CreateEntityCommand<TEntity>, (Guid id, object dto)>,
+            CreateEntityCommandHandler<TEntity>>();
 
-            // Register CreateEntityCommandHandler
-            services.AddTransient<IRequestHandler<CreateEntityCommand<TEntity>, (Guid id, object dto)>,
-                CreateEntityCommandHandler<TEntity>>();
+        // Register UpdateEntityCommandHandler
+        services.AddTransient<IRequestHandler<UpdateEntityCommand<TEntity>>,
+            UpdateEntityCommandHandler<TEntity>>();
 
-            // Register UpdateEntityCommandHandler
-            services.AddTransient<IRequestHandler<UpdateEntityCommand<TEntity, TId>>,
-                UpdateEntityCommandHandler<TEntity, TId>>();
+        // Register DeleteEntityCommandHandler
+        services.AddTransient<IRequestHandler<DeleteEntityCommand<TEntity>>,
+            DeleteEntityCommandHandler<TEntity>>();
 
-            // Register DeleteEntityCommandHandler
-            services.AddTransient<IRequestHandler<DeleteEntityCommand<TEntity>>,
-                DeleteEntityCommandHandler<TEntity>>();
-
-            return services;
-        }
-
-        /// <summary>
-        /// Registers MediatR command handlers for multiple entity types.
-        /// </summary>
-        /// <param name="services">The <see cref="IServiceCollection"/> to add the services to.</param>
-        /// <param name="entityTypes">An array of entity types for which to register command handlers.</param>
-        /// <returns>The updated <see cref="IServiceCollection"/> after registration.</returns>
-        /// <remarks>
-        /// This method dynamically registers command handlers for a variety of entity types.
-        /// It leverages <see cref="AddEntityCommandHandlers{TEntity}"/> for each specified entity type.
-        /// </remarks>
-        public static IServiceCollection AddGenericEntityCommandHandlers(this IServiceCollection services, params (Type entityType, Type idType)[] entityTypes)
-        {
-            foreach (var (entityType, idType) in entityTypes)
-            {
-                var addMethod = typeof(ServiceCollectionExtensions)
-                    .GetMethod(nameof(AddEntityCommandHandlers), BindingFlags.Static | BindingFlags.Public)
-                    ?.MakeGenericMethod(entityType, idType);
-
-                addMethod?.Invoke(null, [services]);
-            }
-
-            return services;
-        }
-
-        #endregion
+        return services;
     }
+
+    #endregion
+
+    #region [ Nox Service Methods ]
+
+    /// <summary>
+    /// Registers MediatR command handlers for Domain Driven Design Entities.
+    /// Used for Domain Driven Design Modeling. If you are usingAnemic Domain Modeling, use
+    /// <see cref="AddAnemicEntityCommands"/> for entities with typed identifiers.
+    /// </summary>
+    /// <typeparam name="TEntity"></typeparam>
+    /// <typeparam name="TId"></typeparam>
+    /// <param name="services"></param>
+    /// <returns>The updated <see cref="IServiceCollection"/> after registration.</returns>
+    public static IServiceCollection AddNoxEntityCommands<TEntity, TId>(this IServiceCollection services)
+    where TEntity : class, IHasStronglyTypedId
+        where TId : class, IHasGuidId
+    {
+        // Register GetAllNoxEntitiesQueryHandler
+        services.AddTransient<IRequestHandler<GetAllNoxEntitiesQuery<TEntity>, PaginatedList>,
+            GetAllNoxEntitiesQueryHandler<TEntity>>();
+
+        // Register GetNoxEntityByIdQueryHandler
+        services.AddTransient<IRequestHandler<GetNoxEntityByIdQuery<TEntity, TId>, object>,
+            GetNoxEntityByIdQueryHandler<TEntity, TId>>();
+
+        // Register CreateNoxEntityCommandHandler
+        services.AddTransient<IRequestHandler<CreateNoxEntityCommand<TEntity>, (Guid id, object dto)>,
+            CreateNoxEntityCommandHandler<TEntity>>();
+
+        // Register DeleteNoxEntityCommandHandler
+        services.AddTransient<IRequestHandler<DeleteNoxEntityCommand<TEntity, TId>>,
+            DeleteNoxEntityCommandHandler<TEntity, TId>>();
+
+        return services;
+    }
+
+    #endregion
 }

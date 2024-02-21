@@ -1,27 +1,25 @@
 ﻿using AppyNox.Services.Base.Domain.Interfaces;
+using AppyNox.Services.Coupon.Application.Dtos.CouponDetailDtos.Models.Basic;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.DetailLevel;
 
-namespace AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base
+namespace AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
+
+[CouponDetailLevel(CouponCreateDetailLevel.Simple)]
+public class CouponSimpleCreateDto : IHasCode
 {
-    [CouponDetailLevel(CouponCreateDetailLevel.Simple)]
-    public class CouponSimpleCreateDto : IHasCode
-    {
-        #region [ Properties ]
+    #region [ Properties ]
 
-        public double DiscountAmount { get; set; }
+    public string Description { get; set; } = string.Empty;
 
-        public int MinAmount { get; set; }
+    public AmountDto Amount { get; set; } = default!;
 
-        public string Description { get; set; } = string.Empty;
+    public CouponDetailIdDto CouponDetailEntityId { get; set; } = default!;
 
-        public Guid CouponDetailEntityId { get; set; }
+    #endregion
 
-        #endregion
+    #region [ IHasCode ]
 
-        #region [ IHasCode ]
+    public string Code { get; set; } = string.Empty;
 
-        public string Code { get; set; } = string.Empty;
-
-        #endregion
-    }
+    #endregion
 }

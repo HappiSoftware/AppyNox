@@ -7,51 +7,50 @@ using AppyNox.Services.License.Infrastructure.Data;
 using AppyNox.Services.License.Infrastructure.ExceptionExtensions;
 using Microsoft.EntityFrameworkCore;
 
-namespace AppyNox.Services.License.Infrastructure.Repositories
+namespace AppyNox.Services.License.Infrastructure.Repositories;
+
+public class LicenseRepository(LicenseDatabaseContext context, INoxInfrastructureLogger noxInfrastructureLogger, IUnitOfWorkBase unitOfWork)
+        : NoxRepositoryBase<LicenseEntity>(context, noxInfrastructureLogger), ILicenseRepository
 {
-    public class LicenseRepository(LicenseDatabaseContext context, INoxInfrastructureLogger noxInfrastructureLogger, IUnitOfWorkBase unitOfWork)
-        : GenericRepositoryBase<LicenseEntity>(context, noxInfrastructureLogger), ILicenseRepository
+    #region [ Fields ]
+
+    private readonly LicenseDatabaseContext _context = context;
+
+    private readonly IUnitOfWorkBase _unitOfWork = unitOfWork;
+
+    #endregion
+
+    #region Public Methods
+
+    public async Task<LicenseEntity?> FindLicenseByKeyAsync(string licenseKey, CancellationToken cancellationToken)
     {
-        #region [ Fields ]
-
-        private readonly LicenseDatabaseContext _context = context;
-
-        private readonly IUnitOfWorkBase _unitOfWork = unitOfWork;
-
-        #endregion
-
-        #region Public Methods
-
-        public async Task<LicenseEntity?> FindLicenseByKeyAsync(string licenseKey, CancellationToken cancellationToken)
-        {
-            return await _context.Licenses
-                                        .FirstOrDefaultAsync(l => l.LicenseKey == licenseKey, cancellationToken);
-        }
-
-        public async Task<int> GetUserCountForLicenseKeyAsync(Guid licenseId, CancellationToken cancellationToken)
-        {
-            return await _context.ApplicationUserLicenses
-                                          .CountAsync(ul => ul.LicenseId.Value == licenseId, cancellationToken);
-        }
-
-        public async Task AssignLicenseToApplicationUserAsync(Guid licenseId, Guid applicationUserId)
-        {
-            try
-            {
-                ApplicationUserLicenses entity = new()
-                {
-                    LicenseId = new LicenseId(licenseId),
-                    UserId = applicationUserId
-                };
-                _context.ApplicationUserLicenses.Add(entity);
-                await _unitOfWork.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                throw new NoxLicenseInfrastructureException(ex);
-            }
-        }
-
-        #endregion
+        return await _context.Licenses
+                                    .FirstOrDefaultAsync(l => l.LicenseKey == licenseKey, cancellationToken);
     }
+
+    public async Task<int> GetUserCountForLicenseKeyAsync(Guid licenseId, CancellationToken cancellationToken)
+    {
+        return await _context.ApplicationUserLicenses
+                                      .CountAsync(ul => ul.LicenseId.Value == licenseId, cancellationToken);
+    }
+
+    public async Task AssignLicenseToApplicationUserAsync(Guid licenseId, Guid applicationUserId)
+    {
+        try
+        {
+            ApplicationUserLicenses entity = new()
+            {
+                LicenseId = new LicenseId(licenseId),
+                UserId = applicationUserId
+            };
+            _context.ApplicationUserLicenses.Add(entity);
+            await _unitOfWork.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            throw new NoxLicenseInfrastructureException(ex);
+        }
+    }
+
+    #endregion
 }

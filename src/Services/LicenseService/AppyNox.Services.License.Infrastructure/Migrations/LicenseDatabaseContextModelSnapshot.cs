@@ -112,7 +112,7 @@ namespace AppyNox.Services.License.Infrastructure.Migrations
                             Code = "LK001",
                             CompanyId = new Guid("221e8b2c-59d5-4e5b-b010-86c239b66738"),
                             Description = "License Description",
-                            ExpirationDate = new DateTime(2025, 2, 15, 4, 53, 32, 725, DateTimeKind.Utc).AddTicks(8870),
+                            ExpirationDate = new DateTime(2025, 2, 20, 2, 26, 46, 493, DateTimeKind.Utc).AddTicks(961),
                             LicenseKey = "7f033381-fbf7-4929-b5f7-c64261b20bf3",
                             MaxMacAddresses = 1,
                             MaxUsers = 3,
@@ -179,7 +179,70 @@ namespace AppyNox.Services.License.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.OwnsOne("AppyNox.Services.Base.Domain.Interfaces.NoxAuditData", "Audit", b1 =>
+                        {
+                            b1.Property<Guid>("LicenseEntityId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("CreatedBy")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<DateTime>("CreationDate")
+                                .HasColumnType("timestamp with time zone");
+
+                            b1.Property<DateTime?>("UpdateDate")
+                                .HasColumnType("timestamp with time zone");
+
+                            b1.Property<string>("UpdatedBy")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.HasKey("LicenseEntityId");
+
+                            b1.ToTable("Licenses");
+
+                            b1.WithOwner()
+                                .HasForeignKey("LicenseEntityId");
+                        });
+
+                    b.Navigation("Audit")
+                        .IsRequired();
+
                     b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("AppyNox.Services.License.Domain.Entities.ProductEntity", b =>
+                {
+                    b.OwnsOne("AppyNox.Services.Base.Domain.Interfaces.NoxAuditData", "Audit", b1 =>
+                        {
+                            b1.Property<Guid>("ProductEntityId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("CreatedBy")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<DateTime>("CreationDate")
+                                .HasColumnType("timestamp with time zone");
+
+                            b1.Property<DateTime?>("UpdateDate")
+                                .HasColumnType("timestamp with time zone");
+
+                            b1.Property<string>("UpdatedBy")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.HasKey("ProductEntityId");
+
+                            b1.ToTable("Products");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ProductEntityId");
+                        });
+
+                    b.Navigation("Audit")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("AppyNox.Services.License.Domain.Entities.ApplicationUserLicenses", b =>

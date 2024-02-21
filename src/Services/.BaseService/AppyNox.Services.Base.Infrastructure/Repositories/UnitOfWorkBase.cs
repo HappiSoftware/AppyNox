@@ -100,17 +100,15 @@ namespace AppyNox.Services.Base.Infrastructure.Repositories
 
             _logger.LogInformation($"Attempting to saving changes to the database asynchronously, responsible user: {_currentUserId}.");
 
-            foreach (var entry in _dbContext.ChangeTracker.Entries<IAuditableData>())
+            foreach (var entry in _dbContext.ChangeTracker.Entries<INoxAuditableData>())
             {
                 if (entry.State == EntityState.Added)
                 {
-                    entry.Entity.CreatedBy = _currentUserId;
-                    entry.Entity.CreationDate = DateTime.UtcNow;
+                    entry.Entity.AddAuditInformation(_currentUserId, DateTime.UtcNow);
                 }
                 else if (entry.State == EntityState.Modified)
                 {
-                    entry.Entity.UpdatedBy = _currentUserId;
-                    entry.Entity.UpdateDate = DateTime.UtcNow;
+                    entry.Entity.UpdateAuditInformation(_currentUserId, DateTime.UtcNow);
                 }
             }
 

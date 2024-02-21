@@ -18,12 +18,15 @@ using AppyNox.Services.Coupon.Infrastructure;
 using AppyNox.Services.Coupon.Infrastructure.Data;
 using AppyNox.Services.Coupon.WebAPI.Permission;
 using Asp.Versioning;
+using Asp.Versioning.Conventions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Localization;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
+using Swashbuckle.AspNetCore.SwaggerGen;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -78,6 +81,9 @@ builder.Services.AddApiVersioning(options =>
     options.AssumeDefaultVersionWhenUnspecified = true;
     options.DefaultApiVersion = new ApiVersion(1, 0);
     options.ApiVersionReader = new UrlSegmentApiVersionReader();
+}).AddMvc(options =>
+{
+    options.Conventions.Add(new VersionByNamespaceConvention());
 });
 
 builder.ConfigureRedis(configuration);
@@ -121,12 +127,13 @@ builder.Services.AddAuthentication(options =>
 {
 });
 
-if (!builder.Environment.IsDevelopment())
+if (builder.Environment.IsDevelopment())
 {
     noxLogger.LogInformation("Adjusting swagger endpoints.");
     builder.Services.AddSwaggerGen(opt =>
     {
-        opt.SwaggerDoc("v1", new OpenApiInfo { Title = "Coupons Service", Version = "v1" });
+        opt.SwaggerDoc($"v{NoxVersions.v1_0}", new OpenApiInfo { Title = "Coupons Service", Version = NoxVersions.v1_0 });
+        opt.SwaggerDoc($"v{NoxVersions.v1_1}", new OpenApiInfo { Title = "Coupons Service", Version = NoxVersions.v1_1 });
         opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
         {
             In = ParameterLocation.Header,
@@ -138,19 +145,31 @@ if (!builder.Environment.IsDevelopment())
         });
 
         opt.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
         {
-            new OpenApiSecurityScheme
             {
-                Reference = new OpenApiReference
+                new OpenApiSecurityScheme
                 {
-                    Type=ReferenceType.SecurityScheme,
-                    Id="Bearer"
-                }
-            },
-            Array.Empty<string>()
-        }
-    });
+                    Reference = new OpenApiReference
+                    {
+                        Type=ReferenceType.SecurityScheme,
+                        Id="Bearer"
+                    }
+                },
+                Array.Empty<string>()
+            }
+        });
+
+        opt.DocInclusionPredicate((version, apiDesc) =>
+        {
+            if (!apiDesc.TryGetMethodInfo(out MethodInfo methodInfo)) return false;
+
+            var versions = methodInfo.DeclaringType
+                .GetCustomAttributes(true)
+                .OfType<ApiVersionAttribute>()
+                .SelectMany(attr => attr.Versions);
+
+            return versions.Any(v => $"v{v}" == version);
+        });
     });
     noxLogger.LogInformation("Adjusting swagger endpoints completed.");
 }
@@ -192,10 +211,14 @@ localizerFactory.AddNoxLocalizationServices();
 
 #region [ Pipeline ]
 
-if (!app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1.0/swagger.json", "Coupons Service v1.0");
+        c.SwaggerEndpoint("/swagger/v1.1/swagger.json", "Coupons Service v1.1");
+    });
 }
 
 app.UseRequestLocalization();

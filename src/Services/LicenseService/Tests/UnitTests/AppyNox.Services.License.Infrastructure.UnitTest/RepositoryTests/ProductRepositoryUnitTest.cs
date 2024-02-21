@@ -42,7 +42,7 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
                 PageNumber = 1,
                 PageSize = 1,
             };
-            PaginatedList result = await repository.GetAllAsync(queryParameters, _cacheService);
+            PaginatedList result = await repository.GetAllAsync(queryParameters, typeof(ProductSimpleDto), _cacheService);
 
             Assert.NotNull(result);
             Assert.Single(result.Items);
@@ -62,7 +62,7 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
                 PageSize = 2,
             };
 
-            PaginatedList result = await repository.GetAllAsync(queryParameters, _cacheService);
+            PaginatedList result = await repository.GetAllAsync(queryParameters, typeof(ProductSimpleDto), _cacheService);
 
             Assert.NotNull(result);
             Assert.Equal(2, result.ItemsCount);
@@ -83,12 +83,12 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
                 PageNumber = 2,
                 PageSize = 1,
             };
-            PaginatedList result = await repository.GetAllAsync(queryParameters, _cacheService);
+            PaginatedList result = await repository.GetAllAsync(queryParameters, typeof(ProductSimpleUpdateDto), _cacheService);
 
             Assert.NotNull(result);
             Assert.Single(result.Items);
-            Assert.Equal(products.Last().Id, ((ProductEntity)result.Items.First()).Id);
-            Assert.Equal(products.Last().Name, ((ProductEntity)result.Items.First()).Name);
+            Assert.Equal(products.Last().Id.Value, ((ProductSimpleUpdateDto)result.Items.First()).Id.Value);
+            Assert.Equal(products.Last().Name, ((ProductSimpleUpdateDto)result.Items.First()).Name);
         }
 
         [Fact]
@@ -104,7 +104,7 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
                 PageNumber = 1,
                 PageSize = 50,
             };
-            PaginatedList result = await repository.GetAllAsync(queryParameters, _cacheService);
+            PaginatedList result = await repository.GetAllAsync(queryParameters, typeof(ProductSimpleUpdateDto), _cacheService);
 
             Assert.NotNull(result);
             Assert.Equal(50, result.ItemsCount);
@@ -125,7 +125,7 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
                 PageNumber = 5,
                 PageSize = 5,
             };
-            PaginatedList result = await repository.GetAllAsync(queryParameters, _cacheService);
+            PaginatedList result = await repository.GetAllAsync(queryParameters, typeof(ProductSimpleUpdateDto), _cacheService);
 
             List<ProductEntity> expectedProducts = products.Skip(20).Take(5).ToList();
             List<object> resultList = result.Items.ToList();
@@ -135,8 +135,8 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
 
             for (int i = 0; i < expectedProducts.Count; i++)
             {
-                Assert.Equal(expectedProducts[i].Id, ((ProductEntity)resultList[i]).Id);
-                Assert.Equal(expectedProducts[i].Name, ((ProductEntity)resultList[i]).Name);
+                Assert.Equal(expectedProducts[i].Id.Value, ((ProductSimpleUpdateDto)resultList[i]).Id.Value);
+                Assert.Equal(expectedProducts[i].Name, ((ProductSimpleUpdateDto)resultList[i]).Name);
             }
         }
 
@@ -180,10 +180,7 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
             var unitOfWork = new UnitOfWork(context, _noxLoggerStub);
             ProductRepository repository = new(context, _noxLoggerStub);
 
-            ProductEntity product = new()
-            {
-                Name = "NewProduct"
-            };
+            ProductEntity product = ProductEntity.Create("NewProduct");
 
             await repository.AddAsync(product);
             await unitOfWork.SaveChangesAsync();
@@ -215,8 +212,7 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
             existingProduct.Name = "NewProductUp";
             existingProduct.Code = "ORP01";
 
-            List<string> propertyList = ["Name"];
-            repository.Update(existingProduct, propertyList);
+            repository.Update(existingProduct);
             await unitOfWork.SaveChangesAsync();
 
             var result = await repository.GetByIdAsync(existingProduct.Id);
@@ -241,7 +237,7 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
             var unitOfWork = new UnitOfWork(context, _noxLoggerStub);
             ProductRepository repository = new(context, _noxLoggerStub);
 
-            repository.Remove(existingProduct);
+            await repository.RemoveByIdAsync(existingProduct.Id);
             await unitOfWork.SaveChangesAsync();
 
             var exception = await Assert.ThrowsAsync<EntityNotFoundException<ProductEntity>>(async () =>

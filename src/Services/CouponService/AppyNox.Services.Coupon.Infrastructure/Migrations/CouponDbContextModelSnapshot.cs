@@ -22,7 +22,56 @@ namespace AppyNox.Services.Coupon.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("AppyNox.Services.Coupon.Domain.Entities.CouponDetailEntity", b =>
+            modelBuilder.Entity("AppyNox.Services.Coupon.Domain.Entities.Coupon", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(5)
+                        .HasColumnType("character varying(5)");
+
+                    b.Property<Guid?>("CouponDetailEntityId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .IsUnicode(true)
+                        .HasColumnType("character varying(60)");
+
+                    b.Property<string>("Detail")
+                        .HasMaxLength(60)
+                        .IsUnicode(true)
+                        .HasColumnType("character varying(60)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CouponDetailEntityId");
+
+                    b.ToTable("Coupons", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("594cf045-3a2b-46f5-99c9-1eb59f035db2"),
+                            Code = "EXF50",
+                            CouponDetailEntityId = new Guid("ec80532f-58f0-4690-b40c-2133b067d5f2"),
+                            Description = "Description",
+                            Detail = "Detail1"
+                        },
+                        new
+                        {
+                            Id = new Guid("c386aec2-dfd2-4ea5-b878-8fe5632e2e40"),
+                            Code = "EXF60",
+                            CouponDetailEntityId = new Guid("ec80532f-58f0-4690-b40c-2133b067d5f2"),
+                            Description = "Description2",
+                            Detail = "Detail2"
+                        });
+                });
+
+            modelBuilder.Entity("AppyNox.Services.Coupon.Domain.Entities.CouponDetail", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -37,13 +86,13 @@ namespace AppyNox.Services.Coupon.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("CouponDetails");
+                    b.ToTable("CouponDetails", (string)null);
 
                     b.HasData(
                         new
                         {
                             Id = new Guid("ec80532f-58f0-4690-b40c-2133b067d5f2"),
-                            Code = "EXF50",
+                            Code = "EXD10",
                             Detail = "TestDetail"
                         });
                 });
@@ -65,7 +114,7 @@ namespace AppyNox.Services.Coupon.Infrastructure.Migrations
 
                     b.HasIndex("CouponDetailEntityId");
 
-                    b.ToTable("CouponDetailTags");
+                    b.ToTable("CouponDetailTags", (string)null);
 
                     b.HasData(
                         new
@@ -76,109 +125,143 @@ namespace AppyNox.Services.Coupon.Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("AppyNox.Services.Coupon.Domain.Entities.CouponEntity", b =>
+            modelBuilder.Entity("AppyNox.Services.Coupon.Domain.Entities.Coupon", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uuid");
+                    b.HasOne("AppyNox.Services.Coupon.Domain.Entities.CouponDetail", "CouponDetail")
+                        .WithMany("Coupons")
+                        .HasForeignKey("CouponDetailEntityId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasMaxLength(5)
-                        .HasColumnType("character varying(5)");
-
-                    b.Property<Guid>("CouponDetailEntityId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("CreationDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(60)
-                        .IsUnicode(true)
-                        .HasColumnType("character varying(60)");
-
-                    b.Property<string>("Detail")
-                        .HasMaxLength(60)
-                        .IsUnicode(true)
-                        .HasColumnType("character varying(60)");
-
-                    b.Property<double>("DiscountAmount")
-                        .HasColumnType("double precision");
-
-                    b.Property<int>("MinAmount")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime?>("UpdateDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("UpdatedBy")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CouponDetailEntityId");
-
-                    b.ToTable("Coupons");
-
-                    b.HasData(
-                        new
+                    b.OwnsOne("AppyNox.Services.Coupon.Domain.Entities.Coupon.Amount#AppyNox.Services.Coupon.Domain.Entities.Amount", "Amount", b1 =>
                         {
-                            Id = new Guid("594cf045-3a2b-46f5-99c9-1eb59f035db2"),
-                            Code = "EXF50",
-                            CouponDetailEntityId = new Guid("ec80532f-58f0-4690-b40c-2133b067d5f2"),
-                            CreatedBy = "admin",
-                            CreationDate = new DateTime(2024, 2, 16, 2, 20, 24, 302, DateTimeKind.Utc).AddTicks(7049),
-                            Description = "Description",
-                            Detail = "Detail1",
-                            DiscountAmount = 10.65,
-                            MinAmount = 100,
-                            UpdateDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            UpdatedBy = "admin"
-                        },
-                        new
-                        {
-                            Id = new Guid("c386aec2-dfd2-4ea5-b878-8fe5632e2e40"),
-                            Code = "EXF60",
-                            CouponDetailEntityId = new Guid("ec80532f-58f0-4690-b40c-2133b067d5f2"),
-                            CreatedBy = "admin",
-                            CreationDate = new DateTime(2024, 2, 16, 2, 20, 24, 302, DateTimeKind.Utc).AddTicks(7084),
-                            Description = "Description2",
-                            Detail = "Detail2",
-                            DiscountAmount = 20.550000000000001,
-                            MinAmount = 200,
-                            UpdateDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            UpdatedBy = "admin"
+                            b1.Property<Guid>("CouponEntityId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<double>("DiscountAmount")
+                                .HasColumnType("double precision");
+
+                            b1.Property<int>("MinAmount")
+                                .HasColumnType("integer");
+
+                            b1.HasKey("CouponEntityId");
+
+                            b1.ToTable("Coupons", (string)null);
+
+                            b1.WithOwner()
+                                .HasForeignKey("CouponEntityId");
                         });
+
+                    b.OwnsOne("AppyNox.Services.Coupon.Domain.Entities.Coupon.Audit#AppyNox.Services.Base.Domain.Interfaces.NoxAuditData", "Audit", b1 =>
+                        {
+                            b1.Property<Guid>("CouponEntityId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("CreatedBy")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<DateTime>("CreationDate")
+                                .HasColumnType("timestamp with time zone");
+
+                            b1.Property<DateTime?>("UpdateDate")
+                                .HasColumnType("timestamp with time zone");
+
+                            b1.Property<string>("UpdatedBy")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.HasKey("CouponEntityId");
+
+                            b1.ToTable("Coupons", (string)null);
+
+                            b1.WithOwner()
+                                .HasForeignKey("CouponEntityId");
+                        });
+
+                    b.Navigation("Amount")
+                        .IsRequired();
+
+                    b.Navigation("Audit")
+                        .IsRequired();
+
+                    b.Navigation("CouponDetail");
+                });
+
+            modelBuilder.Entity("AppyNox.Services.Coupon.Domain.Entities.CouponDetail", b =>
+                {
+                    b.OwnsOne("AppyNox.Services.Coupon.Domain.Entities.CouponDetail.Audit#AppyNox.Services.Base.Domain.Interfaces.NoxAuditData", "Audit", b1 =>
+                        {
+                            b1.Property<Guid>("CouponDetailEntityId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("CreatedBy")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<DateTime>("CreationDate")
+                                .HasColumnType("timestamp with time zone");
+
+                            b1.Property<DateTime?>("UpdateDate")
+                                .HasColumnType("timestamp with time zone");
+
+                            b1.Property<string>("UpdatedBy")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.HasKey("CouponDetailEntityId");
+
+                            b1.ToTable("CouponDetails", (string)null);
+
+                            b1.WithOwner()
+                                .HasForeignKey("CouponDetailEntityId");
+                        });
+
+                    b.Navigation("Audit")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("AppyNox.Services.Coupon.Domain.Entities.CouponDetailTag", b =>
                 {
-                    b.HasOne("AppyNox.Services.Coupon.Domain.Entities.CouponDetailEntity", "CouponDetailEntity")
+                    b.HasOne("AppyNox.Services.Coupon.Domain.Entities.CouponDetail", "CouponDetail")
                         .WithMany("CouponDetailTags")
                         .HasForeignKey("CouponDetailEntityId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("CouponDetailEntity");
+                    b.OwnsOne("AppyNox.Services.Coupon.Domain.Entities.CouponDetailTag.Audit#AppyNox.Services.Base.Domain.Interfaces.NoxAuditData", "Audit", b1 =>
+                        {
+                            b1.Property<Guid>("CouponDetailTagId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("CreatedBy")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<DateTime>("CreationDate")
+                                .HasColumnType("timestamp with time zone");
+
+                            b1.Property<DateTime?>("UpdateDate")
+                                .HasColumnType("timestamp with time zone");
+
+                            b1.Property<string>("UpdatedBy")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.HasKey("CouponDetailTagId");
+
+                            b1.ToTable("CouponDetailTags", (string)null);
+
+                            b1.WithOwner()
+                                .HasForeignKey("CouponDetailTagId");
+                        });
+
+                    b.Navigation("Audit")
+                        .IsRequired();
+
+                    b.Navigation("CouponDetail");
                 });
 
-            modelBuilder.Entity("AppyNox.Services.Coupon.Domain.Entities.CouponEntity", b =>
-                {
-                    b.HasOne("AppyNox.Services.Coupon.Domain.Entities.CouponDetailEntity", "CouponDetailEntity")
-                        .WithMany("Coupons")
-                        .HasForeignKey("CouponDetailEntityId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("CouponDetailEntity");
-                });
-
-            modelBuilder.Entity("AppyNox.Services.Coupon.Domain.Entities.CouponDetailEntity", b =>
+            modelBuilder.Entity("AppyNox.Services.Coupon.Domain.Entities.CouponDetail", b =>
                 {
                     b.Navigation("CouponDetailTags");
 

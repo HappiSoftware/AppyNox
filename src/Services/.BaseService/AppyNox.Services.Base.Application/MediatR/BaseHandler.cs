@@ -1,5 +1,4 @@
-﻿using AppyNox.Services.Base.Application.Dtos;
-using AppyNox.Services.Base.Application.DtoUtilities;
+﻿using AppyNox.Services.Base.Application.DtoUtilities;
 using AppyNox.Services.Base.Application.ExceptionExtensions;
 using AppyNox.Services.Base.Application.ExceptionExtensions.Base;
 using AppyNox.Services.Base.Application.Interfaces.Caches;
@@ -7,30 +6,22 @@ using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Application.Interfaces.Repositories;
 using AppyNox.Services.Base.Core.Enums;
 using AppyNox.Services.Base.Core.Extensions;
-using AppyNox.Services.Base.Domain;
 using AppyNox.Services.Base.Domain.Interfaces;
 using AutoMapper;
 using FluentValidation;
 using FluentValidation.Internal;
 using System.Dynamic;
-using System.Linq.Expressions;
-using System.Reflection;
 using System.Text.Json;
 
 namespace AppyNox.Services.Base.Application.MediatR
 {
     public abstract class BaseHandler<TEntity>(
-        IGenericRepositoryBase<TEntity> repository,
         IMapper mapper,
         IDtoMappingRegistryBase dtoMappingRegistry,
         IServiceProvider serviceProvider,
-        INoxApplicationLogger logger,
-        IUnitOfWorkBase unitOfWork)
-        where TEntity : class, IEntityTypeId
+        INoxApplicationLogger logger)
     {
         #region [ Fields ]
-
-        protected readonly IGenericRepositoryBase<TEntity> Repository = repository;
 
         protected readonly IMapper Mapper = mapper;
 
@@ -39,8 +30,6 @@ namespace AppyNox.Services.Base.Application.MediatR
         protected readonly IServiceProvider ServiceProvider = serviceProvider;
 
         protected readonly INoxApplicationLogger Logger = logger;
-
-        protected readonly IUnitOfWorkBase UnitOfWork = unitOfWork;
 
         protected readonly Type EntityType = typeof(TEntity);
 

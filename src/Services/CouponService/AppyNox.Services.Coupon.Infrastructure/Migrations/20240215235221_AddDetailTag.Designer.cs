@@ -25,7 +25,7 @@ namespace AppyNox.Services.Coupon.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("AppyNox.Services.Coupon.Domain.Entities.CouponDetailEntity", b =>
+            modelBuilder.Entity("AppyNox.Services.Coupon.Domain.Entities.CouponDetail", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -79,7 +79,7 @@ namespace AppyNox.Services.Coupon.Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("AppyNox.Services.Coupon.Domain.Entities.CouponEntity", b =>
+            modelBuilder.Entity("AppyNox.Services.Coupon.Domain.Entities.Coupon", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -161,26 +161,26 @@ namespace AppyNox.Services.Coupon.Infrastructure.Migrations
 
             modelBuilder.Entity("AppyNox.Services.Coupon.Domain.Entities.CouponDetailTag", b =>
                 {
-                    b.HasOne("AppyNox.Services.Coupon.Domain.Entities.CouponDetailEntity", "CouponDetailEntity")
+                    b.HasOne("AppyNox.Services.Coupon.Domain.Entities.CouponDetail", "CouponDetail")
                         .WithMany("CouponDetailTags")
                         .HasForeignKey("CouponDetailEntityId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("CouponDetailEntity");
+                    b.Navigation("CouponDetail");
                 });
 
-            modelBuilder.Entity("AppyNox.Services.Coupon.Domain.Entities.CouponEntity", b =>
+            modelBuilder.Entity("AppyNox.Services.Coupon.Domain.Entities.Coupon", b =>
                 {
-                    b.HasOne("AppyNox.Services.Coupon.Domain.Entities.CouponDetailEntity", "CouponDetailEntity")
+                    b.HasOne("AppyNox.Services.Coupon.Domain.Entities.CouponDetail", "CouponDetail")
                         .WithMany("Coupons")
                         .HasForeignKey("CouponDetailEntityId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.Navigation("CouponDetailEntity");
+                    b.Navigation("CouponDetail");
                 });
 
-            modelBuilder.Entity("AppyNox.Services.Coupon.Domain.Entities.CouponDetailEntity", b =>
+            modelBuilder.Entity("AppyNox.Services.Coupon.Domain.Entities.CouponDetail", b =>
                 {
                     b.Navigation("CouponDetailTags");
 

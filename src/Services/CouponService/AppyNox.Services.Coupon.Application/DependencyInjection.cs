@@ -1,7 +1,7 @@
 ﻿using AppyNox.Services.Base.Application.DtoUtilities;
 using AppyNox.Services.Base.Application.Extensions;
 using AppyNox.Services.Coupon.Application.Dtos.DtoUtilities;
-using AppyNox.Services.Coupon.Domain.Entities;
+using AppyNox.Services.Coupon.Domain.Coupons;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
@@ -24,9 +24,8 @@ namespace AppyNox.Services.Coupon.Application
             {
                 cfg.RegisterServicesFromAssembly(applicationAssembly);
             });
-            services.AddGenericEntityCommandHandlers(
-                (typeof(CouponEntity), typeof(CouponId))
-                );
+
+            services.AddNoxEntityCommands<Domain.Coupons.Coupon, CouponId>();
 
             #endregion
 

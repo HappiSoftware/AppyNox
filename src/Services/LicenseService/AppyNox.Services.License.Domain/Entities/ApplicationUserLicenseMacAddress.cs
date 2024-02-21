@@ -2,7 +2,7 @@
 
 namespace AppyNox.Services.License.Domain.Entities
 {
-    public class ApplicationUserLicenseMacAddress : IEntityTypeId
+    public class ApplicationUserLicenseMacAddress : IHasStronglyTypedId
     {
         #region [ Properties ]
 
@@ -22,7 +22,7 @@ namespace AppyNox.Services.License.Domain.Entities
 
         #region [ IEntityTypeId ]
 
-        Guid IEntityTypeId.GetTypedId => Id;
+        Guid IHasStronglyTypedId.GetTypedId => Id;
 
         #endregion
     }

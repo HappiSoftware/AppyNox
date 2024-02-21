@@ -43,7 +43,7 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
                 PageSize = 1,
             };
 
-            PaginatedList result = await repository.GetAllAsync(queryParameters, _cacheService);
+            PaginatedList result = await repository.GetAllAsync(queryParameters, typeof(LicenseSimpleUpdateDto), _cacheService);
 
             Assert.NotNull(result);
             Assert.Single(result.Items);
@@ -64,7 +64,7 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
                 PageSize = 2,
             };
 
-            PaginatedList result = await repository.GetAllAsync(queryParameters, _cacheService);
+            PaginatedList result = await repository.GetAllAsync(queryParameters, typeof(LicenseSimpleUpdateDto), _cacheService);
 
             Assert.NotNull(result);
             Assert.Equal(2, result.ItemsCount);
@@ -87,12 +87,13 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
                 PageSize = 1,
             };
 
-            PaginatedList result = await repository.GetAllAsync(queryParameters, _cacheService);
+            PaginatedList result = await repository.GetAllAsync(queryParameters, typeof(LicenseSimpleUpdateDto), _cacheService);
 
             Assert.NotNull(result);
             Assert.Single(result.Items);
-            Assert.Equal(licenses.Last().Id, ((LicenseEntity)result.Items.First()).Id);
-            Assert.Equal(licenses.Last().Code, ((LicenseEntity)result.Items.First()).Code);
+
+            Assert.Equal(licenses.Last().Id.Value, ((LicenseSimpleUpdateDto)result.Items.First()).Id.Value);
+            Assert.Equal(licenses.Last().Code, ((LicenseSimpleUpdateDto)result.Items.First()).Code);
         }
 
         [Fact]
@@ -110,7 +111,7 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
                 PageSize = 50,
             };
 
-            PaginatedList result = await repository.GetAllAsync(queryParameters, _cacheService);
+            PaginatedList result = await repository.GetAllAsync(queryParameters, typeof(LicenseSimpleUpdateDto), _cacheService);
 
             Assert.NotNull(result);
             Assert.Equal(50, result.Items.Count());
@@ -132,7 +133,7 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
                 PageSize = 5,
             };
 
-            PaginatedList result = await repository.GetAllAsync(queryParameters, _cacheService);
+            PaginatedList result = await repository.GetAllAsync(queryParameters, typeof(LicenseSimpleUpdateDto), _cacheService);
 
             List<LicenseEntity> expectedLicenses = licenses.Skip(20).Take(5).ToList();
             List<object> resultList = result.Items.ToList();
@@ -142,8 +143,8 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
 
             for (int i = 0; i < expectedLicenses.Count; i++)
             {
-                Assert.Equal(expectedLicenses[i].Id, ((LicenseEntity)resultList[i]).Id);
-                Assert.Equal(expectedLicenses[i].Code, ((LicenseEntity)resultList[i]).Code);
+                Assert.Equal(expectedLicenses[i].Id.Value, ((LicenseSimpleUpdateDto)resultList[i]).Id.Value);
+                Assert.Equal(expectedLicenses[i].Code, ((LicenseSimpleUpdateDto)resultList[i]).Code);
             }
         }
 
@@ -192,15 +193,17 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
             var unitOfWork = new UnitOfWork(context, _noxLoggerStub);
             LicenseRepository repository = new(context, _noxLoggerStub, unitOfWork);
 
-            LicenseEntity license = new()
-            {
-                Code = "LK000",
-                Description = "DescriptionLicense",
-                LicenseKey = Guid.NewGuid().ToString(),
-                ExpirationDate = DateTime.UtcNow.AddDays(2),
-                MaxUsers = 1,
-                ProductId = new ProductId(Guid.NewGuid())
-            };
+            LicenseEntity license = LicenseEntity.Create
+            (
+                "LK000",
+                "DescriptionLicense",
+                Guid.NewGuid().ToString(),
+                DateTime.UtcNow.AddDays(2),
+                1,
+                2,
+                Guid.NewGuid(),
+                new ProductId(Guid.NewGuid())
+            );
 
             await repository.AddAsync(license);
             await unitOfWork.SaveChangesAsync();
@@ -237,8 +240,7 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
             existingLicense.ExpirationDate = DateTime.UtcNow.AddDays(20);
             existingLicense.MaxUsers = 12;
 
-            List<string> propertyList = ["Code", "Description", "LicenseKey", "ExpirationDate", "MaxUsers"];
-            repository.Update(existingLicense, propertyList);
+            repository.Update(existingLicense);
             await unitOfWork.SaveChangesAsync();
 
             var result = await repository.GetByIdAsync(existingLicense.Id);
@@ -266,7 +268,7 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
             var unitOfWork = new UnitOfWork(context, _noxLoggerStub);
             LicenseRepository repository = new(context, _noxLoggerStub, unitOfWork);
 
-            repository.Remove(existingLicense);
+            await repository.RemoveByIdAsync(existingLicense.Id);
             await unitOfWork.SaveChangesAsync();
 
             var exception = await Assert.ThrowsAsync<EntityNotFoundException<LicenseEntity>>(async () =>
