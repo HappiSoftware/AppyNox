@@ -4,10 +4,9 @@ using AppyNox.Services.License.Application.Interfaces;
 using AppyNox.Services.License.Domain.Entities;
 using AppyNox.Services.License.Infrastructure.Data;
 
-namespace AppyNox.Services.License.Infrastructure.Repositories
+namespace AppyNox.Services.License.Infrastructure.Repositories;
+
+public class ProductRepository(LicenseDatabaseContext context, INoxInfrastructureLogger noxInfrastructureLogger)
+        : NoxRepositoryBase<ProductEntity>(context, noxInfrastructureLogger), IProductInterface
 {
-    public class ProductRepository(LicenseDatabaseContext context, INoxInfrastructureLogger noxInfrastructureLogger)
-        : GenericRepositoryBase<ProductEntity>(context, noxInfrastructureLogger), IProductInterface
-    {
-    }
 }

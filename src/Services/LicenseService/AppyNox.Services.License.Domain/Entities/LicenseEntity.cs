@@ -1,8 +1,9 @@
-﻿using AppyNox.Services.Base.Domain.Interfaces;
+﻿using AppyNox.Services.Base.Domain;
+using AppyNox.Services.Base.Domain.Interfaces;
 
 namespace AppyNox.Services.License.Domain.Entities;
 
-public class LicenseEntity : IEntityTypeId, IHasCode
+public class LicenseEntity : EntityBase, IHasStronglyTypedId, IHasCode
 {
     #region [ Properties ]
 
@@ -28,7 +29,7 @@ public class LicenseEntity : IEntityTypeId, IHasCode
 
     public virtual ICollection<ApplicationUserLicenses>? ApplicationUserLicenses { get; set; }
 
-    public ProductId ProductId { get; set; }
+    public ProductId ProductId { get; set; } = default!;
 
     public virtual ProductEntity Product { get; set; } = default!;
 
@@ -36,7 +37,34 @@ public class LicenseEntity : IEntityTypeId, IHasCode
 
     #region [ IEntityTypeId ]
 
-    Guid IEntityTypeId.GetTypedId => Id.Value;
+    Guid IHasStronglyTypedId.GetTypedId => Id.Value;
+
+    #endregion
+
+    #region [ Constructors and Factories ]
+
+    private LicenseEntity()
+    {
+    }
+
+    private LicenseEntity(Guid id, string code, string description, string licenseKey, DateTime expirationDate, int maxUsers, int maxMacAddresses, Guid? companyId, ProductId productId)
+    {
+        Id = new LicenseId(id);
+        Code = code;
+        Description = description;
+        LicenseKey = licenseKey;
+        ExpirationDate = expirationDate;
+        MaxUsers = maxUsers;
+        MaxMacAddresses = maxMacAddresses;
+        CompanyId = companyId;
+        ProductId = productId;
+    }
+
+    public static LicenseEntity Create(string code, string description, string licenseKey, DateTime expirationDate, int maxUsers, int maxMacAddresses, Guid? companyId, ProductId productId)
+    {
+        LicenseEntity entity = new(Guid.NewGuid(), code, description, licenseKey, expirationDate, maxUsers, maxMacAddresses, companyId, productId);
+        return entity;
+    }
 
     #endregion
 }

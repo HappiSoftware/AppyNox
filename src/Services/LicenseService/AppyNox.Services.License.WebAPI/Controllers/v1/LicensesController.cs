@@ -30,21 +30,21 @@ namespace AppyNox.Services.License.WebAPI.Controllers.v1
         [Authorize(Permissions.Licenses.View)]
         public async Task<IActionResult> GetAll([FromQuery] QueryParametersViewModel queryParameters)
         {
-            return Ok(await _mediator.Send(new GetAllEntitiesQuery<LicenseEntity>(queryParameters)));
+            return Ok(await _mediator.Send(new GetAllNoxEntitiesQuery<LicenseEntity>(queryParameters)));
         }
 
         [HttpGet("{id}")]
         [Authorize(Permissions.Licenses.View)]
         public async Task<IActionResult> GetById(Guid id, [FromQuery] QueryParametersViewModel queryParameters)
         {
-            return Ok(await _mediator.Send(new GetEntityByIdQuery<LicenseEntity, LicenseId>(new LicenseId(id), queryParameters)));
+            return Ok(await _mediator.Send(new GetNoxEntityByIdQuery<LicenseEntity, LicenseId>(new LicenseId(id), queryParameters)));
         }
 
         [HttpPost]
         [Authorize(Permissions.Licenses.Create)]
         public async Task<IActionResult> Create([FromBody] dynamic licenseDto, string detailLevel = "Simple")
         {
-            dynamic result = await _mediator.Send(new CreateEntityCommand<LicenseEntity>(licenseDto, detailLevel));
+            dynamic result = await _mediator.Send(new CreateNoxEntityCommand<LicenseEntity>(licenseDto, detailLevel));
             var response = new
             {
                 Id = result.Item1,
@@ -53,24 +53,22 @@ namespace AppyNox.Services.License.WebAPI.Controllers.v1
             return CreatedAtAction(nameof(GetById), new { id = result.Item1 }, response);
         }
 
-        [HttpPut("{id}")]
-        [Authorize(Permissions.Licenses.Edit)]
-        public async Task<IActionResult> Update(Guid id, [FromBody] dynamic licenseDto, string detailLevel = "Simple")
-        {
-            await _mediator.Send(new GetEntityByIdQuery<LicenseEntity, LicenseId>(new LicenseId(id), QueryParameters.CreateForIdOnly()));
+        // TODO Specific update methods will be added
+        //[HttpPut("{id}")]
+        //[Authorize(Permissions.Licenses.Edit)]
+        //public async Task<IActionResult> Update(Guid id, [FromBody] dynamic licenseDto, string detailLevel = "Simple")
+        //{
+        //    await _mediator.Send(new GetEntityByIdQuery<LicenseEntity, LicenseId>(new LicenseId(id), QueryParameters.CreateForIdOnly()));
 
-            await _mediator.Send(new UpdateEntityCommand<LicenseEntity, LicenseId>(new LicenseId(id), licenseDto, detailLevel));
-            return NoContent();
-        }
+        //    await _mediator.Send(new UpdateEntityCommand<LicenseEntity, LicenseId>(new LicenseId(id), licenseDto, detailLevel));
+        //    return NoContent();
+        //}
 
         [HttpDelete("{id}")]
         [Authorize(Permissions.Licenses.Delete)]
         public async Task<IActionResult> Delete(Guid id)
         {
-            await _mediator.Send(new GetEntityByIdQuery<LicenseEntity, LicenseId>(new LicenseId(id), QueryParameters.CreateForIdOnly()));
-
-            LicenseEntity entityToDelete = new() { Id = new LicenseId(id) };
-            await _mediator.Send(new DeleteEntityCommand<LicenseEntity>(entityToDelete));
+            await _mediator.Send(new DeleteNoxEntityCommand<LicenseEntity, LicenseId>(new LicenseId(id)));
             return NoContent();
         }
 

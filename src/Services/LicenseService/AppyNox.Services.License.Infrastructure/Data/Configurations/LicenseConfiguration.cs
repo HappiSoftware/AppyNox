@@ -44,12 +44,21 @@ namespace AppyNox.Services.License.Infrastructure.Data.Configurations
             builder.Property(x => x.MaxUsers).IsRequired();
             builder.Property(x => x.MaxMacAddresses).IsRequired();
 
+            builder.OwnsOne(o => o.Audit, auditableDataBuilder =>
+            {
+                auditableDataBuilder.Property(c => c.CreatedBy);
+                auditableDataBuilder.Property(c => c.CreationDate);
+                auditableDataBuilder.Property(c => c.UpdatedBy);
+                auditableDataBuilder.Property(c => c.UpdateDate);
+                auditableDataBuilder.WithOwner();
+            });
+
             #endregion
 
             #region [ Seeds ]
 
             builder.HasData(
-                new LicenseEntity
+                new
                 {
                     Id = new LicenseId(_licenseId),
                     Code = "LK001",

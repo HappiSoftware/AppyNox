@@ -166,12 +166,23 @@ public class NoxResponseWrapperMiddleware(RequestDelegate next,
     private async Task WriteResponseAsync(HttpContext context, Stream originalBodyStream, NoxApiResponse response)
     {
         context.Response.StatusCode = response.Code;
-        response.Code = 0; // will be ignored in response body
-        string responseContent = JsonSerializer.Serialize(response, _jsonSerializeOptions);
 
-        context.Response.ContentType = "application/json";
-        context.Response.Body = originalBodyStream;
-        await context.Response.WriteAsync(responseContent);
+        // No content should be written to the response body for a 204 response
+        if (context.Response.StatusCode != StatusCodes.Status204NoContent)
+        {
+            response.Code = 0; // will be ignored in response body
+            string responseContent = JsonSerializer.Serialize(response, _jsonSerializeOptions);
+
+            context.Response.ContentType = "application/json";
+            context.Response.Body = originalBodyStream;
+            await context.Response.WriteAsync(responseContent);
+        }
+        else
+        {
+            // If it's a 204 No Content response, make sure the body is empty.
+            context.Response.ContentLength = 0;
+            await originalBodyStream.FlushAsync();
+        }
     }
 
     #endregion

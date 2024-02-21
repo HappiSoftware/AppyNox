@@ -1,9 +1,10 @@
 ﻿using AppyNox.Services.Base.Domain;
 using AppyNox.Services.Base.Domain.Interfaces;
+using System.ComponentModel.Design;
 
 namespace AppyNox.Services.License.Domain.Entities;
 
-public class ProductEntity : EntityBase, IEntityTypeId, IHasCode
+public class ProductEntity : EntityBase, IHasStronglyTypedId, IHasCode
 {
     #region [ Properties ]
 
@@ -27,7 +28,27 @@ public class ProductEntity : EntityBase, IEntityTypeId, IHasCode
 
     #region [ IEntityTypeId ]
 
-    Guid IEntityTypeId.GetTypedId => Id.Value;
+    Guid IHasStronglyTypedId.GetTypedId => Id.Value;
+
+    #endregion
+
+    #region [ Constructors and Factories ]
+
+    private ProductEntity()
+    {
+    }
+
+    private ProductEntity(Guid id, string name)
+    {
+        Id = new ProductId(id);
+        Name = name;
+    }
+
+    public static ProductEntity Create(string name)
+    {
+        ProductEntity entity = new(Guid.NewGuid(), name);
+        return entity;
+    }
 
     #endregion
 }

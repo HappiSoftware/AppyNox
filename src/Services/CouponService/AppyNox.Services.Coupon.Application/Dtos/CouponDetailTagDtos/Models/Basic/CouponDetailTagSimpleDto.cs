@@ -1,16 +1,15 @@
 ﻿using AppyNox.Services.Coupon.Application.Dtos.CouponDetailTagDtos.DetailLevel;
 
-namespace AppyNox.Services.Coupon.Application.Dtos.CouponDetailTagDtos.Models.Basic
+namespace AppyNox.Services.Coupon.Application.Dtos.CouponDetailTagDtos.Models.Basic;
+
+[CouponDetailTagDetailLevel(CouponDetailTagDataAccessDetailLevel.Simple)]
+public class CouponDetailTagSimpleDto
 {
-    [CouponDetailTagDetailLevel(CouponDetailTagDataAccessDetailLevel.Simple)]
-    public class CouponDetailTagSimpleDto
-    {
-        #region [ Properties ]
+    #region [ Properties ]
 
-        public Guid Id { get; set; }
+    public CouponDetailTagIdDto Id { get; set; } = default!;
 
-        //public string Tag { get; set; } = string.Empty;
+    public string Tag { get; set; } = string.Empty;
 
-        #endregion
-    }
+    #endregion
 }

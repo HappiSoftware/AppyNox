@@ -82,8 +82,8 @@ builder.ConfigureRedis(configuration);
 #region [ Dependency Injection For Layers ]
 
 noxLogger.LogInformation("Registering DI's for layers.");
-builder.Services.AddLicenseInfrastructure(builder, builder.Environment.GetEnvironment(), noxLogger);
 builder.Services.AddLicenseApplication();
+builder.Services.AddLicenseInfrastructure(builder, builder.Environment.GetEnvironment(), noxLogger);
 noxLogger.LogInformation("Registering DI's for layers completed.");
 
 #endregion

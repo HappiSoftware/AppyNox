@@ -7,16 +7,16 @@ using System.Diagnostics.CodeAnalysis;
 namespace AppyNox.Services.Base.Application.MediatR.Commands;
 
 [SuppressMessage("Sonar Code Smell", "S2326:Unused type parameters should be removed", Justification = "TEntity is used to specify the type of entity being created")]
-public record CreateEntityCommand<TEntity>(dynamic Dto, string DetailLevel) : IRequest<(Guid guid, object basicDto)>;
+public record CreateEntityCommand<TEntity>(dynamic Dto, string DetailLevel) : IRequest<(Guid guid, object basicDto)> where TEntity : IEntityWithGuid;
 
 [SuppressMessage("Sonar Code Smell", "S2326:Unused type parameters should be removed", Justification = "TEntity is used to specify the type of entity being created")]
-public record DeleteEntityCommand<TEntity>(TEntity Entity) : IRequest where TEntity : IEntityTypeId;
+public record DeleteEntityCommand<TEntity>(TEntity Entity) : IRequest where TEntity : IEntityWithGuid;
 
 [SuppressMessage("Sonar Code Smell", "S2326:Unused type parameters should be removed", Justification = "TEntity is used to specify the type of entity being created")]
-public record UpdateEntityCommand<TEntity, TId>(TId Id, dynamic Dto, string DetailLevel) : IRequest where TEntity : IEntityTypeId where TId : IHasGuidId;
+public record UpdateEntityCommand<TEntity>(Guid Id, dynamic Dto, string DetailLevel) : IRequest where TEntity : IEntityWithGuid;
 
 [SuppressMessage("Sonar Code Smell", "S2326:Unused type parameters should be removed", Justification = "TEntity is used to specify the type of entity being created")]
-public record GetAllEntitiesQuery<TEntity>(IQueryParameters QueryParameters) : IRequest<PaginatedList>;
+public record GetAllEntitiesQuery<TEntity>(IQueryParameters QueryParameters) : IRequest<PaginatedList> where TEntity : IEntityWithGuid;
 
 [SuppressMessage("Sonar Code Smell", "S2326:Unused type parameters should be removed", Justification = "TEntity is used to specify the type of entity being created")]
-public record GetEntityByIdQuery<TEntity, TId>(TId Id, IQueryParameters QueryParameters) : IRequest<object> where TId : IHasGuidId;
+public record GetEntityByIdQuery<TEntity>(Guid Id, IQueryParameters QueryParameters) : IRequest<object> where TEntity : IEntityWithGuid;

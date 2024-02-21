@@ -2,7 +2,7 @@
 
 namespace AppyNox.Services.License.Domain.Entities
 {
-    public class ApplicationUserLicenses : IEntityTypeId
+    public class ApplicationUserLicenses : IHasStronglyTypedId
     {
         #region [ Properties ]
 
@@ -24,7 +24,7 @@ namespace AppyNox.Services.License.Domain.Entities
 
         #region [ IEntityTypeId ]
 
-        Guid IEntityTypeId.GetTypedId => Id;
+        Guid IHasStronglyTypedId.GetTypedId => Id;
 
         #endregion
     }

@@ -4,7 +4,7 @@ public interface IHasCode
 {
     #region [ Properties ]
 
-    string Code { get; set; }
+    string Code { get; }
 
     #endregion
 }

@@ -1,36 +1,34 @@
-﻿using AppyNox.Services.Base.Domain;
-using AppyNox.Services.Base.Domain.Interfaces;
+﻿using AppyNox.Services.Base.Domain.Interfaces;
 
-namespace AppyNox.Services.Sso.Domain.Entities
+namespace AppyNox.Services.Sso.Domain.Entities;
+
+public class CompanyEntity : IHasStronglyTypedId, IHasCode
 {
-    public class CompanyEntity : EntityBase, IEntityTypeId, IHasCode
-    {
-        #region [ Properties ]
+    #region [ Properties ]
 
-        public Guid Id { get; set; }
+    public Guid Id { get; set; }
 
-        public string Name { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
 
-        #endregion
+    #endregion
 
-        #region [ IHasCode ]
+    #region [ IHasCode ]
 
-        public string Code { get; set; } = string.Empty;
+    public string Code { get; set; } = string.Empty;
 
-        #endregion
+    #endregion
 
-        #region [ Relations ]
+    #region [ Relations ]
 
-        public virtual ICollection<ApplicationUser>? Users { get; set; }
+    public virtual ICollection<ApplicationUser>? Users { get; set; }
 
-        public virtual ICollection<ApplicationRole>? Roles { get; set; }
+    public virtual ICollection<ApplicationRole>? Roles { get; set; }
 
-        #endregion
+    #endregion
 
-        #region [ IEntityTypeId ]
+    #region [ IEntityTypeId ]
 
-        Guid IEntityTypeId.GetTypedId => Id;
+    Guid IHasStronglyTypedId.GetTypedId => Id;
 
-        #endregion
-    }
+    #endregion
 }

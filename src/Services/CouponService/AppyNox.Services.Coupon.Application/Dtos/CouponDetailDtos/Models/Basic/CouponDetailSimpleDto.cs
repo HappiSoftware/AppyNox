@@ -1,31 +1,29 @@
 ﻿using AppyNox.Services.Base.Domain.Interfaces;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDetailDtos.DetailLevel;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDetailTagDtos.Models.Basic;
-using AppyNox.Services.Coupon.Domain.Entities;
 
-namespace AppyNox.Services.Coupon.Application.Dtos.CouponDetailDtos.Models.Basic
+namespace AppyNox.Services.Coupon.Application.Dtos.CouponDetailDtos.Models.Basic;
+
+[CouponDetailDetailLevel(CouponDetailDataAccessDetailLevel.Simple)]
+public class CouponDetailSimpleDto : IHasCode
 {
-    [CouponDetailDetailLevel(CouponDetailDataAccessDetailLevel.Simple)]
-    public class CouponDetailSimpleDto : IHasCode
-    {
-        #region [ Properties ]
+    #region [ Properties ]
 
-        public Guid Id { get; set; }
+    public CouponDetailIdDto Id { get; set; } = default!;
 
-        // Omitted for simplicity
+    // Omitted for simplicity
 
-        #endregion
+    #endregion
 
-        #region [ IHasCode ]
+    #region [ IHasCode ]
 
-        public string Code { get; set; } = string.Empty;
+    public string Code { get; set; } = string.Empty;
 
-        #endregion
+    #endregion
 
-        #region [ Relations ]
+    #region [ Relations ]
 
-        public virtual ICollection<CouponDetailTagSimpleDto>? CouponDetailTags { get; set; }
+    public virtual IEnumerable<CouponDetailTagSimpleDto>? CouponDetailTags { get; set; }
 
-        #endregion
-    }
+    #endregion
 }

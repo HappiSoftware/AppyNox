@@ -4,6 +4,7 @@ using AppyNox.Services.Base.Core.Common;
 using AppyNox.Services.Base.Core.Enums;
 using AppyNox.Services.Base.Infrastructure.HostedServices;
 using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
+using AppyNox.Services.Coupon.Domain.Coupons;
 using AppyNox.Services.Coupon.Infrastructure.Data;
 using AppyNox.Services.Coupon.Infrastructure.Repositories;
 using Consul;
@@ -64,7 +65,8 @@ namespace AppyNox.Services.Coupon.Infrastructure
 
             #endregion
 
-            services.AddScoped(typeof(IGenericRepositoryBase<>), typeof(GenericRepository<>));
+            services.AddScoped(typeof(ICouponRepository), typeof(CouponRepository<Domain.Coupons.Coupon>));
+            services.AddScoped(typeof(INoxRepositoryBase<>), typeof(NoxRepository<>));
             services.AddScoped<IUnitOfWorkBase, UnitOfWork>();
 
             return services;

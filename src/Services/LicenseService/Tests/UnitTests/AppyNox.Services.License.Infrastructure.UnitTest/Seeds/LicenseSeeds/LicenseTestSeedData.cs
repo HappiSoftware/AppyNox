@@ -33,19 +33,20 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.Seeds.LicenseSeeds
 
             for (int i = 0; i < licenseSize; i++)
             {
-                LicenseEntity licenseEntity = new()
-                {
-                    Id = new LicenseId(Guid.NewGuid()),
-                    Code = $"LK{codeIdentifier:D3}",
-                    Description = $"DescriptionCoupon{codeIdentifier++}",
-                    LicenseKey = Guid.NewGuid().ToString(),
-                    ExpirationDate = DateTime.UtcNow.AddDays(10),
-                    MaxUsers = 3,
-                    MaxMacAddresses = 3,
-                    ProductId = new ProductId(Guid.NewGuid()),
-                    CompanyId = Guid.NewGuid()
-                };
-                licenses.Add(licenseEntity);
+                LicenseEntity license = LicenseEntity.Create
+                (
+                    $"LK{codeIdentifier:D3}",
+                    $"DescriptionCoupon{codeIdentifier++}",
+                    Guid.NewGuid().ToString(),
+                    DateTime.UtcNow.AddDays(10),
+                    1,
+                    2,
+                    Guid.NewGuid(),
+                    new ProductId(Guid.NewGuid())
+                );
+                license.AddAuditInformation("admin", DateTime.UtcNow);
+                license.UpdateAuditInformation("admin", DateTime.UtcNow);
+                licenses.Add(license);
             }
             context.Licenses.AddRange(licenses);
             context.SaveChanges();

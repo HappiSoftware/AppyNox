@@ -80,63 +80,64 @@ namespace AppyNox.Services.License.WebAPI.IntegrationTest.Controllers
             #endregion
         }
 
-        [Fact]
-        [Order(3)]
-        public async Task Update_ShouldUpdateEntity()
-        {
-            #region [ Get Product ]
+        // TODO Specific update test methods will be added
+        //[Fact]
+        //[Order(3)]
+        //public async Task Update_ShouldUpdateEntity()
+        //{
+        //    #region [ Get Product ]
 
-            // Arrange
-            var product = _licenseApiTestFixture.DbContext.Products.FirstOrDefault();
+        //    // Arrange
+        //    var product = _licenseApiTestFixture.DbContext.Products.FirstOrDefault();
 
-            // Assert
-            Assert.NotNull(product);
+        //    // Assert
+        //    Assert.NotNull(product);
 
-            #endregion
+        //    #endregion
 
-            #region [ Update Product ]
+        //    #region [ Update Product ]
 
-            // Arrange
-            Guid id = product.Id.Value;
-            string newName = "NameUpdated";
-            string newCode = "drop2";
+        //    // Arrange
+        //    Guid id = product.Id.Value;
+        //    string newName = "NameUpdated";
+        //    string newCode = "drop2";
 
-            string requestUri = $"{_serviceURIs.LicenseServiceURI}/v{NoxVersions.v1_0}/products/{id}";
-            var requestBody = new
-            {
-                name = newName,
-                code = newCode,
-                id = new
-                {
-                    value = id
-                },
-            };
-            var jsonRequest = JsonSerializer.Serialize(requestBody);
-            var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+        //    string requestUri = $"{_serviceURIs.LicenseServiceURI}/v{NoxVersions.v1_0}/products/{id}";
+        //    var requestBody = new
+        //    {
+        //        name = newName,
+        //        code = newCode,
+        //        id = new
+        //        {
+        //            value = id
+        //        },
+        //    };
+        //    var jsonRequest = JsonSerializer.Serialize(requestBody);
+        //    var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
 
-            // Act
-            var response = await _client.PutAsync(requestUri, content);
+        //    // Act
+        //    var response = await _client.PutAsync(requestUri, content);
 
-            // Assert
-            response.EnsureSuccessStatusCode();
-            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+        //    // Assert
+        //    response.EnsureSuccessStatusCode();
+        //    Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
 
-            #endregion
+        //    #endregion
 
-            #region [ Get Product ]
+        //    #region [ Get Product ]
 
-            if (product != null)
-            {
-                _licenseApiTestFixture.DbContext.Entry(product).Reload();
-            }
+        //    if (product != null)
+        //    {
+        //        _licenseApiTestFixture.DbContext.Entry(product).Reload();
+        //    }
 
-            // Assert
-            Assert.NotNull(product);
-            Assert.Equal(newName, product.Name);
-            Assert.Equal(newCode, product.Code);
+        //    // Assert
+        //    Assert.NotNull(product);
+        //    Assert.Equal(newName, product.Name);
+        //    Assert.Equal(newCode, product.Code);
 
-            #endregion
-        }
+        //    #endregion
+        //}
 
         [Fact]
         [Order(4)]

@@ -1,5 +1,6 @@
 ﻿using AppyNox.Services.Base.Domain.Interfaces;
 using AppyNox.Services.License.Application.Dtos.LicenseDtos.DetailLevel;
+using AppyNox.Services.License.Application.Dtos.ProductDtos.Models.Base;
 using AppyNox.Services.License.Domain.Entities;
 
 namespace AppyNox.Services.License.Application.Dtos.LicenseDtos.Models.Base;
@@ -29,7 +30,7 @@ public class LicenseSimpleCreateDto : IHasCode
 
     #region [ Relations ]
 
-    public ProductId ProductId { get; set; } = default!;
+    public ProductIdDto ProductId { get; set; } = default!;
 
     #endregion
 }
