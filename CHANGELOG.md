@@ -1,7 +1,16 @@
 # Changelog
 All notable changes to AppyNox will be documented in this file.
 
-## [1.4.0](https://github.com/HappiSoftware/AppyNox/compare/v1.3.0...v1.4.0) - NOT RELEASED
+## [1.5.0](https://github.com/HappiSoftware/AppyNox/compare/v1.4.0...v1.5.0) - NOT RELEASED
+
+
+## [1.4.0](https://github.com/HappiSoftware/AppyNox/compare/v1.3.0...v1.4.0) - 2024.02.26
+### Added
+- Feature request: NoxRepository and Cqrs Methods ([#201](https://github.com/HappiSoftware/AppyNox/issues/201))
+- Feature request: CouponService Should use DDD ([#209](https://github.com/HappiSoftware/AppyNox/issues/209))
+
+### Fixed
+- Bug Report: Generic Repository Update Method Throws Error ([#199](https://github.com/HappiSoftware/AppyNox/issues/199))
 
 
 ## [1.3.0](https://github.com/HappiSoftware/AppyNox/compare/v1.2.0...v1.3.0) - 2024.02.16
