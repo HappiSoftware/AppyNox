@@ -12,6 +12,12 @@ public class NoxJwtAuthorizationHandler
 
     protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, PermissionRequirement requirement)
     {
+        if (context.User.HasClaim(c => c.Type == "superadmin"))
+        {
+            context.Succeed(requirement);
+            return Task.CompletedTask;
+        }
+
         if (context.User.HasClaim(c => c.Type == "nameid"))
         {
             if (context.User.HasClaim(c => c.Value == requirement.Permission))
