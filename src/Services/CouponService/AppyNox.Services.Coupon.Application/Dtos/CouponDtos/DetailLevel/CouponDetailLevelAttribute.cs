@@ -19,6 +19,9 @@ namespace AppyNox.Services.Coupon.Application.Dtos.CouponDtos.DetailLevel
         [Display(Name = "Simple")]
         Simple,
 
+        [Display(Name = "Bulk")]
+        Bulk,
+
         [Display(Name = "Extended")]
         Extended
     }

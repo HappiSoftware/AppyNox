@@ -51,6 +51,7 @@ namespace AppyNox.Services.License.Application.UnitTest.CQRSTests
             validatorMockUpdate
                 .Setup(validator => validator.Validate(It.IsAny<ValidationContext<object>>()))
                 .Returns(new ValidationResult());
+
             _fixture.MockServiceProvider.Setup(service => service.GetService(typeof(IValidator<LicenseSimpleUpdateDto>)))
                 .Returns(validatorMockUpdate.Object);
 

@@ -21,10 +21,11 @@ internal class CouponDetailTagConfiguration(CouponDetailId detailId, CouponDetai
             couponId => couponId.Value,
             value => new CouponDetailTagId(value));
 
-        builder.HasOne(c => c.CouponDetail)
+        builder.HasOne<CouponDetail>()
             .WithMany(cd => cd.CouponDetailTags)
             .HasForeignKey(c => c.CouponDetailId)
-            .IsRequired();
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.Property(x => x.Tag).IsRequired();
 

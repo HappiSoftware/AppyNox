@@ -23,10 +23,10 @@ internal class CouponConfiguration(CouponId couponId1, CouponId couponId2, Coupo
                 value => new CouponDetailId(value));
 
         builder.HasOne(c => c.CouponDetail)
-            .WithMany(cd => cd.Coupons)
+            .WithMany()
             .HasForeignKey(c => c.CouponDetailId)
             .IsRequired()
-            .OnDelete(DeleteBehavior.NoAction);
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.Navigation(b => b.CouponDetail).IsRequired();
 

@@ -9,7 +9,7 @@ using AppyNox.Services.Coupon.Domain.Coupons;
 using System.Data;
 using System.Reflection;
 
-namespace AppyNox.Services.Coupon.Application.Dtos.DtoUtilities
+namespace AppyNox.Services.Coupon.Application.DtoUtilities
 {
     public class DtoMappingRegistry : DtoMappingRegistryBase
     {

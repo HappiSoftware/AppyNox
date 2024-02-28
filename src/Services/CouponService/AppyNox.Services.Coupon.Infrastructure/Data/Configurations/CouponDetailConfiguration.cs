@@ -21,12 +21,6 @@ namespace AppyNox.Services.Coupon.Infrastructure.Data.Configurations
                 couponId => couponId.Value,
                 value => new CouponDetailId(value));
 
-            builder.HasMany(cd => cd.CouponDetailTags)
-                .WithOne(c => c.CouponDetail)
-                .HasForeignKey(c => c.CouponDetailId)
-                .IsRequired(false)
-                .OnDelete(DeleteBehavior.Cascade);
-
             builder.OwnsOne(o => o.Audit, auditableDataBuilder =>
             {
                 auditableDataBuilder.Property(c => c.CreatedBy);
