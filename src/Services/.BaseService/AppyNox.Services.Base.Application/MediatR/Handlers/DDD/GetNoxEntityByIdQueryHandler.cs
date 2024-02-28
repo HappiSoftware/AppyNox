@@ -35,7 +35,7 @@ public class GetNoxEntityByIdQueryHandler<TEntity, TId>(
         {
             Logger.LogInformation($"Fetching entity of type {typeof(TEntity).Name} with ID: {request.Id}.");
             var dtoType = GetDtoType(request.QueryParameters);
-            object entity = await _repository.GetByIdAsync(request.Id);
+            object entity = await _repository.GetByIdAsync(request.Id, dtoType);
             return MapEntityToDtoSingle(entity, dtoType);
         }
         catch (Exception ex) when (ex is INoxException)
