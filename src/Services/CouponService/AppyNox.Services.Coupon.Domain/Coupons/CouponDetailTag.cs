@@ -23,7 +23,7 @@ public class CouponDetailTag : EntityBase, IHasStronglyTypedId
     {
         Id = new CouponDetailTagId(id);
         Tag = tag;
-        CouponDetailEntityId = couponDetailId;
+        CouponDetailId = couponDetailId;
     }
 
     public static CouponDetailTag Create(string tag, CouponDetailId couponDetailId)
@@ -42,9 +42,9 @@ public class CouponDetailTag : EntityBase, IHasStronglyTypedId
 
     #region [ Relations ]
 
-    public CouponDetailId CouponDetailEntityId { get; private set; }
+    public CouponDetailId CouponDetailId { get; private set; }
 
-    public virtual CouponDetail CouponDetailEntity { get; private set; } = null!;
+    public virtual CouponDetail CouponDetail { get; private set; } = null!;
 
     #endregion
 }

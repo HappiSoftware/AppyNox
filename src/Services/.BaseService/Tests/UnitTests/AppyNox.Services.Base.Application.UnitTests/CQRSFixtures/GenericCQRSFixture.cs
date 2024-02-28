@@ -42,15 +42,15 @@ public class GenericCQRSFixture<TEntity> : IDisposable
 
     public Mock<IMediator> MockMediator { get; private set; }
 
-    public GetAllEntitiesQueryHandler<TEntity> GetAllEntitiesCommandHandler { get; set; }
+    internal GetAllEntitiesQueryHandler<TEntity> GetAllEntitiesCommandHandler { get; set; }
 
-    public GetEntityByIdQueryHandler<TEntity> GetEntityByIdCommandHandler { get; set; }
+    internal GetEntityByIdQueryHandler<TEntity> GetEntityByIdCommandHandler { get; set; }
 
-    public CreateEntityCommandHandler<TEntity> CreateEntityCommandHandler { get; set; }
+    internal CreateEntityCommandHandler<TEntity> CreateEntityCommandHandler { get; set; }
 
-    public UpdateEntityCommandHandler<TEntity> UpdateEntityCommandHandler { get; set; }
+    internal UpdateEntityCommandHandler<TEntity> UpdateEntityCommandHandler { get; set; }
 
-    public DeleteEntityCommandHandler<TEntity> DeleteEntityCommandHandler { get; set; }
+    internal DeleteEntityCommandHandler<TEntity> DeleteEntityCommandHandler { get; set; }
 
     #endregion
 
@@ -72,7 +72,6 @@ public class GenericCQRSFixture<TEntity> : IDisposable
         MockQueryParameters = new Mock<IQueryParameters>();
         MockQueryParameters.Setup(p => p.PageNumber).Returns(1);
         MockQueryParameters.Setup(p => p.PageSize).Returns(10);
-        MockQueryParameters.Setup(p => p.CommonDtoLevel).Returns(CommonDtoLevelEnums.Simple);
         MockQueryParameters.Setup(p => p.AccessType).Returns(DtoLevelMappingTypes.DataAccess);
         MockQueryParameters.Setup(p => p.Access).Returns(string.Empty);
         MockQueryParameters.Setup(p => p.DetailLevel).Returns("Simple");

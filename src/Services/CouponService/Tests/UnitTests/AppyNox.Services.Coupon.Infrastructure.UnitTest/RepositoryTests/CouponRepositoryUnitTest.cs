@@ -12,7 +12,7 @@ using AppyNox.Services.Coupon.Infrastructure.Repositories;
 using AppyNox.Services.Coupon.Infrastructure.UnitTest.Seeds.CouponSeeds;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
-using CouponAggreagate = AppyNox.Services.Coupon.Domain.Coupons.Coupon;
+using CouponAggregate = AppyNox.Services.Coupon.Domain.Coupons.Coupon;
 
 namespace AppyNox.Services.Coupon.Infrastructure.UnitTest.RepositoryTests;
 
@@ -37,7 +37,7 @@ public class CouponRepositoryUnitTest(RepositoryFixture fixture) : IClassFixture
     {
         CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
         context.SeedOneCoupon();
-        var repository = new CouponRepository<Domain.Coupons.Coupon>(context, _noxLoggerStub);
+        var repository = new CouponRepository<CouponAggregate>(context, _noxLoggerStub);
         QueryParameters queryParameters = new()
         {
             Access = string.Empty,
@@ -57,7 +57,7 @@ public class CouponRepositoryUnitTest(RepositoryFixture fixture) : IClassFixture
     {
         CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
         context.SeedMultipleCoupons(2, 1);
-        var repository = new CouponRepository<Domain.Coupons.Coupon>(context, _noxLoggerStub);
+        var repository = new CouponRepository<CouponAggregate>(context, _noxLoggerStub);
         QueryParameters queryParameters = new()
         {
             Access = string.Empty,
@@ -79,7 +79,7 @@ public class CouponRepositoryUnitTest(RepositoryFixture fixture) : IClassFixture
         var coupons = context.SeedMultipleCoupons(2, 1);
         Assert.NotNull(coupons);
 
-        var repository = new CouponRepository<Domain.Coupons.Coupon>(context, _noxLoggerStub);
+        var repository = new CouponRepository<CouponAggregate>(context, _noxLoggerStub);
         QueryParameters queryParameters = new()
         {
             Access = string.Empty,
@@ -88,8 +88,6 @@ public class CouponRepositoryUnitTest(RepositoryFixture fixture) : IClassFixture
             PageSize = 1,
         };
 
-        var test = context.Coupons.Include(c => c.CouponDetailEntity).ToList();
-        var test2 = context.CouponDetails.ToList();
         var result = await repository.GetAllAsync(queryParameters, typeof(CouponWithAllRelationsDto), _cacheService);
 
         Assert.NotNull(result);
@@ -104,7 +102,7 @@ public class CouponRepositoryUnitTest(RepositoryFixture fixture) : IClassFixture
     {
         CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
         context.SeedMultipleCoupons(50, 5);
-        var repository = new CouponRepository<Domain.Coupons.Coupon>(context, _noxLoggerStub);
+        var repository = new CouponRepository<CouponAggregate>(context, _noxLoggerStub);
         QueryParameters queryParameters = new()
         {
             Access = string.Empty,
@@ -126,7 +124,7 @@ public class CouponRepositoryUnitTest(RepositoryFixture fixture) : IClassFixture
         var coupons = context.SeedMultipleCoupons(50, 5);
         Assert.NotNull(coupons);
 
-        var repository = new CouponRepository<Domain.Coupons.Coupon>(context, _noxLoggerStub);
+        var repository = new CouponRepository<CouponAggregate>(context, _noxLoggerStub);
         QueryParameters queryParameters = new()
         {
             Access = string.Empty,
@@ -157,8 +155,8 @@ public class CouponRepositoryUnitTest(RepositoryFixture fixture) : IClassFixture
         var existingCoupon = context.SeedOneCoupon();
         Assert.NotNull(existingCoupon);
 
-        var repository = new CouponRepository<Domain.Coupons.Coupon>(context, _noxLoggerStub);
-        var result = await repository.GetByIdAsync(existingCoupon.Id);
+        var repository = new CouponRepository<CouponAggregate>(context, _noxLoggerStub);
+        var result = await repository.GetByIdAsync(existingCoupon.Id, typeof(CouponSimpleDto));
 
         Assert.NotNull(result);
     }
@@ -170,9 +168,9 @@ public class CouponRepositoryUnitTest(RepositoryFixture fixture) : IClassFixture
         var existingCoupon = context.SeedOneCoupon();
         Assert.NotNull(existingCoupon);
 
-        var repository = new CouponRepository<Domain.Coupons.Coupon>(context, _noxLoggerStub);
+        var repository = new CouponRepository<CouponAggregate>(context, _noxLoggerStub);
 
-        var result = await repository.GetByIdAsync(existingCoupon.Id);
+        var result = await repository.GetByIdAsync(existingCoupon.Id, typeof(CouponWithAllRelationsDto)) as CouponWithAllRelationsDto;
 
         Assert.NotNull(result);
 
@@ -180,7 +178,7 @@ public class CouponRepositoryUnitTest(RepositoryFixture fixture) : IClassFixture
         Assert.Equal(existingCoupon.Description, result.Description);
         Assert.Equal(existingCoupon.Amount.DiscountAmount, result.Amount.DiscountAmount);
         Assert.Equal(existingCoupon.Amount.MinAmount, result.Amount.MinAmount);
-        Assert.Equal(existingCoupon.CouponDetailEntityId, result.CouponDetailEntityId);
+        Assert.Equal(existingCoupon.CouponDetailId.Value, result.CouponDetailId.Value);
     }
 
     #endregion
@@ -193,27 +191,29 @@ public class CouponRepositoryUnitTest(RepositoryFixture fixture) : IClassFixture
     {
         CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
         var unitOfWork = new UnitOfWork(context, _noxLoggerStub);
-        var repository = new CouponRepository<Domain.Coupons.Coupon>(context, _noxLoggerStub);
+        var repository = new CouponRepository<CouponAggregate>(context, _noxLoggerStub);
 
         var existingCoupon = context.SeedOneCoupon(); // To Seed CouponDetail
         Assert.NotNull(existingCoupon);
 
         Amount amount = new(0.1, 1);
-        Domain.Coupons.Coupon coupon = Domain.Coupons.Coupon.Create("TEE10", "DescriptionCoupon", "", amount, new CouponDetailId(Guid.NewGuid()));
+        CouponAggregate coupon = CouponAggregate.Create("TEE10", "DescriptionCoupon", "", amount, existingCoupon.CouponDetailId);
 
         await repository.AddAsync(coupon);
         await unitOfWork.SaveChangesAsync();
 
-        var result = await repository.GetByIdAsync(coupon.Id);
+        var tt = context.Coupons.ToList();
+
+        var result = await repository.GetByIdAsync(coupon.Id, typeof(CouponWithAllRelationsDto)) as CouponWithAllRelationsDto;
 
         Assert.NotNull(result);
 
-        Assert.Equal(coupon.Id, result.Id);
+        Assert.Equal(coupon.Id.Value, result.Id.Value);
         Assert.Equal(coupon.Code, result.Code);
         Assert.Equal(coupon.Description, result.Description);
         Assert.Equal(coupon.Amount.DiscountAmount, result.Amount.DiscountAmount);
         Assert.Equal(coupon.Amount.MinAmount, result.Amount.MinAmount);
-        Assert.Equal(coupon.CouponDetailEntityId, result.CouponDetailEntityId);
+        Assert.Equal(coupon.CouponDetailId.Value, result.CouponDetailId.Value);
     }
 
     #endregion
@@ -228,23 +228,23 @@ public class CouponRepositoryUnitTest(RepositoryFixture fixture) : IClassFixture
         Assert.NotNull(existingCoupon);
 
         var unitOfWork = new UnitOfWork(context, _noxLoggerStub);
-        var repository = new CouponRepository<Domain.Coupons.Coupon>(context, _noxLoggerStub);
+        var repository = new CouponRepository<CouponAggregate>(context, _noxLoggerStub);
 
         existingCoupon.UpdateMinimumAmount(10);
 
         repository.Update(existingCoupon);
         await unitOfWork.SaveChangesAsync();
 
-        var result = await repository.GetByIdAsync(existingCoupon.Id);
+        var result = await repository.GetByIdAsync(existingCoupon.Id, typeof(CouponWithAllRelationsDto)) as CouponWithAllRelationsDto;
 
         Assert.NotNull(result);
 
-        Assert.Equal(existingCoupon.Id, result.Id);
+        Assert.Equal(existingCoupon.Id.Value, result.Id.Value);
         Assert.Equal(existingCoupon.Code, result.Code);
         Assert.Equal(existingCoupon.Description, result.Description);
         Assert.Equal(existingCoupon.Amount.DiscountAmount, result.Amount.DiscountAmount);
         Assert.Equal(existingCoupon.Amount.MinAmount, result.Amount.MinAmount);
-        Assert.Equal(existingCoupon.CouponDetailEntityId, result.CouponDetailEntityId);
+        Assert.Equal(existingCoupon.CouponDetailId.Value, result.CouponDetailId.Value);
     }
 
     [Fact]
@@ -255,7 +255,7 @@ public class CouponRepositoryUnitTest(RepositoryFixture fixture) : IClassFixture
         Assert.NotNull(existingCoupon);
 
         var unitOfWork = new UnitOfWork(context, _noxLoggerStub);
-        var repository = new CouponRepository<Domain.Coupons.Coupon>(context, _noxLoggerStub);
+        var repository = new CouponRepository<CouponAggregate>(context, _noxLoggerStub);
 
         var exception = Assert.Throws<NoxCouponDomainException>(() => existingCoupon.UpdateMinimumAmount(0));
         Assert.Equal((int)HttpStatusCode.UnprocessableContent, exception.StatusCode);
@@ -274,14 +274,14 @@ public class CouponRepositoryUnitTest(RepositoryFixture fixture) : IClassFixture
         Assert.NotNull(existingCoupon);
 
         var unitOfWork = new UnitOfWork(context, _noxLoggerStub);
-        var repository = new CouponRepository<Domain.Coupons.Coupon>(context, _noxLoggerStub);
+        var repository = new CouponRepository<CouponAggregate>(context, _noxLoggerStub);
 
         await repository.RemoveByIdAsync(existingCoupon.Id);
         await unitOfWork.SaveChangesAsync();
 
-        var exception = await Assert.ThrowsAsync<EntityNotFoundException<CouponAggreagate>>(async () =>
+        var exception = await Assert.ThrowsAsync<EntityNotFoundException<CouponAggregate>>(async () =>
         {
-            var result = await repository.GetByIdAsync(existingCoupon.Id);
+            var result = await repository.GetByIdAsync(existingCoupon.Id, typeof(CouponSimpleDto));
         });
 
         Assert.NotNull(exception);

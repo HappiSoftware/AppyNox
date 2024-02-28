@@ -40,12 +40,6 @@ namespace AppyNox.Services.Base.Application.Localization
         internal static LocalizedString LevelNotFoundForEntity => GetMessage("LevelNotFoundForEntity");
 
         /// <summary>
-        /// CommonDtoLevelEnums not found for: {0}.
-        /// <para>{0}: enumVal</para>
-        /// </summary>
-        internal static LocalizedString CommonDtoLevelNotFound => GetMessage("CommonDtoLevelNotFound");
-
-        /// <summary>
         /// Request responded with one or more validation errors for '{0}'
         /// <para>{0}: dtoType</para>
         /// </summary>

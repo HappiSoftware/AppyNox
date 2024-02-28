@@ -62,7 +62,7 @@ public class UpdateCouponCommandHandler(
 
             CouponId couponId = _mapper.Map<CouponIdDto, CouponId>(request.Dto.Id);
 
-            Domain.Coupons.Coupon entity = await _repository.GetByIdAsync(couponId);
+            Domain.Coupons.Coupon entity = await _repository.GetEntityByIdAsync(couponId);
 
             _repository.Update(entity);
 

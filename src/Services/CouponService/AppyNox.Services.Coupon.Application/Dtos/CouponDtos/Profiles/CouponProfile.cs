@@ -20,7 +20,7 @@ public class CouponProfile : Profile
                 src.Description,
                 null,
                 context.Mapper.Map<Amount>(src.Amount),
-                context.Mapper.Map<CouponDetailId>(src.CouponDetailEntityId)
+                context.Mapper.Map<CouponDetailId>(src.CouponDetailId)
             ));
 
         CreateMap<CouponExtendedCreateDto, CouponAggreagete>()
@@ -29,7 +29,7 @@ public class CouponProfile : Profile
                 src.Description,
                 src.Detail,
                 context.Mapper.Map<Amount>(src.Amount),
-                context.Mapper.Map<CouponDetailId>(src.CouponDetailEntityId)
+                context.Mapper.Map<CouponDetailId>(src.CouponDetailId)
             ));
 
         CreateMap<CouponAggreagete, CouponSimpleDto>();

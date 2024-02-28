@@ -2,6 +2,8 @@
 All notable changes to AppyNox will be documented in this file.
 
 ## [1.5.0](https://github.com/HappiSoftware/AppyNox/compare/v1.4.0...v1.5.0) - NOT RELEASED
+### Fixed
+- Bug report: NoxRepository GetById should use projection ([#226](https://github.com/HappiSoftware/AppyNox/issues/226))
 
 
 ## [1.4.0](https://github.com/HappiSoftware/AppyNox/compare/v1.3.0...v1.4.0) - 2024.02.26

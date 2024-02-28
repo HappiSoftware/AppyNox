@@ -12,7 +12,7 @@ using MediatR;
 
 namespace AppyNox.Services.Base.Application.MediatR.Handlers.DDD;
 
-public class GetAllNoxEntitiesQueryHandler<TEntity>(
+internal class GetAllNoxEntitiesQueryHandler<TEntity>(
         INoxRepositoryBase<TEntity> repository,
         IMapper mapper,
         IDtoMappingRegistryBase dtoMappingRegistry,
@@ -39,9 +39,7 @@ public class GetAllNoxEntitiesQueryHandler<TEntity>(
         {
             Logger.LogInformation($"Fetching entities of type '{typeof(TEntity).Name}'");
             var dtoType = GetDtoType(request.QueryParameters);
-            PaginatedList paginatedList = await _repository.GetAllAsync(request.QueryParameters, dtoType, _cacheService);
-            paginatedList.Items = MapEntitiesToDto(paginatedList.Items, dtoType, request.QueryParameters);
-            return paginatedList;
+            return await _repository.GetAllAsync(request.QueryParameters, dtoType, _cacheService);
         }
         catch (Exception ex) when (ex is INoxException)
         {

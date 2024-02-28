@@ -4,14 +4,8 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace AppyNox.Services.Coupon.Infrastructure.Data.Configurations
 {
-    internal class CouponDetailConfiguration(Guid couponDetailId) : IEntityTypeConfiguration<CouponDetail>
+    internal class CouponDetailConfiguration(CouponDetailId couponDetailId) : IEntityTypeConfiguration<CouponDetail>
     {
-        #region [ Fields ]
-
-        private readonly Guid _couponDetailId = couponDetailId;
-
-        #endregion
-
         #region [ Public Methods ]
 
         public void Configure(EntityTypeBuilder<CouponDetail> builder)
@@ -27,15 +21,9 @@ namespace AppyNox.Services.Coupon.Infrastructure.Data.Configurations
                 couponId => couponId.Value,
                 value => new CouponDetailId(value));
 
-            builder.HasMany(cd => cd.Coupons)
-                .WithOne(c => c.CouponDetailEntity)
-                .HasForeignKey(c => c.CouponDetailEntityId)
-                .IsRequired(false)
-                .OnDelete(DeleteBehavior.Restrict);
-
             builder.HasMany(cd => cd.CouponDetailTags)
-                .WithOne(c => c.CouponDetailEntity)
-                .HasForeignKey(c => c.CouponDetailEntityId)
+                .WithOne(c => c.CouponDetail)
+                .HasForeignKey(c => c.CouponDetailId)
                 .IsRequired(false)
                 .OnDelete(DeleteBehavior.Cascade);
 
@@ -55,14 +43,18 @@ namespace AppyNox.Services.Coupon.Infrastructure.Data.Configurations
             builder.HasData(
                new
                {
-                   Id = new CouponDetailId(couponDetailId),
+                   Id = couponDetailId,
                    Code = "EXD10",
-                   Detail = "TestDetail",
-                   CreatedBy = "admin",
-                   CreationDate = DateTime.UtcNow,
-                   UpdatedBy = "admin",
-                   UpdateDate = DateTime.MinValue
+                   Detail = "TestDetail"
                });
+            builder.OwnsOne(a => a.Audit).HasData(new
+            {
+                CouponDetailId = couponDetailId,
+                CreatedBy = "admin",
+                CreationDate = DateTime.UtcNow,
+                UpdatedBy = string.Empty,
+                UpdateDate = (DateTime?)null
+            });
 
             #endregion
         }

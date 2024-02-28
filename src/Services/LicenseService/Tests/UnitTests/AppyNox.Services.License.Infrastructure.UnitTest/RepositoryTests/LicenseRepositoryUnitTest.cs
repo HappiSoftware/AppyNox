@@ -158,7 +158,7 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
 
             LicenseRepository repository = new(context, _noxLoggerStub, unitOfWork);
 
-            LicenseEntity result = await repository.GetByIdAsync(existingLicense.Id);
+            var result = await repository.GetByIdAsync(existingLicense.Id, typeof(LicenseSimpleCreateDto));
 
             Assert.NotNull(result);
         }
@@ -172,7 +172,7 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
             UnitOfWork unitOfWork = new(context, _noxLoggerStub);
 
             LicenseRepository repository = new(context, _noxLoggerStub, unitOfWork);
-            LicenseEntity result = await repository.GetByIdAsync(existingLicense.Id);
+            LicenseSimpleDto? result = await repository.GetByIdAsync(existingLicense.Id, typeof(LicenseSimpleDto)) as LicenseSimpleDto;
 
             Assert.NotNull(result);
             Assert.Equal(existingLicense.Code, result.Code);
@@ -208,11 +208,10 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
             await repository.AddAsync(license);
             await unitOfWork.SaveChangesAsync();
 
-            var result = await repository.GetByIdAsync(license.Id);
+            var result = await repository.GetByIdAsync(license.Id, typeof(LicenseSimpleCreateDto)) as LicenseSimpleCreateDto;
 
             // Assert
             Assert.NotNull(result);
-            Assert.Equal(license.Id, result.Id);
             Assert.Equal(license.Code, result.Code);
             Assert.Equal(license.Description, result.Description);
             Assert.Equal(license.LicenseKey, result.LicenseKey);
@@ -243,10 +242,9 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
             repository.Update(existingLicense);
             await unitOfWork.SaveChangesAsync();
 
-            var result = await repository.GetByIdAsync(existingLicense.Id);
+            var result = await repository.GetByIdAsync(existingLicense.Id, typeof(LicenseSimpleCreateDto)) as LicenseSimpleCreateDto;
 
             Assert.NotNull(result);
-            Assert.Equal(existingLicense.Id, result.Id);
             Assert.Equal(existingLicense.Code, result.Code);
             Assert.Equal(existingLicense.Description, result.Description);
             Assert.Equal(existingLicense.LicenseKey, result.LicenseKey);
@@ -273,7 +271,7 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
 
             var exception = await Assert.ThrowsAsync<EntityNotFoundException<LicenseEntity>>(async () =>
             {
-                var result = await repository.GetByIdAsync(existingLicense.Id);
+                var result = await repository.GetByIdAsync(existingLicense.Id, typeof(LicenseSimpleCreateDto));
             });
 
             Assert.NotNull(exception);

@@ -21,11 +21,6 @@ namespace AppyNox.Services.Base.Application.Interfaces.Repositories
         DtoLevelMappingTypes AccessType { get; }
 
         /// <summary>
-        /// Gets the common DTO level, determining the amount of data detail in the response.
-        /// </summary>
-        CommonDtoLevelEnums CommonDtoLevel { get; }
-
-        /// <summary>
         /// Gets or sets the detail level for the query as a string.
         /// This property then will be converted to related Enum type of the TEntity using DtoMappingRegistry.
         /// </summary>

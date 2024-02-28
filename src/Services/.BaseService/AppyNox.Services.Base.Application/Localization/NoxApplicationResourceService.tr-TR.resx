@@ -117,9 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="CommonDtoLevelNotFound" xml:space="preserve">
-    <value>CommonDtoLevelEnums şunun için bulunamadı: {0}.</value>
-  </data>
   <data name="EntityHasNoAccessLevel" xml:space="preserve">
     <value>Bu '{0}' varlığının erişim düzeyi eşlemesi yok.</value>
   </data>

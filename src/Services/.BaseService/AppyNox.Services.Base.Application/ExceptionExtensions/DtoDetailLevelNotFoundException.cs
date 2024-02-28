@@ -40,17 +40,6 @@ namespace AppyNox.Services.Base.Application.ExceptionExtensions
         {
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="DtoDetailLevelNotFoundException"/> class when a CommonDtoLevelEnums value is not found.
-        /// Http status code is set to 500.
-        /// </summary>
-        /// <param name="enumVal">The enum value that is not found.</param>
-        internal DtoDetailLevelNotFoundException(CommonDtoLevelEnums enumVal)
-            : base(message: NoxApplicationResourceService.CommonDtoLevelNotFound.Format(enumVal),
-                  exceptionCode: (int)NoxApplicationExceptionCode.CommonDtoLevelIsNotFound)
-        {
-        }
-
         #endregion
     }
 }
