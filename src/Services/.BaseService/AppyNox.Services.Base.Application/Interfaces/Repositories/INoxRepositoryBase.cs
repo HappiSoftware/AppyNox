@@ -14,6 +14,8 @@ public interface INoxRepositoryBase<TEntity> where TEntity : class, IHasStrongly
 
     Task<object> GetByIdAsync<TId>(TId id, Type dtoType) where TId : IHasGuidId;
 
+    Task<TEntity> GetEntityByIdAsync<TId>(TId id) where TId : IHasGuidId;
+
     Task RemoveByIdAsync<TId>(TId id) where TId : IHasGuidId;
 
     void Update(TEntity entity);

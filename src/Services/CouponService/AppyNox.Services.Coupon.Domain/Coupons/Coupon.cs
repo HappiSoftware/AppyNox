@@ -36,14 +36,14 @@ public class Coupon : EntityBase, IHasStronglyTypedId, IHasCode
     private Coupon(Guid id, string code, string description, string? detail, Amount amount, CouponDetailId couponDetailId)
         : this(id, code, description, detail, amount)
     {
-        CouponDetailEntityId = couponDetailId;
+        CouponDetailId = couponDetailId;
     }
 
     private Coupon(Guid id, string code, string description, string? detail, Amount amount, CouponDetail couponDetail)
         : this(id, code, description, detail, amount)
     {
-        CouponDetailEntity = couponDetail;
-        CouponDetailEntityId = couponDetail.Id;
+        CouponDetail = couponDetail;
+        CouponDetailId = couponDetail.Id;
     }
 
     public static Coupon Create(string code, string description, string? detail, Amount amount, CouponDetailId couponDetailId)
@@ -68,9 +68,9 @@ public class Coupon : EntityBase, IHasStronglyTypedId, IHasCode
 
     #region [ Relations ]
 
-    public CouponDetailId CouponDetailEntityId { get; private set; } = default!;
+    public CouponDetailId CouponDetailId { get; private set; } = default!;
 
-    public virtual CouponDetail CouponDetailEntity { get; private set; } = null!;
+    public virtual CouponDetail CouponDetail { get; private set; } = null!;
 
     #endregion
 

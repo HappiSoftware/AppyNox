@@ -11,8 +11,6 @@ namespace AppyNox.Services.Base.Infrastructure.Repositories.Common
     {
         #region [ Properties ]
 
-        private CommonDtoLevelEnums _commonDtoLevel = CommonDtoLevelEnums.None;
-
         private string _detailLevel = string.Empty;
 
         [Range(1, int.MaxValue, ErrorMessage = "Page number must be greater than 0.")]
@@ -20,8 +18,6 @@ namespace AppyNox.Services.Base.Infrastructure.Repositories.Common
 
         [Range(1, 100, ErrorMessage = "Page size must be between 1 and 100.")]
         public int PageSize { get; set; } = 10;
-
-        public CommonDtoLevelEnums CommonDtoLevel { get => _commonDtoLevel; }
 
         public DtoLevelMappingTypes AccessType { get; set; } = DtoLevelMappingTypes.DataAccess;
 
@@ -53,33 +49,12 @@ namespace AppyNox.Services.Base.Infrastructure.Repositories.Common
                 if (_detailLevel.Equals("Simple", StringComparison.OrdinalIgnoreCase))
                 {
                     _detailLevel = "Simple";
-                    _commonDtoLevel = CommonDtoLevelEnums.Simple;
                 }
                 else if (_detailLevel.Equals("IdOnly", StringComparison.OrdinalIgnoreCase))
                 {
                     _detailLevel = "IdOnly";
-                    _commonDtoLevel = CommonDtoLevelEnums.IdOnly;
-                }
-                else
-                {
-                    _commonDtoLevel = CommonDtoLevelEnums.None;
                 }
             }
-        }
-
-        #endregion
-
-        #region [ Public Static Methods ]
-
-        /// <summary>
-        /// Creates a new instance of <see cref="QueryParametersBase"/> for queries that require only the ID.
-        /// This method should be overridden in derived classes.
-        /// </summary>
-        /// <returns>A new <see cref="QueryParametersBase"/> instance.</returns>
-        /// <exception cref="NotImplementedException">Thrown when not implemented in derived classes.</exception>
-        public static QueryParametersBase CreateForIdOnly()
-        {
-            throw new NotImplementedException("CreateForIdOnly must be implemented in derived classes.");
         }
 
         #endregion
@@ -92,31 +67,6 @@ namespace AppyNox.Services.Base.Infrastructure.Repositories.Common
         protected QueryParametersBase()
         {
             DetailLevel = string.Empty;
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="QueryParametersBase"/> class with a specified common DTO level.
-        /// </summary>
-        /// <param name="commonDtoLevel">The common DTO level for the query.</param>
-        /// <exception cref="ArgumentException">Thrown when an invalid common DTO level is provided.</exception>
-        protected QueryParametersBase(CommonDtoLevelEnums commonDtoLevel) : this()
-        {
-            switch (commonDtoLevel)
-            {
-                case CommonDtoLevelEnums.Simple:
-                    DetailLevel = nameof(CommonDtoLevelEnums.Simple);
-                    _commonDtoLevel = CommonDtoLevelEnums.Simple;
-                    break;
-
-                case CommonDtoLevelEnums.IdOnly:
-                    DetailLevel = nameof(CommonDtoLevelEnums.IdOnly);
-                    _commonDtoLevel = CommonDtoLevelEnums.IdOnly;
-                    break;
-
-                case CommonDtoLevelEnums.None:
-                default:
-                    throw new ArgumentException("CommonDtoLevel is not provided or set as none for QueryParameters.");
-            }
         }
 
         #endregion

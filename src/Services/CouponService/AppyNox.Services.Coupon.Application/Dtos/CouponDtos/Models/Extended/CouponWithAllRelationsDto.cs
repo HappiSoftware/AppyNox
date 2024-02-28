@@ -11,7 +11,7 @@ public class CouponWithAllRelationsDto : CouponExtendedCreateDto
 
     public CouponIdDto Id { get; set; } = default!;
 
-    public virtual CouponDetailSimpleDto CouponDetailEntity { get; set; } = null!;
+    public CouponDetailSimpleDto CouponDetail { get; set; } = null!;
 
     #endregion
 }

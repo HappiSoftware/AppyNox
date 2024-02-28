@@ -13,7 +13,7 @@ public class CouponSimpleCreateDto : IHasCode
 
     public AmountDto Amount { get; set; } = default!;
 
-    public CouponDetailIdDto CouponDetailEntityId { get; set; } = default!;
+    public CouponDetailIdDto CouponDetailId { get; set; } = default!;
 
     #endregion
 

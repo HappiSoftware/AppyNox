@@ -10,7 +10,7 @@ using MediatR;
 
 namespace AppyNox.Services.Base.Application.MediatR.Handlers.Anemic;
 
-public class GetEntityByIdQueryHandler<TEntity>(
+internal class GetEntityByIdQueryHandler<TEntity>(
         IGenericRepositoryBase<TEntity> repository,
         IMapper mapper,
         IDtoMappingRegistryBase dtoMappingRegistry,
@@ -34,8 +34,7 @@ public class GetEntityByIdQueryHandler<TEntity>(
         {
             Logger.LogInformation($"Fetching entity of type {typeof(TEntity).Name} with ID: {request.Id}.");
             var dtoType = GetDtoType(request.QueryParameters);
-            object entity = await _repository.GetByIdAsync(request.Id);
-            return MapEntityToDtoSingle(entity, dtoType);
+            return await _repository.GetByIdAsync(request.Id);
         }
         catch (Exception ex) when (ex is INoxException)
         {

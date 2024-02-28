@@ -15,7 +15,7 @@ using System.Text.Json;
 
 namespace AppyNox.Services.Base.Application.MediatR.Handlers.DDD;
 
-public sealed class CreateNoxEntityCommandHandler<TEntity>(
+internal sealed class CreateNoxEntityCommandHandler<TEntity>(
         INoxRepositoryBase<TEntity> repository,
         IMapper mapper,
         IDtoMappingRegistryBase dtoMappingRegistry,
@@ -24,7 +24,7 @@ public sealed class CreateNoxEntityCommandHandler<TEntity>(
         IUnitOfWorkBase unitOfWork,
         ICacheService cacheService)
         : BaseHandler<TEntity>(mapper, dtoMappingRegistry, serviceProvider, logger),
-        IRequestHandler<CreateNoxEntityCommand<TEntity>, (Guid guid, object basicDto)>
+        IRequestHandler<CreateNoxEntityCommand<TEntity>, (Guid guid, TEntity entity)>
         where TEntity : class, IHasStronglyTypedId
 {
     #region [ Fields ]
@@ -39,7 +39,7 @@ public sealed class CreateNoxEntityCommandHandler<TEntity>(
 
     #region [ Public Methods ]
 
-    public async Task<(Guid guid, object basicDto)> Handle(CreateNoxEntityCommand<TEntity> request, CancellationToken cancellationToken)
+    public async Task<(Guid guid, TEntity entity)> Handle(CreateNoxEntityCommand<TEntity> request, CancellationToken cancellationToken)
     {
         try
         {
@@ -63,9 +63,8 @@ public sealed class CreateNoxEntityCommandHandler<TEntity>(
             await _repository.AddAsync(mappedEntity);
             await _unitOfWork.SaveChangesAsync(NoxContext.UserId.ToString());
             await UpdateTotalCountOnCache(_cacheService, $"total-count-{typeof(TEntity).Name}", true);
-            Type returnDtoType = DtoMappingRegistry.GetDtoType(DtoLevelMappingTypes.DataAccess, entityType, CommonDtoLevelEnums.Simple.GetDisplayName());
-            object createdObject = Mapper.Map(mappedEntity, returnDtoType, returnDtoType);
-            return (guid: mappedEntity.GetTypedId, basicDto: createdObject);
+            Type returnDtoType = DtoMappingRegistry.GetDtoType(DtoLevelMappingTypes.DataAccess, entityType, "Simple");
+            return (guid: mappedEntity.GetTypedId, entity: mappedEntity);
         }
         catch (Exception ex) when (ex is INoxException)
         {

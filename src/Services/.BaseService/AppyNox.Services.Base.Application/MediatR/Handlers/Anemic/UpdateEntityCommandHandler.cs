@@ -13,7 +13,7 @@ using System.Text.Json;
 
 namespace AppyNox.Services.Base.Application.MediatR.Handlers.Anemic;
 
-public class UpdateEntityCommandHandler<TEntity>(
+internal class UpdateEntityCommandHandler<TEntity>(
         IGenericRepositoryBase<TEntity> repository,
         IMapper mapper,
         IDtoMappingRegistryBase dtoMappingRegistry,

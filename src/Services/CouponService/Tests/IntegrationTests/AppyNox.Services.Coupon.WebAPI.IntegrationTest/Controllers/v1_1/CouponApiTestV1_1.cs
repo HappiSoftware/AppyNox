@@ -69,7 +69,7 @@ public class CouponApiTestV1_1(CouponServiceFixture couponApiTestFixture)
             },
             Description = "string",
             Detail = detail,
-            CouponDetailEntityId = new CouponDetailIdDto() { Value = newDetail.Id.Value },
+            CouponDetailId = new CouponDetailIdDto() { Value = newDetail.Id.Value },
             Id = new CouponIdDto() { Value = id }
         };
         var jsonRequest = JsonSerializer.Serialize(couponExtendedUpdateDto);

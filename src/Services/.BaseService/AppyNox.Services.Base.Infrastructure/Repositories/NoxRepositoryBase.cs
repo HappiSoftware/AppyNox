@@ -41,6 +41,7 @@ public abstract class NoxRepositoryBase<TEntity> : INoxRepositoryBase<TEntity> w
 
     /// <summary>
     /// Retrieves an entity asynchronously by its ID.
+    /// <para>if dtoType is not specified, returns entity without projection.</para>
     /// </summary>
     /// <typeparam name="TId">The type of the entity's ID.</typeparam>
     /// <param name="id">The ID of the entity to retrieve.</param>
@@ -55,7 +56,54 @@ public abstract class NoxRepositoryBase<TEntity> : INoxRepositoryBase<TEntity> w
         try
         {
             _logger.LogInformation($"Attempting to retrieve entity with ID: '{id}' Type: '{typeof(TEntity).Name}'.");
-            var entity = await _dbSet.Where("Id == @0", id).Select(CreateProjection(dtoType)).AsNoTracking().FirstOrDefaultAsync();
+            object? entity;
+
+            if (dtoType != null)
+            {
+                entity = await _dbSet.Where("Id == @0", id).Select(CreateProjection(dtoType)).AsNoTracking().FirstOrDefaultAsync();
+            }
+            else
+            {
+                entity = await _dbSet.Where("Id == @0", id).AsNoTracking().FirstOrDefaultAsync();
+            }
+
+            if (entity == null)
+            {
+                _logger.LogWarning($"Entity with ID: {id} not found.");
+
+                throw new EntityNotFoundException<TEntity>(((IHasGuidId)id).GetGuidValue());
+            }
+
+            _logger.LogInformation($"Successfully retrieved entity with ID: '{id}' Type: '{typeof(TEntity).Name}'.");
+            return entity;
+        }
+        catch (NoxInfrastructureException)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Error retrieving entity with ID: '{id}' Type: '{typeof(TEntity).Name}'.");
+            throw new NoxInfrastructureException(ex, (int)NoxInfrastructureExceptionCode.DataFetchingError);
+        }
+    }
+
+    /// <summary>
+    /// Retrieves an entity asynchronously by its ID.
+    /// </summary>
+    /// <typeparam name="TId">The type of the entity's ID.</typeparam>
+    /// <param name="id">The ID of the entity to retrieve.</param>
+    /// <returns>A task representing the asynchronous operation, returning the retrieved entity.</returns>
+    /// <exception cref="EntityNotFoundException{TEntity}">Thrown when the entity with the specified ID is not found.</exception>
+    /// <exception cref="NoxInfrastructureException">Thrown when there is an error retrieving the entity from the database.</exception>
+
+    public async Task<TEntity> GetEntityByIdAsync<TId>(TId id)
+        where TId : IHasGuidId
+    {
+        try
+        {
+            _logger.LogInformation($"Attempting to retrieve entity with ID: '{id}' Type: '{typeof(TEntity).Name}'.");
+            TEntity? entity = await _dbSet.Where("Id == @0", id).AsNoTracking().FirstOrDefaultAsync();
 
             if (entity == null)
             {

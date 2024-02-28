@@ -11,7 +11,7 @@ using MediatR;
 
 namespace AppyNox.Services.Base.Application.MediatR.Handlers.Anemic;
 
-public sealed class DeleteEntityCommandHandler<TEntity>(
+internal sealed class DeleteEntityCommandHandler<TEntity>(
         IGenericRepositoryBase<TEntity> repository,
         IMapper mapper,
         IDtoMappingRegistryBase dtoMappingRegistry,

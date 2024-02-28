@@ -16,7 +16,7 @@ namespace AppyNox.Services.Base.Application.ExceptionExtensions.Base
 
         DtoDetailLevelNotFound = 1003,
 
-        CommonDtoLevelIsNotFound = 1004,
+        // 1004 is empty
 
         FluentValidationError = 1005,
 

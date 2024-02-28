@@ -43,15 +43,13 @@ namespace AppyNox.Services.Base.Application.UnitTests.CQRSFixtures
 
         public Mock<IMediator> MockMediator { get; private set; }
 
-        public GetAllNoxEntitiesQueryHandler<TEntity> GetAllNoxEntitiesCommandHandler { get; set; }
+        internal GetAllNoxEntitiesQueryHandler<TEntity> GetAllNoxEntitiesCommandHandler { get; set; }
 
-        public GetNoxEntityByIdQueryHandler<TEntity, TId> GetNoxEntityByIdCommandHandler { get; set; }
+        internal GetNoxEntityByIdQueryHandler<TEntity, TId> GetNoxEntityByIdCommandHandler { get; set; }
 
-        public CreateNoxEntityCommandHandler<TEntity> CreateNoxEntityCommandHandler { get; set; }
+        internal CreateNoxEntityCommandHandler<TEntity> CreateNoxEntityCommandHandler { get; set; }
 
-        //public UpdateNoxEntityCommandHandler<TEntity, TId> UpdateEntityCommandHandler { get; set; }
-
-        public DeleteNoxEntityCommandHandler<TEntity, TId> DeleteNoxEntityCommandHandler { get; set; }
+        internal DeleteNoxEntityCommandHandler<TEntity, TId> DeleteNoxEntityCommandHandler { get; set; }
 
         #endregion
 
@@ -73,7 +71,6 @@ namespace AppyNox.Services.Base.Application.UnitTests.CQRSFixtures
             MockQueryParameters = new Mock<IQueryParameters>();
             MockQueryParameters.Setup(p => p.PageNumber).Returns(1);
             MockQueryParameters.Setup(p => p.PageSize).Returns(10);
-            MockQueryParameters.Setup(p => p.CommonDtoLevel).Returns(CommonDtoLevelEnums.Simple);
             MockQueryParameters.Setup(p => p.AccessType).Returns(DtoLevelMappingTypes.DataAccess);
             MockQueryParameters.Setup(p => p.Access).Returns(string.Empty);
             MockQueryParameters.Setup(p => p.DetailLevel).Returns("Simple");
@@ -89,8 +86,6 @@ namespace AppyNox.Services.Base.Application.UnitTests.CQRSFixtures
             GetAllNoxEntitiesCommandHandler = new GetAllNoxEntitiesQueryHandler<TEntity>(MockRepository.Object, MockMapper.Object, MockDtoMappingRegistry.Object, MockServiceProvider.Object, _noxApplicationLogger, _cacheService.Object);
             GetNoxEntityByIdCommandHandler = new GetNoxEntityByIdQueryHandler<TEntity, TId>(MockRepository.Object, MockMapper.Object, MockDtoMappingRegistry.Object, MockServiceProvider.Object, _noxApplicationLogger);
             CreateNoxEntityCommandHandler = new CreateNoxEntityCommandHandler<TEntity>(MockRepository.Object, MockMapper.Object, MockDtoMappingRegistry.Object, MockServiceProvider.Object, _noxApplicationLogger, _mockUnitOfWork.Object, _cacheService.Object);
-
-            //UpdateEntityCommandHandler = new UpdateEntityCommandHandler<TEntity, TId>(_mockRepository.Object, _mockMapper.Object, MockDtoMappingRegistry.Object, MockServiceProvider.Object, _noxApplicationLogger, _mockUnitOfWork.Object);
             DeleteNoxEntityCommandHandler = new DeleteNoxEntityCommandHandler<TEntity, TId>(MockRepository.Object, MockMapper.Object, MockDtoMappingRegistry.Object, MockServiceProvider.Object, _noxApplicationLogger, _mockUnitOfWork.Object, _cacheService.Object);
 
             #endregion
@@ -103,9 +98,6 @@ namespace AppyNox.Services.Base.Application.UnitTests.CQRSFixtures
 
             MockMediator.Setup(m => m.Send(It.IsAny<CreateNoxEntityCommand<TEntity>>(), It.IsAny<CancellationToken>()))
                 .Returns((CreateNoxEntityCommand<TEntity> cmd, CancellationToken ct) => CreateNoxEntityCommandHandler.Handle(cmd, ct));
-
-            //MockMediator.Setup(m => m.Send(It.IsAny<UpdateEntityCommand<TEntity, TId>>(), It.IsAny<CancellationToken>()))
-            //    .Returns((UpdateEntityCommand<TEntity, TId> cmd, CancellationToken ct) => UpdateEntityCommandHandler.Handle(cmd, ct));
 
             MockMediator.Setup(m => m.Send(It.IsAny<DeleteNoxEntityCommand<TEntity, TId>>(), It.IsAny<CancellationToken>()))
                 .Returns((DeleteNoxEntityCommand<TEntity, TId> cmd, CancellationToken ct) => DeleteNoxEntityCommandHandler.Handle(cmd, ct));

@@ -44,10 +44,10 @@ namespace AppyNox.Services.Coupon.Infrastructure.Data
 
             #region [ Common Ids ]
 
-            Guid couponDetailId = Guid.Parse("ec80532f-58f0-4690-b40c-2133b067d5f2");
-            Guid couponId1 = Guid.Parse("594cf045-3a2b-46f5-99c9-1eb59f035db2");
-            Guid couponId2 = Guid.Parse("c386aec2-dfd2-4ea5-b878-8fe5632e2e40");
-            Guid couponDetailTagId = Guid.Parse("b6bcfe76-83c7-4a4a-b088-13b14751fce8");
+            CouponDetailId couponDetailId = new CouponDetailId(Guid.Parse("ec80532f-58f0-4690-b40c-2133b067d5f2"));
+            CouponId couponId1 = new CouponId(Guid.Parse("594cf045-3a2b-46f5-99c9-1eb59f035db2"));
+            CouponId couponId2 = new CouponId(Guid.Parse("c386aec2-dfd2-4ea5-b878-8fe5632e2e40"));
+            CouponDetailTagId couponDetailTagId = new CouponDetailTagId(Guid.Parse("b6bcfe76-83c7-4a4a-b088-13b14751fce8"));
 
             #endregion
 

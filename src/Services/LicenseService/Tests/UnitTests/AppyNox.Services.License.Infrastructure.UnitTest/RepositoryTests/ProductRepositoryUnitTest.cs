@@ -4,6 +4,7 @@ using AppyNox.Services.Base.Infrastructure.ExceptionExtensions;
 using AppyNox.Services.Base.Infrastructure.Repositories.Common;
 using AppyNox.Services.Base.Infrastructure.UnitTests.Fixtures;
 using AppyNox.Services.Base.Infrastructure.UnitTests.Stubs;
+using AppyNox.Services.License.Application.Dtos.LicenseDtos.Models.Base;
 using AppyNox.Services.License.Application.Dtos.ProductDtos.Models.Base;
 using AppyNox.Services.License.Domain.Entities;
 using AppyNox.Services.License.Infrastructure.Data;
@@ -148,7 +149,7 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
             Assert.NotNull(existingProducts);
 
             ProductRepository repository = new(context, _noxLoggerStub);
-            ProductEntity result = await repository.GetByIdAsync(existingProducts.Id);
+            var result = await repository.GetByIdAsync(existingProducts.Id, typeof(ProductSimpleDto));
 
             Assert.NotNull(result);
         }
@@ -162,7 +163,7 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
             UnitOfWork unitOfWork = new(context, _noxLoggerStub);
 
             ProductRepository repository = new(context, _noxLoggerStub);
-            ProductEntity result = await repository.GetByIdAsync(existingProducts.Id);
+            ProductSimpleDto? result = await repository.GetByIdAsync(existingProducts.Id, typeof(ProductSimpleDto)) as ProductSimpleDto;
 
             Assert.NotNull(result);
             Assert.Equal(existingProducts.Code, result.Code);
@@ -186,11 +187,11 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
             await unitOfWork.SaveChangesAsync();
 
             var asd = context.Licenses.ToList();
-            var result = await repository.GetByIdAsync(product.Id);
+            var result = await repository.GetByIdAsync(product.Id, typeof(ProductSimpleDto)) as ProductSimpleDto;
 
             // Assert
             Assert.NotNull(result);
-            Assert.Equal(product.Id, result.Id);
+            Assert.Equal(product.Id.Value, result.Id.Value);
             Assert.Equal(product.Code, result.Code);
             Assert.Equal(product.Name, result.Name);
         }
@@ -215,10 +216,10 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
             repository.Update(existingProduct);
             await unitOfWork.SaveChangesAsync();
 
-            var result = await repository.GetByIdAsync(existingProduct.Id);
+            var result = await repository.GetByIdAsync(existingProduct.Id, typeof(ProductSimpleDto)) as ProductSimpleDto;
 
             Assert.NotNull(result);
-            Assert.Equal(existingProduct.Id, result.Id);
+            Assert.Equal(existingProduct.Id.Value, result.Id.Value);
             Assert.Equal(existingProduct.Code, result.Code);
             Assert.Equal(existingProduct.Name, result.Name);
         }
@@ -242,7 +243,7 @@ namespace AppyNox.Services.License.Infrastructure.UnitTest.RepositoryTests
 
             var exception = await Assert.ThrowsAsync<EntityNotFoundException<ProductEntity>>(async () =>
             {
-                var result = await repository.GetByIdAsync(existingProduct.Id);
+                var result = await repository.GetByIdAsync(existingProduct.Id, typeof(ProductSimpleDto));
             });
 
             Assert.NotNull(exception);

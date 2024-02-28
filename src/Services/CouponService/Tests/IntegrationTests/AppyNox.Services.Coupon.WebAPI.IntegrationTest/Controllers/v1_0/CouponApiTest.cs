@@ -103,7 +103,7 @@ public class CouponApiTest(CouponServiceFixture couponApiTestFixture)
                 DiscountAmount = 2,
             },
             Description = "string",
-            CouponDetailEntityId = new CouponDetailIdDto()
+            CouponDetailId = new CouponDetailIdDto()
             {
                 Value = new Guid("ec80532f-58f0-4690-b40c-2133b067d5f2")
             }
@@ -152,7 +152,7 @@ public class CouponApiTest(CouponServiceFixture couponApiTestFixture)
                 DiscountAmount = 2,
             },
             Description = "string",
-            CouponDetailEntityId = new CouponDetailIdDto()
+            CouponDetailId = new CouponDetailIdDto()
             {
                 Value = new Guid("ec80532f-58f0-4690-b40c-2133b067d5f2")
             }
@@ -197,7 +197,7 @@ public class CouponApiTest(CouponServiceFixture couponApiTestFixture)
                 DiscountAmount = 2,
             },
             Description = "string",
-            CouponDetailEntityId = new CouponDetailIdDto()
+            CouponDetailId = new CouponDetailIdDto()
             {
                 Value = new Guid("ec80532f-58f0-4690-b40c-2133b067d5f2")
             }

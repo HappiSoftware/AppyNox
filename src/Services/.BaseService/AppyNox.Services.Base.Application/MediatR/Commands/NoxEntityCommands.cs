@@ -13,7 +13,7 @@ public record GetAllNoxEntitiesQuery<TEntity>(IQueryParameters QueryParameters) 
 public record GetNoxEntityByIdQuery<TEntity, TId>(TId Id, IQueryParameters QueryParameters) : IRequest<object> where TId : IHasGuidId;
 
 [SuppressMessage("Sonar Code Smell", "S2326:Unused type parameters should be removed", Justification = "TEntity is used to specify the type of entity being created")]
-public record CreateNoxEntityCommand<TEntity>(dynamic Dto, string DetailLevel) : IRequest<(Guid guid, object basicDto)> where TEntity : class, IHasStronglyTypedId;
+public record CreateNoxEntityCommand<TEntity>(dynamic Dto, string DetailLevel) : IRequest<(Guid guid, TEntity entity)> where TEntity : class, IHasStronglyTypedId;
 
 [SuppressMessage("Sonar Code Smell", "S2326:Unused type parameters should be removed", Justification = "TEntity is used to specify the type of entity being created")]
 public record DeleteNoxEntityCommand<TEntity, TId>(TId Id) : IRequest where TEntity : class, IHasStronglyTypedId where TId : class, IHasGuidId;

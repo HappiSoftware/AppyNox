@@ -1,24 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿using AppyNox.Services.Coupon.Domain.Coupons;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AppyNox.Services.Coupon.Domain.Coupons;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace AppyNox.Services.Coupon.Infrastructure.Data.Configurations;
 
-internal class CouponDetailTagConfiguration(Guid detailId, Guid detailTagId) : IEntityTypeConfiguration<CouponDetailTag>
+internal class CouponDetailTagConfiguration(CouponDetailId detailId, CouponDetailTagId detailTagId) : IEntityTypeConfiguration<CouponDetailTag>
 {
-    #region [ Fields ]
-
-    private readonly Guid _detailId = detailId;
-
-    private readonly Guid _detailTagId = detailTagId;
-
-    #endregion
-
     #region [ Public Methods ]
 
     public void Configure(EntityTypeBuilder<CouponDetailTag> builder)
@@ -34,9 +21,9 @@ internal class CouponDetailTagConfiguration(Guid detailId, Guid detailTagId) : I
             couponId => couponId.Value,
             value => new CouponDetailTagId(value));
 
-        builder.HasOne(c => c.CouponDetailEntity)
+        builder.HasOne(c => c.CouponDetail)
             .WithMany(cd => cd.CouponDetailTags)
-            .HasForeignKey(c => c.CouponDetailEntityId)
+            .HasForeignKey(c => c.CouponDetailId)
             .IsRequired();
 
         builder.Property(x => x.Tag).IsRequired();
@@ -57,14 +44,18 @@ internal class CouponDetailTagConfiguration(Guid detailId, Guid detailTagId) : I
         builder.HasData(
             new
             {
-                Id = new CouponDetailTagId(_detailTagId),
+                Id = detailTagId,
                 Tag = "Tag Description",
-                CouponDetailEntityId = new CouponDetailId(_detailId),
-                CreatedBy = "admin",
-                CreationDate = DateTime.UtcNow,
-                UpdatedBy = "admin",
-                UpdateDate = DateTime.MinValue
+                CouponDetailId = detailId
             });
+        builder.OwnsOne(a => a.Audit).HasData(new
+        {
+            CouponDetailTagId = detailTagId,
+            CreatedBy = "admin",
+            CreationDate = DateTime.UtcNow,
+            UpdatedBy = string.Empty,
+            UpdateDate = (DateTime?)null
+        });
 
         #endregion
     }

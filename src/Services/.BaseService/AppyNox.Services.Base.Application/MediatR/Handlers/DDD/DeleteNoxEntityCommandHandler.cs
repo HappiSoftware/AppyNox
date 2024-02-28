@@ -11,7 +11,7 @@ using MediatR;
 
 namespace AppyNox.Services.Base.Application.MediatR.Handlers.DDD;
 
-public sealed class DeleteNoxEntityCommandHandler<TEntity, TId>(
+internal sealed class DeleteNoxEntityCommandHandler<TEntity, TId>(
         INoxRepositoryBase<TEntity> repository,
         IMapper mapper,
         IDtoMappingRegistryBase dtoMappingRegistry,
