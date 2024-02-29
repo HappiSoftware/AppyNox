@@ -125,6 +125,82 @@ namespace AppyNox.Services.Coupon.Infrastructure.Migrations
                         });
                 });
 
+            modelBuilder.Entity("AppyNox.Services.Coupon.Domain.Entities.Ticket", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("ReportDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("UpdateDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Tickets");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("69472ec0-4da6-4fdd-93cc-b0a529d7f5e0"),
+                            Content = "Ticket content",
+                            CreatedBy = "admin",
+                            CreationDate = new DateTime(2024, 2, 29, 9, 47, 1, 158, DateTimeKind.Utc).AddTicks(5411),
+                            ReportDate = new DateTime(2024, 2, 29, 9, 47, 1, 158, DateTimeKind.Utc).AddTicks(5410),
+                            Title = "Title",
+                            UpdatedBy = ""
+                        });
+                });
+
+            modelBuilder.Entity("AppyNox.Services.Coupon.Domain.Entities.TicketTag", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("TicketId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TicketId");
+
+                    b.ToTable("TicketTags");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("6125498b-ca83-4d9f-ae4d-55b97d98b47d"),
+                            Description = "Tag Description",
+                            TicketId = new Guid("69472ec0-4da6-4fdd-93cc-b0a529d7f5e0")
+                        });
+                });
+
             modelBuilder.Entity("AppyNox.Services.Coupon.Domain.Coupons.Coupon", b =>
                 {
                     b.HasOne("AppyNox.Services.Coupon.Domain.Coupons.CouponDetail", "CouponDetail")
@@ -197,14 +273,14 @@ namespace AppyNox.Services.Coupon.Infrastructure.Migrations
                                 {
                                     CouponId = new Guid("594cf045-3a2b-46f5-99c9-1eb59f035db2"),
                                     CreatedBy = "admin",
-                                    CreationDate = new DateTime(2024, 2, 28, 7, 9, 7, 603, DateTimeKind.Utc).AddTicks(425),
+                                    CreationDate = new DateTime(2024, 2, 29, 9, 47, 1, 144, DateTimeKind.Utc).AddTicks(814),
                                     UpdatedBy = ""
                                 },
                                 new
                                 {
                                     CouponId = new Guid("c386aec2-dfd2-4ea5-b878-8fe5632e2e40"),
                                     CreatedBy = "admin",
-                                    CreationDate = new DateTime(2024, 2, 28, 7, 9, 7, 603, DateTimeKind.Utc).AddTicks(677),
+                                    CreationDate = new DateTime(2024, 2, 29, 9, 47, 1, 144, DateTimeKind.Utc).AddTicks(1682),
                                     UpdatedBy = ""
                                 });
                         });
@@ -251,7 +327,7 @@ namespace AppyNox.Services.Coupon.Infrastructure.Migrations
                                 {
                                     CouponDetailId = new Guid("ec80532f-58f0-4690-b40c-2133b067d5f2"),
                                     CreatedBy = "admin",
-                                    CreationDate = new DateTime(2024, 2, 28, 7, 9, 7, 616, DateTimeKind.Utc).AddTicks(6918),
+                                    CreationDate = new DateTime(2024, 2, 29, 9, 47, 1, 152, DateTimeKind.Utc).AddTicks(7121),
                                     UpdatedBy = ""
                                 });
                         });
@@ -299,7 +375,7 @@ namespace AppyNox.Services.Coupon.Infrastructure.Migrations
                                 {
                                     CouponDetailTagId = new Guid("b6bcfe76-83c7-4a4a-b088-13b14751fce8"),
                                     CreatedBy = "admin",
-                                    CreationDate = new DateTime(2024, 2, 28, 7, 9, 7, 621, DateTimeKind.Utc).AddTicks(8103),
+                                    CreationDate = new DateTime(2024, 2, 29, 9, 47, 1, 158, DateTimeKind.Utc).AddTicks(3365),
                                     UpdatedBy = ""
                                 });
                         });
@@ -308,9 +384,23 @@ namespace AppyNox.Services.Coupon.Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("AppyNox.Services.Coupon.Domain.Entities.TicketTag", b =>
+                {
+                    b.HasOne("AppyNox.Services.Coupon.Domain.Entities.Ticket", null)
+                        .WithMany("Tags")
+                        .HasForeignKey("TicketId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("AppyNox.Services.Coupon.Domain.Coupons.CouponDetail", b =>
                 {
                     b.Navigation("CouponDetailTags");
+                });
+
+            modelBuilder.Entity("AppyNox.Services.Coupon.Domain.Entities.Ticket", b =>
+                {
+                    b.Navigation("Tags");
                 });
 #pragma warning restore 612, 618
         }

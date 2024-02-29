@@ -24,31 +24,32 @@ public interface IGenericRepositoryBase<TEntity> where TEntity : class, IEntityW
     /// <summary>
     /// Removes an entity.
     /// </summary>
-    /// <param name="entity">The entity to remove.</param>
-    void Remove(TEntity entity);
+    /// <param name="id">The entity id to remove.</param>
+    Task RemoveByIdAsync(Guid id);
 
     /// <summary>
     /// Retrieves all entities asynchronously based on specified query parameters and selected columns.
     /// </summary>
     /// <param name="queryParameters">The query parameters for filtering and pagination.</param>
-    /// <param name="selectedColumns">The columns to include in the result. Created by CreateProjection. See more in <see cref="CreateProjection"/> </param>
+    /// <param name="dtoType">An expression defining the columns to select for the entity.</param>
+    /// /// <param name="cacheService">The cache service used for caching.</param>
     /// <returns>A collection of entities.</returns>
-    Task<PaginatedList> GetAllAsync(IQueryParameters queryParameters, ICacheService cacheService);
+    Task<PaginatedList> GetAllAsync(IQueryParameters queryParameters, Type dtoType, ICacheService cacheService);
 
     /// <summary>
     /// Retrieves an entity of type TEntity by its ID, selecting specific columns based on the provided expression.
     /// </summary>
     /// <param name="id">The unique identifier of the entity to retrieve.</param>
     /// <param name="dtoType">An expression defining the columns to select for the entity.</param>
-    /// <returns>The entity of type TEntity</returns>
-    Task<TEntity> GetByIdAsync(Guid id);
+    /// <returns>The projectized object of TEntity </returns>
+    Task<object> GetByIdAsync(Guid id, Type dtoType);
 
     /// <summary>
     /// Updates an existing entity of type TEntity in the repository.
     /// </summary>
     /// <param name="entity">The entity to update.</param>
-    /// <param name="properties">A list of property names to update.</param>
-    void Update(TEntity entity, IList<string> properties);
+    void Update(TEntity entity);
+    Task<TEntity> GetEntityByIdAsync(Guid id);
 
     #endregion
 }

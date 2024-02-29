@@ -39,8 +39,8 @@ internal sealed class DeleteEntityCommandHandler<TEntity>(
     {
         try
         {
-            Logger.LogInformation($"Deleting entity of type '{typeof(TEntity).Name}' with ID: {request.Entity.Id}.");
-            _repository.Remove(request.Entity);
+            Logger.LogInformation($"Deleting entity of type '{typeof(TEntity).Name}' with ID: {request.Id}.");
+            await _repository.RemoveByIdAsync(request.Id);
             await _unitOfWork.SaveChangesAsync();
             await UpdateTotalCountOnCache(_cacheService, $"total-count-{typeof(TEntity).Name}", false);
         }
@@ -50,7 +50,7 @@ internal sealed class DeleteEntityCommandHandler<TEntity>(
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, $"Error deleting entity of type '{typeof(TEntity).Name}' with ID: {request.Entity.Id}.");
+            Logger.LogError(ex, $"Error deleting entity of type '{typeof(TEntity).Name}' with ID: {request.Id}.");
             throw new NoxApplicationException(ex, (int)NoxApplicationExceptionCode.GenericDeleteCommandError);
         }
     }

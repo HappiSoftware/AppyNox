@@ -21,7 +21,7 @@ public static class ServiceCollectionExtensions
     /// <typeparam name="TEntity"></typeparam>
     /// <param name="services"></param>
     /// <returns>The updated <see cref="IServiceCollection"/> after registration.</returns>
-    private static IServiceCollection AddAnemicEntityCommands<TEntity>(this IServiceCollection services)
+    public static IServiceCollection AddAnemicEntityCommands<TEntity>(this IServiceCollection services)
     where TEntity : class, IEntityWithGuid
     {
         // Register GetAllEntitiesQueryHandler

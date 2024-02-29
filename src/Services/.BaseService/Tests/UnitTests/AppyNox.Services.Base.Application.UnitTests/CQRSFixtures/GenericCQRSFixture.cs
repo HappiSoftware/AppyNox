@@ -28,7 +28,7 @@ public class GenericCQRSFixture<TEntity> : IDisposable
 
     public readonly Mock<ICacheService> _cacheService;
 
-    private readonly Mock<IGenericRepositoryBase<TEntity>> _mockRepository;
+    public readonly Mock<IGenericRepositoryBase<TEntity>> MockRepository;
 
     private readonly Mock<IMapper> _mockMapper;
 
@@ -58,7 +58,7 @@ public class GenericCQRSFixture<TEntity> : IDisposable
 
     public GenericCQRSFixture()
     {
-        _mockRepository = new();
+        MockRepository = new();
         _mockMapper = new();
         MockDtoMappingRegistry = new();
         _mockUnitOfWork = new();
@@ -78,19 +78,6 @@ public class GenericCQRSFixture<TEntity> : IDisposable
 
         #endregion
 
-        #region [ Repository Mocks ]
-
-        _mockRepository.Setup(repo => repo.GetAllAsync(It.IsAny<IQueryParameters>(), It.IsAny<ICacheService>()))
-            .ReturnsAsync(new Mock<PaginatedList>().Object);
-
-        _mockRepository.Setup(repo => repo.GetByIdAsync(It.IsAny<Guid>()))
-            .ReturnsAsync(new Mock<TEntity>().Object);
-
-        _mockRepository.Setup(repo => repo.AddAsync(It.IsAny<TEntity>()))
-            .ReturnsAsync(new Mock<TEntity>().Object);
-
-        #endregion
-
         _mockMapper.Setup(mapper => mapper.Map(It.IsAny<object>(), It.IsAny<Type>(), It.IsAny<Type>()))
             .Returns((object source, Type sourceType, Type destinationType) =>
             {
@@ -103,11 +90,11 @@ public class GenericCQRSFixture<TEntity> : IDisposable
         _cacheService.Setup(rcs => rcs.SetCachedValueAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<TimeSpan?>()))
             .Returns(Task.CompletedTask);
 
-        GetAllEntitiesCommandHandler = new GetAllEntitiesQueryHandler<TEntity>(_mockRepository.Object, _mockMapper.Object, MockDtoMappingRegistry.Object, MockServiceProvider.Object, _noxApplicationLogger, _cacheService.Object);
-        GetEntityByIdCommandHandler = new GetEntityByIdQueryHandler<TEntity>(_mockRepository.Object, _mockMapper.Object, MockDtoMappingRegistry.Object, MockServiceProvider.Object, _noxApplicationLogger);
-        CreateEntityCommandHandler = new CreateEntityCommandHandler<TEntity>(_mockRepository.Object, _mockMapper.Object, MockDtoMappingRegistry.Object, MockServiceProvider.Object, _noxApplicationLogger, _mockUnitOfWork.Object, _cacheService.Object);
-        UpdateEntityCommandHandler = new UpdateEntityCommandHandler<TEntity>(_mockRepository.Object, _mockMapper.Object, MockDtoMappingRegistry.Object, MockServiceProvider.Object, _noxApplicationLogger, _mockUnitOfWork.Object);
-        DeleteEntityCommandHandler = new DeleteEntityCommandHandler<TEntity>(_mockRepository.Object, _mockMapper.Object, MockDtoMappingRegistry.Object, MockServiceProvider.Object, _noxApplicationLogger, _mockUnitOfWork.Object, _cacheService.Object);
+        GetAllEntitiesCommandHandler = new GetAllEntitiesQueryHandler<TEntity>(MockRepository.Object, _mockMapper.Object, MockDtoMappingRegistry.Object, MockServiceProvider.Object, _noxApplicationLogger, _cacheService.Object);
+        GetEntityByIdCommandHandler = new GetEntityByIdQueryHandler<TEntity>(MockRepository.Object, _mockMapper.Object, MockDtoMappingRegistry.Object, MockServiceProvider.Object, _noxApplicationLogger);
+        CreateEntityCommandHandler = new CreateEntityCommandHandler<TEntity>(MockRepository.Object, _mockMapper.Object, MockDtoMappingRegistry.Object, MockServiceProvider.Object, _noxApplicationLogger, _mockUnitOfWork.Object, _cacheService.Object);
+        UpdateEntityCommandHandler = new UpdateEntityCommandHandler<TEntity>(MockRepository.Object, _mockMapper.Object, MockDtoMappingRegistry.Object, MockServiceProvider.Object, _noxApplicationLogger, _mockUnitOfWork.Object);
+        DeleteEntityCommandHandler = new DeleteEntityCommandHandler<TEntity>(MockRepository.Object, _mockMapper.Object, MockDtoMappingRegistry.Object, MockServiceProvider.Object, _noxApplicationLogger, _mockUnitOfWork.Object, _cacheService.Object);
 
         #endregion
 

@@ -6,7 +6,10 @@ using AppyNox.Services.Base.Domain.Interfaces;
 using AppyNox.Services.Base.Infrastructure.ExceptionExtensions;
 using AppyNox.Services.Base.Infrastructure.ExceptionExtensions.Base;
 using Microsoft.EntityFrameworkCore;
+using System.Collections;
 using System.Linq.Dynamic.Core;
+using System.Linq.Expressions;
+using System.Reflection;
 
 namespace AppyNox.Services.Base.Infrastructure.Repositories;
 
@@ -42,19 +45,19 @@ public abstract class GenericRepositoryBase<TEntity> : IGenericRepositoryBase<TE
     #region [ Public Methods ]
 
     /// <summary>
-    /// Retrieves an entity of type TEntity by its ID, selecting specific columns based on the provided expression.
+    /// Retrieves an entity asynchronously by its ID.
     /// </summary>
-    /// <param name="id">The unique identifier of the entity to retrieve.</param>
-    /// <param name="selectedColumns">An expression defining the columns to select for the entity.</param>
-    /// <returns>The entity of type TEntity</returns>
-    /// <exception cref="EntityNotFoundException{TEntity}">Thrown when TEntity is not found by given ID</exception>
-    /// <exception cref="NoxInfrastructureException">Thrown if an unexpected error occurs.</exception>
-    public async Task<TEntity> GetByIdAsync(Guid id)
+    /// <param name="id">The ID of the entity to retrieve.</param>
+    /// <param name="dtoType">The type of DTO (Data Transfer Object) to project the entity into.</param>
+    /// <returns>A task representing the asynchronous operation, returning the retrieved entity.</returns>
+    /// <exception cref="EntityNotFoundException{TEntity}">Thrown when the entity with the specified ID is not found.</exception>
+    /// <exception cref="NoxInfrastructureException">Thrown when there is an error retrieving the entity from the database.</exception>
+    public async Task<object> GetByIdAsync(Guid id, Type dtoType)
     {
         try
         {
             _logger.LogInformation($"Attempting to retrieve entity with ID: '{id}' Type: '{typeof(TEntity).Name}'.");
-            var entity = await _dbSet.Where(x => x.Id == id).AsNoTracking().FirstOrDefaultAsync();
+            object? entity = await _dbSet.Where("Id == @0", id).Select(CreateProjection(dtoType)).AsNoTracking().FirstOrDefaultAsync();
 
             if (entity == null)
             {
@@ -77,7 +80,50 @@ public abstract class GenericRepositoryBase<TEntity> : IGenericRepositoryBase<TE
         }
     }
 
-    public async Task<PaginatedList> GetAllAsync(IQueryParameters queryParameters, ICacheService cacheService)
+    /// <summary>
+    /// Retrieves an entity asynchronously by its ID.
+    /// </summary>
+    /// <param name="id">The ID of the entity to retrieve.</param>
+    /// <returns>A task representing the asynchronous operation, returning the retrieved entity.</returns>
+    /// <exception cref="EntityNotFoundException{TEntity}">Thrown when the entity with the specified ID is not found.</exception>
+    /// <exception cref="NoxInfrastructureException">Thrown when there is an error retrieving the entity from the database.</exception>
+    public async Task<TEntity> GetEntityByIdAsync(Guid id)
+    {
+        try
+        {
+            _logger.LogInformation($"Attempting to retrieve entity with ID: '{id}' Type: '{typeof(TEntity).Name}'.");
+            TEntity? entity = await _dbSet.Where("Id == @0", id).AsNoTracking().FirstOrDefaultAsync();
+
+            if (entity == null)
+            {
+                _logger.LogWarning($"Entity with ID: {id} not found.");
+
+                throw new EntityNotFoundException<TEntity>(id);
+            }
+
+            _logger.LogInformation($"Successfully retrieved entity with ID: '{id}' Type: '{typeof(TEntity).Name}'.");
+            return entity;
+        }
+        catch (NoxInfrastructureException)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Error retrieving entity with ID: '{id}' Type: '{typeof(TEntity).Name}'.");
+            throw new NoxInfrastructureException(ex, (int)NoxInfrastructureExceptionCode.DataFetchingError);
+        }
+    }
+
+    /// <summary>
+    /// Retrieves a paginated list of entities asynchronously based on the specified query parameters.
+    /// </summary>
+    /// <param name="queryParameters">The query parameters specifying pagination details.</param>
+    /// <param name="dtoType">The type of DTO (Data Transfer Object) to project the entities into.</param>
+    /// <param name="cacheService">The cache service used for caching.</param>
+    /// <returns>A task representing the asynchronous operation, returning a PaginatedList of entities.</returns>
+    /// <exception cref="NoxInfrastructureException">Thrown when there is an error retrieving entities from the database.</exception>
+    public async Task<PaginatedList> GetAllAsync(IQueryParameters queryParameters, Type dtoType, ICacheService cacheService)
     {
         try
         {
@@ -95,6 +141,7 @@ public abstract class GenericRepositoryBase<TEntity> : IGenericRepositoryBase<TE
             var entities = await _dbSet
                 .AsQueryable()
                 .AsNoTracking()
+                .Select(CreateProjection(dtoType))
                 .Skip((queryParameters.PageNumber - 1) * queryParameters.PageSize)
                 .Take(queryParameters.PageSize)
                 .ToListAsync();
@@ -142,26 +189,26 @@ public abstract class GenericRepositoryBase<TEntity> : IGenericRepositoryBase<TE
     /// Updates an existing entity of type TEntity in the repository.
     /// </summary>
     /// <param name="entity">The entity to update.</param>
-    /// <param name="properties">A list of property names to update.</param>
     /// <exception cref="NoxInfrastructureException">Thrown if an unexpected error occurs.</exception>
-    public void Update(TEntity entity, IList<string> properties)
+    public void Update(TEntity entity)
     {
         try
         {
             _logger.LogInformation($"Attempting to update entity with ID: '{entity.Id}' Type: '{typeof(TEntity).Name}'.");
             _context.Set<TEntity>().Entry(entity).State = EntityState.Unchanged;
 
-            // TODO With Value Objects, direct usage of "Id" can cause problems.
-            properties = properties.Where(p => p != "Id").ToList();
-            foreach (var property in properties)
+            if (!_context.Set<TEntity>().Local.Any(e => e == entity))
             {
-                _context.Entry(entity).Property(property).IsModified = true;
+                _context.Set<TEntity>().Attach(entity);
             }
-            _logger.LogInformation($"Successfully updated entity with ID: '{entity.Id}' Type: '{typeof(TEntity).Name}'.");
+
+            _context.Entry(entity).State = EntityState.Modified;
+
+            _logger.LogInformation($"Entity marked as modified for update with ID: '{entity.Id}' Type: '{typeof(TEntity).Name}'.");
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Error updating entity with ID: '{entity.Id}' Type: '{typeof(TEntity).Name}'.");
+            _logger.LogError(ex, $"Error attempting to mark entity for update with ID: '{entity.Id}' Type: '{typeof(TEntity).Name}'.");
             throw new NoxInfrastructureException(ex, (int)NoxInfrastructureExceptionCode.UpdatingDataError);
         }
     }
@@ -169,21 +216,175 @@ public abstract class GenericRepositoryBase<TEntity> : IGenericRepositoryBase<TE
     /// <summary>
     /// Removes an entity of type TEntity from the repository.
     /// </summary>
-    /// <param name="entity">The entity to remove.</param>
+    /// <param name="id">The id of the entity to remove.</param>
     /// <exception cref="NoxInfrastructureException">Thrown if an unexpected error occurs.</exception>
-    public void Remove(TEntity entity)
+    public async Task RemoveByIdAsync(Guid id)
     {
         try
         {
-            _logger.LogInformation($"Attempting to delete entity with ID: '{entity.Id}' Type: '{typeof(TEntity).Name}'.");
+            _logger.LogInformation($"Attempting to delete entity with ID: '{id}' Type: '{typeof(TEntity).Name}'.");
+            var entity = await _dbSet.FindAsync([id]);
+            if (entity == null)
+            {
+                _logger.LogWarning($"Entity with ID: '{id}' not found.");
+                throw new EntityNotFoundException<TEntity>(id);
+            }
             _dbSet.Remove(entity);
-            _logger.LogInformation($"Successfully deleted entity with ID: '{entity.Id}' Type: '{typeof(TEntity).Name}'.");
+            _logger.LogInformation($"Successfully deleted entity with ID: '{id}' Type: '{typeof(TEntity).Name}'.");
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Error deleting entity with ID: '{entity.Id}' Type: '{typeof(TEntity).Name}'.");
+            _logger.LogError(ex, $"Error deleting entity with ID: '{id}' Type: '{typeof(TEntity).Name}'.");
             throw new NoxInfrastructureException(ex, (int)NoxInfrastructureExceptionCode.DeletingDataError);
         }
+    }
+
+    #endregion
+
+    #region [ Projection ]
+
+    private static bool IsSimpleType(Type type)
+    {
+        if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
+        {
+            // If it's a nullable type, check if the underlying type is simple.
+            return IsSimpleType(Nullable.GetUnderlyingType(type)!);
+        }
+
+        if (type == typeof(Guid) || type == typeof(Guid?))
+        {
+            return true;
+        }
+
+        var typeCode = Type.GetTypeCode(type);
+        switch (typeCode)
+        {
+            case TypeCode.Empty:
+            case TypeCode.Object:
+                return false;
+
+            default:
+                return true;
+        }
+    }
+
+    private static Expression<Func<TEntity, object>> CreateProjection(Type dtoType)
+    {
+        var parameterExpr = Expression.Parameter(typeof(TEntity), "entity");
+        var bindings = CreateBindings(parameterExpr, typeof(TEntity), dtoType);
+
+        var body = Expression.MemberInit(Expression.New(dtoType), bindings);
+        return Expression.Lambda<Func<TEntity, object>>(body, parameterExpr);
+    }
+
+    [Obsolete("This method usage should be removed with Audit mechanism refactoring")]
+    private static IEnumerable<MemberBinding> MapAuditInfoProperties(Expression source, Type sourceType, PropertyInfo targetAuditInfoProp)
+    {
+        var auditBindings = new List<MemberBinding>();
+        var auditInfoType = targetAuditInfoProp.PropertyType; // Assuming this is the AuditInfo class
+        var auditProperties = new[] { "CreatedBy", "CreationDate", "UpdatedBy", "UpdateDate" };
+
+        foreach (var propName in auditProperties)
+        {
+            var sourceProp = sourceType.GetProperty(propName);
+            if (sourceProp != null)
+            {
+                var targetAuditInfoProperty = auditInfoType.GetProperty(propName);
+                if (targetAuditInfoProperty != null)
+                {
+                    Expression propertyExpr = Expression.Property(source, sourceProp);
+                    var binding = Expression.Bind(targetAuditInfoProperty, propertyExpr);
+                    auditBindings.Add(binding);
+                }
+            }
+        }
+
+        // Create a MemberInit expression for the AuditInfo object with the mapped audit properties
+        var auditInfoNewExpr = Expression.New(auditInfoType);
+        var auditInfoInitExpr = Expression.MemberInit(auditInfoNewExpr, auditBindings);
+
+        // Bind the initialized AuditInfo object to the AuditInfo property of the target DTO
+        var auditInfoPropertyBinding = Expression.Bind(targetAuditInfoProp, auditInfoInitExpr);
+
+        return new[] { auditInfoPropertyBinding };
+    }
+
+    private static IEnumerable<MemberBinding> CreateBindings(Expression source, Type sourceType, Type targetType)
+    {
+        var bindings = new List<MemberBinding>();
+
+        bool hasAuditInfo = targetType.GetProperty("AuditInfo") != null;
+        PropertyInfo[] targetProps = targetType.GetProperties();
+
+        if (hasAuditInfo)
+        {
+            var targetAuditInfoProp = targetType.GetProperty("AuditInfo");
+            if (targetAuditInfoProp != null)
+            {
+                var auditBindings = MapAuditInfoProperties(source, sourceType, targetAuditInfoProp);
+                bindings.AddRange(auditBindings);
+            }
+        }
+
+        foreach (var targetProp in targetType.GetProperties())
+        {
+            // TODO this manual block will be removed with Audit mechanism refactoring
+            if (targetProp.GetType() == typeof(AuditInfo))
+            {
+                continue;
+            }
+            var sourceProp = sourceType.GetProperty(targetProp.Name);
+            if (sourceProp != null)
+            {
+                Expression propertyExpr = Expression.Property(source, sourceProp);
+                MemberBinding binding;
+
+                if (IsSimpleType(targetProp.PropertyType))
+                {
+                    binding = Expression.Bind(targetProp, propertyExpr);
+                }
+                else if (typeof(IEnumerable).IsAssignableFrom(targetProp.PropertyType) && targetProp.PropertyType.IsGenericType)
+                {
+                    // Handle collections
+                    var collectionType = targetProp.PropertyType.GetGenericArguments()[0];
+                    var entityCollectionType = sourceProp.PropertyType.GetGenericArguments()[0];
+
+                    var selectExpression = CreateCollectionSelectExpression(entityCollectionType, collectionType);
+
+                    // Create a call to Enumerable.Select
+                    var selectCallExpression = Expression.Call(
+                        typeof(Enumerable), nameof(Enumerable.Select),
+                        [entityCollectionType, collectionType],
+                        propertyExpr, selectExpression);
+
+                    // Convert the IEnumerable result to a List (which implements ICollection)
+                    var toListMethod = typeof(Enumerable).GetMethod(nameof(Enumerable.ToList))!
+                                                          .MakeGenericMethod(collectionType);
+                    var toListCallExpression = Expression.Call(null, toListMethod, selectCallExpression);
+
+                    // Bind the List result to the target property
+                    binding = Expression.Bind(targetProp, toListCallExpression);
+                }
+                else // Complex type
+                {
+                    var nestedBindings = CreateBindings(propertyExpr, sourceProp.PropertyType, targetProp.PropertyType);
+                    var nestedBody = Expression.MemberInit(Expression.New(targetProp.PropertyType), nestedBindings);
+                    binding = Expression.Bind(targetProp, nestedBody);
+                }
+
+                bindings.Add(binding);
+            }
+        }
+
+        return bindings;
+    }
+
+    private static LambdaExpression CreateCollectionSelectExpression(Type sourceType, Type targetType)
+    {
+        var parameter = Expression.Parameter(sourceType, "x");
+        var bindings = CreateBindings(parameter, sourceType, targetType);
+        var body = Expression.MemberInit(Expression.New(targetType), bindings);
+        return Expression.Lambda(body, parameter);
     }
 
     #endregion

@@ -16,7 +16,7 @@ namespace AppyNox.Services.Base.Application.ExceptionExtensions.Base
 
         DtoDetailLevelNotFound = 1003,
 
-        // 1004 is empty
+        IUpdateDtoNullId = 1004,
 
         FluentValidationError = 1005,
 
@@ -37,6 +37,8 @@ namespace AppyNox.Services.Base.Application.ExceptionExtensions.Base
         MapEntityError = 1013,
 
         UnsupportedLevelAttribute = 1014,
+
+        MismatchedIdInUpdate = 1015
     }
 
     #endregion

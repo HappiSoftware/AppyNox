@@ -1,17 +1,16 @@
-﻿namespace AppyNox.Services.Base.Domain.Interfaces
+﻿namespace AppyNox.Services.Base.Domain.Interfaces;
+
+public interface IAuditableData
 {
-    public interface IAuditableData
-    {
-        #region [ Properties ]
+    #region [ Properties ]
 
-        string CreatedBy { get; set; }
+    string CreatedBy { get; set; }
 
-        DateTime CreationDate { get; set; }
+    DateTime CreationDate { get; set; }
 
-        string UpdatedBy { get; set; }
+    string UpdatedBy { get; set; }
 
-        DateTime? UpdateDate { get; set; }
+    DateTime? UpdateDate { get; set; }
 
-        #endregion
-    }
+    #endregion
 }

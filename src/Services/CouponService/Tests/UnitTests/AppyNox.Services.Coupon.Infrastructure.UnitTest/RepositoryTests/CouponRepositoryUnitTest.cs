@@ -11,7 +11,7 @@ using AppyNox.Services.Coupon.Domain.Exceptions.Base;
 using AppyNox.Services.Coupon.Domain.Localization;
 using AppyNox.Services.Coupon.Infrastructure.Data;
 using AppyNox.Services.Coupon.Infrastructure.Repositories;
-using AppyNox.Services.Coupon.Infrastructure.UnitTest.Seeds.CouponSeeds;
+using AppyNox.Services.Coupon.Infrastructure.UnitTest.Seeds;
 using Microsoft.Extensions.Localization;
 using Moq;
 using System.Net;

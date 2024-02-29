@@ -8,7 +8,7 @@ public class CouponSimpleDto : CouponSimpleCreateDto, INoxAuditDto
 {
     #region [ IAuditDto ]
 
-    public NoxAuditDataDto Audit { get; set; } = null!;
+    public NoxAuditDataDto Audit { get; set; } = default!;
 
     #endregion
 }
