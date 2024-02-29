@@ -1,9 +1,17 @@
 # Changelog
 All notable changes to AppyNox will be documented in this file.
 
-## [1.5.0](https://github.com/HappiSoftware/AppyNox/compare/v1.4.0...v1.5.0) - NOT RELEASED
+## [1.6.0](https://github.com/HappiSoftware/AppyNox/compare/v1.5.0...v1.6.0) - NOT RELEASED
+
+
+## [1.5.0](https://github.com/HappiSoftware/AppyNox/compare/v1.4.0...v1.5.0) - 2024.02.29
+### Added
+- Feature request: Superadmin role bypass authorization ([#229](https://github.com/HappiSoftware/AppyNox/issues/229))
+- Feature request: Coupon Service should has Anemic Domain Modeling Example ([#223](https://github.com/HappiSoftware/AppyNox/issues/223))
+
 ### Fixed
 - Bug report: NoxRepository GetById should use projection ([#226](https://github.com/HappiSoftware/AppyNox/issues/226))
+- Refactoring request: Generic Repository and CQRS Refactor ([#222](https://github.com/HappiSoftware/AppyNox/issues/222))
 
 
 ## [1.4.0](https://github.com/HappiSoftware/AppyNox/compare/v1.3.0...v1.4.0) - 2024.02.26
