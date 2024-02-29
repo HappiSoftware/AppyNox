@@ -153,11 +153,16 @@ public class TicketAnemicCQRSUnitTest : IClassFixture<GenericCQRSFixture<Ticket>
     public void UpdateEntityCommand_ShouldSuccess()
     {
         // Prepare
-        string jsonData = @"{
-            }";
-        JsonDocument jsonDocument = JsonDocument.Parse(jsonData);
+        Guid id = new();
+        var updateBody = new
+        {
+            Id = id
+        };
+
+        string jsonString = JsonSerializer.Serialize(updateBody);
+        JsonDocument jsonDocument = JsonDocument.Parse(jsonString);
         JsonElement root = jsonDocument.RootElement;
-        Guid id = Guid.NewGuid();
+
         NoxContext.UserId = Guid.Parse("a8bfc75b-2ac3-47e2-b013-8b8a1efba45d");
 
         // Act
@@ -174,7 +179,7 @@ public class TicketAnemicCQRSUnitTest : IClassFixture<GenericCQRSFixture<Ticket>
     {
         // Act
         var result = _fixture.MockMediator.Object
-            .Send(new DeleteEntityCommand<Ticket>(It.IsAny<Guid>()));
+            .Send(new DeleteEntityCommand<Ticket>(new Guid()));
 
         // Assert
         Assert.NotNull(result);
