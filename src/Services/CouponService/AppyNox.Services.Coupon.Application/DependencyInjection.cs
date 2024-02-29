@@ -1,6 +1,6 @@
 ﻿using AppyNox.Services.Base.Application.DtoUtilities;
 using AppyNox.Services.Base.Application.Extensions;
-using AppyNox.Services.Coupon.Application.Dtos.DtoUtilities;
+using AppyNox.Services.Coupon.Application.DtoUtilities;
 using AppyNox.Services.Coupon.Domain.Coupons;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;

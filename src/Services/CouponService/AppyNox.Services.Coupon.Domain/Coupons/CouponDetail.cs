@@ -1,5 +1,6 @@
 ﻿using AppyNox.Services.Base.Domain;
 using AppyNox.Services.Base.Domain.Interfaces;
+using AppyNox.Services.Coupon.Domain.Coupons.Builders;
 
 namespace AppyNox.Services.Coupon.Domain.Coupons;
 
@@ -7,38 +8,34 @@ public class CouponDetail : EntityBase, IHasStronglyTypedId, IHasCode
 {
     #region [ Properties ]
 
-    public CouponDetailId Id { get; private set; } = new CouponDetailId(Guid.NewGuid());
+    public CouponDetailId Id { get; private set; }
 
     public string? Detail { get; private set; }
 
     #endregion
 
-    #region [ Constructors and Factories ]
+#nullable disable
+
+    #region [ Constructors ]
 
     private CouponDetail()
     {
     }
 
-    private CouponDetail(Guid id, string code, string? detail)
-    {
-        Id = new CouponDetailId(id);
-        Code = code;
-        Detail = detail;
-    }
+#nullable restore
 
-    public static CouponDetail Create(string code, string? detail)
+    internal CouponDetail(CouponDetailBuilder builder)
     {
-        CouponDetail entity = new(Guid.NewGuid(), code, detail);
-        return entity;
+        Id = new CouponDetailId(Guid.NewGuid());
+        Code = builder.Code;
+        Detail = builder.Detail;
     }
 
     #endregion
 
     #region [ Relations ]
 
-    public virtual IEnumerable<Coupon>? Coupons { get; set; }
-
-    public virtual IEnumerable<CouponDetailTag>? CouponDetailTags { get; set; }
+    public ICollection<CouponDetailTag>? CouponDetailTags { get; set; }
 
     #endregion
 

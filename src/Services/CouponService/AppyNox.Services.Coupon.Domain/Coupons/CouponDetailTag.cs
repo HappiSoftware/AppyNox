@@ -1,5 +1,6 @@
 ﻿using AppyNox.Services.Base.Domain;
 using AppyNox.Services.Base.Domain.Interfaces;
+using AppyNox.Services.Coupon.Domain.Coupons.Builders;
 
 namespace AppyNox.Services.Coupon.Domain.Coupons;
 
@@ -7,29 +8,27 @@ public class CouponDetailTag : EntityBase, IHasStronglyTypedId
 {
     #region [ Properties ]
 
-    public CouponDetailTagId Id { get; private set; } = new CouponDetailTagId(Guid.NewGuid());
+    public CouponDetailTagId Id { get; private set; }
 
     public string Tag { get; private set; } = string.Empty;
 
     #endregion
 
-    #region [ Constructors and Factories ]
+    #region [ Constructors ]
+
+#nullable disable
 
     private CouponDetailTag()
     {
     }
 
-    private CouponDetailTag(Guid id, string tag, CouponDetailId couponDetailId)
-    {
-        Id = new CouponDetailTagId(id);
-        Tag = tag;
-        CouponDetailId = couponDetailId;
-    }
+#nullable restore
 
-    public static CouponDetailTag Create(string tag, CouponDetailId couponDetailId)
+    internal CouponDetailTag(CouponDetailTagBuilder builder)
     {
-        CouponDetailTag entity = new(Guid.NewGuid(), tag, couponDetailId);
-        return entity;
+        Id = new CouponDetailTagId(Guid.NewGuid());
+        Tag = builder.Tag;
+        CouponDetailId = builder.CouponDetailId;
     }
 
     #endregion
@@ -43,8 +42,6 @@ public class CouponDetailTag : EntityBase, IHasStronglyTypedId
     #region [ Relations ]
 
     public CouponDetailId CouponDetailId { get; private set; }
-
-    public virtual CouponDetail CouponDetail { get; private set; } = null!;
 
     #endregion
 }

@@ -6,25 +6,46 @@ using AppyNox.Services.Base.Infrastructure.UnitTests.Stubs;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Extended;
 using AppyNox.Services.Coupon.Domain.Coupons;
-using AppyNox.Services.Coupon.Domain.ExceptionExtensions.Base;
+using AppyNox.Services.Coupon.Domain.Coupons.Builders;
+using AppyNox.Services.Coupon.Domain.Exceptions.Base;
+using AppyNox.Services.Coupon.Domain.Localization;
 using AppyNox.Services.Coupon.Infrastructure.Data;
 using AppyNox.Services.Coupon.Infrastructure.Repositories;
 using AppyNox.Services.Coupon.Infrastructure.UnitTest.Seeds.CouponSeeds;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
+using Moq;
 using System.Net;
 using CouponAggregate = AppyNox.Services.Coupon.Domain.Coupons.Coupon;
 
 namespace AppyNox.Services.Coupon.Infrastructure.UnitTest.RepositoryTests;
 
-public class CouponRepositoryUnitTest(RepositoryFixture fixture) : IClassFixture<RepositoryFixture>
+public class CouponRepositoryUnitTest : IClassFixture<RepositoryFixture>
 {
     #region [ Fields ]
 
-    private readonly RepositoryFixture _fixture = fixture;
+    private readonly RepositoryFixture _fixture;
 
-    private readonly NoxInfrastructureLoggerStub _noxLoggerStub = fixture.NoxLoggerStub;
+    private readonly NoxInfrastructureLoggerStub _noxLoggerStub;
 
-    private readonly ICacheService _cacheService = fixture.RedisCacheService.Object;
+    private readonly ICacheService _cacheService;
+
+    #endregion
+
+    #region [ Public Constructors ]
+
+    public CouponRepositoryUnitTest(RepositoryFixture fixture)
+    {
+        _fixture = fixture;
+        _noxLoggerStub = fixture.NoxLoggerStub;
+        _cacheService = fixture.RedisCacheService.Object;
+        var localizer = new Mock<IStringLocalizer>();
+        localizer.Setup(l => l[It.IsAny<string>()]).Returns(new LocalizedString("key", "mock value"));
+
+        var localizerFactory = new Mock<IStringLocalizerFactory>();
+        localizerFactory.Setup(lf => lf.Create(typeof(CouponDomainResourceService))).Returns(localizer.Object);
+
+        CouponDomainResourceService.Initialize(localizerFactory.Object);
+    }
 
     #endregion
 
@@ -197,7 +218,10 @@ public class CouponRepositoryUnitTest(RepositoryFixture fixture) : IClassFixture
         Assert.NotNull(existingCoupon);
 
         Amount amount = new(0.1, 1);
-        CouponAggregate coupon = CouponAggregate.Create("TEE10", "DescriptionCoupon", "", amount, existingCoupon.CouponDetailId);
+        CouponAggregate coupon = new CouponBuilder().WithDetails("TEE10", "DescriptionCoupon", "")
+                                                    .WithAmount(amount)
+                                                    .WithCouponDetailId(existingCoupon.CouponDetailId)
+                                                    .Build();
 
         await repository.AddAsync(coupon);
         await unitOfWork.SaveChangesAsync();

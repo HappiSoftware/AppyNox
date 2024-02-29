@@ -1,12 +1,16 @@
 ﻿using AppyNox.Services.Base.Domain.ExceptionExtensions.Base;
 
-namespace AppyNox.Services.Coupon.Domain.ExceptionExtensions.Base;
+namespace AppyNox.Services.Coupon.Domain.Exceptions.Base;
 
 #region [ NoxCouponDomainException Code]
 
 internal enum NoxCouponDomainExceptionCode
 {
-    AmountValidation = 1000,
+    NullPropertyException = 1000,
+
+    AmountValidation = 1001,
+
+    CouponBuilderValidation = 1002,
 }
 
 #endregion

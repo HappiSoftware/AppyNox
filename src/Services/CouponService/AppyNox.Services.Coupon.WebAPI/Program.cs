@@ -14,6 +14,7 @@ using AppyNox.Services.Base.Infrastructure.HostedServices;
 using AppyNox.Services.Base.Infrastructure.Localization;
 using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
 using AppyNox.Services.Coupon.Application;
+using AppyNox.Services.Coupon.Domain;
 using AppyNox.Services.Coupon.Infrastructure;
 using AppyNox.Services.Coupon.Infrastructure.Data;
 using AppyNox.Services.Coupon.WebAPI.Permission;
@@ -206,6 +207,8 @@ var app = builder.Build();
 
 IStringLocalizerFactory localizerFactory = app.Services.GetRequiredService<IStringLocalizerFactory>();
 localizerFactory.AddNoxLocalizationServices();
+
+localizerFactory.AddCouponDomainLocalizationService();
 
 #endregion
 

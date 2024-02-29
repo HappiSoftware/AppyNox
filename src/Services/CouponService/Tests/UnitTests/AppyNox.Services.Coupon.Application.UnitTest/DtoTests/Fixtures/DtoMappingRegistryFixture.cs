@@ -1,4 +1,4 @@
-﻿using AppyNox.Services.Coupon.Application.Dtos.DtoUtilities;
+﻿using AppyNox.Services.Coupon.Application.DtoUtilities;
 
 namespace AppyNox.Services.Coupon.Application.UnitTest.DtoTests.Fixtures
 {

@@ -3,6 +3,7 @@ using AppyNox.Services.Base.Domain.Interfaces;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Extended;
 using AppyNox.Services.Coupon.Domain.Coupons;
+using AppyNox.Services.Coupon.Domain.Coupons.Builders;
 using AutoMapper;
 using CouponAggreagete = AppyNox.Services.Coupon.Domain.Coupons.Coupon;
 
@@ -14,23 +15,36 @@ public class CouponProfile : Profile
 
     public CouponProfile()
     {
+        CreateMap<CouponBulkCreateDto, CouponAggreagete>()
+            .ConstructUsing((src, context) =>
+            {
+                return new CouponBuilder()
+                    .WithDetails(src.Code, src.Description, string.Empty)
+                    .WithAmount(context.Mapper.Map<Amount>(src.Amount))
+                    .WithCouponDetail(context.Mapper.Map<CouponDetail>(src.CouponDetail))
+                    .MarkAsBulkCreate()
+                    .Build();
+            });
+
         CreateMap<CouponSimpleCreateDto, CouponAggreagete>()
-            .ConstructUsing((src, context) => CouponAggreagete.Create(
-                src.Code,
-                src.Description,
-                null,
-                context.Mapper.Map<Amount>(src.Amount),
-                context.Mapper.Map<CouponDetailId>(src.CouponDetailId)
-            ));
+            .ConstructUsing((src, context) =>
+            {
+                return new CouponBuilder()
+                    .WithDetails(src.Code, src.Description, string.Empty)
+                    .WithAmount(context.Mapper.Map<Amount>(src.Amount))
+                    .WithCouponDetailId(context.Mapper.Map<CouponDetailId>(src.CouponDetailId))
+                    .Build();
+            });
 
         CreateMap<CouponExtendedCreateDto, CouponAggreagete>()
-            .ConstructUsing((src, context) => CouponAggreagete.Create(
-                src.Code,
-                src.Description,
-                src.Detail,
-                context.Mapper.Map<Amount>(src.Amount),
-                context.Mapper.Map<CouponDetailId>(src.CouponDetailId)
-            ));
+            .ConstructUsing((src, context) =>
+            {
+                return new CouponBuilder()
+                    .WithDetails(src.Code, src.Description, src.Detail)
+                    .WithAmount(context.Mapper.Map<Amount>(src.Amount))
+                    .WithCouponDetailId(context.Mapper.Map<CouponDetailId>(src.CouponDetailId))
+                    .Build();
+            });
 
         CreateMap<CouponAggreagete, CouponSimpleDto>();
 

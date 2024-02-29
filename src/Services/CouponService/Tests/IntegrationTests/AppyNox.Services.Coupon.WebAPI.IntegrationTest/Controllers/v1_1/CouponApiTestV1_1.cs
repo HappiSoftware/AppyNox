@@ -4,6 +4,7 @@ using AppyNox.Services.Coupon.Application.Dtos.CouponDetailDtos.Models.Basic;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Extended;
 using AppyNox.Services.Coupon.Domain.Coupons;
+using AppyNox.Services.Coupon.Domain.Coupons.Builders;
 using AppyNox.Services.Coupon.WebAPI.IntegrationTest.Fixtures;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Dynamic.Core;
@@ -38,8 +39,12 @@ public class CouponApiTestV1_1(CouponServiceFixture couponApiTestFixture)
     {
         #region [ Create and Get Coupon ]
 
-        CouponDetail newDetail = CouponDetail.Create("test01", "testdetail");
-        CouponAggregate newCoupon = CouponAggregate.Create("code", "description", "detail", new Amount(10, 15), newDetail);
+        CouponDetail newDetail = new CouponDetailBuilder().WithDetails("test01", "testdetail").Build();
+        CouponAggregate newCoupon = new CouponBuilder().WithDetails("code", "description", "detail")
+                                                       .WithAmount(10, 15)
+                                                       .WithCouponDetail(newDetail)
+                                                       .MarkAsBulkCreate()
+                                                       .Build();
         _couponApiTestFixture.DbContext.Coupons.Add(newCoupon);
         await _couponApiTestFixture.DbContext.SaveChangesAsync();
 

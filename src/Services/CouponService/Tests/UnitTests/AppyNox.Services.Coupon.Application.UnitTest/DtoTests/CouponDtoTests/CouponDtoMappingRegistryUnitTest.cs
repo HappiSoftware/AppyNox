@@ -3,7 +3,7 @@ using AppyNox.Services.Base.Core.Extensions;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.DetailLevel;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Extended;
-using AppyNox.Services.Coupon.Application.Dtos.DtoUtilities;
+using AppyNox.Services.Coupon.Application.DtoUtilities;
 using AppyNox.Services.Coupon.Application.UnitTest.DtoTests.Fixtures;
 using AppyNox.Services.Coupon.Domain.Coupons;
 using CouponAggreagate = AppyNox.Services.Coupon.Domain.Coupons.Coupon;

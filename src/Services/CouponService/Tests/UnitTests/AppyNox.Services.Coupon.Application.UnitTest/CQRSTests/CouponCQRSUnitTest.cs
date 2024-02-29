@@ -11,8 +11,11 @@ using AppyNox.Services.Coupon.Application.Dtos.CouponDetailDtos.Models.Basic;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.DetailLevel;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
 using AppyNox.Services.Coupon.Domain.Coupons;
+using AppyNox.Services.Coupon.Domain.Coupons.Builders;
+using AppyNox.Services.Coupon.Domain.Localization;
 using FluentValidation;
 using FluentValidation.Results;
+using Microsoft.Extensions.Localization;
 using Moq;
 using System.Text.Json;
 using CouponAggregate = AppyNox.Services.Coupon.Domain.Coupons.Coupon;
@@ -31,6 +34,14 @@ namespace AppyNox.Services.Coupon.Application.UnitTest.CQRSTests
 
         public CouponCQRSUnitTest(NoxCQRSFixture<Domain.Coupons.Coupon, CouponId> fixture)
         {
+            var localizer = new Mock<IStringLocalizer>();
+            localizer.Setup(l => l[It.IsAny<string>()]).Returns(new LocalizedString("key", "mock value"));
+
+            var localizerFactory = new Mock<IStringLocalizerFactory>();
+            localizerFactory.Setup(lf => lf.Create(typeof(CouponDomainResourceService))).Returns(localizer.Object);
+
+            CouponDomainResourceService.Initialize(localizerFactory.Object);
+
             _fixture = fixture;
             _fixture.MockDtoMappingRegistry.Setup(registry => registry.GetDtoType(DtoLevelMappingTypes.DataAccess, typeof(CouponAggregate), CommonDetailLevels.Simple))
                 .Returns(typeof(CouponSimpleDto));
@@ -57,7 +68,8 @@ namespace AppyNox.Services.Coupon.Application.UnitTest.CQRSTests
 
             #region [ Repository Mocks ]
 
-            CouponAggregate couponEntity = CouponAggregate.Create("code", "description", "detail", new Amount(10, 15), new CouponDetailId(Guid.NewGuid()));
+            CouponDetail newDetail = new CouponDetailBuilder().WithDetails("test01", "testdetail").Build();
+            CouponAggregate couponEntity = new CouponBuilder().WithDetails("code", "description", "detail").WithAmount(10, 15).WithCouponDetail(newDetail).MarkAsBulkCreate().Build();
             CouponSimpleDto couponSimpleDto = new()
             {
                 Code = "code",

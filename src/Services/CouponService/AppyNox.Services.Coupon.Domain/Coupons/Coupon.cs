@@ -1,6 +1,7 @@
 ﻿using AppyNox.Services.Base.Domain;
 using AppyNox.Services.Base.Domain.Interfaces;
-using AppyNox.Services.Coupon.Domain.ExceptionExtensions.Base;
+using AppyNox.Services.Coupon.Domain.Coupons.Builders;
+using AppyNox.Services.Coupon.Domain.Exceptions.Base;
 
 namespace AppyNox.Services.Coupon.Domain.Coupons;
 
@@ -8,7 +9,7 @@ public class Coupon : EntityBase, IHasStronglyTypedId, IHasCode
 {
     #region [ Properties ]
 
-    public CouponId Id { get; private set; } = new CouponId(Guid.NewGuid());
+    public CouponId Id { get; private set; }
 
     public string Description { get; private set; } = string.Empty;
 
@@ -18,44 +19,28 @@ public class Coupon : EntityBase, IHasStronglyTypedId, IHasCode
 
     #endregion
 
-    #region [ Constructors and Factories ]
+    #region [ Constructors ]
+
+    /// <summary>
+    /// For ef core migration creating. Do not use this constructor in actual implementations
+    /// </summary>
+#nullable disable
 
     private Coupon()
     {
     }
 
-    private Coupon(Guid id, string code, string description, string? detail, Amount amount)
-    {
-        Id = new CouponId(id);
-        Description = description;
-        Detail = detail;
-        Code = code;
-        Amount = amount;
-    }
+#nullable restore
 
-    private Coupon(Guid id, string code, string description, string? detail, Amount amount, CouponDetailId couponDetailId)
-        : this(id, code, description, detail, amount)
+    internal Coupon(CouponBuilder builder)
     {
-        CouponDetailId = couponDetailId;
-    }
-
-    private Coupon(Guid id, string code, string description, string? detail, Amount amount, CouponDetail couponDetail)
-        : this(id, code, description, detail, amount)
-    {
-        CouponDetail = couponDetail;
-        CouponDetailId = couponDetail.Id;
-    }
-
-    public static Coupon Create(string code, string description, string? detail, Amount amount, CouponDetailId couponDetailId)
-    {
-        Coupon entity = new(Guid.NewGuid(), code, description, detail, amount, couponDetailId);
-        return entity;
-    }
-
-    public static Coupon Create(string code, string description, string? detail, Amount amount, CouponDetail couponDetail)
-    {
-        Coupon entity = new(Guid.NewGuid(), code, description, detail, amount, couponDetail);
-        return entity;
+        Id = new CouponId(Guid.NewGuid());
+        Code = builder.Code;
+        Description = builder.Description;
+        Detail = builder.Detail;
+        Amount = builder.Amount;
+        CouponDetailId = builder.CouponDetailId;
+        CouponDetail = builder.BulkCreate ? builder.CouponDetail : default!;
     }
 
     #endregion
@@ -68,9 +53,9 @@ public class Coupon : EntityBase, IHasStronglyTypedId, IHasCode
 
     #region [ Relations ]
 
-    public CouponDetailId CouponDetailId { get; private set; } = default!;
+    public CouponDetailId CouponDetailId { get; private set; }
 
-    public virtual CouponDetail CouponDetail { get; private set; } = null!;
+    public CouponDetail CouponDetail { get; private set; }
 
     #endregion
 
