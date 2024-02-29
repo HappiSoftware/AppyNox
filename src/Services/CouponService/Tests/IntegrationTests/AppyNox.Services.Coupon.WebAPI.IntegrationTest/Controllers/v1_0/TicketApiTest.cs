@@ -191,7 +191,7 @@ public class TicketApiTest(CouponServiceFixture couponApiTestFixture)
         #region [ Update Ticket ]
 
         // Arrange
-        var requestUri = $"{_serviceURIs.CouponServiceURI}/v{NoxVersions.v1_1}/coupons/{id}";
+        var requestUri = $"{_serviceURIs.CouponServiceURI}/v{NoxVersions.v1_0}/tickets/{id}";
         string updatedTitle = "updated title";
         string updatedContent = "updated content";
 
