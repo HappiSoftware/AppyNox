@@ -61,6 +61,19 @@ namespace AppyNox.Services.Base.Application.Localization
         /// </summary>
         internal static LocalizedString UnexpectedError => GetMessage("UnexpectedError");
 
+        /// <summary>
+        /// Id is required in body while updating. Provided data transfer object: {0}
+        /// <para>{0}: DtoType</para>
+        /// </summary>
+        internal static LocalizedString IUpdateDtoNullId => GetMessage("IUpdateDtoNullId");
+
+        /// <summary>
+        /// Ids do not match. Received id in body: '{0}', received id in uri: '{1}'
+        /// <para>{0}: Received id in body</para>
+        /// <para>{1}: Received id in uri</para>
+        /// </summary>
+        internal static LocalizedString MismatchedIdInUpdate => GetMessage("MismatchedIdInUpdate");
+
         #endregion
 
         #region [ Private Methods ]

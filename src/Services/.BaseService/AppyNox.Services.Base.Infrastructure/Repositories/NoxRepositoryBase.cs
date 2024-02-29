@@ -41,7 +41,6 @@ public abstract class NoxRepositoryBase<TEntity> : INoxRepositoryBase<TEntity> w
 
     /// <summary>
     /// Retrieves an entity asynchronously by its ID.
-    /// <para>if dtoType is not specified, returns entity without projection.</para>
     /// </summary>
     /// <typeparam name="TId">The type of the entity's ID.</typeparam>
     /// <param name="id">The ID of the entity to retrieve.</param>
@@ -56,16 +55,7 @@ public abstract class NoxRepositoryBase<TEntity> : INoxRepositoryBase<TEntity> w
         try
         {
             _logger.LogInformation($"Attempting to retrieve entity with ID: '{id}' Type: '{typeof(TEntity).Name}'.");
-            object? entity;
-
-            if (dtoType != null)
-            {
-                entity = await _dbSet.Where("Id == @0", id).Select(CreateProjection(dtoType)).AsNoTracking().FirstOrDefaultAsync();
-            }
-            else
-            {
-                entity = await _dbSet.Where("Id == @0", id).AsNoTracking().FirstOrDefaultAsync();
-            }
+            object? entity = await _dbSet.Where("Id == @0", id).Select(CreateProjection(dtoType)).AsNoTracking().FirstOrDefaultAsync();
 
             if (entity == null)
             {
@@ -96,7 +86,6 @@ public abstract class NoxRepositoryBase<TEntity> : INoxRepositoryBase<TEntity> w
     /// <returns>A task representing the asynchronous operation, returning the retrieved entity.</returns>
     /// <exception cref="EntityNotFoundException{TEntity}">Thrown when the entity with the specified ID is not found.</exception>
     /// <exception cref="NoxInfrastructureException">Thrown when there is an error retrieving the entity from the database.</exception>
-
     public async Task<TEntity> GetEntityByIdAsync<TId>(TId id)
         where TId : IHasGuidId
     {
@@ -134,7 +123,6 @@ public abstract class NoxRepositoryBase<TEntity> : INoxRepositoryBase<TEntity> w
     /// <param name="cacheService">The cache service used for caching.</param>
     /// <returns>A task representing the asynchronous operation, returning a PaginatedList of entities.</returns>
     /// <exception cref="NoxInfrastructureException">Thrown when there is an error retrieving entities from the database.</exception>
-
     public async Task<PaginatedList> GetAllAsync(IQueryParameters queryParameters, Type dtoType, ICacheService cacheService)
     {
         try
@@ -255,7 +243,7 @@ public abstract class NoxRepositoryBase<TEntity> : INoxRepositoryBase<TEntity> w
 
     #endregion
 
-    #region [ Public Helper Methods ]
+    #region [ Projection ]
 
     private static bool IsSimpleType(Type type)
     {

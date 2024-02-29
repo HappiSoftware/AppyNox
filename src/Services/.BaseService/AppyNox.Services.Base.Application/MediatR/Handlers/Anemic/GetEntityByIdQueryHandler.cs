@@ -34,7 +34,7 @@ internal class GetEntityByIdQueryHandler<TEntity>(
         {
             Logger.LogInformation($"Fetching entity of type {typeof(TEntity).Name} with ID: {request.Id}.");
             var dtoType = GetDtoType(request.QueryParameters);
-            return await _repository.GetByIdAsync(request.Id);
+            return await _repository.GetByIdAsync(request.Id, dtoType);
         }
         catch (Exception ex) when (ex is INoxException)
         {

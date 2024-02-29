@@ -129,8 +129,14 @@
   <data name="FluentValidationFailed" xml:space="preserve">
     <value>Request responded with one or more validation errors for '{0}'.</value>
   </data>
+  <data name="IUpdateDtoNullId" xml:space="preserve">
+    <value>Id is required in body while updating. Provided data transfer object: {0}</value>
+  </data>
   <data name="LevelNotFoundForEntity" xml:space="preserve">
     <value>This '{0}' level is not found in dto-entity mapping for '{1}'.</value>
+  </data>
+  <data name="MismatchedIdInUpdate" xml:space="preserve">
+    <value>Ids do not match. Received id in body: '{0}', received id in uri: '{1}'</value>
   </data>
   <data name="UnexpectedError" xml:space="preserve">
     <value>Unexpected Error Occurred.</value>

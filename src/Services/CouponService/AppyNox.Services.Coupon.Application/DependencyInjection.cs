@@ -2,6 +2,7 @@
 using AppyNox.Services.Base.Application.Extensions;
 using AppyNox.Services.Coupon.Application.DtoUtilities;
 using AppyNox.Services.Coupon.Domain.Coupons;
+using AppyNox.Services.Coupon.Domain.Entities;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
@@ -26,6 +27,7 @@ namespace AppyNox.Services.Coupon.Application
             });
 
             services.AddNoxEntityCommands<Domain.Coupons.Coupon, CouponId>();
+            services.AddAnemicEntityCommands<Ticket>();
 
             #endregion
 

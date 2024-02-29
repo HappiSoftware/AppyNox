@@ -111,6 +111,19 @@ namespace AppyNox.Services.Base.Infrastructure.Repositories
                     entry.Entity.UpdateAuditInformation(_currentUserId, DateTime.UtcNow);
                 }
             }
+            foreach (var entry in _dbContext.ChangeTracker.Entries<IAuditableData>())
+            {
+                if (entry.State == EntityState.Added)
+                {
+                    entry.Entity.CreatedBy = _currentUserId;
+                    entry.Entity.CreationDate = DateTime.UtcNow;
+                }
+                else if (entry.State == EntityState.Modified)
+                {
+                    entry.Entity.UpdatedBy = _currentUserId;
+                    entry.Entity.UpdateDate = DateTime.UtcNow;
+                }
+            }
 
             return await _dbContext.SaveChangesAsync();
         }

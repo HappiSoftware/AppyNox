@@ -10,7 +10,7 @@ namespace AppyNox.Services.Base.Application.MediatR.Commands;
 public record CreateEntityCommand<TEntity>(dynamic Dto, string DetailLevel) : IRequest<(Guid guid, object basicDto)> where TEntity : IEntityWithGuid;
 
 [SuppressMessage("Sonar Code Smell", "S2326:Unused type parameters should be removed", Justification = "TEntity is used to specify the type of entity being created")]
-public record DeleteEntityCommand<TEntity>(TEntity Entity) : IRequest where TEntity : IEntityWithGuid;
+public record DeleteEntityCommand<TEntity>(Guid Id) : IRequest where TEntity : IEntityWithGuid;
 
 [SuppressMessage("Sonar Code Smell", "S2326:Unused type parameters should be removed", Justification = "TEntity is used to specify the type of entity being created")]
 public record UpdateEntityCommand<TEntity>(Guid Id, dynamic Dto, string DetailLevel) : IRequest where TEntity : IEntityWithGuid;

@@ -129,8 +129,14 @@
   <data name="FluentValidationFailed" xml:space="preserve">
     <value>İstek, '{0}' için bir veya daha fazla doğrulama hatasıyla yanıtlandı.</value>
   </data>
+  <data name="IUpdateDtoNullId" xml:space="preserve">
+    <value>Güncelleme sırasında gövdede kimlik gereklidir. Sağlanan veri aktarım nesnesi: {0}</value>
+  </data>
   <data name="LevelNotFoundForEntity" xml:space="preserve">
     <value>Bu '{0}' düzeyi, '{1}' için dto-varlık eşlemesinde bulunamadı.</value>
+  </data>
+  <data name="MismatchedIdInUpdate" xml:space="preserve">
+    <value>Kimlikler eşleşmiyor. Gövdede alınan kimlik: '{0}', uri'de alınan kimlik: '{1}'</value>
   </data>
   <data name="UnexpectedError" xml:space="preserve">
     <value>Beklenmedik hata oluştu.</value>

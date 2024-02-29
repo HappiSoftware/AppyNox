@@ -1,11 +1,13 @@
 ﻿using AppyNox.Services.Base.Application.DtoUtilities;
-using AppyNox.Services.Base.Application.Localization;
 using AppyNox.Services.Base.Core.Enums;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDetailDtos.DetailLevel;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDetailTagDtos.DetailLevel;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.DetailLevel;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
+using AppyNox.Services.Coupon.Application.Dtos.TicketDtos.DetailLevel;
+using AppyNox.Services.Coupon.Application.Dtos.TicketTagDtos.DetailLevel;
 using AppyNox.Services.Coupon.Domain.Coupons;
+using AppyNox.Services.Coupon.Domain.Entities;
 using System.Data;
 using System.Reflection;
 
@@ -53,7 +55,26 @@ namespace AppyNox.Services.Coupon.Application.DtoUtilities
                     _ => couponDetailTagDetailAttribute.DataAccessDetailLevel
                 };
             }
-
+            else if (attribute is TicketDetailLevelAttribute ticketDetailLevelAttribute)
+            {
+                return mappingType switch
+                {
+                    DtoLevelMappingTypes.DataAccess => ticketDetailLevelAttribute.DataAccessDetailLevel,
+                    DtoLevelMappingTypes.Create => ticketDetailLevelAttribute.CreateDetailLevel,
+                    DtoLevelMappingTypes.Update => ticketDetailLevelAttribute.UpdateDetailLevel,
+                    _ => ticketDetailLevelAttribute.DataAccessDetailLevel
+                };
+            }
+            else if (attribute is TicketTagDetailLevelAttribute ticketTagDetailLevelAttribute)
+            {
+                return mappingType switch
+                {
+                    DtoLevelMappingTypes.DataAccess => ticketTagDetailLevelAttribute.DataAccessDetailLevel,
+                    DtoLevelMappingTypes.Create => ticketTagDetailLevelAttribute.CreateDetailLevel,
+                    DtoLevelMappingTypes.Update => ticketTagDetailLevelAttribute.UpdateDetailLevel,
+                    _ => ticketTagDetailLevelAttribute.DataAccessDetailLevel
+                };
+            }
             throw new ArgumentException("Unsupported attribute type for detail level mapping.");
         }
 
@@ -87,6 +108,14 @@ namespace AppyNox.Services.Coupon.Application.DtoUtilities
                     else if (attribute is CouponDetailTagDetailLevelAttribute couponDetailTagAttribute)
                     {
                         RegisterMapping(typeof(CouponDetailTag), dtoType, couponDetailTagAttribute);
+                    }
+                    else if (attribute is TicketDetailLevelAttribute ticketDetailLevelAttribute)
+                    {
+                        RegisterMapping(typeof(Ticket), dtoType, ticketDetailLevelAttribute);
+                    }
+                    else if (attribute is TicketTagDetailLevelAttribute ticketTagDetailLevelAttribute)
+                    {
+                        RegisterMapping(typeof(TicketTag), dtoType, ticketTagDetailLevelAttribute);
                     }
                 }
             }
