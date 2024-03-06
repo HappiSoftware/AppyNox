@@ -7,10 +7,10 @@ using AppyNox.Services.Base.Application.MediatR.Commands;
 using AppyNox.Services.Base.Core.AsyncLocals;
 using AppyNox.Services.Base.Core.Enums;
 using AppyNox.Services.Base.Core.ExceptionExtensions.Base;
-using AppyNox.Services.Base.Core.Extensions;
 using AppyNox.Services.Base.Domain.Interfaces;
 using AutoMapper;
 using MediatR;
+using System;
 using System.Text.Json;
 
 namespace AppyNox.Services.Base.Application.MediatR.Handlers.Anemic;
@@ -24,7 +24,7 @@ internal sealed class CreateEntityCommandHandler<TEntity>(
         IUnitOfWorkBase unitOfWork,
         ICacheService cacheService)
         : BaseHandler<TEntity>(mapper, dtoMappingRegistry, serviceProvider, logger),
-        IRequestHandler<CreateEntityCommand<TEntity>, (Guid guid, object basicDto)>
+        IRequestHandler<CreateEntityCommand<TEntity>, Guid>
         where TEntity : class, IEntityWithGuid
 {
     #region [ Fields ]
@@ -39,7 +39,7 @@ internal sealed class CreateEntityCommandHandler<TEntity>(
 
     #region [ Public Methods ]
 
-    public async Task<(Guid guid, object basicDto)> Handle(CreateEntityCommand<TEntity> request, CancellationToken cancellationToken)
+    public async Task<Guid> Handle(CreateEntityCommand<TEntity> request, CancellationToken cancellationToken)
     {
         try
         {
@@ -63,9 +63,7 @@ internal sealed class CreateEntityCommandHandler<TEntity>(
             await _repository.AddAsync(mappedEntity);
             await _unitOfWork.SaveChangesAsync(NoxContext.UserId.ToString());
             await UpdateTotalCountOnCache(_cacheService, $"total-count-{typeof(TEntity).Name}", true);
-            Type returnDtoType = DtoMappingRegistry.GetDtoType(DtoLevelMappingTypes.DataAccess, entityType, "Simple");
-            object createdObject = Mapper.Map(mappedEntity, returnDtoType, returnDtoType);
-            return (guid: mappedEntity.Id, basicDto: createdObject);
+            return mappedEntity.Id;
         }
         catch (Exception ex) when (ex is INoxException)
         {

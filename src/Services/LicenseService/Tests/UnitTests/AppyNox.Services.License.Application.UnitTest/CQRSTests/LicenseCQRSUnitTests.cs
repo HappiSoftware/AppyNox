@@ -141,8 +141,7 @@ namespace AppyNox.Services.License.Application.UnitTest.CQRSTests
                 .Send(new CreateNoxEntityCommand<LicenseEntity>(root, LicenseCreateDetailLevel.Simple.GetDisplayName()));
 
             // Assert
-            Assert.NotNull(result.entity);
-            Assert.True(result.entity is LicenseEntity);
+            Assert.True(Guid.TryParse(result.ToString(), out _));
         }
 
         [Fact]

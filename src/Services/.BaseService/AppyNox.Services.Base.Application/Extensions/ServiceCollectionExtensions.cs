@@ -33,7 +33,7 @@ public static class ServiceCollectionExtensions
             GetEntityByIdQueryHandler<TEntity>>();
 
         // Register CreateEntityCommandHandler
-        services.AddTransient<IRequestHandler<CreateEntityCommand<TEntity>, (Guid id, object dto)>,
+        services.AddTransient<IRequestHandler<CreateEntityCommand<TEntity>, Guid>,
             CreateEntityCommandHandler<TEntity>>();
 
         // Register UpdateEntityCommandHandler
@@ -73,7 +73,7 @@ public static class ServiceCollectionExtensions
             GetNoxEntityByIdQueryHandler<TEntity, TId>>();
 
         // Register CreateNoxEntityCommandHandler
-        services.AddTransient<IRequestHandler<CreateNoxEntityCommand<TEntity>, (Guid id, TEntity entity)>,
+        services.AddTransient<IRequestHandler<CreateNoxEntityCommand<TEntity>, Guid>,
             CreateNoxEntityCommandHandler<TEntity>>();
 
         // Register DeleteNoxEntityCommandHandler

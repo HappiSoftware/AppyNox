@@ -2,6 +2,8 @@
 All notable changes to AppyNox will be documented in this file.
 
 ## [1.6.0](https://github.com/HappiSoftware/AppyNox/compare/v1.5.0...v1.6.0) - NOT RELEASED
+### Added
+- Feature request: Create methods should return id only ([#237](https://github.com/HappiSoftware/AppyNox/issues/237))
 
 
 ## [1.5.0](https://github.com/HappiSoftware/AppyNox/compare/v1.4.0...v1.5.0) - 2024.02.29

@@ -135,11 +135,10 @@ public class CouponDddCQRSUnitTest : IClassFixture<NoxCQRSFixture<Domain.Coupons
 
         // Act
         var result = await _fixture.MockMediator.Object
-            .Send<(Guid guid, CouponAggregate entity)>(new CreateNoxEntityCommand<Domain.Coupons.Coupon>(root, CouponCreateDetailLevel.Simple.GetDisplayName()));
+            .Send<Guid>(new CreateNoxEntityCommand<Domain.Coupons.Coupon>(root, CouponCreateDetailLevel.Simple.GetDisplayName()));
 
         // Assert
-        Assert.NotNull(result.entity);
-        Assert.True(result.entity is CouponAggregate);
+        Assert.True(Guid.TryParse(result.ToString(), out _));
     }
 
     [Fact]

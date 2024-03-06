@@ -142,11 +142,10 @@ public class TicketAnemicCQRSUnitTest : IClassFixture<GenericCQRSFixture<Ticket>
 
         // Act
         var result = await _fixture.MockMediator.Object
-            .Send<(Guid guid, object entity)>(new CreateEntityCommand<Ticket>(root, CommonDetailLevels.Simple));
+            .Send<Guid>(new CreateEntityCommand<Ticket>(root, CommonDetailLevels.Simple));
 
         // Assert
-        Assert.NotNull(result.entity);
-        Assert.True(result.entity is TicketSimpleDto);
+        Assert.True(Guid.TryParse(result.ToString(), out _));
     }
 
     [Fact]
