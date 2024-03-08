@@ -57,7 +57,8 @@ public class GenericTicketRepositoryTest : IClassFixture<RepositoryFixture>
     public async Task GetAllAsync_ShouldReturnEntity(Type fetchType)
     {
         CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
-        context.SeedOneTicket();
+        UnitOfWork unitOfWork = new(context, _noxLoggerStub);
+        await context.SeedOneTicket(unitOfWork);
         var repository = new GenericRepository<Ticket>(context, _noxLoggerStub);
         QueryParameters queryParameters = new()
         {
@@ -79,7 +80,8 @@ public class GenericTicketRepositoryTest : IClassFixture<RepositoryFixture>
     public async Task GetAllAsync_ShouldPaginationReturnTwo(Type fetchType)
     {
         CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
-        context.SeedMultipleTickets(2, 1);
+        UnitOfWork unitOfWork = new(context, _noxLoggerStub);
+        await context.SeedMultipleTickets(unitOfWork, 2, 1);
         var repository = new GenericRepository<Ticket>(context, _noxLoggerStub);
         QueryParameters queryParameters = new()
         {
@@ -100,7 +102,8 @@ public class GenericTicketRepositoryTest : IClassFixture<RepositoryFixture>
     public async Task GetAllAsync_ShouldPaginationReturnCorrectEntity(Type fetchType)
     {
         CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
-        var tickets = context.SeedMultipleTickets(2, 1);
+        UnitOfWork unitOfWork = new(context, _noxLoggerStub);
+        var tickets = await context.SeedMultipleTickets(unitOfWork, 2, 1);
         Assert.NotNull(tickets);
 
         var repository = new GenericRepository<Ticket>(context, _noxLoggerStub);
@@ -128,7 +131,8 @@ public class GenericTicketRepositoryTest : IClassFixture<RepositoryFixture>
     public async Task GetAllAsync_ShouldPaginationReturnFifty(Type fetchType)
     {
         CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
-        context.SeedMultipleTickets(50, 5);
+        UnitOfWork unitOfWork = new(context, _noxLoggerStub);
+        await context.SeedMultipleTickets(unitOfWork, 50, 5);
         var repository = new GenericRepository<Ticket>(context, _noxLoggerStub);
         QueryParameters queryParameters = new()
         {
@@ -149,7 +153,8 @@ public class GenericTicketRepositoryTest : IClassFixture<RepositoryFixture>
     public async Task GetAllAsync_ShouldPaginationReturnFiftyAndCorrectEntities(Type fetchType)
     {
         CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
-        var tickets = context.SeedMultipleTickets(50, 5);
+        UnitOfWork unitOfWork = new(context, _noxLoggerStub);
+        var tickets = await context.SeedMultipleTickets(unitOfWork, 50, 5);
         Assert.NotNull(tickets);
 
         var repository = new GenericRepository<Ticket>(context, _noxLoggerStub);
@@ -183,7 +188,8 @@ public class GenericTicketRepositoryTest : IClassFixture<RepositoryFixture>
     public async Task GetByIdAsync_ShouldReturnEntity(Type fetchType)
     {
         CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
-        var existingTicket = context.SeedOneTicket();
+        UnitOfWork unitOfWork = new(context, _noxLoggerStub);
+        var existingTicket = await context.SeedOneTicket(unitOfWork);
         Assert.NotNull(existingTicket);
 
         var repository = new GenericRepository<Ticket>(context, _noxLoggerStub);
@@ -196,7 +202,8 @@ public class GenericTicketRepositoryTest : IClassFixture<RepositoryFixture>
     public async Task GetByIdAsync_ShouldValuesBeCorrect()
     {
         CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
-        var existingTicket = context.SeedOneTicket();
+        UnitOfWork unitOfWork = new(context, _noxLoggerStub);
+        var existingTicket = await context.SeedOneTicket(unitOfWork);
         Assert.NotNull(existingTicket);
 
         var repository = new GenericRepository<Ticket>(context, _noxLoggerStub);
@@ -221,7 +228,7 @@ public class GenericTicketRepositoryTest : IClassFixture<RepositoryFixture>
     public async Task AddAsync_ShouldAddEntity()
     {
         CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
-        var unitOfWork = new UnitOfWork(context, _noxLoggerStub);
+        UnitOfWork unitOfWork = new(context, _noxLoggerStub);
         var repository = new GenericRepository<Ticket>(context, _noxLoggerStub);
 
         TicketTag tagToAdd = new()
@@ -260,10 +267,10 @@ public class GenericTicketRepositoryTest : IClassFixture<RepositoryFixture>
     public async Task UpdateAsync_ShouldUpdateTicket()
     {
         CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
-        var existingTicket = context.SeedOneTicket();
+        UnitOfWork unitOfWork = new(context, _noxLoggerStub);
+        var existingTicket = await context.SeedOneTicket(unitOfWork);
         Assert.NotNull(existingTicket);
 
-        var unitOfWork = new UnitOfWork(context, _noxLoggerStub);
         var repository = new GenericRepository<Ticket>(context, _noxLoggerStub);
 
         // Hold ticket old data
@@ -298,10 +305,10 @@ public class GenericTicketRepositoryTest : IClassFixture<RepositoryFixture>
     public async Task DeleteAsync_ShouldDeleteEntity()
     {
         CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
-        var existingTicket = context.SeedOneTicket();
+        UnitOfWork unitOfWork = new(context, _noxLoggerStub);
+        var existingTicket = await context.SeedOneTicket(unitOfWork);
         Assert.NotNull(existingTicket);
 
-        var unitOfWork = new UnitOfWork(context, _noxLoggerStub);
         var repository = new GenericRepository<Ticket>(context, _noxLoggerStub);
 
         await repository.RemoveByIdAsync(existingTicket.Id);

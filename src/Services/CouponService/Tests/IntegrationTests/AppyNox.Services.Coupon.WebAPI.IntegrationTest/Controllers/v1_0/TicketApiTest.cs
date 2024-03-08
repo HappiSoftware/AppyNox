@@ -5,12 +5,10 @@ using AppyNox.Services.Base.Application.ExceptionExtensions.Base;
 using AppyNox.Services.Base.IntegrationTests.URIs;
 using AppyNox.Services.Base.IntegrationTests.Wrapper;
 using AppyNox.Services.Base.IntegrationTests.Wrapper.Helpers;
-using AppyNox.Services.Coupon.Application.Dtos.CouponDetailDtos.Models.Basic;
-using AppyNox.Services.Coupon.Application.Dtos.CouponDetailTagDtos.Models.Basic;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
 using AppyNox.Services.Coupon.Application.Dtos.TicketDtos.Models.Basic;
 using AppyNox.Services.Coupon.Domain.Entities;
-using AppyNox.Services.Coupon.Domain.Exceptions.Base;
+using AppyNox.Services.Coupon.Infrastructure.Repositories;
 using AppyNox.Services.Coupon.WebAPI.IntegrationTest.Fixtures;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Dynamic.Core;
@@ -18,7 +16,6 @@ using System.Net;
 using System.Text;
 using System.Text.Json;
 using Xunit.Extensions.Ordering;
-using CouponId = AppyNox.Services.Coupon.Domain.Coupons.CouponId;
 
 namespace AppyNox.Services.Coupon.WebAPI.IntegrationTest.Controllers.v1_0;
 
@@ -109,12 +106,12 @@ public class TicketApiTest(CouponServiceFixture couponApiTestFixture)
         // Act
         HttpResponseMessage response = await _client.PostAsync(requestUri, content);
         string jsonResponse = await response.Content.ReadAsStringAsync();
-        (Guid id, TicketSimpleDto createdObject) = NoxResponseUnwrapper.UnwrapDataWithId<TicketSimpleDto>(jsonResponse, _jsonSerializerOptions);
+        Guid id = NoxResponseUnwrapper.UnwrapData<Guid>(jsonResponse, _jsonSerializerOptions);
 
         // Assert
         response.EnsureSuccessStatusCode();
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
-        Assert.NotNull(createdObject);
+        Assert.NotEqual(id, Guid.Empty);
 
         #endregion
 
@@ -171,13 +168,14 @@ public class TicketApiTest(CouponServiceFixture couponApiTestFixture)
     {
         #region [ Create and Get Ticket ]
 
+        UnitOfWork unitOfWork = new(_couponApiTestFixture.DbContext, _couponApiTestFixture.NoxLoggerStub);
         Ticket ticket = new()
         {
             Title = "title",
             Content = "content"
         };
         _couponApiTestFixture.DbContext.Tickets.Add(ticket);
-        await _couponApiTestFixture.DbContext.SaveChangesAsync();
+        await unitOfWork.SaveChangesAsync();
 
         // Act
         Ticket? ticketEntity = _couponApiTestFixture.DbContext.Tickets.Where(x => x.Id == ticket.Id).FirstOrDefault();
@@ -225,10 +223,12 @@ public class TicketApiTest(CouponServiceFixture couponApiTestFixture)
 
         // Assert
         Assert.NotNull(updatedTicket);
+        var updateDate = _couponApiTestFixture.DbContext.Entry(updatedTicket).Property("UpdateDate").CurrentValue as DateTime?;
+        var updatedBy = _couponApiTestFixture.DbContext.Entry(updatedTicket).Property("UpdatedBy").CurrentValue as string;
         Assert.Equal(updatedTicket.Title, updatedTitle);
         Assert.Equal(updatedTicket.Content, updatedContent);
-        Assert.NotNull(updatedTicket.UpdateDate);
-        Assert.False(string.IsNullOrEmpty(updatedTicket.UpdatedBy));
+        Assert.NotNull(updateDate);
+        Assert.False(string.IsNullOrEmpty(updatedBy));
 
         #endregion
     }

@@ -44,13 +44,9 @@ public class TicketsController(IMediator mediator) : NoxController
     [AllowAnonymous]
     public async Task<IActionResult> Create([FromBody] dynamic ticketDto, string detailLevel = "Simple")
     {
-        dynamic result = await _mediator.Send(new CreateEntityCommand<Ticket>(ticketDto, detailLevel));
-        var response = new
-        {
-            Id = result.Item1,
-            CreatedObject = result.Item2
-        };
-        return CreatedAtAction(nameof(GetById), new { id = result.Item1 }, response);
+        Guid result = await _mediator.Send(new CreateEntityCommand<Ticket>(ticketDto, detailLevel));
+
+        return CreatedAtAction(nameof(GetById), new { id = result }, result);
     }
 
     [HttpPut("{id}")]

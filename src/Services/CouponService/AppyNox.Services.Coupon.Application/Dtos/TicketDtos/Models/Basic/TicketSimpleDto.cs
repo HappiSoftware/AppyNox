@@ -8,7 +8,7 @@ public class TicketSimpleDto : TicketSimpleCreateDto, IAuditDto
 {
     #region [ Properties ]
 
-    public AuditInfo AuditInfo { get; set; } = default!;
+    public AuditInformation AuditInformation { get; set; } = default!;
 
     #endregion
 }

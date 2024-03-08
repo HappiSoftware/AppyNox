@@ -133,8 +133,8 @@ if (builder.Environment.IsDevelopment())
     noxLogger.LogInformation("Adjusting swagger endpoints.");
     builder.Services.AddSwaggerGen(opt =>
     {
-        opt.SwaggerDoc($"v{NoxVersions.v1_0}", new OpenApiInfo { Title = "Coupons Service", Version = NoxVersions.v1_0 });
-        opt.SwaggerDoc($"v{NoxVersions.v1_1}", new OpenApiInfo { Title = "Coupons Service", Version = NoxVersions.v1_1 });
+        opt.SwaggerDoc($"v{NoxVersions.v1_0}", new OpenApiInfo { Title = "Coupon Service", Version = NoxVersions.v1_0 });
+        opt.SwaggerDoc($"v{NoxVersions.v1_1}", new OpenApiInfo { Title = "Coupon Service", Version = NoxVersions.v1_1 });
         opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
         {
             In = ParameterLocation.Header,
@@ -219,8 +219,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
-        c.SwaggerEndpoint("/swagger/v1.0/swagger.json", "Coupons Service v1.0");
-        c.SwaggerEndpoint("/swagger/v1.1/swagger.json", "Coupons Service v1.1");
+        c.SwaggerEndpoint("/swagger/v1.0/swagger.json", "Coupon Service v1.0");
+        c.SwaggerEndpoint("/swagger/v1.1/swagger.json", "Coupon Service v1.1");
     });
 }
 

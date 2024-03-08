@@ -52,7 +52,7 @@ namespace AppyNox.Services.Sso.Application.UnitTest.FluentValidation
         public async Task Validate_Code_ShouldMatchExpected(string? code, bool expectedIsValid)
         {
             // Arrange
-            var dto = new ApplicationUserCreateDto { Code = code, UserName = "validUser", Password = _validPassword, ConfirmPassword = _validPassword, Email = "test@happisoft.com" };
+            var dto = new ApplicationUserCreateDto { Code = code!, UserName = "validUser", Password = _validPassword, ConfirmPassword = _validPassword, Email = "test@happisoft.com" };
 
             // Act
             var result = await _validator.ValidateAsync(dto);

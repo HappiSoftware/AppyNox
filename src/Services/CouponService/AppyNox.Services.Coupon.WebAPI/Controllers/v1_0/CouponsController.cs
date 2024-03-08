@@ -29,27 +29,23 @@ public class CouponsController(IMediator mediator) : NoxController
     [Authorize(Coupons.View)]
     public async Task<IActionResult> GetAll([FromQuery] QueryParametersViewModel queryParameters)
     {
-        return base.Ok(await _mediator.Send(new GetAllNoxEntitiesQuery<Domain.Coupons.Coupon>(queryParameters)));
+        return base.Ok(await _mediator.Send(new GetAllNoxEntitiesQuery<CouponAggreagate>(queryParameters)));
     }
 
     [HttpGet("{id}")]
     [Authorize(Coupons.View)]
     public async Task<IActionResult> GetById(Guid id, [FromQuery] QueryParametersViewModel queryParameters)
     {
-        return base.Ok(await _mediator.Send(new GetNoxEntityByIdQuery<Domain.Coupons.Coupon, CouponId>(new CouponId(id), queryParameters)));
+        return base.Ok(await _mediator.Send(new GetNoxEntityByIdQuery<CouponAggreagate, CouponId>(new CouponId(id), queryParameters)));
     }
 
     [HttpPost]
     [Authorize(Coupons.Create)]
     public async Task<IActionResult> Create([FromBody] dynamic couponDto, string detailLevel = "Simple")
     {
-        dynamic result = await _mediator.Send(new CreateNoxEntityCommand<Domain.Coupons.Coupon>(couponDto, detailLevel));
-        var response = new
-        {
-            Id = result.Item1,
-            CreatedObject = result.Item2
-        };
-        return CreatedAtAction(nameof(GetById), new { id = result.Item1 }, response);
+        Guid result = await _mediator.Send(new CreateNoxEntityCommand<CouponAggreagate>(couponDto, detailLevel));
+
+        return CreatedAtAction(nameof(GetById), new { id = result }, result);
     }
 
     [HttpDelete("{id}")]

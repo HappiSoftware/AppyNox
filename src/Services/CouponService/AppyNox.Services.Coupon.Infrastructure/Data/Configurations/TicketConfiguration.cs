@@ -24,16 +24,16 @@ internal class TicketConfiguration(Guid ticketId) : IEntityTypeConfiguration<Tic
 
         #region [ SeedData ]
 
-        builder.HasData(new Ticket()
+        builder.HasData(new
         {
             Id = ticketId,
             Title = "Title",
             Content = "Ticket content",
             ReportDate = DateTime.UtcNow,
-            CreatedBy = "admin",
+            CreatedBy = "System",
             CreationDate = DateTime.UtcNow,
-            UpdatedBy = string.Empty,
-            UpdateDate = null
+            UpdatedBy = (string?)null,
+            UpdateDate = (DateTime?)null
         });
 
         #endregion

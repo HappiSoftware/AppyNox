@@ -44,15 +44,6 @@ namespace AppyNox.Services.License.Infrastructure.Data.Configurations
             builder.Property(x => x.MaxUsers).IsRequired();
             builder.Property(x => x.MaxMacAddresses).IsRequired();
 
-            builder.OwnsOne(o => o.Audit, auditableDataBuilder =>
-            {
-                auditableDataBuilder.Property(c => c.CreatedBy);
-                auditableDataBuilder.Property(c => c.CreationDate);
-                auditableDataBuilder.Property(c => c.UpdatedBy);
-                auditableDataBuilder.Property(c => c.UpdateDate);
-                auditableDataBuilder.WithOwner();
-            });
-
             #endregion
 
             #region [ Seeds ]
@@ -68,7 +59,11 @@ namespace AppyNox.Services.License.Infrastructure.Data.Configurations
                     ExpirationDate = DateTime.UtcNow.AddDays(365),
                     MaxUsers = 3,
                     MaxMacAddresses = 1,
-                    ProductId = new ProductId(_productId)
+                    ProductId = new ProductId(_productId),
+                    CreatedBy = "System",
+                    CreationDate = DateTime.UtcNow,
+                    UpdatedBy = (string?)null,
+                    UpdateDate = (DateTime?)null
                 });
 
             #endregion

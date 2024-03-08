@@ -115,12 +115,12 @@ public class CouponApiTest(CouponServiceFixture couponApiTestFixture)
         // Act
         HttpResponseMessage response = await _client.PostAsync(requestUri, content);
         string jsonResponse = await response.Content.ReadAsStringAsync();
-        (Guid id, CouponSimpleDto createdObject) = NoxResponseUnwrapper.UnwrapDataWithId<CouponSimpleDto>(jsonResponse, _jsonSerializerOptions);
+        Guid id = NoxResponseUnwrapper.UnwrapData<Guid>(jsonResponse, _jsonSerializerOptions);
 
         // Assert
         response.EnsureSuccessStatusCode();
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
-        Assert.NotNull(createdObject);
+        Assert.NotEqual(id, Guid.Empty);
 
         #endregion
 
@@ -172,12 +172,12 @@ public class CouponApiTest(CouponServiceFixture couponApiTestFixture)
         // Act
         HttpResponseMessage response = await _client.PostAsync(requestUri, content);
         string jsonResponse = await response.Content.ReadAsStringAsync();
-        (Guid id, CouponSimpleDto createdObject) = NoxResponseUnwrapper.UnwrapDataWithId<CouponSimpleDto>(jsonResponse, _jsonSerializerOptions);
+        Guid id = NoxResponseUnwrapper.UnwrapData<Guid>(jsonResponse, _jsonSerializerOptions);
 
         // Assert
         response.EnsureSuccessStatusCode();
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
-        Assert.NotNull(createdObject);
+        Assert.NotEqual(id, Guid.Empty);
 
         #endregion
 

@@ -80,65 +80,6 @@ namespace AppyNox.Services.License.WebAPI.IntegrationTest.Controllers
             #endregion
         }
 
-        // TODO Specific update test methods will be added
-        //[Fact]
-        //[Order(3)]
-        //public async Task Update_ShouldUpdateEntity()
-        //{
-        //    #region [ Get Product ]
-
-        //    // Arrange
-        //    var product = _licenseApiTestFixture.DbContext.Products.FirstOrDefault();
-
-        //    // Assert
-        //    Assert.NotNull(product);
-
-        //    #endregion
-
-        //    #region [ Update Product ]
-
-        //    // Arrange
-        //    Guid id = product.Id.Value;
-        //    string newName = "NameUpdated";
-        //    string newCode = "drop2";
-
-        //    string requestUri = $"{_serviceURIs.LicenseServiceURI}/v{NoxVersions.v1_0}/products/{id}";
-        //    var requestBody = new
-        //    {
-        //        name = newName,
-        //        code = newCode,
-        //        id = new
-        //        {
-        //            value = id
-        //        },
-        //    };
-        //    var jsonRequest = JsonSerializer.Serialize(requestBody);
-        //    var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
-
-        //    // Act
-        //    var response = await _client.PutAsync(requestUri, content);
-
-        //    // Assert
-        //    response.EnsureSuccessStatusCode();
-        //    Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
-
-        //    #endregion
-
-        //    #region [ Get Product ]
-
-        //    if (product != null)
-        //    {
-        //        _licenseApiTestFixture.DbContext.Entry(product).Reload();
-        //    }
-
-        //    // Assert
-        //    Assert.NotNull(product);
-        //    Assert.Equal(newName, product.Name);
-        //    Assert.Equal(newCode, product.Code);
-
-        //    #endregion
-        //}
-
         [Fact]
         [Order(4)]
         public async Task Create_ShouldAddNewProduct()
@@ -158,12 +99,12 @@ namespace AppyNox.Services.License.WebAPI.IntegrationTest.Controllers
             // Act
             HttpResponseMessage response = await _client.PostAsync(requestUri, content);
             string jsonResponse = await response.Content.ReadAsStringAsync();
-            (Guid id, ProductSimpleDto createdObject) = NoxResponseUnwrapper.UnwrapDataWithId<ProductSimpleDto>(jsonResponse, _jsonSerializerOptions);
+            Guid id = NoxResponseUnwrapper.UnwrapData<Guid>(jsonResponse, _jsonSerializerOptions);
 
             // Assert
             response.EnsureSuccessStatusCode();
             Assert.Equal(HttpStatusCode.Created, response.StatusCode);
-            Assert.NotNull(createdObject);
+            Assert.NotEqual(id, Guid.Empty);
 
             #endregion
 

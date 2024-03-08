@@ -309,8 +309,8 @@ public class AuthenticationApiTest(SsoServiceFixture ssoApiTestFixture)
             using (JsonDocument doc = JsonDocument.Parse(resultDataObject))
             {
                 JsonElement root = doc.RootElement;
-                token = useVerifiedToken ? root.GetProperty("token").GetString() : "dummyToken";
-                refreshToken = useVerifiedRefreshToken ? root.GetProperty("refreshToken").GetString() : "dummyRefreshToken";
+                token = useVerifiedToken ? root.GetProperty("token").GetString() ?? throw new Exception("token was null") : "dummyToken";
+                refreshToken = useVerifiedRefreshToken ? root.GetProperty("refreshToken").GetString() ?? throw new Exception("refresh token was null") : "dummyRefreshToken";
             }
             Assert.NotNull(token);
             Assert.NotNull(refreshToken);

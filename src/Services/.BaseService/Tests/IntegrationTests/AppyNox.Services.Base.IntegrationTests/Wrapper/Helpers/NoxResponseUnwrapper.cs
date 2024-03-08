@@ -51,16 +51,6 @@ public static class NoxResponseUnwrapper
                ?? throw new Exception("Unwrapper - Unwrapped Object was null");
     }
 
-    public static (Guid, T) UnwrapDataWithId<T>(string jsonResponse, JsonSerializerOptions? jsonSerializerOptions = null)
-    {
-        var dataElement = ExtractDataElement(jsonResponse, jsonSerializerOptions);
-        var id = dataElement.GetProperty("id").GetGuid();
-        var createdObject = JsonSerializer.Deserialize<T>(dataElement.GetProperty("createdObject").GetRawText(), jsonSerializerOptions)
-                           ?? throw new Exception("Unwrapper - Created Object was null");
-
-        return (id, createdObject);
-    }
-
     #endregion
 
     #region [ Private Methods ]
