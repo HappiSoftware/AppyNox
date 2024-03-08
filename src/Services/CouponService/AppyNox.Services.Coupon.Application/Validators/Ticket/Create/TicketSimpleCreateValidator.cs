@@ -2,7 +2,7 @@
 using AppyNox.Services.Coupon.Application.Dtos.TicketDtos.Models.Basic;
 using FluentValidation;
 
-namespace AppyNox.Services.Coupon.Application.Validators.Coupon.Create;
+namespace AppyNox.Services.Coupon.Application.Validators.Ticket.Create;
 
 public class TicketSimpleCreateValidator : DtoValidatorBase<TicketSimpleCreateDto>
 {

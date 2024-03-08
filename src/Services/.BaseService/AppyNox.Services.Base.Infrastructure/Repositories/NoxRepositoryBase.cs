@@ -285,6 +285,14 @@ public abstract class NoxRepositoryBase<TEntity> : INoxRepositoryBase<TEntity> w
 
         foreach (var targetProp in targetType.GetProperties())
         {
+            if (targetProp.PropertyType == typeof(AuditInformation))
+            {
+                var auditInfoBindings = MapAuditInfoWithShadowProperties(source);
+                var auditInfoInit = Expression.MemberInit(Expression.New(typeof(AuditInformation)), auditInfoBindings);
+                bindings.Add(Expression.Bind(targetProp, auditInfoInit));
+                continue;
+            }
+
             var sourceProp = sourceType.GetProperty(targetProp.Name);
             if (sourceProp != null)
             {
@@ -329,6 +337,30 @@ public abstract class NoxRepositoryBase<TEntity> : INoxRepositoryBase<TEntity> w
         var bindings = CreateBindings(parameter, sourceType, targetType);
         var body = Expression.MemberInit(Expression.New(targetType), bindings);
         return Expression.Lambda(body, parameter);
+    }
+
+    private static IEnumerable<MemberBinding> MapAuditInfoWithShadowProperties(Expression source)
+    {
+        var auditPropertyNames = new[] { "CreatedBy", "CreationDate", "UpdatedBy", "UpdateDate" };
+        var auditInfoType = typeof(AuditInformation);
+        var bindings = new List<MemberBinding>();
+
+        foreach (var propName in auditPropertyNames)
+        {
+            var targetProp = auditInfoType.GetProperty(propName);
+            if (targetProp != null)
+            {
+                var propertyAccess = Expression.Call(
+                    typeof(EF), nameof(EF.Property),
+                    [targetProp.PropertyType],
+                    source, Expression.Constant(propName));
+
+                var binding = Expression.Bind(targetProp, propertyAccess);
+                bindings.Add(binding);
+            }
+        }
+
+        return bindings;
     }
 
     #endregion

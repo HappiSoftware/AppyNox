@@ -29,15 +29,6 @@ internal class CouponDetailTagConfiguration(CouponDetailId detailId, CouponDetai
 
         builder.Property(x => x.Tag).IsRequired();
 
-        builder.OwnsOne(o => o.Audit, auditableDataBuilder =>
-        {
-            auditableDataBuilder.Property(c => c.CreatedBy);
-            auditableDataBuilder.Property(c => c.CreationDate);
-            auditableDataBuilder.Property(c => c.UpdatedBy);
-            auditableDataBuilder.Property(c => c.UpdateDate);
-            auditableDataBuilder.WithOwner();
-        });
-
         #endregion
 
         #region [ Seeds ]
@@ -47,16 +38,12 @@ internal class CouponDetailTagConfiguration(CouponDetailId detailId, CouponDetai
             {
                 Id = detailTagId,
                 Tag = "Tag Description",
-                CouponDetailId = detailId
+                CouponDetailId = detailId,
+                CreatedBy = "System",
+                CreationDate = DateTime.UtcNow,
+                UpdatedBy = (string?)null,
+                UpdateDate = (DateTime?)null
             });
-        builder.OwnsOne(a => a.Audit).HasData(new
-        {
-            CouponDetailTagId = detailTagId,
-            CreatedBy = "admin",
-            CreationDate = DateTime.UtcNow,
-            UpdatedBy = string.Empty,
-            UpdateDate = (DateTime?)null
-        });
 
         #endregion
     }

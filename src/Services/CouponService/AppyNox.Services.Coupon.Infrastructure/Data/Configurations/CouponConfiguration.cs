@@ -41,15 +41,6 @@ internal class CouponConfiguration(CouponId couponId1, CouponId couponId2, Coupo
             amountBuilder.Property(c => c.DiscountAmount);
         });
 
-        builder.OwnsOne(o => o.Audit, auditableDataBuilder =>
-        {
-            auditableDataBuilder.Property(c => c.CreatedBy);
-            auditableDataBuilder.Property(c => c.CreationDate);
-            auditableDataBuilder.Property(c => c.UpdatedBy);
-            auditableDataBuilder.Property(c => c.UpdateDate);
-            auditableDataBuilder.WithOwner();
-        });
-
         #endregion
 
         #region [ Seeds ]
@@ -62,20 +53,16 @@ internal class CouponConfiguration(CouponId couponId1, CouponId couponId2, Coupo
                 Description = "Description",
                 Detail = "Detail1",
                 CouponDetailId = couponDetailId,
+                CreatedBy = "System",
+                CreationDate = DateTime.UtcNow,
+                UpdatedBy = (string?)null,
+                UpdateDate = (DateTime?)null
             });
         builder.OwnsOne(o => o.Amount).HasData(new
         {
             CouponId = couponId1,
             DiscountAmount = 10.65,
             MinAmount = 100
-        });
-        builder.OwnsOne(a => a.Audit).HasData(new
-        {
-            CouponId = couponId1,
-            CreatedBy = "admin",
-            CreationDate = DateTime.UtcNow,
-            UpdatedBy = string.Empty,
-            UpdateDate = (DateTime?)null
         });
 
         // Second Coupon
@@ -90,20 +77,16 @@ internal class CouponConfiguration(CouponId couponId1, CouponId couponId2, Coupo
                 MinAmount = 200,
                 Detail = "Detail2",
                 CouponDetailId = couponDetailId,
+                CreatedBy = "System",
+                CreationDate = DateTime.UtcNow,
+                UpdatedBy = (string?)null,
+                UpdateDate = (DateTime?)null
             });
         builder.OwnsOne(o => o.Amount).HasData(new
         {
             CouponId = couponId2,
             DiscountAmount = 10.65,
             MinAmount = 100
-        });
-        builder.OwnsOne(a => a.Audit).HasData(new
-        {
-            CouponId = couponId2,
-            CreatedBy = "admin",
-            CreationDate = DateTime.UtcNow,
-            UpdatedBy = string.Empty,
-            UpdateDate = (DateTime?)null
         });
 
         #endregion

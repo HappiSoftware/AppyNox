@@ -1,5 +1,6 @@
 ﻿using AppyNox.Services.Coupon.Domain.Entities;
 using AppyNox.Services.Coupon.Infrastructure.Data;
+using AppyNox.Services.Coupon.Infrastructure.Repositories;
 
 namespace AppyNox.Services.Coupon.Infrastructure.UnitTest.Seeds;
 
@@ -17,12 +18,12 @@ internal static class TicketTestSeedData
 
     #region [ Internal Methods ]
 
-    internal static Ticket SeedOneTicket(this CouponDbContext context)
+    internal static async Task<Ticket> SeedOneTicket(this CouponDbContext context, UnitOfWork unitOfWork)
     {
-        return context.SeedMultipleTickets(1, 1).First();
+        return (await context.SeedMultipleTickets(unitOfWork, 1, 1)).First();
     }
 
-    internal static IEnumerable<Ticket> SeedMultipleTickets(this CouponDbContext context, int ticketSize, int ticketTagSize)
+    internal static async Task<IEnumerable<Ticket>> SeedMultipleTickets(this CouponDbContext context, UnitOfWork unitOfWork, int ticketSize, int ticketTagSize)
     {
         if (ticketSize <= 0)
         {
@@ -72,7 +73,7 @@ internal static class TicketTestSeedData
             tickets.Add(ticket);
         }
         context.Tickets.AddRange(tickets);
-        context.SaveChanges();
+        await unitOfWork.SaveChangesAsync();
 
         #endregion
 

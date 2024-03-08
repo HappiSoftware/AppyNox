@@ -53,8 +53,6 @@ public class CouponProfile : Profile
         CreateMap<CouponId, CouponIdDto>().ReverseMap();
 
         CreateMap<Amount, AmountDto>().ReverseMap();
-
-        CreateMap<NoxAuditData, NoxAuditDataDto>();
     }
 
     #endregion

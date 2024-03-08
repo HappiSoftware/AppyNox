@@ -5,6 +5,7 @@ using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Extended;
 using AppyNox.Services.Coupon.Domain.Coupons;
 using AppyNox.Services.Coupon.Domain.Coupons.Builders;
+using AppyNox.Services.Coupon.Infrastructure.Repositories;
 using AppyNox.Services.Coupon.WebAPI.IntegrationTest.Fixtures;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Dynamic.Core;
@@ -39,6 +40,7 @@ public class CouponApiTestV1_1(CouponServiceFixture couponApiTestFixture)
     {
         #region [ Create and Get Coupon ]
 
+        UnitOfWork unitOfWork = new(_couponApiTestFixture.DbContext, _couponApiTestFixture.NoxLoggerStub);
         CouponDetail newDetail = new CouponDetailBuilder().WithDetails("test01", "testdetail").Build();
         CouponAggregate newCoupon = new CouponBuilder().WithDetails("code", "description", "detail")
                                                        .WithAmount(10, 15)
@@ -46,7 +48,7 @@ public class CouponApiTestV1_1(CouponServiceFixture couponApiTestFixture)
                                                        .MarkAsBulkCreate()
                                                        .Build();
         _couponApiTestFixture.DbContext.Coupons.Add(newCoupon);
-        await _couponApiTestFixture.DbContext.SaveChangesAsync();
+        await unitOfWork.SaveChangesAsync();
 
         // Act
         CouponAggregate? coupon = _couponApiTestFixture.DbContext.Coupons.Where("Id == @0", newCoupon.Id).FirstOrDefault();
@@ -101,10 +103,12 @@ public class CouponApiTestV1_1(CouponServiceFixture couponApiTestFixture)
 
         // Assert
         Assert.NotNull(updatedCoupon);
+        var updateDate = _couponApiTestFixture.DbContext.Entry(updatedCoupon).Property("UpdateDate").CurrentValue as DateTime?;
+        var updatedBy = _couponApiTestFixture.DbContext.Entry(updatedCoupon).Property("UpdatedBy").CurrentValue as string;
         Assert.Equal(updatedCoupon.Amount.MinAmount, minimumAmount);
         Assert.Equal(updatedCoupon.Detail, detail);
-        Assert.NotNull(updatedCoupon.Audit.UpdateDate);
-        Assert.False(string.IsNullOrEmpty(updatedCoupon.Audit.UpdatedBy));
+        Assert.NotNull(updateDate);
+        Assert.False(string.IsNullOrEmpty(updatedBy));
 
         #endregion
     }

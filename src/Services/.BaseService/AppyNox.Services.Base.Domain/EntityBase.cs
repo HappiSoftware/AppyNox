@@ -2,7 +2,7 @@
 
 namespace AppyNox.Services.Base.Domain;
 
-public abstract class EntityBase : INoxAuditableData
+public abstract class EntityBase : IAuditable
 {
     #region [ Fields ]
 
@@ -16,23 +16,7 @@ public abstract class EntityBase : INoxAuditableData
 
     #endregion
 
-    #region [ IAuditableData ]
-
-    public NoxAuditData Audit { get; private set; } = default!;
-
-    #endregion
-
     #region [ Protected Methods ]
-
-    public void UpdateAuditInformation(string updatedBy, DateTime? updateDate)
-    {
-        Audit = Audit.UpdateModification(updatedBy, updateDate);
-    }
-
-    public void AddAuditInformation(string createdBy, DateTime creationDate)
-    {
-        Audit = NoxAuditData.AddCreation(createdBy, creationDate);
-    }
 
     protected void Raise(IDomainEvent domainEvent)
     {

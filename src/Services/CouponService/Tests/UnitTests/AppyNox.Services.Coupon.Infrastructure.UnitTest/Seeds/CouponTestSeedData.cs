@@ -1,6 +1,7 @@
 ﻿using AppyNox.Services.Coupon.Domain.Coupons;
 using AppyNox.Services.Coupon.Domain.Coupons.Builders;
 using AppyNox.Services.Coupon.Infrastructure.Data;
+using AppyNox.Services.Coupon.Infrastructure.Repositories;
 using CouponAggregate = AppyNox.Services.Coupon.Domain.Coupons.Coupon;
 
 namespace AppyNox.Services.Coupon.Infrastructure.UnitTest.Seeds;
@@ -19,12 +20,12 @@ internal static class CouponTestSeedData
 
     #region [ Internal Methods ]
 
-    internal static CouponAggregate SeedOneCoupon(this CouponDbContext context)
+    internal static async Task<CouponAggregate> SeedOneCoupon(this CouponDbContext context, UnitOfWork unitOfWork)
     {
-        return context.SeedMultipleCoupons(1, 1).First();
+        return (await context.SeedMultipleCoupons(unitOfWork, 1, 1)).First();
     }
 
-    internal static IEnumerable<CouponAggregate> SeedMultipleCoupons(this CouponDbContext context, int couponSize, int couponDetailSize)
+    internal static async Task<IEnumerable<CouponAggregate>> SeedMultipleCoupons(this CouponDbContext context, UnitOfWork unitOfWork, int couponSize, int couponDetailSize)
     {
         if (couponSize <= 0)
         {
@@ -37,7 +38,6 @@ internal static class CouponTestSeedData
 
         var couponDetails = new List<CouponDetail>();
         var coupons = new List<CouponAggregate>();
-        Random random = new();
 
         #region [ CouponDetails ]
 
@@ -49,7 +49,7 @@ internal static class CouponTestSeedData
             couponDetails.Add(couponDetail);
         }
         context.CouponDetails.AddRange(couponDetails);
-        context.SaveChanges();
+        await unitOfWork.SaveChangesAsync();
 
         #endregion
 
@@ -67,14 +67,12 @@ internal static class CouponTestSeedData
                                                                .WithCouponDetailId(couponDetails[0].Id)
                                                                .Build();
 
-            couponEntity.AddAuditInformation("admin", DateTime.UtcNow);
-            couponEntity.UpdateAuditInformation("admin", DateTime.UtcNow);
             minAmount++;
             discountAmount += 0.1;
             coupons.Add(couponEntity);
         }
         context.Coupons.AddRange(coupons);
-        context.SaveChanges();
+        await unitOfWork.SaveChangesAsync();
 
         #endregion
 

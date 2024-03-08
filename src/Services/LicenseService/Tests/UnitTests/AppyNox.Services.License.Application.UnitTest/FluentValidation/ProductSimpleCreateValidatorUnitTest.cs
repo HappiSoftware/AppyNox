@@ -21,7 +21,7 @@ namespace AppyNox.Services.License.Application.UnitTest.FluentValidation
         public async Task Validate_Code_ShouldMatchExpected(string? code, bool expectedIsValid)
         {
             var dto = CreateValidDto();
-            dto.Code = code;
+            dto.Code = code!;
 
             var result = await _validator.ValidateAsync(dto);
 

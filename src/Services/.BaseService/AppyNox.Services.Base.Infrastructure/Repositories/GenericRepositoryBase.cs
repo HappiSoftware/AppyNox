@@ -277,62 +277,20 @@ public abstract class GenericRepositoryBase<TEntity> : IGenericRepositoryBase<TE
         return Expression.Lambda<Func<TEntity, object>>(body, parameterExpr);
     }
 
-    [Obsolete("This method usage should be removed with Audit mechanism refactoring")]
-    private static IEnumerable<MemberBinding> MapAuditInfoProperties(Expression source, Type sourceType, PropertyInfo targetAuditInfoProp)
-    {
-        var auditBindings = new List<MemberBinding>();
-        var auditInfoType = targetAuditInfoProp.PropertyType; // Assuming this is the AuditInfo class
-        var auditProperties = new[] { "CreatedBy", "CreationDate", "UpdatedBy", "UpdateDate" };
-
-        foreach (var propName in auditProperties)
-        {
-            var sourceProp = sourceType.GetProperty(propName);
-            if (sourceProp != null)
-            {
-                var targetAuditInfoProperty = auditInfoType.GetProperty(propName);
-                if (targetAuditInfoProperty != null)
-                {
-                    Expression propertyExpr = Expression.Property(source, sourceProp);
-                    var binding = Expression.Bind(targetAuditInfoProperty, propertyExpr);
-                    auditBindings.Add(binding);
-                }
-            }
-        }
-
-        // Create a MemberInit expression for the AuditInfo object with the mapped audit properties
-        var auditInfoNewExpr = Expression.New(auditInfoType);
-        var auditInfoInitExpr = Expression.MemberInit(auditInfoNewExpr, auditBindings);
-
-        // Bind the initialized AuditInfo object to the AuditInfo property of the target DTO
-        var auditInfoPropertyBinding = Expression.Bind(targetAuditInfoProp, auditInfoInitExpr);
-
-        return new[] { auditInfoPropertyBinding };
-    }
-
     private static IEnumerable<MemberBinding> CreateBindings(Expression source, Type sourceType, Type targetType)
     {
         var bindings = new List<MemberBinding>();
 
-        bool hasAuditInfo = targetType.GetProperty("AuditInfo") != null;
-        PropertyInfo[] targetProps = targetType.GetProperties();
-
-        if (hasAuditInfo)
-        {
-            var targetAuditInfoProp = targetType.GetProperty("AuditInfo");
-            if (targetAuditInfoProp != null)
-            {
-                var auditBindings = MapAuditInfoProperties(source, sourceType, targetAuditInfoProp);
-                bindings.AddRange(auditBindings);
-            }
-        }
-
         foreach (var targetProp in targetType.GetProperties())
         {
-            // TODO this manual block will be removed with Audit mechanism refactoring
-            if (targetProp.GetType() == typeof(AuditInfo))
+            if (targetProp.PropertyType == typeof(AuditInformation))
             {
+                var auditInfoBindings = MapAuditInfoWithShadowProperties(source);
+                var auditInfoInit = Expression.MemberInit(Expression.New(typeof(AuditInformation)), auditInfoBindings);
+                bindings.Add(Expression.Bind(targetProp, auditInfoInit));
                 continue;
             }
+
             var sourceProp = sourceType.GetProperty(targetProp.Name);
             if (sourceProp != null)
             {
@@ -385,6 +343,30 @@ public abstract class GenericRepositoryBase<TEntity> : IGenericRepositoryBase<TE
         var bindings = CreateBindings(parameter, sourceType, targetType);
         var body = Expression.MemberInit(Expression.New(targetType), bindings);
         return Expression.Lambda(body, parameter);
+    }
+
+    private static IEnumerable<MemberBinding> MapAuditInfoWithShadowProperties(Expression source)
+    {
+        var auditPropertyNames = new[] { "CreatedBy", "CreationDate", "UpdatedBy", "UpdateDate" };
+        var auditInfoType = typeof(AuditInformation);
+        var bindings = new List<MemberBinding>();
+
+        foreach (var propName in auditPropertyNames)
+        {
+            var targetProp = auditInfoType.GetProperty(propName);
+            if (targetProp != null)
+            {
+                var propertyAccess = Expression.Call(
+                    typeof(EF), nameof(EF.Property),
+                    [targetProp.PropertyType],
+                    source, Expression.Constant(propName));
+
+                var binding = Expression.Bind(targetProp, propertyAccess);
+                bindings.Add(binding);
+            }
+        }
+
+        return bindings;
     }
 
     #endregion

@@ -80,76 +80,6 @@ namespace AppyNox.Services.License.WebAPI.IntegrationTest.Controllers
             #endregion
         }
 
-        // TODO Specific update test methods will be added
-        //[Fact]
-        //[Order(3)]
-        //public async Task Update_ShouldUpdateEntity()
-        //{
-        //    #region [ Get License ]
-
-        //    // Arrange
-        //    var license = _licenseApiTestFixture.DbContext.Licenses.FirstOrDefault();
-
-        //    // Assert
-        //    Assert.NotNull(license);
-
-        //    #endregion
-
-        //    #region [ Update License ]
-
-        //    // Arrange
-        //    Guid id = license.Id.Value;
-        //    DateTime newExpirationDate = license.ExpirationDate.AddDays(5);
-        //    string newLicenseKey = Guid.NewGuid().ToString();
-        //    string newDescription = "new description";
-        //    int newMaxUsers = license.MaxUsers + 1;
-        //    int newmaxMacAddresses = license.MaxMacAddresses + 1;
-
-        //    string requestUri = $"{_serviceURIs.LicenseServiceURI}/v{NoxVersions.v1_0}/licenses/{id}";
-        //    var requestBody = new
-        //    {
-        //        code = license.Code,
-        //        expirationDate = newExpirationDate,
-        //        licenseKey = newLicenseKey,
-        //        description = newDescription,
-        //        maxUsers = newMaxUsers,
-        //        maxMacAddresses = newmaxMacAddresses,
-        //        productId = license.ProductId,
-        //        id = new
-        //        {
-        //            value = id
-        //        }
-        //    };
-        //    var jsonRequest = JsonSerializer.Serialize(requestBody);
-        //    var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
-
-        //    // Act
-        //    var response = await _client.PutAsync(requestUri, content);
-
-        //    // Assert
-        //    response.EnsureSuccessStatusCode();
-        //    Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
-
-        //    #endregion
-
-        //    #region [ Get License ]
-
-        //    if (license != null)
-        //    {
-        //        _licenseApiTestFixture.DbContext.Entry(license).Reload();
-        //    }
-
-        //    // Assert
-        //    Assert.NotNull(license);
-        //    Assert.Equal(newExpirationDate, license.ExpirationDate);
-        //    Assert.Equal(newLicenseKey, license.LicenseKey);
-        //    Assert.Equal(newDescription, license.Description);
-        //    Assert.Equal(newMaxUsers, license.MaxUsers);
-        //    Assert.Equal(newmaxMacAddresses, license.MaxMacAddresses);
-
-        //    #endregion
-        //}
-
         [Fact]
         [Order(4)]
         public async Task Create_ShouldAddNewLicense()
@@ -178,12 +108,12 @@ namespace AppyNox.Services.License.WebAPI.IntegrationTest.Controllers
             // Act
             HttpResponseMessage response = await _client.PostAsync(requestUri, content);
             string jsonResponse = await response.Content.ReadAsStringAsync();
-            (Guid id, LicenseSimpleDto createdObject) = NoxResponseUnwrapper.UnwrapDataWithId<LicenseSimpleDto>(jsonResponse, _jsonSerializerOptions);
+            Guid id = NoxResponseUnwrapper.UnwrapData<Guid>(jsonResponse, _jsonSerializerOptions);
 
             // Assert
             response.EnsureSuccessStatusCode();
             Assert.Equal(HttpStatusCode.Created, response.StatusCode);
-            Assert.NotNull(createdObject);
+            Assert.NotEqual(id, Guid.Empty);
 
             #endregion
 

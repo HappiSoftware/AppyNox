@@ -11,7 +11,7 @@ public class TicketProfile : Profile
 
     public TicketProfile()
     {
-        CreateMap<Ticket, TicketSimpleDto>().MapAuditInfo();
+        CreateMap<Ticket, TicketSimpleDto>();
         CreateMap<TicketSimpleCreateDto, Ticket>();
         CreateMap<TicketSimpleUpdateDto, Ticket>();
     }

@@ -1,10 +1,11 @@
-﻿using AppyNox.Services.License.Domain.Entities;
+﻿using AppyNox.Services.Base.Infrastructure.Data;
+using AppyNox.Services.License.Domain.Entities;
 using AppyNox.Services.License.Infrastructure.Data.Configurations;
 using Microsoft.EntityFrameworkCore;
 
 namespace AppyNox.Services.License.Infrastructure.Data
 {
-    public class LicenseDatabaseContext : DbContext
+    public class LicenseDatabaseContext : NoxDatabaseContext
     {
         #region [ Public Constructors ]
 

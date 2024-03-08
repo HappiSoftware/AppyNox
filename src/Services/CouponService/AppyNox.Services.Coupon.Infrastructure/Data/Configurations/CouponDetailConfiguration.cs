@@ -21,15 +21,6 @@ namespace AppyNox.Services.Coupon.Infrastructure.Data.Configurations
                 couponId => couponId.Value,
                 value => new CouponDetailId(value));
 
-            builder.OwnsOne(o => o.Audit, auditableDataBuilder =>
-            {
-                auditableDataBuilder.Property(c => c.CreatedBy);
-                auditableDataBuilder.Property(c => c.CreationDate);
-                auditableDataBuilder.Property(c => c.UpdatedBy);
-                auditableDataBuilder.Property(c => c.UpdateDate);
-                auditableDataBuilder.WithOwner();
-            });
-
             #endregion
 
             #region [ Seeds ]
@@ -39,16 +30,12 @@ namespace AppyNox.Services.Coupon.Infrastructure.Data.Configurations
                {
                    Id = couponDetailId,
                    Code = "EXD10",
-                   Detail = "TestDetail"
+                   Detail = "TestDetail",
+                   CreatedBy = "System",
+                   CreationDate = DateTime.UtcNow,
+                   UpdatedBy = (string?)null,
+                   UpdateDate = (DateTime?)null
                });
-            builder.OwnsOne(a => a.Audit).HasData(new
-            {
-                CouponDetailId = couponDetailId,
-                CreatedBy = "admin",
-                CreationDate = DateTime.UtcNow,
-                UpdatedBy = string.Empty,
-                UpdateDate = (DateTime?)null
-            });
 
             #endregion
         }

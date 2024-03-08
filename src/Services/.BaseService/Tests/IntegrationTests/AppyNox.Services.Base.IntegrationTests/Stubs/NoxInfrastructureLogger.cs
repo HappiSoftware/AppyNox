@@ -3,9 +3,9 @@
 namespace AppyNox.Services.Base.IntegrationTests.Stubs
 {
     /// <summary>
-    /// A stub implementation of <see cref="INoxApplicationLogger"/> for integration testing, simulating logging behavior.
+    /// A stub implementation of <see cref="INoxInfrastructureLogger"/> for integration testing, simulating logging behavior.
     /// </summary>
-    public class NoxApplicationLoggerStub : INoxApplicationLogger
+    public class NoxInfrastructureLogger : INoxInfrastructureLogger
     {
         #region [ Public Methods ]
 
@@ -37,6 +37,11 @@ namespace AppyNox.Services.Base.IntegrationTests.Stubs
         public void LogCritical(Exception exception, string message)
         {
             Console.WriteLine($"Critical: {message}. Exception: {exception.Message}");
+        }
+
+        public void LogCritical(Exception exception, string message, Guid correlationId)
+        {
+            Console.WriteLine($"Critical: {message}. Exception: {exception.Message}. CorrelationId: {correlationId}");
         }
 
         #endregion

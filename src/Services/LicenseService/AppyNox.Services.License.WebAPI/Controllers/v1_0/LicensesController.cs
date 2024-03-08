@@ -11,11 +11,11 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AppyNox.Services.License.WebAPI.Controllers.v1
+namespace AppyNox.Services.License.WebAPI.Controllers.v1_0
 {
     [ApiController]
     [ApiVersion(NoxVersions.v1_0)]
-    [Route("api/v{version:apiVersion}/[controller]")]
+    [Route("api/v{version:apiVersion}/licenses")]
     public class LicensesController(IMediator mediator) : Controller
     {
         #region [ Fields ]
@@ -44,13 +44,9 @@ namespace AppyNox.Services.License.WebAPI.Controllers.v1
         [Authorize(Permissions.Licenses.Create)]
         public async Task<IActionResult> Create([FromBody] dynamic licenseDto, string detailLevel = "Simple")
         {
-            dynamic result = await _mediator.Send(new CreateNoxEntityCommand<LicenseEntity>(licenseDto, detailLevel));
-            var response = new
-            {
-                Id = result.Item1,
-                CreatedObject = result.Item2
-            };
-            return CreatedAtAction(nameof(GetById), new { id = result.Item1 }, response);
+            Guid result = await _mediator.Send(new CreateNoxEntityCommand<LicenseEntity>(licenseDto, detailLevel));
+
+            return CreatedAtAction(nameof(GetById), new { id = result }, result);
         }
 
         // TODO Specific update methods will be added

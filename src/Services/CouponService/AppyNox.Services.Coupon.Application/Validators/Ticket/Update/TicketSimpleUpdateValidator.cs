@@ -1,8 +1,8 @@
 ﻿using AppyNox.Services.Base.Application.Validators;
 using AppyNox.Services.Coupon.Application.Dtos.TicketDtos.Models.Basic;
-using AppyNox.Services.Coupon.Application.Validators.Coupon.Create;
+using AppyNox.Services.Coupon.Application.Validators.Ticket.Create;
 
-namespace AppyNox.Services.Coupon.Application.Validators.Coupon.Update;
+namespace AppyNox.Services.Coupon.Application.Validators.Ticket.Update;
 
 public class TicketSimpleUpdateValidator : DtoValidatorBase<TicketSimpleUpdateDto>
 {

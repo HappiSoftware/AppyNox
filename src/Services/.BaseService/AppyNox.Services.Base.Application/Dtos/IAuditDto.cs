@@ -1,28 +1,21 @@
-﻿using AppyNox.Services.Base.Domain.Interfaces;
+﻿namespace AppyNox.Services.Base.Application.Dtos;
 
-namespace AppyNox.Services.Base.Application.Dtos
+public interface IAuditDto
 {
-    public interface IAuditDto
-    {
-        #region [ Properties ]
+    #region [ Properties ]
 
-        AuditInfo AuditInfo { get; set; }
+    AuditInformation AuditInformation { get; set; }
 
-        #endregion
-    }
+    #endregion
+}
 
-    public class AuditInfo : IAuditableData
-    {
-        #region [ IAuditableData ]
+public class AuditInformation
+{
+    public string CreatedBy { get; set; } = string.Empty;
 
-        public string CreatedBy { get; set; } = string.Empty;
+    public DateTime CreationDate { get; set; }
 
-        public DateTime CreationDate { get; set; }
+    public string UpdatedBy { get; set; } = string.Empty;
 
-        public string UpdatedBy { get; set; } = string.Empty;
-
-        public DateTime? UpdateDate { get; set; }
-
-        #endregion
-    }
+    public DateTime? UpdateDate { get; set; }
 }
