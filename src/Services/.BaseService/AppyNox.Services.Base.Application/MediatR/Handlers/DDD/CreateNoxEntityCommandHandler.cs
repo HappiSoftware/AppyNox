@@ -20,7 +20,7 @@ internal sealed class CreateNoxEntityCommandHandler<TEntity>(
         IDtoMappingRegistryBase dtoMappingRegistry,
         IServiceProvider serviceProvider,
         INoxApplicationLogger logger,
-        IUnitOfWorkBase unitOfWork,
+        IUnitOfWork unitOfWork,
         ICacheService cacheService)
         : BaseHandler<TEntity>(mapper, dtoMappingRegistry, serviceProvider, logger),
         IRequestHandler<CreateNoxEntityCommand<TEntity>, Guid>
@@ -32,7 +32,7 @@ internal sealed class CreateNoxEntityCommandHandler<TEntity>(
 
     private readonly INoxRepositoryBase<TEntity> _repository = repository;
 
-    private readonly IUnitOfWorkBase _unitOfWork = unitOfWork;
+    private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
     #endregion
 

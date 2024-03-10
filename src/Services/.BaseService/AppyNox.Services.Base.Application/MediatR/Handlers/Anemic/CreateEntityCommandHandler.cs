@@ -21,7 +21,7 @@ internal sealed class CreateEntityCommandHandler<TEntity>(
         IDtoMappingRegistryBase dtoMappingRegistry,
         IServiceProvider serviceProvider,
         INoxApplicationLogger logger,
-        IUnitOfWorkBase unitOfWork,
+        IUnitOfWork unitOfWork,
         ICacheService cacheService)
         : BaseHandler<TEntity>(mapper, dtoMappingRegistry, serviceProvider, logger),
         IRequestHandler<CreateEntityCommand<TEntity>, Guid>
@@ -33,7 +33,7 @@ internal sealed class CreateEntityCommandHandler<TEntity>(
 
     private readonly IGenericRepositoryBase<TEntity> _repository = repository;
 
-    private readonly IUnitOfWorkBase _unitOfWork = unitOfWork;
+    private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
     #endregion
 

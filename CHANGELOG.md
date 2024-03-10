@@ -1,9 +1,15 @@
 # Changelog
 All notable changes to AppyNox will be documented in this file.
 
-## [1.6.0](https://github.com/HappiSoftware/AppyNox/compare/v1.5.0...v1.6.0) - NOT RELEASED
+## [1.7.0](https://github.com/HappiSoftware/AppyNox/compare/v1.6.0...v1.7.0) - NOT RELEASED
+
+## [1.6.0](https://github.com/HappiSoftware/AppyNox/compare/v1.5.0...v1.6.0) - 2024.03.10
 ### Added
 - Feature request: Create methods should return id only ([#237](https://github.com/HappiSoftware/AppyNox/issues/237))
+
+### Improved
+- Refactoring request: AuditData should be refactored ([#236](https://github.com/HappiSoftware/AppyNox/issues/236))
+- Refactoring request: UnitOfWorkBase refactoring ([#241](https://github.com/HappiSoftware/AppyNox/issues/241))
 
 
 ## [1.5.0](https://github.com/HappiSoftware/AppyNox/compare/v1.4.0...v1.5.0) - 2024.02.29
@@ -13,6 +19,8 @@ All notable changes to AppyNox will be documented in this file.
 
 ### Fixed
 - Bug report: NoxRepository GetById should use projection ([#226](https://github.com/HappiSoftware/AppyNox/issues/226))
+
+### Improved
 - Refactoring request: Generic Repository and CQRS Refactor ([#222](https://github.com/HappiSoftware/AppyNox/issues/222))
 
 
