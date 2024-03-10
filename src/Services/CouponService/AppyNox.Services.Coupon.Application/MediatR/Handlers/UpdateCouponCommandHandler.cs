@@ -20,7 +20,7 @@ public class UpdateCouponCommandHandler(
         IMapper mapper,
         IValidator<CouponExtendedUpdateDto> validator,
         INoxApplicationLogger logger,
-        IUnitOfWorkBase unitOfWork)
+        IUnitOfWork unitOfWork)
 
     : IRequestHandler<UpdateCouponCommand>
 {
@@ -28,7 +28,7 @@ public class UpdateCouponCommandHandler(
 
     private readonly INoxRepositoryBase<Domain.Coupons.Coupon> _repository = repository;
 
-    private readonly IUnitOfWorkBase _unitOfWork = unitOfWork;
+    private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
     private readonly IMapper _mapper = mapper;
 

@@ -33,7 +33,7 @@ namespace AppyNox.Services.Base.Application.UnitTests.CQRSFixtures
 
         public readonly Mock<IMapper> MockMapper;
 
-        private readonly Mock<IUnitOfWorkBase> _mockUnitOfWork;
+        private readonly Mock<IUnitOfWork> _mockUnitOfWork;
 
         private readonly NoxApplicationLoggerStub _noxApplicationLogger;
 

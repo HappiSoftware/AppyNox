@@ -9,14 +9,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AppyNox.Services.License.Infrastructure.Repositories;
 
-public class LicenseRepository(LicenseDatabaseContext context, INoxInfrastructureLogger noxInfrastructureLogger, IUnitOfWorkBase unitOfWork)
+public class LicenseRepository(LicenseDatabaseContext context, INoxInfrastructureLogger noxInfrastructureLogger, IUnitOfWork unitOfWork)
         : NoxRepositoryBase<LicenseEntity>(context, noxInfrastructureLogger), ILicenseRepository
 {
     #region [ Fields ]
 
     private readonly LicenseDatabaseContext _context = context;
 
-    private readonly IUnitOfWorkBase _unitOfWork = unitOfWork;
+    private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
     #endregion
 

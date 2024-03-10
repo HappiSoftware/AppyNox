@@ -24,7 +24,7 @@ internal class UpdateEntityCommandHandler<TEntity>(
         IDtoMappingRegistryBase dtoMappingRegistry,
         IServiceProvider serviceProvider,
         INoxApplicationLogger logger,
-        IUnitOfWorkBase unitOfWork)
+        IUnitOfWork unitOfWork)
         : BaseHandler<TEntity>(mapper, dtoMappingRegistry, serviceProvider, logger),
         IRequestHandler<UpdateEntityCommand<TEntity>>
         where TEntity : class, IEntityWithGuid
@@ -33,7 +33,7 @@ internal class UpdateEntityCommandHandler<TEntity>(
 
     private readonly IGenericRepositoryBase<TEntity> _repository = repository;
 
-    private readonly IUnitOfWorkBase _unitOfWork = unitOfWork;
+    private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
     #endregion
 

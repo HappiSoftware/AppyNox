@@ -32,7 +32,7 @@ public class GenericCQRSFixture<TEntity> : IDisposable
 
     private readonly Mock<IMapper> _mockMapper;
 
-    private readonly Mock<IUnitOfWorkBase> _mockUnitOfWork;
+    private readonly Mock<IUnitOfWork> _mockUnitOfWork;
 
     private readonly NoxApplicationLoggerStub _noxApplicationLogger;
 

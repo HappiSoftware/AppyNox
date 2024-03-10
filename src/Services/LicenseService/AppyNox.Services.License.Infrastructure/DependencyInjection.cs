@@ -113,7 +113,7 @@ namespace AppyNox.Services.License.Infrastructure
             services.AddScoped(typeof(IGenericRepositoryBase<>), typeof(GenericRepository<>));
             services.AddScoped(typeof(INoxRepositoryBase<>), typeof(NoxRepository<>));
             services.AddScoped<ILicenseRepository, LicenseRepository>();
-            services.AddScoped<IUnitOfWorkBase, UnitOfWork>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             return services;
         }

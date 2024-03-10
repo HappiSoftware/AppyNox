@@ -17,7 +17,7 @@ internal sealed class DeleteNoxEntityCommandHandler<TEntity, TId>(
         IDtoMappingRegistryBase dtoMappingRegistry,
         IServiceProvider serviceProvider,
         INoxApplicationLogger logger,
-        IUnitOfWorkBase unitOfWork,
+        IUnitOfWork unitOfWork,
         ICacheService cacheService)
         : BaseHandler<TEntity>(mapper, dtoMappingRegistry, serviceProvider, logger),
         IRequestHandler<DeleteNoxEntityCommand<TEntity, TId>>
@@ -30,7 +30,7 @@ internal sealed class DeleteNoxEntityCommandHandler<TEntity, TId>(
 
     private readonly INoxRepositoryBase<TEntity> _repository = repository;
 
-    private readonly IUnitOfWorkBase _unitOfWork = unitOfWork;
+    private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
     #endregion
 

@@ -68,7 +68,7 @@ namespace AppyNox.Services.Coupon.Infrastructure
             services.AddScoped(typeof(ICouponRepository), typeof(CouponRepository<Domain.Coupons.Coupon>));
             services.AddScoped(typeof(INoxRepositoryBase<>), typeof(NoxRepository<>));
             services.AddScoped(typeof(IGenericRepositoryBase<>), typeof(GenericRepository<>));
-            services.AddScoped<IUnitOfWorkBase, UnitOfWork>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             return services;
         }
