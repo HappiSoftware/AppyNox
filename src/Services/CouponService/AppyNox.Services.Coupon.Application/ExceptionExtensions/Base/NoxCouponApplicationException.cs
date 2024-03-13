@@ -11,7 +11,9 @@ internal enum NoxCouponApplicationExceptionCode
 
     IdsMismatch = 1000,
 
-    UnexpectedUpdateCommandError = 1001
+    UnexpectedUpdateCommandError = 1001,
+
+    UnexpectedDomainEventHandlerError = 1002
 }
 
 #endregion

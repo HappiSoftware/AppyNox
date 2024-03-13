@@ -4,7 +4,7 @@ using System.ComponentModel.Design;
 
 namespace AppyNox.Services.License.Domain.Entities;
 
-public class ProductEntity : EntityBase, IHasStronglyTypedId, IHasCode
+public class ProductEntity : AggregateRoot, IHasStronglyTypedId, IHasCode
 {
     #region [ Properties ]
 

@@ -1,0 +1,158 @@
+version: '3.8'
+
+volumes:
+  rabbitmq_data: 
+  consul_data: 
+  redis_data: 
+  redisinsight_data: 
+  sso_db_data: 
+  sso_saga_db_data: 
+
+networks:
+  nox_network:
+    driver: overlay
+
+services:
+  appynox-rabbitmq-service:
+    image: rabbitmq:management
+    environment:
+      RABBITMQ_DEFAULT_USER: HappiCorp
+      RABBITMQ_DEFAULT_PASS: HappiCorp
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    command:
+      [
+        "bash",
+        "-c",
+        "chmod 400 /var/lib/rabbitmq/.erlang.cookie; rabbitmq-server"
+      ]
+    networks:
+      - nox_network
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  appynox-consul:
+    image: "hashicorp/consul:latest"
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+    networks:
+      - nox_network
+    ports:
+      - "8500:8500"
+      - "8600:8600/udp" 
+
+  appynox-redis:
+    image: redis:latest
+    volumes:
+      - redis_data:/data
+      - ./redis.acl:/etc/redis/redis.acl
+    command: ["redis-server", "--aclfile", "/etc/redis/redis.acl"] 
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+    networks:
+      - nox_network
+    ports:
+      - "6379:6379"
+
+  appynox-redisinsight:
+    image: redislabs/redisinsight
+    volumes:
+      - redisinsight_data:/db
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+    networks:
+      - nox_network
+    ports:
+      - "8001:8001"
+
+  appynox-gateway-ocelotgateway:
+    image: ${DOCKER_REGISTRY-}appynoxgatewayocelotgateway
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=https://+:443
+    depends_on:
+      - appynox-consul
+    volumes:
+      - ./src/Gateways/AppyNox.Gateway.OcelotGateway/ssl:/https2:ro
+      - ./src/Gateways/AppyNox.Gateway.OcelotGateway/ssl/crt:/usr/local/share/ca-certificates/:ro
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+    networks:
+      - nox_network
+    ports:
+      - "7000:443"
+
+  appynox-sso-db:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: AppyNox_Sso
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: auth_password
+    volumes:
+      - sso_db_data:/var/lib/ssodb/data
+    networks:
+      - nox_network
+    ports:
+      - "5435:5432" 
+
+  appynox-sso-saga-db:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: AppyNox_Sso_Saga
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: auth_saga_password
+    volumes:
+      - sso_saga_db_data:/var/lib/ssodb/data
+    networks:
+      - nox_network
+    ports:
+      - "5430:5432" 
+
+  appynox-services-sso-webapi:
+    image: ${DOCKER_REGISTRY-}appynoxservicesssowebapi
+    depends_on:
+      - appynox-rabbitmq-service
+      - appynox-consul
+      - appynox-sso-db
+      - appynox-sso-saga-db
+      - appynox-redis
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:7001
+      - WAIT_HOSTS=appynox-sso-db:5432,appynox-sso-saga-db:5432,appynox-rabbitmq-service:5672
+      - WAIT_TIMEOUT=300
+      - WAIT_SLEEP_INTERVAL=30
+      - WAIT_HOST_CONNECT_TIMEOUT=30
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+    networks:
+      - nox_network

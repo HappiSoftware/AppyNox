@@ -22,14 +22,25 @@ docker stack deploy -c docker-compose.yml -c docker-compose.Production.yml AppyN
 
 **Extras**
 
-`Stop Docker Swarm`
+- `Stop Docker Swarm`
 
 ```bash
 docker stack rm AppyNox
 ```
 
-`Scaling and Load Balancing`
+<br>
+
+- `Scaling and Load Balancing`
 
 ```bash
 docker service scale <service_name>=<replica_count>
+```
+
+<br>
+
+- `Sso Only Startup`
+
+If the project you are working on is using Nox Sso, you can simply just run the necessary services via:
+```bash
+docker stack deploy -c docker-compose.Sso.yml AppyNox_Sso
 ```
