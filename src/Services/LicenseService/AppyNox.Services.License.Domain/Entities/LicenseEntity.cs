@@ -3,7 +3,7 @@ using AppyNox.Services.Base.Domain.Interfaces;
 
 namespace AppyNox.Services.License.Domain.Entities;
 
-public class LicenseEntity : EntityBase, IHasStronglyTypedId, IHasCode
+public class LicenseEntity : AggregateRoot, IHasStronglyTypedId, IHasCode
 {
     #region [ Properties ]
 

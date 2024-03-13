@@ -33,6 +33,8 @@ public class CouponDbContext : NoxDatabaseContext
 
     public DbSet<TicketTag> TicketTags { get; set; }
 
+    public DbSet<CouponHistory> CouponHistories { get; set; }
+
     #endregion
 
     #region [ Protected Methods ]
@@ -69,6 +71,7 @@ public class CouponDbContext : NoxDatabaseContext
         // Anemic Domain Modeling
         modelBuilder.ApplyConfiguration(new TicketConfiguration(ticketId));
         modelBuilder.ApplyConfiguration(new TicketTagConfiguration(ticketTagId, ticketId));
+        modelBuilder.ApplyConfiguration(new CouponHistoryConfiguration(couponId1));
 
         #endregion
     }

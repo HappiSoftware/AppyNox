@@ -2,6 +2,9 @@
 using AppyNox.Services.Base.Application.Interfaces.Repositories;
 using AppyNox.Services.Base.Core.Common;
 using AppyNox.Services.Base.Core.Enums;
+using AppyNox.Services.Base.Infrastructure.BackgroundJobs;
+using AppyNox.Services.Base.Infrastructure.Data;
+using AppyNox.Services.Base.Infrastructure.Data.Interceptors;
 using AppyNox.Services.Base.Infrastructure.HostedServices;
 using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
 using AppyNox.Services.Coupon.Domain.Coupons;
@@ -12,6 +15,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Quartz;
 
 namespace AppyNox.Services.Coupon.Infrastructure
 {
@@ -46,8 +50,14 @@ namespace AppyNox.Services.Coupon.Infrastructure
                 _ => configuration.GetConnectionString("DefaultConnection"),
             };
 
-            services.AddDbContext<CouponDbContext>(options =>
-                options.UseNpgsql(connectionString));
+            services.AddSingleton<ConvertDomainEventsToOutboxMessagesInterceptor>();
+
+            services.AddDbContext<CouponDbContext>((sp, options) =>
+            {
+                var interceptor = sp.GetService<ConvertDomainEventsToOutboxMessagesInterceptor>();
+                options.UseNpgsql(connectionString)
+                .AddInterceptors(interceptor ?? throw new ArgumentException("ConvertDomainEventsToOutboxMessagesInterceptor was null!"));
+            });
 
             logger.LogInformation($"Connection String: {connectionString}");
 
@@ -62,6 +72,21 @@ namespace AppyNox.Services.Coupon.Infrastructure
             }));
             services.AddSingleton<IHostedService, ConsulHostedService>();
             services.Configure<ConsulConfiguration>(configuration.GetSection("consul"));
+
+            #endregion
+
+            #region [ Background Jobs ]
+
+            services.AddQuartz(configure =>
+            {
+                var jobKey = new JobKey(nameof(ProcessOutboxMessagesJob<CouponDbContext>));
+                configure
+                    .AddJob<ProcessOutboxMessagesJob<CouponDbContext>>(jobKey)
+                    .AddTrigger(trigger => trigger.ForJob(jobKey).StartNow()
+                    .WithSimpleSchedule(schedule => schedule.WithIntervalInSeconds(30).RepeatForever()));
+            });
+
+            services.AddQuartzHostedService();
 
             #endregion
 

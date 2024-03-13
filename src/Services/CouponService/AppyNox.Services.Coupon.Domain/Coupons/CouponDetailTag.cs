@@ -4,7 +4,7 @@ using AppyNox.Services.Coupon.Domain.Coupons.Builders;
 
 namespace AppyNox.Services.Coupon.Domain.Coupons;
 
-public class CouponDetailTag : EntityBase, IHasStronglyTypedId
+public class CouponDetailTag : AggregateRoot, IHasStronglyTypedId
 {
     #region [ Properties ]
 

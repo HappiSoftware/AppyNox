@@ -41,6 +41,11 @@ internal class CouponConfiguration(CouponId couponId1, CouponId couponId2, Coupo
             amountBuilder.Property(c => c.DiscountAmount);
         });
 
+        builder.HasMany(c => c.Histories)
+            .WithOne()
+            .HasForeignKey(ch => ch.CouponId)
+            .OnDelete(DeleteBehavior.Cascade);
+
         #endregion
 
         #region [ Seeds ]
