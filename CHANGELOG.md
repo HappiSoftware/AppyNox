@@ -3,6 +3,11 @@ All notable changes to AppyNox will be documented in this file.
 
 ## [1.7.0](https://github.com/HappiSoftware/AppyNox/compare/v1.6.0...v1.7.0) - NOT RELEASED
 
+## [1.6.1](https://github.com/HappiSoftware/AppyNox/compare/v1.6.0...v1.6.1) - 2024.03.13
+### Added
+- Feature request: DDD Domain event support and example ([#243](https://github.com/HappiSoftware/AppyNox/issues/243))
+
+
 ## [1.6.0](https://github.com/HappiSoftware/AppyNox/compare/v1.5.0...v1.6.0) - 2024.03.10
 ### Added
 - Feature request: Create methods should return id only ([#237](https://github.com/HappiSoftware/AppyNox/issues/237))
