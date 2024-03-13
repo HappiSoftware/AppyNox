@@ -5,7 +5,7 @@ using AppyNox.Services.Coupon.Domain.Exceptions.Base;
 
 namespace AppyNox.Services.Coupon.Domain.Coupons;
 
-public class Coupon : EntityBase, IHasStronglyTypedId, IHasCode
+public class Coupon : AggregateRoot, IHasStronglyTypedId, IHasCode
 {
     #region [ Properties ]
 
@@ -57,6 +57,8 @@ public class Coupon : EntityBase, IHasStronglyTypedId, IHasCode
 
     public CouponDetail CouponDetail { get; private set; }
 
+    public ICollection<CouponHistory>? Histories { get; private set; }
+
     #endregion
 
     #region [ IEntityTypeId ]
@@ -69,7 +71,9 @@ public class Coupon : EntityBase, IHasStronglyTypedId, IHasCode
 
     public void UpdateMinimumAmount(int minimumAmount)
     {
+        int oldAmount = Amount.MinAmount;
         Amount = Amount.UpdateMinimumAmount(minimumAmount);
+        Raise(new CouponUpdatedDomainEvent(Id, oldAmount));
     }
 
     public void UpdateDetail(string? detail)

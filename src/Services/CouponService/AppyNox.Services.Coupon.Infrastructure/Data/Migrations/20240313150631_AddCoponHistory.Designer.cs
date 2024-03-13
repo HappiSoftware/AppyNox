@@ -3,6 +3,7 @@ using System;
 using AppyNox.Services.Coupon.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AppyNox.Services.Coupon.Infrastructure.Migrations
 {
     [DbContext(typeof(CouponDbContext))]
-    partial class CouponDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240313150631_AddCoponHistory")]
+    partial class AddCoponHistory
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,37 +24,6 @@ namespace AppyNox.Services.Coupon.Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("AppyNox.Services.Base.Domain.Outbox.OutboxMessage", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Error")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("OccurredOnUtc")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("ProcessedOnUtc")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("RetryCount")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("OutboxMessages");
-                });
 
             modelBuilder.Entity("AppyNox.Services.Coupon.Domain.Coupons.Coupon", b =>
                 {
@@ -107,7 +79,7 @@ namespace AppyNox.Services.Coupon.Infrastructure.Migrations
                             Code = "EXF50",
                             CouponDetailId = new Guid("ec80532f-58f0-4690-b40c-2133b067d5f2"),
                             CreatedBy = "System",
-                            CreationDate = new DateTime(2024, 3, 13, 18, 21, 7, 576, DateTimeKind.Utc).AddTicks(1009),
+                            CreationDate = new DateTime(2024, 3, 13, 15, 6, 30, 204, DateTimeKind.Utc).AddTicks(6095),
                             Description = "Description",
                             Detail = "Detail1"
                         },
@@ -117,7 +89,7 @@ namespace AppyNox.Services.Coupon.Infrastructure.Migrations
                             Code = "EXF60",
                             CouponDetailId = new Guid("ec80532f-58f0-4690-b40c-2133b067d5f2"),
                             CreatedBy = "System",
-                            CreationDate = new DateTime(2024, 3, 13, 18, 21, 7, 576, DateTimeKind.Utc).AddTicks(1278),
+                            CreationDate = new DateTime(2024, 3, 13, 15, 6, 30, 204, DateTimeKind.Utc).AddTicks(6576),
                             Description = "Description2",
                             Detail = "Detail2"
                         });
@@ -163,7 +135,7 @@ namespace AppyNox.Services.Coupon.Infrastructure.Migrations
                             Id = new Guid("ec80532f-58f0-4690-b40c-2133b067d5f2"),
                             Code = "EXD10",
                             CreatedBy = "System",
-                            CreationDate = new DateTime(2024, 3, 13, 18, 21, 7, 577, DateTimeKind.Utc).AddTicks(3183),
+                            CreationDate = new DateTime(2024, 3, 13, 15, 6, 30, 209, DateTimeKind.Utc).AddTicks(7471),
                             Detail = "TestDetail"
                         });
                 });
@@ -210,7 +182,7 @@ namespace AppyNox.Services.Coupon.Infrastructure.Migrations
                             Id = new Guid("b6bcfe76-83c7-4a4a-b088-13b14751fce8"),
                             CouponDetailId = new Guid("ec80532f-58f0-4690-b40c-2133b067d5f2"),
                             CreatedBy = "System",
-                            CreationDate = new DateTime(2024, 3, 13, 18, 21, 7, 580, DateTimeKind.Utc).AddTicks(6166),
+                            CreationDate = new DateTime(2024, 3, 13, 15, 6, 30, 215, DateTimeKind.Utc).AddTicks(2309),
                             Tag = "Tag Description"
                         });
                 });
@@ -255,11 +227,11 @@ namespace AppyNox.Services.Coupon.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("9bb64f7a-f656-40eb-9206-845cbee05ef2"),
+                            Id = new Guid("7a00866d-8240-4278-a1d0-10a59c7c67f6"),
                             CouponId = new Guid("594cf045-3a2b-46f5-99c9-1eb59f035db2"),
                             CreatedBy = "System",
-                            CreationDate = new DateTime(2024, 3, 13, 18, 21, 7, 581, DateTimeKind.Utc).AddTicks(7365),
-                            Date = new DateTime(2024, 3, 13, 18, 21, 7, 581, DateTimeKind.Utc).AddTicks(7363),
+                            CreationDate = new DateTime(2024, 3, 13, 15, 6, 30, 217, DateTimeKind.Utc).AddTicks(414),
+                            Date = new DateTime(2024, 3, 13, 15, 6, 30, 217, DateTimeKind.Utc).AddTicks(412),
                             MinimumAmount = 100
                         });
                 });
@@ -308,8 +280,8 @@ namespace AppyNox.Services.Coupon.Infrastructure.Migrations
                             Id = new Guid("69472ec0-4da6-4fdd-93cc-b0a529d7f5e0"),
                             Content = "Ticket content",
                             CreatedBy = "System",
-                            CreationDate = new DateTime(2024, 3, 13, 18, 21, 7, 580, DateTimeKind.Utc).AddTicks(8869),
-                            ReportDate = new DateTime(2024, 3, 13, 18, 21, 7, 580, DateTimeKind.Utc).AddTicks(8868),
+                            CreationDate = new DateTime(2024, 3, 13, 15, 6, 30, 215, DateTimeKind.Utc).AddTicks(8228),
+                            ReportDate = new DateTime(2024, 3, 13, 15, 6, 30, 215, DateTimeKind.Utc).AddTicks(8227),
                             Title = "Title"
                         });
                 });

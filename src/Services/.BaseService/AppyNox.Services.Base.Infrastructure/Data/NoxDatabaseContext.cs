@@ -1,10 +1,17 @@
 ﻿using AppyNox.Services.Base.Domain.Interfaces;
+using AppyNox.Services.Base.Domain.Outbox;
 using Microsoft.EntityFrameworkCore;
 
 namespace AppyNox.Services.Base.Infrastructure.Data;
 
 public abstract class NoxDatabaseContext : DbContext
 {
+    #region [ Properties ]
+
+    public DbSet<OutboxMessage> OutboxMessages { get; set; }
+
+    #endregion
+
     #region [ Protected Constructors ]
 
     protected NoxDatabaseContext()
@@ -42,6 +49,18 @@ public abstract class NoxDatabaseContext : DbContext
                 entity.HasIndex("UpdateDate");
             }
         }
+
+        // Outbox message
+        modelBuilder.Entity<OutboxMessage>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(om => om.Type).IsRequired();
+            entity.Property(om => om.Content).IsRequired();
+            entity.Property(om => om.OccurredOnUtc).IsRequired();
+            entity.Property(om => om.ProcessedOnUtc).IsRequired(false);
+            entity.Property(om => om.Error).IsRequired(false);
+            entity.Property(om => om.RetryCount).IsRequired();
+        });
     }
 
     #endregion
