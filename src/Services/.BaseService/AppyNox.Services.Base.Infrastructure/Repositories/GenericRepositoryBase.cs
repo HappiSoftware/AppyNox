@@ -87,6 +87,10 @@ public abstract class GenericRepositoryBase<TEntity> : IGenericRepositoryBase<TE
     /// <returns>A task representing the asynchronous operation, returning the retrieved entity.</returns>
     /// <exception cref="EntityNotFoundException{TEntity}">Thrown when the entity with the specified ID is not found.</exception>
     /// <exception cref="NoxInfrastructureException">Thrown when there is an error retrieving the entity from the database.</exception>
+    /// <remarks>
+    /// <para>Use <see cref="GetByIdAsync"/> instead. This method will be removed in v1.8.0.</para>
+    /// </remarks>
+    [Obsolete("Use GetByIdAsync instead. This method will be removed in v1.8.0")]
     public async Task<TEntity> GetEntityByIdAsync(Guid id)
     {
         try

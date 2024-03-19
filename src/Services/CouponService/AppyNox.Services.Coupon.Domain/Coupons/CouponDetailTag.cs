@@ -4,7 +4,7 @@ using AppyNox.Services.Coupon.Domain.Coupons.Builders;
 
 namespace AppyNox.Services.Coupon.Domain.Coupons;
 
-public class CouponDetailTag : AggregateRoot, IHasStronglyTypedId
+public class CouponDetailTag : AggregateMember, IHasStronglyTypedId
 {
     #region [ Properties ]
 
@@ -33,9 +33,9 @@ public class CouponDetailTag : AggregateRoot, IHasStronglyTypedId
 
     #endregion
 
-    #region [ IEntityTypeId ]
+    #region [ IHasStronglyTypedId ]
 
-    public Guid GetTypedId => Id.Value;
+    public Guid GetTypedId() => Id.Value;
 
     #endregion
 
@@ -46,18 +46,13 @@ public class CouponDetailTag : AggregateRoot, IHasStronglyTypedId
     #endregion
 }
 
-public sealed record CouponDetailTagId : IHasGuidId
+public sealed record CouponDetailTagId : IHasGuidId, IValueObject
 {
-    public Guid Value { get; private set; }
-    Guid IHasGuidId.GetGuidValue()
-    {
-        return Value;
-    }
-    private CouponDetailTagId()
-    {
-    }
+    private CouponDetailTagId() { }
     public CouponDetailTagId(Guid value)
     {
         Value = value;
     }
+    public Guid Value { get; private set; }
+    public Guid GetGuidValue() => Value;
 }

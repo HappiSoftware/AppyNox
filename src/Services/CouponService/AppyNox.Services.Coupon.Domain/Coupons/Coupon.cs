@@ -61,9 +61,9 @@ public class Coupon : AggregateRoot, IHasStronglyTypedId, IHasCode
 
     #endregion
 
-    #region [ IEntityTypeId ]
+    #region [ IHasStronglyTypedId ]
 
-    Guid IHasStronglyTypedId.GetTypedId => Id.Value;
+    public Guid GetTypedId() => Id.Value;
 
     #endregion
 
@@ -84,13 +84,20 @@ public class Coupon : AggregateRoot, IHasStronglyTypedId, IHasCode
     #endregion
 }
 
-public sealed record CouponId(Guid Value) : IHasGuidId
+public sealed record CouponId : IHasGuidId, IValueObject
 {
+    private CouponId() { }
+    public CouponId(Guid value)
+    {
+        Value = value;
+    }
+    public Guid Value { get; private set; }
     public Guid GetGuidValue() => Value;
 }
 
-public sealed record Amount
+public sealed record Amount : IValueObject
 {
+    private Amount() { }
     public double DiscountAmount { get; private set; }
 
     public int MinAmount { get; private set; }

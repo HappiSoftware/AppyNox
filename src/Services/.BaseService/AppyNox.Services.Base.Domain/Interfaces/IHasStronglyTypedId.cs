@@ -8,7 +8,7 @@ public interface IHasStronglyTypedId
 {
     #region [ Public Methods ]
 
-    Guid GetTypedId { get; }
+    Guid GetTypedId();
 
     #endregion
 }

@@ -23,7 +23,7 @@ public class CouponDetailSimpleDto : IHasCode
 
     #region [ Relations ]
 
-    public IEnumerable<CouponDetailTagSimpleDto>? CouponDetailTags { get; set; }
+    public ICollection<CouponDetailTagSimpleDto>? CouponDetailTags { get; set; }
 
     #endregion
 }

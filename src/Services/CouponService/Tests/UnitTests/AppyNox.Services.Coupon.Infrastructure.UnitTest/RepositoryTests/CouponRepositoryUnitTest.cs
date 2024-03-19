@@ -53,8 +53,10 @@ public class CouponRepositoryUnitTest : IClassFixture<RepositoryFixture>
 
     #region [ Read ]
 
-    [Fact]
-    public async Task GetAllAsync_ShouldReturnEntity()
+    [Theory]
+    [InlineData(typeof(CouponAggregate))]
+    [InlineData(typeof(CouponSimpleDto))]
+    public async Task GetAllAsync_ShouldReturnEntity(Type fetchType)
     {
         CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
         UnitOfWork unitOfWork = new(context, _noxLoggerStub);
@@ -68,7 +70,7 @@ public class CouponRepositoryUnitTest : IClassFixture<RepositoryFixture>
             PageSize = 1,
         };
 
-        var result = await repository.GetAllAsync(queryParameters, typeof(CouponSimpleDto), _cacheService);
+        var result = await repository.GetAllAsync(queryParameters, fetchType, _cacheService);
 
         Assert.NotNull(result);
         Assert.Single(result.Items);

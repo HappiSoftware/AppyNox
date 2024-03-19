@@ -61,8 +61,8 @@ public class UpdateCouponCommandHandler(
             #endregion
 
             CouponId couponId = _mapper.Map<CouponIdDto, CouponId>(request.Dto.Id);
-
-            Domain.Coupons.Coupon entity = await _repository.GetEntityByIdAsync(couponId);
+            Domain.Coupons.Coupon? entity = (await _repository.GetByIdAsync(couponId, typeof(Domain.Coupons.Coupon)) as Domain.Coupons.Coupon)
+                ?? throw new NoxCouponApplicationException("GetByIdAsync returned null", (int)NoxCouponApplicationExceptionCode.UnexpectedUpdateCommandError);
 
             _repository.Update(entity);
 
