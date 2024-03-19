@@ -1,7 +1,21 @@
 # Changelog
 All notable changes to AppyNox will be documented in this file.
 
-## [1.7.0](https://github.com/HappiSoftware/AppyNox/compare/v1.6.0...v1.7.0) - NOT RELEASED
+
+## [1.8.0](https://github.com/HappiSoftware/AppyNox/compare/v1.7.0...v1.8.0) - NOT RELEASED
+
+
+## [1.7.0](https://github.com/HappiSoftware/AppyNox/compare/v1.6.0...v1.7.0) - 2024.03.19
+### Added
+- Feature request: Generic repository Projection should handle nested entities ([#247](https://github.com/HappiSoftware/AppyNox/issues/247))
+- Feature request: Generic Nox Repository should handle Domain entity returns ([#250](https://github.com/HappiSoftware/AppyNox/issues/250))
+- Feature request: DDD Domain event support and example ([#243](https://github.com/HappiSoftware/AppyNox/issues/243))
+
+
+## [1.6.1](https://github.com/HappiSoftware/AppyNox/compare/v1.6.0...v1.6.1) - 2024.03.13
+### Added
+- Feature request: DDD Domain event support and example ([#243](https://github.com/HappiSoftware/AppyNox/issues/243))
+
 
 ## [1.6.0](https://github.com/HappiSoftware/AppyNox/compare/v1.5.0...v1.6.0) - 2024.03.10
 ### Added
