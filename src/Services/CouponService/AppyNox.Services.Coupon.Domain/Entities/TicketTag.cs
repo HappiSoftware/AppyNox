@@ -16,5 +16,7 @@ public class TicketTag : IEntityWithGuid
 
     public Guid TicketId { get; set; }
 
+    public Ticket Ticket { get; set; } = default!;
+
     #endregion
 }

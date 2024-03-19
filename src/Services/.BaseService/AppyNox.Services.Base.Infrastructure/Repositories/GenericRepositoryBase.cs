@@ -271,13 +271,20 @@ public abstract class GenericRepositoryBase<TEntity> : IGenericRepositoryBase<TE
     private static Expression<Func<TEntity, object>> CreateProjection(Type dtoType)
     {
         var parameterExpr = Expression.Parameter(typeof(TEntity), "entity");
-        var bindings = CreateBindings(parameterExpr, typeof(TEntity), dtoType);
+        bool checkNestedNavigation = false;
+        HashSet<Type> visitedTypes = [];
+        if (!dtoType.Name.Contains("Dto", StringComparison.OrdinalIgnoreCase))
+        {
+            checkNestedNavigation = true;
+            visitedTypes = [dtoType];
+        }
+        var bindings = CreateBindings(parameterExpr, typeof(TEntity), dtoType, visitedTypes, checkNestedNavigation);
 
         var body = Expression.MemberInit(Expression.New(dtoType), bindings);
         return Expression.Lambda<Func<TEntity, object>>(body, parameterExpr);
     }
 
-    private static IEnumerable<MemberBinding> CreateBindings(Expression source, Type sourceType, Type targetType)
+    private static IEnumerable<MemberBinding> CreateBindings(Expression source, Type sourceType, Type targetType, HashSet<Type> visitedTypes, bool checkNestedNavigation)
     {
         var bindings = new List<MemberBinding>();
 
@@ -307,7 +314,7 @@ public abstract class GenericRepositoryBase<TEntity> : IGenericRepositoryBase<TE
                     var collectionType = targetProp.PropertyType.GetGenericArguments()[0];
                     var entityCollectionType = sourceProp.PropertyType.GetGenericArguments()[0];
 
-                    var selectExpression = CreateCollectionSelectExpression(entityCollectionType, collectionType);
+                    var selectExpression = CreateCollectionSelectExpression(entityCollectionType, collectionType, visitedTypes, checkNestedNavigation);
 
                     // Create a call to Enumerable.Select
                     var selectCallExpression = Expression.Call(
@@ -325,7 +332,12 @@ public abstract class GenericRepositoryBase<TEntity> : IGenericRepositoryBase<TE
                 }
                 else // Complex type
                 {
-                    var nestedBindings = CreateBindings(propertyExpr, sourceProp.PropertyType, targetProp.PropertyType);
+                    if (visitedTypes.Contains(targetProp.PropertyType))
+                    {
+                        continue;
+                    }
+                    visitedTypes.Add(targetProp.PropertyType);
+                    var nestedBindings = CreateBindings(propertyExpr, sourceProp.PropertyType, targetProp.PropertyType, visitedTypes, checkNestedNavigation);
                     var nestedBody = Expression.MemberInit(Expression.New(targetProp.PropertyType), nestedBindings);
                     binding = Expression.Bind(targetProp, nestedBody);
                 }
@@ -337,10 +349,10 @@ public abstract class GenericRepositoryBase<TEntity> : IGenericRepositoryBase<TE
         return bindings;
     }
 
-    private static LambdaExpression CreateCollectionSelectExpression(Type sourceType, Type targetType)
+    private static LambdaExpression CreateCollectionSelectExpression(Type sourceType, Type targetType, HashSet<Type> visitedTypes, bool checkNestedNavigation)
     {
         var parameter = Expression.Parameter(sourceType, "x");
-        var bindings = CreateBindings(parameter, sourceType, targetType);
+        var bindings = CreateBindings(parameter, sourceType, targetType, visitedTypes, checkNestedNavigation);
         var body = Expression.MemberInit(Expression.New(targetType), bindings);
         return Expression.Lambda(body, parameter);
     }

@@ -48,6 +48,18 @@ internal static class TicketTestSeedData
 
         for (int i = 0; i < ticketSize; i++)
         {
+            // Create ticket now
+            Ticket ticket = new()
+            {
+                Title = $"Title {titleSuffix++}",
+                Content = $"Content {contentSuffix++}",
+                ReportDate = DateTime.Now,
+                Tags = null
+            };
+
+            context.Tickets.Add(ticket);
+            await unitOfWork.SaveChangesAsync();
+
             // Random amount of ticket tags
             int tagSuffix = TagSuffix;
             var ticketTags = new List<TicketTag>();
@@ -56,24 +68,18 @@ internal static class TicketTestSeedData
             {
                 TicketTag ticketTag = new()
                 {
-                    Description = $"Tag Description{tagSuffix++}"
+                    Description = $"Tag Description{tagSuffix++}",
+                    TicketId = ticket.Id,
+                    Ticket = ticket
                 };
                 ticketTags.Add(ticketTag);
             }
 
-            // Create ticket now
-            Ticket ticket = new()
-            {
-                Title = $"Title {titleSuffix++}",
-                Content = $"Content {contentSuffix++}",
-                ReportDate = DateTime.Now,
-                Tags = ticketTags
-            };
+            await context.TicketTags.AddRangeAsync(ticketTags);
+            await unitOfWork.SaveChangesAsync();
 
             tickets.Add(ticket);
         }
-        context.Tickets.AddRange(tickets);
-        await unitOfWork.SaveChangesAsync();
 
         #endregion
 
