@@ -3,7 +3,7 @@ using AppyNox.Services.Base.Domain.Interfaces;
 
 namespace AppyNox.Services.Coupon.Domain.Coupons;
 
-public sealed class CouponHistory : AggregateRoot, IHasStronglyTypedId
+public sealed class CouponHistory : AggregateMember, IHasStronglyTypedId
 {
     #region [ Properties ]
 
@@ -23,7 +23,7 @@ public sealed class CouponHistory : AggregateRoot, IHasStronglyTypedId
 
     #region [ IHasStronglyTypedId ]
 
-    public Guid GetTypedId => Id.Value;
+    public Guid GetTypedId() => Id.Value;
 
     #endregion
 
@@ -53,8 +53,14 @@ public sealed class CouponHistory : AggregateRoot, IHasStronglyTypedId
 
 #region [ Value Objects ]
 
-public sealed record CouponHistoryId(Guid Value) : IHasGuidId
+public sealed record CouponHistoryId : IHasGuidId
 {
+    private CouponHistoryId() { }
+    public CouponHistoryId(Guid value)
+    {
+        Value = value;
+    }
+    public Guid Value { get; private set; }
     public Guid GetGuidValue() => Value;
 }
 

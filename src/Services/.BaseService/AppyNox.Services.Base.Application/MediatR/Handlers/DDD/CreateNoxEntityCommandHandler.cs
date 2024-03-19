@@ -62,7 +62,7 @@ internal sealed class CreateNoxEntityCommandHandler<TEntity>(
             await _repository.AddAsync(mappedEntity);
             await _unitOfWork.SaveChangesAsync(NoxContext.UserId.ToString());
             await UpdateTotalCountOnCache(_cacheService, $"total-count-{typeof(TEntity).Name}", true);
-            return mappedEntity.GetTypedId;
+            return mappedEntity.GetTypedId();
         }
         catch (Exception ex) when (ex is INoxException)
         {

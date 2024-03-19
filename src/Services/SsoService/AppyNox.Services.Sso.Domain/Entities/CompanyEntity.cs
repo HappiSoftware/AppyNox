@@ -2,7 +2,7 @@
 
 namespace AppyNox.Services.Sso.Domain.Entities;
 
-public class CompanyEntity : IHasStronglyTypedId, IHasCode
+public class CompanyEntity : IHasCode
 {
     #region [ Properties ]
 
@@ -23,12 +23,6 @@ public class CompanyEntity : IHasStronglyTypedId, IHasCode
     public virtual ICollection<ApplicationUser>? Users { get; set; }
 
     public virtual ICollection<ApplicationRole>? Roles { get; set; }
-
-    #endregion
-
-    #region [ IEntityTypeId ]
-
-    Guid IHasStronglyTypedId.GetTypedId => Id;
 
     #endregion
 }

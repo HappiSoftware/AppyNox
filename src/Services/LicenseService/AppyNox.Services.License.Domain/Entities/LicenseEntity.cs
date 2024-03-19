@@ -35,9 +35,9 @@ public class LicenseEntity : AggregateRoot, IHasStronglyTypedId, IHasCode
 
     #endregion
 
-    #region [ IEntityTypeId ]
+    #region [ IHasStronglyTypedId ]
 
-    Guid IHasStronglyTypedId.GetTypedId => Id.Value;
+    public Guid GetTypedId() => Id.Value;
 
     #endregion
 

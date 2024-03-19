@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections;
 using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
+using System.Reflection;
 
 namespace AppyNox.Services.Base.Infrastructure.Repositories;
 
@@ -86,6 +87,10 @@ public abstract class NoxRepositoryBase<TEntity> : INoxRepositoryBase<TEntity> w
     /// <returns>A task representing the asynchronous operation, returning the retrieved entity.</returns>
     /// <exception cref="EntityNotFoundException{TEntity}">Thrown when the entity with the specified ID is not found.</exception>
     /// <exception cref="NoxInfrastructureException">Thrown when there is an error retrieving the entity from the database.</exception>
+    /// <remarks>
+    /// <para>Use <see cref="GetByIdAsync"/> instead. This method will be removed in v1.8.0.</para>
+    /// </remarks>
+    [Obsolete("Use GetByIdAsync instead. This method will be removed in v1.8.0")]
     public async Task<TEntity> GetEntityByIdAsync<TId>(TId id)
         where TId : IHasGuidId
     {
@@ -270,6 +275,11 @@ public abstract class NoxRepositoryBase<TEntity> : INoxRepositoryBase<TEntity> w
         }
     }
 
+    private static bool IsValueObject(Type type)
+    {
+        return typeof(IValueObject).IsAssignableFrom(type);
+    }
+
     private static Expression<Func<TEntity, object>> CreateProjection(Type dtoType)
     {
         var parameterExpr = Expression.Parameter(typeof(TEntity), "entity");
@@ -318,14 +328,19 @@ public abstract class NoxRepositoryBase<TEntity> : INoxRepositoryBase<TEntity> w
 
                     var selectExpression = CreateCollectionSelectExpression(entityCollectionType, collectionType, visitedTypes, checkNestedNavigation);
                     var callExpression = Expression.Call(
-                        typeof(Enumerable), "Select", new Type[] { entityCollectionType, collectionType },
+                        typeof(Enumerable), "Select", [entityCollectionType, collectionType],
                         propertyExpr, selectExpression);
 
-                    binding = Expression.Bind(targetProp, callExpression);
+                    var toListMethod = typeof(Enumerable).GetMethod("ToList")
+                        ?? throw new NoxInfrastructureException("Unable to find the 'ToList' method on the 'Enumerable' class.", (int)NoxInfrastructureExceptionCode.ProjectionError);
+                    toListMethod = toListMethod.MakeGenericMethod([collectionType]);
+                    var toListExpression = Expression.Call(null, toListMethod, callExpression);
+
+                    binding = Expression.Bind(targetProp, toListExpression);
                 }
                 else // Complex type
                 {
-                    if (checkNestedNavigation)
+                    if (checkNestedNavigation && !IsValueObject(targetProp.PropertyType))
                     {
                         if (visitedTypes.Contains(targetProp.PropertyType))
                         {

@@ -1,6 +1,5 @@
 ﻿using AppyNox.Services.Base.Domain;
 using AppyNox.Services.Base.Domain.Interfaces;
-using System.ComponentModel.Design;
 
 namespace AppyNox.Services.License.Domain.Entities;
 
@@ -26,9 +25,9 @@ public class ProductEntity : AggregateRoot, IHasStronglyTypedId, IHasCode
 
     #endregion
 
-    #region [ IEntityTypeId ]
+    #region [ IHasStronglyTypedId ]
 
-    Guid IHasStronglyTypedId.GetTypedId => Id.Value;
+    public Guid GetTypedId() => Id.Value;
 
     #endregion
 
