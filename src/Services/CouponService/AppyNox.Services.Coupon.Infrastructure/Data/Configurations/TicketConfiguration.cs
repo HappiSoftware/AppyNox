@@ -16,7 +16,7 @@ internal class TicketConfiguration(Guid ticketId) : IEntityTypeConfiguration<Tic
         builder.Property(t => t.ReportDate).IsRequired();
 
         builder.HasMany(t => t.Tags)
-            .WithOne()
+            .WithOne(tg => tg.Ticket)
             .HasForeignKey(tt => tt.TicketId)
             .OnDelete(DeleteBehavior.Cascade);
 
