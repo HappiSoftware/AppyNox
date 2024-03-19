@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to AppyNox will be documented in this file.
 
+
+## [1.8.0](https://github.com/HappiSoftware/AppyNox/compare/v1.7.0...v1.8.0) - NOT RELEASED
+
+
 ## [1.7.0](https://github.com/HappiSoftware/AppyNox/compare/v1.6.0...v1.7.0) - 2024.03.19
 ### Added
 - Feature request: Generic repository Projection should handle nested entities ([#247](https://github.com/HappiSoftware/AppyNox/issues/247))
