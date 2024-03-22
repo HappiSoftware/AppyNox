@@ -3,7 +3,8 @@ name: Deploy Docsify Documentation
 on:
   push:
     branches:
-      - gh-docs  # This is where you specify your branch
+      - gh-pages
+  workflow_dispatch:
 
 jobs:
   deploy:
