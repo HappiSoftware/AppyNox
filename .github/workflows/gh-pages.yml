@@ -12,7 +12,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Deploy Docsify to GitHub Pages
-      uses: tool3/docsify-action@master
+      uses: tool3/docsify-action@v1.0.3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        docs_folder: ./docs/
