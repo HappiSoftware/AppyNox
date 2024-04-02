@@ -11,6 +11,8 @@
 
         private static readonly AsyncLocal<Guid> _userId = new();
 
+        private static readonly AsyncLocal<Guid> _companyId = new();
+
         #endregion
 
         #region [ Properties ]
@@ -31,6 +33,15 @@
         {
             get => _userId.Value;
             set => _userId.Value = value;
+        }
+
+        /// <summary>
+        /// Gets or sets the Company ID for the current request.
+        /// </summary>
+        public static Guid CompanyId
+        {
+            get => _companyId.Value;
+            set => _companyId.Value = value;
         }
 
         #endregion
