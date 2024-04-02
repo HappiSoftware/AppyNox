@@ -52,18 +52,26 @@ namespace AppyNox.Services.Base.API.Middleware
                 NoxContext.CorrelationId = Guid.Parse(correlationId);
                 context.Response.Headers["X-Correlation-ID"] = correlationId;
 
-                // Extracting and setting UserId from JWT token
+                // Extracting and setting UserId and CompanyId from JWT token
                 var token = context.Request.Headers.Authorization.FirstOrDefault()?.Split(' ').Last();
                 if (!string.IsNullOrEmpty(token))
                 {
                     var handler = new JwtSecurityTokenHandler();
                     if (handler.CanReadToken(token))
                     {
+                        // userid
                         var jwtToken = handler.ReadJwtToken(token);
                         var userIdClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == "nameid")?.Value;
                         if (!string.IsNullOrEmpty(userIdClaim) && Guid.TryParse(userIdClaim, out Guid parsedUserId))
                         {
                             NoxContext.UserId = parsedUserId;
+                        }
+
+                        // companyid
+                        var companyIdClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == "company")?.Value;
+                        if (!string.IsNullOrEmpty(companyIdClaim) && Guid.TryParse(companyIdClaim, out Guid parsedCompanyIdClaim))
+                        {
+                            NoxContext.CompanyId = parsedCompanyIdClaim;
                         }
                     }
                 }
@@ -75,6 +83,7 @@ namespace AppyNox.Services.Base.API.Middleware
                 // Resetting the AsyncLocal values at the end of the request
                 NoxContext.CorrelationId = Guid.Empty;
                 NoxContext.UserId = Guid.Empty;
+                NoxContext.CompanyId = Guid.Empty;
             }
         }
 
