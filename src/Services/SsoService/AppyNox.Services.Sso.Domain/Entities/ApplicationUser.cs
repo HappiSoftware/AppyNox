@@ -17,7 +17,7 @@ namespace AppyNox.Services.Sso.Domain.Entities
 
         public Guid CompanyId { get; set; }
 
-        public virtual CompanyEntity Company { get; set; } = null!;
+        public virtual Company Company { get; set; } = null!;
 
         #endregion
     }

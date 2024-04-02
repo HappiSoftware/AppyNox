@@ -19,6 +19,7 @@ using AppyNox.Services.Sso.WebAPI.Managers;
 using AppyNox.Services.Sso.WebAPI.Middlewares;
 using AppyNox.Services.Sso.WebAPI.Permission;
 using Asp.Versioning;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Localization;
@@ -152,9 +153,8 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new SymmetricSecurityKey(jwtConfiguration.GetSecretKeyBytes())
     };
 })
-.AddScheme<NoxSsoJwtAuthenticationHandlerOptions, NoxSsoJwtAuthenticationHandler>("NoxSsoJwtScheme", options =>
+.AddScheme<AuthenticationSchemeOptions, NoxSsoJwtAuthenticationHandler>("NoxSsoJwtScheme", options =>
 {
-    options.Audience = "AppyNox";
 });
 
 builder.Services.AddScoped<ICustomTokenManager, JwtTokenManager>();

@@ -2,7 +2,7 @@
 
 namespace AppyNox.Services.Sso.Domain.Entities;
 
-public class CompanyEntity : IHasCode
+public class Company : IHasCode
 {
     #region [ Properties ]
 
@@ -23,6 +23,8 @@ public class CompanyEntity : IHasCode
     public virtual ICollection<ApplicationUser>? Users { get; set; }
 
     public virtual ICollection<ApplicationRole>? Roles { get; set; }
+
+    public virtual ICollection<EmailProvider> EmailProviders { get; set; } = [];
 
     #endregion
 }

@@ -184,7 +184,7 @@ namespace AppyNox.Services.Sso.Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("AppyNox.Services.Sso.Domain.Entities.CompanyEntity", b =>
+            modelBuilder.Entity("AppyNox.Services.Sso.Domain.Entities.Company", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -456,7 +456,7 @@ namespace AppyNox.Services.Sso.Infrastructure.Migrations
 
             modelBuilder.Entity("AppyNox.Services.Sso.Domain.Entities.ApplicationRole", b =>
                 {
-                    b.HasOne("AppyNox.Services.Sso.Domain.Entities.CompanyEntity", "Company")
+                    b.HasOne("AppyNox.Services.Sso.Domain.Entities.Company", "Company")
                         .WithMany("Roles")
                         .HasForeignKey("CompanyId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -467,7 +467,7 @@ namespace AppyNox.Services.Sso.Infrastructure.Migrations
 
             modelBuilder.Entity("AppyNox.Services.Sso.Domain.Entities.ApplicationUser", b =>
                 {
-                    b.HasOne("AppyNox.Services.Sso.Domain.Entities.CompanyEntity", "Company")
+                    b.HasOne("AppyNox.Services.Sso.Domain.Entities.Company", "Company")
                         .WithMany("Users")
                         .HasForeignKey("CompanyId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -527,7 +527,7 @@ namespace AppyNox.Services.Sso.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("AppyNox.Services.Sso.Domain.Entities.CompanyEntity", b =>
+            modelBuilder.Entity("AppyNox.Services.Sso.Domain.Entities.Company", b =>
                 {
                     b.Navigation("Roles");
 
