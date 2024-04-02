@@ -5,14 +5,14 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace AppyNox.Services.Sso.Infrastructure.Data.Configurations
 {
     /// <summary>
-    /// Configures the entity type CompanyEntity and seeds initial data.
+    /// Configures the entity type Company and seeds initial data.
     /// </summary>
     /// <remarks>
-    /// Initializes a new instance of the CompanyEntity class with the specified company ID.
+    /// Initializes a new instance of the Company class with the specified company ID.
     /// </remarks>
-    /// <param name="happiCompanyId">The ID of the Happi CompanyEntity for seeding data.</param>
-    /// <param name="companyId">The ID of the CompanyEntity for seeding data.</param>
-    internal class CompanyConfiguration(Guid happiCompanyId, Guid companyId) : IEntityTypeConfiguration<CompanyEntity>
+    /// <param name="happiCompanyId">The ID of the Happi Company for seeding data.</param>
+    /// <param name="companyId">The ID of the Company for seeding data.</param>
+    internal class CompanyConfiguration(Guid happiCompanyId, Guid companyId) : IEntityTypeConfiguration<Company>
     {
         #region [ Fields ]
 
@@ -25,10 +25,10 @@ namespace AppyNox.Services.Sso.Infrastructure.Data.Configurations
         #region [ Public Methods ]
 
         /// <summary>
-        /// Configures the CompanyEntity entity type and seeds data.
+        /// Configures the Company entity type and seeds data.
         /// </summary>
         /// <param name="builder">The builder being used to construct the entity type model.</param>
-        public void Configure(EntityTypeBuilder<CompanyEntity> builder)
+        public void Configure(EntityTypeBuilder<Company> builder)
         {
             #region [ Configurations ]
 
@@ -51,6 +51,12 @@ namespace AppyNox.Services.Sso.Infrastructure.Data.Configurations
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Cascade);
 
+            builder.HasMany(c => c.EmailProviders)
+                .WithOne()
+                .HasForeignKey(c => c.CompanyId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Cascade);
+
             builder.Property(x => x.Name).IsRequired();
 
             #endregion
@@ -58,12 +64,12 @@ namespace AppyNox.Services.Sso.Infrastructure.Data.Configurations
             #region [ Seeds ]
 
             builder.HasData(
-                new CompanyEntity
+                new Company
                 {
                     Id = _happiCompanyId,
                     Name = "HappiSoft"
                 },
-                new CompanyEntity
+                new Company
                 {
                     Id = _companyId,
                     Name = "TestCompany"

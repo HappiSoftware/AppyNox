@@ -34,7 +34,9 @@ namespace AppyNox.Services.Sso.Infrastructure.Data
 
         #region [ Properties ]
 
-        public DbSet<CompanyEntity> Companies { get; set; }
+        public DbSet<Company> Companies { get; set; }
+
+        public DbSet<EmailProvider> EmailProviders { get; set; }
 
         #endregion
 
@@ -64,6 +66,7 @@ namespace AppyNox.Services.Sso.Infrastructure.Data
             builder.ApplyConfiguration(new ApplicationUserConfiguration(adminUserId, companyId, superAdminUserId, happiCompanyId));
             builder.ApplyConfiguration(new ApplicationRoleClaimConfiguration(adminRoleId));
             builder.ApplyConfiguration(new ApplicationUserRoleConfiguration(adminRoleId, adminUserId, superAdminRoleId, superAdminUserId));
+            builder.ApplyConfiguration(new EmailProviderConfiguration());
 
             #endregion
 

@@ -62,7 +62,7 @@ namespace AppyNox.Services.Sso.WebAPI.Managers
             }
 
             //create an empty list for userClaims
-            IEnumerable<Claim> userClaims = Enumerable.Empty<Claim>();
+            IEnumerable<Claim> userClaims = [];
 
             //fill userClaim with associated claims
             foreach (var item in roles)
