@@ -25,6 +25,8 @@ namespace AppyNox.Services.Base.Infrastructure.ExceptionExtensions.Base
         DeletingDataError = 1006,
 
         ProjectionError = 1007,
+
+        SqlInjectionError = 1008
     }
 
     #endregion

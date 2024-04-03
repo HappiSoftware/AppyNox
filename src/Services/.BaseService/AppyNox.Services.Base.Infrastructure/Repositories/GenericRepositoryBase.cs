@@ -2,14 +2,13 @@
 using AppyNox.Services.Base.Application.Interfaces.Caches;
 using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Application.Interfaces.Repositories;
+using AppyNox.Services.Base.Core.ExceptionExtensions.Base;
 using AppyNox.Services.Base.Domain.Interfaces;
 using AppyNox.Services.Base.Infrastructure.ExceptionExtensions;
 using AppyNox.Services.Base.Infrastructure.ExceptionExtensions.Base;
 using Microsoft.EntityFrameworkCore;
-using System.Collections;
 using System.Linq.Dynamic.Core;
-using System.Linq.Expressions;
-using System.Reflection;
+using static AppyNox.Services.Base.Infrastructure.Repositories.RepositoryHelpers;
 
 namespace AppyNox.Services.Base.Infrastructure.Repositories;
 
@@ -57,46 +56,7 @@ public abstract class GenericRepositoryBase<TEntity> : IGenericRepositoryBase<TE
         try
         {
             _logger.LogInformation($"Attempting to retrieve entity with ID: '{id}' Type: '{typeof(TEntity).Name}'.");
-            object? entity = await _dbSet.Where("Id == @0", id).Select(CreateProjection(dtoType)).AsNoTracking().FirstOrDefaultAsync();
-
-            if (entity == null)
-            {
-                _logger.LogWarning($"Entity with ID: {id} not found.");
-
-                throw new EntityNotFoundException<TEntity>(id);
-            }
-
-            _logger.LogInformation($"Successfully retrieved entity with ID: '{id}' Type: '{typeof(TEntity).Name}'.");
-            return entity;
-        }
-        catch (NoxInfrastructureException)
-        {
-            throw;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, $"Error retrieving entity with ID: '{id}' Type: '{typeof(TEntity).Name}'.");
-            throw new NoxInfrastructureException(ex, (int)NoxInfrastructureExceptionCode.DataFetchingError);
-        }
-    }
-
-    /// <summary>
-    /// Retrieves an entity asynchronously by its ID.
-    /// </summary>
-    /// <param name="id">The ID of the entity to retrieve.</param>
-    /// <returns>A task representing the asynchronous operation, returning the retrieved entity.</returns>
-    /// <exception cref="EntityNotFoundException{TEntity}">Thrown when the entity with the specified ID is not found.</exception>
-    /// <exception cref="NoxInfrastructureException">Thrown when there is an error retrieving the entity from the database.</exception>
-    /// <remarks>
-    /// <para>Use <see cref="GetByIdAsync"/> instead. This method will be removed in v1.8.0.</para>
-    /// </remarks>
-    [Obsolete("Use GetByIdAsync instead. This method will be removed in v1.8.0")]
-    public async Task<TEntity> GetEntityByIdAsync(Guid id)
-    {
-        try
-        {
-            _logger.LogInformation($"Attempting to retrieve entity with ID: '{id}' Type: '{typeof(TEntity).Name}'.");
-            TEntity? entity = await _dbSet.Where("Id == @0", id).AsNoTracking().FirstOrDefaultAsync();
+            object? entity = await _dbSet.Where("Id == @0", id).Select(CreateProjection<TEntity>(dtoType)).AsNoTracking().FirstOrDefaultAsync();
 
             if (entity == null)
             {
@@ -142,10 +102,18 @@ public abstract class GenericRepositoryBase<TEntity> : IGenericRepositoryBase<TE
                 await cacheService.SetCachedValueAsync(_countCacheKey, totalCount.ToString(), TimeSpan.FromMinutes(10));
             }
 
-            var entities = await _dbSet
-                .AsQueryable()
-                .AsNoTracking()
-                .Select(CreateProjection(dtoType))
+            var query = _dbSet
+            .AsQueryable()
+            .AsNoTracking();
+
+            // Validate and apply sorting
+            if (!string.IsNullOrWhiteSpace(queryParameters.SortBy) && ValidateSortBy(queryParameters.SortBy, typeof(TEntity)))
+            {
+                query = query.OrderBy(queryParameters.SortBy);
+            }
+
+            var entities = await query
+                .Select(CreateProjection<TEntity>(dtoType))
                 .Skip((queryParameters.PageNumber - 1) * queryParameters.PageSize)
                 .Take(queryParameters.PageSize)
                 .ToListAsync();
@@ -159,6 +127,10 @@ public abstract class GenericRepositoryBase<TEntity> : IGenericRepositoryBase<TE
                 CurrentPage = queryParameters.PageNumber,
                 PageSize = queryParameters.PageSize
             };
+        }
+        catch (Exception ex) when (ex is INoxException)
+        {
+            throw;
         }
         catch (Exception ex)
         {
@@ -241,148 +213,6 @@ public abstract class GenericRepositoryBase<TEntity> : IGenericRepositoryBase<TE
             _logger.LogError(ex, $"Error deleting entity with ID: '{id}' Type: '{typeof(TEntity).Name}'.");
             throw new NoxInfrastructureException(ex, (int)NoxInfrastructureExceptionCode.DeletingDataError);
         }
-    }
-
-    #endregion
-
-    #region [ Projection ]
-
-    private static bool IsSimpleType(Type type)
-    {
-        if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
-        {
-            // If it's a nullable type, check if the underlying type is simple.
-            return IsSimpleType(Nullable.GetUnderlyingType(type)!);
-        }
-
-        if (type == typeof(Guid) || type == typeof(Guid?))
-        {
-            return true;
-        }
-
-        var typeCode = Type.GetTypeCode(type);
-        switch (typeCode)
-        {
-            case TypeCode.Empty:
-            case TypeCode.Object:
-                return false;
-
-            default:
-                return true;
-        }
-    }
-
-    private static Expression<Func<TEntity, object>> CreateProjection(Type dtoType)
-    {
-        var parameterExpr = Expression.Parameter(typeof(TEntity), "entity");
-        bool checkNestedNavigation = false;
-        HashSet<Type> visitedTypes = [];
-        if (!dtoType.Name.Contains("Dto", StringComparison.OrdinalIgnoreCase))
-        {
-            checkNestedNavigation = true;
-            visitedTypes = [dtoType];
-        }
-        var bindings = CreateBindings(parameterExpr, typeof(TEntity), dtoType, visitedTypes, checkNestedNavigation);
-
-        var body = Expression.MemberInit(Expression.New(dtoType), bindings);
-        return Expression.Lambda<Func<TEntity, object>>(body, parameterExpr);
-    }
-
-    private static IEnumerable<MemberBinding> CreateBindings(Expression source, Type sourceType, Type targetType, HashSet<Type> visitedTypes, bool checkNestedNavigation)
-    {
-        var bindings = new List<MemberBinding>();
-
-        foreach (var targetProp in targetType.GetProperties())
-        {
-            if (targetProp.PropertyType == typeof(AuditInformation))
-            {
-                var auditInfoBindings = MapAuditInfoWithShadowProperties(source);
-                var auditInfoInit = Expression.MemberInit(Expression.New(typeof(AuditInformation)), auditInfoBindings);
-                bindings.Add(Expression.Bind(targetProp, auditInfoInit));
-                continue;
-            }
-
-            var sourceProp = sourceType.GetProperty(targetProp.Name);
-            if (sourceProp != null)
-            {
-                Expression propertyExpr = Expression.Property(source, sourceProp);
-                MemberBinding binding;
-
-                if (IsSimpleType(targetProp.PropertyType))
-                {
-                    binding = Expression.Bind(targetProp, propertyExpr);
-                }
-                else if (typeof(IEnumerable).IsAssignableFrom(targetProp.PropertyType) && targetProp.PropertyType.IsGenericType)
-                {
-                    // Handle collections
-                    var collectionType = targetProp.PropertyType.GetGenericArguments()[0];
-                    var entityCollectionType = sourceProp.PropertyType.GetGenericArguments()[0];
-
-                    var selectExpression = CreateCollectionSelectExpression(entityCollectionType, collectionType, visitedTypes, checkNestedNavigation);
-
-                    // Create a call to Enumerable.Select
-                    var selectCallExpression = Expression.Call(
-                        typeof(Enumerable), nameof(Enumerable.Select),
-                        [entityCollectionType, collectionType],
-                        propertyExpr, selectExpression);
-
-                    // Convert the IEnumerable result to a List (which implements ICollection)
-                    var toListMethod = typeof(Enumerable).GetMethod(nameof(Enumerable.ToList))!
-                                                          .MakeGenericMethod(collectionType);
-                    var toListCallExpression = Expression.Call(null, toListMethod, selectCallExpression);
-
-                    // Bind the List result to the target property
-                    binding = Expression.Bind(targetProp, toListCallExpression);
-                }
-                else // Complex type
-                {
-                    if (visitedTypes.Contains(targetProp.PropertyType))
-                    {
-                        continue;
-                    }
-                    visitedTypes.Add(targetProp.PropertyType);
-                    var nestedBindings = CreateBindings(propertyExpr, sourceProp.PropertyType, targetProp.PropertyType, visitedTypes, checkNestedNavigation);
-                    var nestedBody = Expression.MemberInit(Expression.New(targetProp.PropertyType), nestedBindings);
-                    binding = Expression.Bind(targetProp, nestedBody);
-                }
-
-                bindings.Add(binding);
-            }
-        }
-
-        return bindings;
-    }
-
-    private static LambdaExpression CreateCollectionSelectExpression(Type sourceType, Type targetType, HashSet<Type> visitedTypes, bool checkNestedNavigation)
-    {
-        var parameter = Expression.Parameter(sourceType, "x");
-        var bindings = CreateBindings(parameter, sourceType, targetType, visitedTypes, checkNestedNavigation);
-        var body = Expression.MemberInit(Expression.New(targetType), bindings);
-        return Expression.Lambda(body, parameter);
-    }
-
-    private static IEnumerable<MemberBinding> MapAuditInfoWithShadowProperties(Expression source)
-    {
-        var auditPropertyNames = new[] { "CreatedBy", "CreationDate", "UpdatedBy", "UpdateDate" };
-        var auditInfoType = typeof(AuditInformation);
-        var bindings = new List<MemberBinding>();
-
-        foreach (var propName in auditPropertyNames)
-        {
-            var targetProp = auditInfoType.GetProperty(propName);
-            if (targetProp != null)
-            {
-                var propertyAccess = Expression.Call(
-                    typeof(EF), nameof(EF.Property),
-                    [targetProp.PropertyType],
-                    source, Expression.Constant(propName));
-
-                var binding = Expression.Bind(targetProp, propertyAccess);
-                bindings.Add(binding);
-            }
-        }
-
-        return bindings;
     }
 
     #endregion
