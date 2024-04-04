@@ -12,7 +12,7 @@ namespace AppyNox.Services.Base.Infrastructure.Repositories.Common
         /// <summary>
         /// Initializes a new instance of the <see cref="QueryParameters"/> class with default settings.
         /// </summary>
-        public QueryParameters() : base()
+        public QueryParameters()
         {
         }
 

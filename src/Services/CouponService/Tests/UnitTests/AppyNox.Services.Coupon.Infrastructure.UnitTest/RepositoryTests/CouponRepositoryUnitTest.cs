@@ -1,5 +1,6 @@
 ﻿using AppyNox.Services.Base.Application.Interfaces.Caches;
 using AppyNox.Services.Base.Infrastructure.ExceptionExtensions;
+using AppyNox.Services.Base.Infrastructure.ExceptionExtensions.Base;
 using AppyNox.Services.Base.Infrastructure.Repositories.Common;
 using AppyNox.Services.Base.Infrastructure.UnitTests.Fixtures;
 using AppyNox.Services.Base.Infrastructure.UnitTests.Stubs;
@@ -16,6 +17,8 @@ using Microsoft.Extensions.Localization;
 using Moq;
 using System.Net;
 using CouponAggregate = AppyNox.Services.Coupon.Domain.Coupons.Coupon;
+using AppyNox.Services.Base.Application.Extensions;
+using AppyNox.Services.Base.Application.Dtos;
 
 namespace AppyNox.Services.Coupon.Infrastructure.UnitTest.RepositoryTests;
 
@@ -74,6 +77,85 @@ public class CouponRepositoryUnitTest : IClassFixture<RepositoryFixture>
 
         Assert.NotNull(result);
         Assert.Single(result.Items);
+    }
+
+    [Theory]
+    [InlineData(typeof(CouponAggregate))]
+    [InlineData(typeof(CouponWithAllRelationsDto))]
+    public async Task GetAllAsync_ShouldApplySorting(Type fetchType)
+    {
+        CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
+        UnitOfWork unitOfWork = new(context, _noxLoggerStub);
+        await context.SeedMultipleCoupons(unitOfWork, 2, 1);
+        var repository = new CouponRepository<CouponAggregate>(context, _noxLoggerStub);
+        QueryParameters queryParameters = new()
+        {
+            Access = string.Empty,
+            DetailLevel = "WithAllRelations",
+            PageNumber = 1,
+            PageSize = 2,
+            SortBy = "code asc, CouponDetail.Detail desc"
+        };
+
+        var result = await repository.GetAllAsync(queryParameters, fetchType, _cacheService);
+
+        Assert.NotNull(result);
+        Assert.Equal(2, result.Items.Count());
+    }
+
+    [Theory]
+    [InlineData(typeof(CouponAggregate), "code asc2")]
+    [InlineData(typeof(CouponSimpleDto), "test desc")]
+    public async Task GetAllAsync_ShouldRefuseWrongSortBy(Type fetchType, string sortBy)
+    {
+        CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
+        UnitOfWork unitOfWork = new(context, _noxLoggerStub);
+        await context.SeedMultipleCoupons(unitOfWork, 2, 1);
+        var repository = new CouponRepository<CouponAggregate>(context, _noxLoggerStub);
+        QueryParameters queryParameters = new()
+        {
+            Access = string.Empty,
+            DetailLevel = "WithAllRelations",
+            PageNumber = 1,
+            PageSize = 2,
+            SortBy = sortBy
+        };
+
+        var exception = await Assert.ThrowsAsync<NoxInfrastructureException>(() => repository.GetAllAsync(queryParameters, fetchType, _cacheService));
+        Assert.Equal((int)HttpStatusCode.BadRequest, exception.StatusCode);
+        Assert.Equal(1008, exception.ExceptionCode);
+    }
+
+    [Theory]
+    [InlineData("Amount.DiscountAmount", true)]
+    [InlineData("Amount.DiscountAmount desc", false)]
+    public async Task GetAllAsync_ShouldSortCorrectly(string sortBy, bool ascending)
+    {
+        CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
+        UnitOfWork unitOfWork = new(context, _noxLoggerStub);
+        await context.SeedMultipleCoupons(unitOfWork, 2, 1);
+        var repository = new CouponRepository<CouponAggregate>(context, _noxLoggerStub);
+        QueryParameters queryParameters = new()
+        {
+            Access = string.Empty,
+            DetailLevel = "WithAllRelations",
+            PageNumber = 1,
+            PageSize = 2,
+            SortBy = sortBy
+        };
+
+        var result = await repository.GetAllAsync(queryParameters, typeof(CouponSimpleDto), _cacheService);
+        TypedPaginatedList<CouponSimpleDto> typedList = result.ConvertToTypedPaginatedList<CouponSimpleDto>();
+        Assert.NotNull(result);
+        Assert.Equal(2, result.Items.Count());
+        if (ascending)
+        {
+            Assert.True(typedList.Items.ElementAt(0).Amount.DiscountAmount < typedList.Items.ElementAt(1).Amount.DiscountAmount);
+        }
+        else
+        {
+            Assert.True(typedList.Items.ElementAt(0).Amount.DiscountAmount > typedList.Items.ElementAt(1).Amount.DiscountAmount);
+        }
     }
 
     [Fact]
