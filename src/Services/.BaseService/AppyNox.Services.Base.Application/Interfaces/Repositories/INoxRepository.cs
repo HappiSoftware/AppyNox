@@ -4,7 +4,7 @@ using AppyNox.Services.Base.Domain.Interfaces;
 
 namespace AppyNox.Services.Base.Application.Interfaces.Repositories;
 
-public interface INoxRepositoryBase<TEntity> where TEntity : class, IHasStronglyTypedId
+public interface INoxRepository<TEntity> where TEntity : class, IHasStronglyTypedId
 {
     #region Public Methods
 

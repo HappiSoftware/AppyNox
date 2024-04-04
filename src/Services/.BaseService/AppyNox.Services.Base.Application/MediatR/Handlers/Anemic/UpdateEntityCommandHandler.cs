@@ -19,7 +19,7 @@ using System.Text.Json;
 namespace AppyNox.Services.Base.Application.MediatR.Handlers.Anemic;
 
 internal class UpdateEntityCommandHandler<TEntity>(
-        IGenericRepositoryBase<TEntity> repository,
+        IGenericRepository<TEntity> repository,
         IMapper mapper,
         IDtoMappingRegistryBase dtoMappingRegistry,
         IServiceProvider serviceProvider,
@@ -31,7 +31,7 @@ internal class UpdateEntityCommandHandler<TEntity>(
 {
     #region [ Fields ]
 
-    private readonly IGenericRepositoryBase<TEntity> _repository = repository;
+    private readonly IGenericRepository<TEntity> _repository = repository;
 
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 

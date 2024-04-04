@@ -11,7 +11,7 @@ using MediatR;
 namespace AppyNox.Services.Base.Application.MediatR.Handlers.Anemic;
 
 internal class GetEntityByIdQueryHandler<TEntity>(
-        IGenericRepositoryBase<TEntity> repository,
+        IGenericRepository<TEntity> repository,
         IMapper mapper,
         IDtoMappingRegistryBase dtoMappingRegistry,
         IServiceProvider serviceProvider,
@@ -22,7 +22,7 @@ internal class GetEntityByIdQueryHandler<TEntity>(
 {
     #region [ Fields ]
 
-    private readonly IGenericRepositoryBase<TEntity> _repository = repository;
+    private readonly IGenericRepository<TEntity> _repository = repository;
 
     #endregion
 

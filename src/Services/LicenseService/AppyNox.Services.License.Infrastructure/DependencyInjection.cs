@@ -110,8 +110,8 @@ namespace AppyNox.Services.License.Infrastructure
 
             #endregion
 
-            services.AddScoped(typeof(IGenericRepositoryBase<>), typeof(GenericRepository<>));
-            services.AddScoped(typeof(INoxRepositoryBase<>), typeof(NoxRepository<>));
+            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            services.AddScoped(typeof(INoxRepository<>), typeof(NoxRepository<>));
             services.AddScoped<ILicenseRepository, LicenseRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 

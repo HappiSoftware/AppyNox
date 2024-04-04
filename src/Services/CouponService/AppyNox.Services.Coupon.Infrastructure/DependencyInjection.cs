@@ -91,8 +91,8 @@ namespace AppyNox.Services.Coupon.Infrastructure
             #endregion
 
             services.AddScoped(typeof(ICouponRepository), typeof(CouponRepository<Domain.Coupons.Coupon>));
-            services.AddScoped(typeof(INoxRepositoryBase<>), typeof(NoxRepository<>));
-            services.AddScoped(typeof(IGenericRepositoryBase<>), typeof(GenericRepository<>));
+            services.AddScoped(typeof(INoxRepository<>), typeof(NoxRepository<>));
+            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             return services;

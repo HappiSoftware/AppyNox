@@ -13,7 +13,7 @@ using MediatR;
 namespace AppyNox.Services.Base.Application.MediatR.Handlers.Anemic;
 
 internal class GetAllEntitiesQueryHandler<TEntity>(
-        IGenericRepositoryBase<TEntity> repository,
+        IGenericRepository<TEntity> repository,
         IMapper mapper,
         IDtoMappingRegistryBase dtoMappingRegistry,
         IServiceProvider serviceProvider,
@@ -27,7 +27,7 @@ internal class GetAllEntitiesQueryHandler<TEntity>(
 
     private readonly ICacheService _cacheService = cacheService;
 
-    private readonly IGenericRepositoryBase<TEntity> _repository = repository;
+    private readonly IGenericRepository<TEntity> _repository = repository;
 
     #endregion
 

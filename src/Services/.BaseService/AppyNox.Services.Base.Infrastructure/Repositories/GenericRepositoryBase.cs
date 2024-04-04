@@ -17,7 +17,7 @@ namespace AppyNox.Services.Base.Infrastructure.Repositories;
 /// Defines a generic repository abstract class for CRUD operations.
 /// </summary>
 /// <typeparam name="TEntity">The type of entity the repository manages.</typeparam>
-public abstract class GenericRepositoryBase<TEntity> : IGenericRepositoryBase<TEntity> where TEntity : class, IEntityWithGuid
+public abstract class GenericRepositoryBase<TEntity> : IGenericRepository<TEntity> where TEntity : class, IEntityWithGuid
 {
     #region [ Fields ]
 

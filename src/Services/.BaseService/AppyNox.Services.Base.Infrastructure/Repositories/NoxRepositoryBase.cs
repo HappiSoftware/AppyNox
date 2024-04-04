@@ -13,7 +13,7 @@ using System.Reflection;
 
 namespace AppyNox.Services.Base.Infrastructure.Repositories;
 
-public abstract class NoxRepositoryBase<TEntity> : INoxRepositoryBase<TEntity> where TEntity : class, IHasStronglyTypedId
+public abstract class NoxRepositoryBase<TEntity> : INoxRepository<TEntity> where TEntity : class, IHasStronglyTypedId
 {
     #region [ Fields ]
 
