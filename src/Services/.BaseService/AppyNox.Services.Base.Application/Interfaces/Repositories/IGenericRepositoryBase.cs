@@ -49,7 +49,6 @@ public interface IGenericRepositoryBase<TEntity> where TEntity : class, IEntityW
     /// </summary>
     /// <param name="entity">The entity to update.</param>
     void Update(TEntity entity);
-    Task<TEntity> GetEntityByIdAsync(Guid id);
 
     #endregion
 }

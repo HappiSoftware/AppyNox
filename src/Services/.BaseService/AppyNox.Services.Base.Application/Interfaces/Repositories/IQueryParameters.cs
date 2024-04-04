@@ -36,6 +36,8 @@ namespace AppyNox.Services.Base.Application.Interfaces.Repositories
         /// </summary>
         int PageSize { get; set; }
 
+        string SortBy { get; set; }
+
         #endregion
     }
 }

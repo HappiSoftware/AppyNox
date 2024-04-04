@@ -1,4 +1,6 @@
-﻿using AppyNox.Services.Base.Application.Interfaces.Repositories;
+﻿using AppyNox.Services.Base.Application.Constants;
+using AppyNox.Services.Base.Application.Extensions;
+using AppyNox.Services.Base.Application.Interfaces.Repositories;
 using AppyNox.Services.Base.Core.Enums;
 using System.ComponentModel.DataAnnotations;
 
@@ -10,8 +12,6 @@ namespace AppyNox.Services.Base.Infrastructure.Repositories.Common
     public abstract class QueryParametersBase : IQueryParameters
     {
         #region [ Properties ]
-
-        private string _detailLevel = string.Empty;
 
         [Range(1, int.MaxValue, ErrorMessage = "Page number must be greater than 0.")]
         public int PageNumber { get; set; } = 1;
@@ -36,38 +36,26 @@ namespace AppyNox.Services.Base.Infrastructure.Repositories.Common
             }
         }
 
+        private string _detailLevel = CommonDetailLevels.Simple;
+
         public string DetailLevel
         {
             get => _detailLevel;
 
             set
             {
-                _detailLevel = string.IsNullOrEmpty(value)
-                    ? "Simple"
-                    : value;
-
-                if (_detailLevel.Equals("Simple", StringComparison.OrdinalIgnoreCase))
+                if (value.Equals("Simple", StringComparison.OrdinalIgnoreCase) || value.IsNullOrEmpty())
                 {
-                    _detailLevel = "Simple";
+                    _detailLevel = CommonDetailLevels.Simple;
                 }
-                else if (_detailLevel.Equals("IdOnly", StringComparison.OrdinalIgnoreCase))
+                else
                 {
-                    _detailLevel = "IdOnly";
+                    _detailLevel = value;
                 }
             }
         }
 
-        #endregion
-
-        #region [ Protected Constructors ]
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="QueryParametersBase"/> class with default settings.
-        /// </summary>
-        protected QueryParametersBase()
-        {
-            DetailLevel = string.Empty;
-        }
+        public string SortBy { get; set; } = string.Empty;
 
         #endregion
     }
