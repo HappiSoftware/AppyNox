@@ -19,6 +19,7 @@ using System.Net;
 using CouponAggregate = AppyNox.Services.Coupon.Domain.Coupons.Coupon;
 using AppyNox.Services.Base.Application.Extensions;
 using AppyNox.Services.Base.Application.Dtos;
+using Microsoft.AspNetCore.Mvc;
 
 namespace AppyNox.Services.Coupon.Infrastructure.UnitTest.RepositoryTests;
 
@@ -103,6 +104,8 @@ public class CouponRepositoryUnitTest : IClassFixture<RepositoryFixture>
         Assert.Equal(2, result.Items.Count());
     }
 
+    #region [ Sorting ]
+
     [Theory]
     [InlineData(typeof(CouponAggregate), "code asc2")]
     [InlineData(typeof(CouponSimpleDto), "test desc")]
@@ -157,6 +160,112 @@ public class CouponRepositoryUnitTest : IClassFixture<RepositoryFixture>
             Assert.True(typedList.Items.ElementAt(0).Amount.DiscountAmount > typedList.Items.ElementAt(1).Amount.DiscountAmount);
         }
     }
+
+    [Theory]
+    [InlineData("drop insert delete update exec execute merge declare alter create xp_ sp_ -- " +
+    "; /* */ cast convert table from select sysobjects syscolumns @@ db_name bulk admin grant" +
+    " revoke deny link openquery opendatasource openrowset dump restore pg_ setval currval nextval" +
+    " regclass :: plpythonu plperlu dblink pg_sleep lo_import lo_export pg_read_file pg_ls_dir")]
+    public async Task GetAllAsync_ShouldRefuseMaliciousSort(string sort)
+    {
+        CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
+        UnitOfWork unitOfWork = new(context, _noxLoggerStub);
+        await context.SeedMultipleCoupons(unitOfWork, 2, 1);
+        var repository = new CouponRepository<CouponAggregate>(context, _noxLoggerStub);
+        QueryParameters queryParameters = new()
+        {
+            Access = string.Empty,
+            DetailLevel = "WithAllRelations",
+            PageNumber = 1,
+            PageSize = 2,
+            SortBy = sort
+        };
+
+        var exception = await Assert.ThrowsAsync<NoxInfrastructureException>(() => repository.GetAllAsync(queryParameters, typeof(CouponSimpleDto), _cacheService));
+        Assert.Equal((int)HttpStatusCode.BadRequest, exception.StatusCode);
+        Assert.Equal(1009, exception.ExceptionCode);
+    }
+
+    #endregion
+
+    #region [ Filtering ]
+
+    [Theory]
+    [InlineData("Amount.DiscountAmount == 10", 1)]
+    [InlineData("code == \"EXF10\"", 1)]
+    [InlineData("code.Contains(\"EXF\")", 3)]
+    [InlineData("code.Contains(\"EXF\") and Amount.DiscountAmount == 10", 1)]
+    [InlineData("code.Contains(\"EXF\") and (Amount.DiscountAmount >= 10 and Amount.MinAmount == 102)", 1)]
+    public async Task GetAllAsync_ShouldApplyFiltering(string filter, int size)
+    {
+        CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
+        UnitOfWork unitOfWork = new(context, _noxLoggerStub);
+        await context.SeedMultipleCoupons(unitOfWork, 3, 1);
+        var repository = new CouponRepository<CouponAggregate>(context, _noxLoggerStub);
+        QueryParameters queryParameters = new()
+        {
+            Access = string.Empty,
+            DetailLevel = "WithAllRelations",
+            PageNumber = 1,
+            PageSize = 3,
+            Filter = filter
+        };
+
+        var result = await repository.GetAllAsync(queryParameters, typeof(CouponAggregate), _cacheService);
+
+        Assert.NotNull(result);
+        Assert.Equal(size, result.Items.Count());
+    }
+
+    [Theory]
+    [InlineData("code asc2")]
+    [InlineData("test == 10")]
+    public async Task GetAllAsync_ShouldRefuseWrongFilter(string filter)
+    {
+        CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
+        UnitOfWork unitOfWork = new(context, _noxLoggerStub);
+        await context.SeedMultipleCoupons(unitOfWork, 2, 1);
+        var repository = new CouponRepository<CouponAggregate>(context, _noxLoggerStub);
+        QueryParameters queryParameters = new()
+        {
+            Access = string.Empty,
+            DetailLevel = "WithAllRelations",
+            PageNumber = 1,
+            PageSize = 2,
+            Filter = filter
+        };
+
+        var exception = await Assert.ThrowsAsync<NoxInfrastructureException>(() => repository.GetAllAsync(queryParameters, typeof(CouponSimpleDto), _cacheService));
+        Assert.Equal((int)HttpStatusCode.BadRequest, exception.StatusCode);
+        Assert.Equal(1008, exception.ExceptionCode);
+    }
+
+    [Theory]
+    [InlineData("drop insert delete update exec execute merge declare alter create xp_ sp_ -- " +
+        "; /* */ cast convert table from select sysobjects syscolumns @@ db_name bulk admin grant" +
+        " revoke deny link openquery opendatasource openrowset dump restore pg_ setval currval nextval" +
+        " regclass :: plpythonu plperlu dblink pg_sleep lo_import lo_export pg_read_file pg_ls_dir")]
+    public async Task GetAllAsync_ShouldRefuseMaliciousFilter(string filter)
+    {
+        CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
+        UnitOfWork unitOfWork = new(context, _noxLoggerStub);
+        await context.SeedMultipleCoupons(unitOfWork, 2, 1);
+        var repository = new CouponRepository<CouponAggregate>(context, _noxLoggerStub);
+        QueryParameters queryParameters = new()
+        {
+            Access = string.Empty,
+            DetailLevel = "WithAllRelations",
+            PageNumber = 1,
+            PageSize = 2,
+            Filter = filter
+        };
+
+        var exception = await Assert.ThrowsAsync<NoxInfrastructureException>(() => repository.GetAllAsync(queryParameters, typeof(CouponSimpleDto), _cacheService));
+        Assert.Equal((int)HttpStatusCode.BadRequest, exception.StatusCode);
+        Assert.Equal(1009, exception.ExceptionCode);
+    }
+
+    #endregion
 
     [Fact]
     public async Task GetAllAsync_ShouldPaginationReturnTwo()

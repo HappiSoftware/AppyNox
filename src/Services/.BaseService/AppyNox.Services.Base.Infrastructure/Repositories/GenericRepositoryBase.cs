@@ -8,6 +8,8 @@ using AppyNox.Services.Base.Infrastructure.ExceptionExtensions;
 using AppyNox.Services.Base.Infrastructure.ExceptionExtensions.Base;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Dynamic.Core;
+using System.Linq.Dynamic.Core.Exceptions;
+using System.Net;
 using static AppyNox.Services.Base.Infrastructure.Repositories.RepositoryHelpers;
 
 namespace AppyNox.Services.Base.Infrastructure.Repositories;
@@ -137,6 +139,10 @@ public abstract class GenericRepositoryBase<TEntity> : IGenericRepository<TEntit
         catch (Exception ex) when (ex is INoxException)
         {
             throw;
+        }
+        catch (Exception ex) when (ex is ParseException)
+        {
+            throw new NoxInfrastructureException(ex, "QueryParameter values were in wrong format.", (int)NoxInfrastructureExceptionCode.QueryParameterError, (int)HttpStatusCode.BadRequest);
         }
         catch (Exception ex)
         {
