@@ -38,6 +38,8 @@ namespace AppyNox.Services.Base.Application.Interfaces.Repositories
 
         string SortBy { get; set; }
 
+        string Filter { get; set; }
+
         #endregion
     }
 }

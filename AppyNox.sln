@@ -106,7 +106,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppyNox.Services.Base.Api.U
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IntegrationTests", "IntegrationTests", "{5D153F77-0942-4DA5-8655-AEDB92339738}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppyNox.Services.Sso.WebAPI.IntegrationTest", "src\Services\SsoService\Tests\IntegrationTests\AppyNox.Services.Sso.WebAPI.IntegrationTest\AppyNox.Services.Sso.WebAPI.IntegrationTest.csproj", "{6D36FEB5-B1D5-4E6D-B3B4-18531447D5F7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppyNox.Services.Sso.WebAPI.IntegrationTest", "src\Services\SsoService\Tests\IntegrationTests\AppyNox.Services.Sso.WebAPI.IntegrationTest\AppyNox.Services.Sso.WebAPI.IntegrationTest.csproj", "{6D36FEB5-B1D5-4E6D-B3B4-18531447D5F7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

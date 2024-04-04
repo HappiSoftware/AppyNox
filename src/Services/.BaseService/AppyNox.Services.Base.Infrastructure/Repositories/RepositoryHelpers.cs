@@ -1,7 +1,6 @@
 ﻿using AppyNox.Services.Base.Application.Dtos;
 using AppyNox.Services.Base.Domain.Interfaces;
 using AppyNox.Services.Base.Infrastructure.ExceptionExtensions.Base;
-using AppyNox.Services.Base.Infrastructure.Repositories.Common;
 using Microsoft.EntityFrameworkCore;
 using System.Collections;
 using System.Linq.Expressions;
@@ -160,70 +159,43 @@ internal static class RepositoryHelpers
 
     #region [ Protection ]
 
-    private static List<string> GetValidSortFields(Type entityType)
+    private static readonly HashSet<string> Blacklist = new(StringComparer.OrdinalIgnoreCase)
     {
-        var properties = entityType.GetProperties();
-        var validFields = new List<string>();
+        // General SQL manipulation and potentially harmful actions
+        "drop", "insert", "delete", "update", "exec", "execute", "merge", "declare", "alter", "create",
+        "xp_", "sp_", "--", ";", "/*", "*/", "cast", "convert", "table", "from", "select",
 
-        foreach (var property in properties)
-        {
-            validFields.Add(property.Name);
+        // Potentially dangerous functions and system views
+        "sysobjects", "syscolumns", "@@", "db_name", "bulk", "admin",
 
-            if (!property.PropertyType.IsPrimitive && property.PropertyType != typeof(string))
-            {
-                var nestedProperties = property.PropertyType.GetProperties();
-                foreach (var nestedProperty in nestedProperties)
-                {
-                    validFields.Add($"{property.Name}.{nestedProperty.Name}");
-                }
-            }
-        }
+        // Commands related to database structure manipulation or data theft
+        "grant", "revoke", "deny", "link", "openquery", "opendatasource", "openrowset", "dump", "restore",
 
-        return validFields;
-    }
+        // Keywords that might be used in unwanted data manipulation or exfiltration
+        "cursor", "fetch", "kill", "session_user", "system_user", "table_name", "column_name", "schema", "information_schema",
 
-    internal static bool ValidateSortBy(string sortBy, Type entityType)
+        // PostgreSQL-specific additions
+        "pg_", // Prefix for PostgreSQL system catalogs and functions
+        "setval", "currval", "nextval", // Functions for manipulating sequences
+        "regclass", // Cast to regclass to get an object's OID by name, which could reveal schema information
+        "::", // Type cast operator, could be used in payload obfuscation
+        "plpythonu", "plperlu", // Untrusted procedural languages
+        "dblink", // Used to execute queries across databases
+        "pg_sleep", // Could be used in blind SQL injection attacks to measure response times
+
+        // Additional PostgreSQL-specific items to consider
+        "lo_import", "lo_export", // Large Object operations that might be misused
+        "pg_read_file", "pg_ls_dir", // Functions that can read server files or list directory contents
+    };
+
+    public static bool IsValidExpression<TEntity>(string expression)
     {
-        if (!IsValidSortBy(sortBy, entityType))
+        // Ensure the expression doesn't contain any blacklisted terms
+        if (Blacklist.Any(blacklisted => expression.Contains(blacklisted, StringComparison.OrdinalIgnoreCase)))
         {
-            throw new NoxInfrastructureException("Invalid SortBy parameter.", (int)NoxInfrastructureExceptionCode.SqlInjectionError, (int)HttpStatusCode.BadRequest);
+            throw new NoxInfrastructureException("Malicious behavior detected.", (int)NoxInfrastructureExceptionCode.SqlInjectionError, (int)HttpStatusCode.BadRequest);
         }
         return true;
-    }
-
-    internal static bool IsValidSortBy(string sortBy, Type entityType)
-    {
-        var validFields = GetValidSortFields(entityType);
-
-        if (string.IsNullOrWhiteSpace(sortBy)) return false;
-
-        // Split by comma to handle multiple sorting fields
-        var sortSegments = sortBy.Split(',', StringSplitOptions.RemoveEmptyEntries);
-
-        foreach (var segment in sortSegments)
-        {
-            var parts = segment.Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries);
-
-            // Check if the segment has either one or two parts: ["FieldName"] or ["FieldName", "asc|desc"]
-            if (parts.Length == 0 || parts.Length > 2) return false; // Invalid if there are no parts or more than 2
-
-            var fieldName = parts[0];
-
-            // Validate field name
-            if (!validFields.Contains(fieldName, StringComparer.OrdinalIgnoreCase))
-                return false;
-
-            // If there's a sorting direction, validate it
-            if (parts.Length == 2 && !IsSortingDirectionValid(parts[1]))
-                return false;
-        }
-
-        return true;
-    }
-
-    private static bool IsSortingDirectionValid(string direction)
-    {
-        return direction.Equals("asc", StringComparison.OrdinalIgnoreCase) || direction.Equals("desc", StringComparison.OrdinalIgnoreCase);
     }
 
     #endregion

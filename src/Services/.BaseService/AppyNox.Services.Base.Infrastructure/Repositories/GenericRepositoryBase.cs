@@ -107,9 +107,15 @@ public abstract class GenericRepositoryBase<TEntity> : IGenericRepository<TEntit
             .AsNoTracking();
 
             // Validate and apply sorting
-            if (!string.IsNullOrWhiteSpace(queryParameters.SortBy) && ValidateSortBy(queryParameters.SortBy, typeof(TEntity)))
+            if (!string.IsNullOrWhiteSpace(queryParameters.SortBy) && IsValidExpression<TEntity>(queryParameters.SortBy))
             {
                 query = query.OrderBy(queryParameters.SortBy);
+            }
+
+            // Validate and apply filtering
+            if (!string.IsNullOrWhiteSpace(queryParameters.Filter) && IsValidExpression<TEntity>(queryParameters.Filter))
+            {
+                query = query.Where(queryParameters.Filter);
             }
 
             var entities = await query
