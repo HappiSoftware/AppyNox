@@ -1,8 +1,15 @@
 # Changelog
 All notable changes to AppyNox will be documented in this file.
 
+## [1.9.0](https://github.com/HappiSoftware/AppyNox/compare/v1.8.0...v1.9.0) - NOT RELEASED
 
-## [1.8.0](https://github.com/HappiSoftware/AppyNox/compare/v1.7.0...v1.8.0) - NOT RELEASED
+
+## [1.8.0](https://github.com/HappiSoftware/AppyNox/compare/v1.7.0...v1.8.0) - 2024.04.08
+### Added 
+- Feature request: NoxContext should support companyid ([#257](https://github.com/HappiSoftware/AppyNox/issues/257))
+- Mail System Integration ([#254](https://github.com/HappiSoftware/AppyNox/issues/254))
+- Feature request: Add Sorting Functionality to GetAll Method ([#259](https://github.com/HappiSoftware/AppyNox/issues/259))
+- Feature request: Generic Repositories should allow filtering ([#261](https://github.com/HappiSoftware/AppyNox/issues/261))
 
 
 ## [1.7.0](https://github.com/HappiSoftware/AppyNox/compare/v1.6.0...v1.7.0) - 2024.03.19
