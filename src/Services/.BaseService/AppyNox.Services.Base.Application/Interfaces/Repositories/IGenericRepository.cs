@@ -7,10 +7,10 @@ namespace AppyNox.Services.Base.Application.Interfaces.Repositories;
 /// <summary>
 /// Defines a generic repository interface for CRUD operations.
 /// Used for Anemic Domain Modeling. If you are using Domain Driven Design, use
-/// <see cref="INoxRepositoryBase{TEntity}"/> for entities with typed identifiers.
+/// <see cref="INoxRepository{TEntity}"/> for entities with typed identifiers.
 /// </summary>
 /// <typeparam name="TEntity">The type of entity the repository manages.</typeparam>
-public interface IGenericRepositoryBase<TEntity> where TEntity : class, IEntityWithGuid
+public interface IGenericRepository<TEntity> where TEntity : class, IEntityWithGuid
 {
     #region [ CRUD Methods ]
 

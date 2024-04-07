@@ -16,7 +16,7 @@ using System.Text.Json;
 namespace AppyNox.Services.Base.Application.MediatR.Handlers.Anemic;
 
 internal sealed class CreateEntityCommandHandler<TEntity>(
-        IGenericRepositoryBase<TEntity> repository,
+        IGenericRepository<TEntity> repository,
         IMapper mapper,
         IDtoMappingRegistryBase dtoMappingRegistry,
         IServiceProvider serviceProvider,
@@ -31,7 +31,7 @@ internal sealed class CreateEntityCommandHandler<TEntity>(
 
     private readonly ICacheService _cacheService = cacheService;
 
-    private readonly IGenericRepositoryBase<TEntity> _repository = repository;
+    private readonly IGenericRepository<TEntity> _repository = repository;
 
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 

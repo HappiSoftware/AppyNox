@@ -28,7 +28,7 @@ public class GenericCQRSFixture<TEntity> : IDisposable
 
     public readonly Mock<ICacheService> _cacheService;
 
-    public readonly Mock<IGenericRepositoryBase<TEntity>> MockRepository;
+    public readonly Mock<IGenericRepository<TEntity>> MockRepository;
 
     private readonly Mock<IMapper> _mockMapper;
 

@@ -57,6 +57,8 @@ namespace AppyNox.Services.Base.Infrastructure.Repositories.Common
 
         public string SortBy { get; set; } = string.Empty;
 
+        public string Filter { get; set; } = string.Empty;
+
         #endregion
     }
 }

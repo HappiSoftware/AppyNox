@@ -8,6 +8,8 @@ using AppyNox.Services.Base.Infrastructure.ExceptionExtensions;
 using AppyNox.Services.Base.Infrastructure.ExceptionExtensions.Base;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Dynamic.Core;
+using System.Linq.Dynamic.Core.Exceptions;
+using System.Net;
 using static AppyNox.Services.Base.Infrastructure.Repositories.RepositoryHelpers;
 
 namespace AppyNox.Services.Base.Infrastructure.Repositories;
@@ -16,7 +18,7 @@ namespace AppyNox.Services.Base.Infrastructure.Repositories;
 /// Defines a generic repository abstract class for CRUD operations.
 /// </summary>
 /// <typeparam name="TEntity">The type of entity the repository manages.</typeparam>
-public abstract class GenericRepositoryBase<TEntity> : IGenericRepositoryBase<TEntity> where TEntity : class, IEntityWithGuid
+public abstract class GenericRepositoryBase<TEntity> : IGenericRepository<TEntity> where TEntity : class, IEntityWithGuid
 {
     #region [ Fields ]
 
@@ -107,9 +109,15 @@ public abstract class GenericRepositoryBase<TEntity> : IGenericRepositoryBase<TE
             .AsNoTracking();
 
             // Validate and apply sorting
-            if (!string.IsNullOrWhiteSpace(queryParameters.SortBy) && ValidateSortBy(queryParameters.SortBy, typeof(TEntity)))
+            if (!string.IsNullOrWhiteSpace(queryParameters.SortBy) && IsValidExpression<TEntity>(queryParameters.SortBy))
             {
                 query = query.OrderBy(queryParameters.SortBy);
+            }
+
+            // Validate and apply filtering
+            if (!string.IsNullOrWhiteSpace(queryParameters.Filter) && IsValidExpression<TEntity>(queryParameters.Filter))
+            {
+                query = query.Where(queryParameters.Filter);
             }
 
             var entities = await query
@@ -131,6 +139,10 @@ public abstract class GenericRepositoryBase<TEntity> : IGenericRepositoryBase<TE
         catch (Exception ex) when (ex is INoxException)
         {
             throw;
+        }
+        catch (Exception ex) when (ex is ParseException)
+        {
+            throw new NoxInfrastructureException(ex, "QueryParameter values were in wrong format.", (int)NoxInfrastructureExceptionCode.QueryParameterError, (int)HttpStatusCode.BadRequest);
         }
         catch (Exception ex)
         {

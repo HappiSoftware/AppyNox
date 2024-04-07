@@ -26,7 +26,9 @@ namespace AppyNox.Services.Base.Infrastructure.ExceptionExtensions.Base
 
         ProjectionError = 1007,
 
-        SqlInjectionError = 1008
+        QueryParameterError = 1008,
+
+        SqlInjectionError = 1009
     }
 
     #endregion

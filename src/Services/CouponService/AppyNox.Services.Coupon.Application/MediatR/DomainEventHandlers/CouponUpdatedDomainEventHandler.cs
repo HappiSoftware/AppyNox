@@ -8,11 +8,11 @@ using MediatR;
 namespace AppyNox.Services.Coupon.Application.MediatR.DomainEventHandlers;
 
 internal class CouponUpdatedDomainEventHandler(
-    INoxRepositoryBase<CouponHistory> repository,
+    INoxRepository<CouponHistory> repository,
     INoxApplicationLogger logger,
     IUnitOfWork unitOfWork) : INotificationHandler<CouponUpdatedDomainEvent>
 {
-    private readonly INoxRepositoryBase<CouponHistory> _repository = repository;
+    private readonly INoxRepository<CouponHistory> _repository = repository;
 
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 

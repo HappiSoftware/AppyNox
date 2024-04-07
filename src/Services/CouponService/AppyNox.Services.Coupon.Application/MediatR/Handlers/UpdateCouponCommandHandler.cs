@@ -16,7 +16,7 @@ using System.Net;
 namespace AppyNox.Services.Coupon.Application.MediatR.Handlers;
 
 public class UpdateCouponCommandHandler(
-        INoxRepositoryBase<Domain.Coupons.Coupon> repository,
+        INoxRepository<Domain.Coupons.Coupon> repository,
         IMapper mapper,
         IValidator<CouponExtendedUpdateDto> validator,
         INoxApplicationLogger logger,
@@ -26,7 +26,7 @@ public class UpdateCouponCommandHandler(
 {
     #region [ Fields ]
 
-    private readonly INoxRepositoryBase<Domain.Coupons.Coupon> _repository = repository;
+    private readonly INoxRepository<Domain.Coupons.Coupon> _repository = repository;
 
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 

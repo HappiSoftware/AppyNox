@@ -29,7 +29,7 @@ namespace AppyNox.Services.Base.Application.UnitTests.CQRSFixtures
 
         public readonly Mock<ICacheService> _cacheService;
 
-        public readonly Mock<INoxRepositoryBase<TEntity>> MockRepository;
+        public readonly Mock<INoxRepository<TEntity>> MockRepository;
 
         public readonly Mock<IMapper> MockMapper;
 
