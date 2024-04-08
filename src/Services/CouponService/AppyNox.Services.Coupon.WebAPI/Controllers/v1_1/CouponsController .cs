@@ -31,12 +31,12 @@ public class CouponsController(IMediator mediator) : NoxController
 
     [HttpGet]
     [Authorize(Coupons.View)]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TypedPaginatedList<CouponSimpleDto>))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PaginatedList<CouponSimpleDto>))]
     public async Task<IActionResult> GetAll([FromQuery] QueryParametersViewModelBasic queryParameters)
     {
-        PaginatedList response = await _mediator.Send(new GetAllNoxEntitiesQuery<Domain.Coupons.Coupon>(queryParameters));
+        PaginatedList<object> response = await _mediator.Send(new GetAllNoxEntitiesQuery<Domain.Coupons.Coupon>(queryParameters));
 
-        return Ok(response.ConvertToTypedPaginatedList<CouponSimpleDto>());
+        return Ok(response);
     }
 
     [HttpGet("{id}")]

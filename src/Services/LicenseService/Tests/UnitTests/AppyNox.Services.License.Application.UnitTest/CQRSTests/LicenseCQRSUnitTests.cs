@@ -11,9 +11,11 @@ using AppyNox.Services.License.Application.Dtos.LicenseDtos.DetailLevel;
 using AppyNox.Services.License.Application.Dtos.LicenseDtos.Models.Base;
 using AppyNox.Services.License.Application.Dtos.ProductDtos.Models.Base;
 using AppyNox.Services.License.Domain.Entities;
+using AutoMapper;
 using FluentValidation;
 using FluentValidation.Results;
 using Moq;
+using System.Reflection;
 using System.Text.Json;
 
 namespace AppyNox.Services.License.Application.UnitTest.CQRSTests
@@ -80,24 +82,41 @@ namespace AppyNox.Services.License.Application.UnitTest.CQRSTests
                 ProductId = new ProductIdDto() { Value = Guid.NewGuid() }
             };
 
-            _fixture.MockRepository.Setup(repo => repo.GetAllAsync(It.IsAny<IQueryParameters>(), It.IsAny<Type>(), It.IsAny<ICacheService>()))
-                .ReturnsAsync(new Mock<PaginatedList>().Object);
+            _fixture.MockRepository.Setup(repo => repo.GetAllAsync(It.IsAny<IQueryParameters>(), It.IsAny<ICacheService>()))
+                .ReturnsAsync(new Mock<PaginatedList<LicenseEntity>>().Object);
 
-            _fixture.MockRepository.Setup(repo => repo.GetByIdAsync(It.IsAny<LicenseId>(), It.IsAny<Type>()))
-                .ReturnsAsync(licenseSimpleDto);
+            _fixture.MockRepository.Setup(repo => repo.GetByIdAsync(It.IsAny<LicenseId>()))
+                .ReturnsAsync(licenseEntity);
 
             _fixture.MockRepository.Setup(repo => repo.AddAsync(It.IsAny<LicenseEntity>()))
                 .ReturnsAsync(licenseEntity);
 
             #endregion
 
+            #region [ Mapper ]
+
+            Assembly applicationAssembly = Assembly.Load("AppyNox.Services.License.Application");
+            var profiles = applicationAssembly.GetTypes()
+                .Where(t => typeof(Profile).IsAssignableFrom(t))
+                .Select(Activator.CreateInstance)
+                .Cast<Profile>();
+
+            var configuration = new MapperConfiguration(cfg =>
+            {
+                foreach (var profile in profiles)
+                {
+                    cfg.AddProfile(profile);
+                }
+            });
+
             _fixture.MockMapper.Setup(mapper => mapper.Map(It.IsAny<object>(), It.IsAny<Type>(), It.IsAny<Type>()))
                 .Returns((object source, Type sourceType, Type destinationType) =>
                 {
-                    if (destinationType == typeof(LicenseEntity))
-                        return licenseEntity;
-                    return Activator.CreateInstance(destinationType)!;
+                    var mapper = configuration.CreateMapper();
+                    return mapper.Map(source, sourceType, destinationType);
                 });
+
+            #endregion
         }
 
         #endregion
@@ -112,7 +131,6 @@ namespace AppyNox.Services.License.Application.UnitTest.CQRSTests
 
             // Assert
             Assert.NotNull(result);
-            Assert.True(result is PaginatedList);
         }
 
         [Fact]

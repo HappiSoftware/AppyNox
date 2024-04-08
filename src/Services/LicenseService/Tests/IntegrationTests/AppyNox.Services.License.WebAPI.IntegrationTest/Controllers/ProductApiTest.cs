@@ -39,7 +39,7 @@ namespace AppyNox.Services.License.WebAPI.IntegrationTest.Controllers
 
             var jsonResponse = await response.Content.ReadAsStringAsync();
 
-            var products = NoxResponseUnwrapper.UnwrapData<PaginatedList>(jsonResponse, jsonSerializerOptions: _jsonSerializerOptions);
+            var products = NoxResponseUnwrapper.UnwrapData<PaginatedList<ProductSimpleDto>>(jsonResponse, jsonSerializerOptions: _jsonSerializerOptions);
 
             // Assert
             response.EnsureSuccessStatusCode();

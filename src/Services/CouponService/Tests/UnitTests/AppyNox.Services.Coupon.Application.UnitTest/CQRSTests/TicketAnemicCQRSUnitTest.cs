@@ -11,10 +11,12 @@ using AppyNox.Services.Coupon.Application.Dtos.TicketDtos.Models.Basic;
 using AppyNox.Services.Coupon.Domain.Coupons;
 using AppyNox.Services.Coupon.Domain.Entities;
 using AppyNox.Services.Coupon.Domain.Localization;
+using AutoMapper;
 using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.Extensions.Localization;
 using Moq;
+using System.Reflection;
 using System.Text.Json;
 
 namespace AppyNox.Services.Coupon.Application.UnitTest.CQRSTests;
@@ -84,22 +86,39 @@ public class TicketAnemicCQRSUnitTest : IClassFixture<GenericCQRSFixture<Ticket>
         Ticket mockTicket = new();
         TicketSimpleDto mockTicketSimpleDto = new();
 
-        _fixture.MockRepository.Setup(repo => repo.GetAllAsync(It.IsAny<IQueryParameters>(), It.IsAny<Type>(), It.IsAny<ICacheService>()))
-            .ReturnsAsync(new Mock<PaginatedList>().Object);
+        _fixture.MockRepository.Setup(repo => repo.GetAllAsync(It.IsAny<IQueryParameters>(), It.IsAny<ICacheService>()))
+            .ReturnsAsync(new Mock<PaginatedList<Ticket>>().Object);
 
-        _fixture.MockRepository.Setup(repo => repo.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<Type>()))
-            .ReturnsAsync(mockTicketSimpleDto);
+        _fixture.MockRepository.Setup(repo => repo.GetByIdAsync(It.IsAny<Guid>()))
+            .ReturnsAsync(mockTicket);
 
         _fixture.MockRepository.Setup(repo => repo.AddAsync(It.IsAny<Ticket>()))
             .ReturnsAsync(mockTicket);
 
-        //_fixture.MockMapper.Setup(mapper => mapper.Map(It.IsAny<object>(), It.IsAny<Type>(), It.IsAny<Type>()))
-        //    .Returns((object source, Type sourceType, Type destinationType) =>
-        //    {
-        //        if (destinationType == typeof(CouponAggregate))
-        //            return couponEntity;
-        //        return Activator.CreateInstance(destinationType)!;
-        //    });
+        #endregion
+
+        #region [ Mapper ]
+
+        Assembly applicationAssembly = Assembly.Load("AppyNox.Services.Coupon.Application");
+        var profiles = applicationAssembly.GetTypes()
+            .Where(t => typeof(Profile).IsAssignableFrom(t))
+            .Select(Activator.CreateInstance)
+            .Cast<Profile>();
+
+        var configuration = new MapperConfiguration(cfg =>
+        {
+            foreach (var profile in profiles)
+            {
+                cfg.AddProfile(profile);
+            }
+        });
+
+        _fixture.MockMapper.Setup(mapper => mapper.Map(It.IsAny<object>(), It.IsAny<Type>(), It.IsAny<Type>()))
+            .Returns((object source, Type sourceType, Type destinationType) =>
+            {
+                var mapper = configuration.CreateMapper();
+                return mapper.Map(source, sourceType, destinationType);
+            });
 
         #endregion
     }
@@ -116,7 +135,6 @@ public class TicketAnemicCQRSUnitTest : IClassFixture<GenericCQRSFixture<Ticket>
 
         // Assert
         Assert.NotNull(result);
-        Assert.True(result is PaginatedList);
     }
 
     [Fact]

@@ -43,7 +43,7 @@ public class LicenseRepositoryUnitTest(RepositoryFixture fixture) : IClassFixtur
             PageSize = 1,
         };
 
-        PaginatedList result = await repository.GetAllAsync(queryParameters, typeof(LicenseSimpleUpdateDto), _cacheService);
+        var result = await repository.GetAllAsync(queryParameters, _cacheService);
 
         Assert.NotNull(result);
         Assert.Single(result.Items);
@@ -64,7 +64,7 @@ public class LicenseRepositoryUnitTest(RepositoryFixture fixture) : IClassFixtur
             PageSize = 2,
         };
 
-        PaginatedList result = await repository.GetAllAsync(queryParameters, typeof(LicenseSimpleUpdateDto), _cacheService);
+        var result = await repository.GetAllAsync(queryParameters, _cacheService);
 
         Assert.NotNull(result);
         Assert.Equal(2, result.ItemsCount);
@@ -87,13 +87,13 @@ public class LicenseRepositoryUnitTest(RepositoryFixture fixture) : IClassFixtur
             PageSize = 1,
         };
 
-        PaginatedList result = await repository.GetAllAsync(queryParameters, typeof(LicenseSimpleUpdateDto), _cacheService);
+        var result = await repository.GetAllAsync(queryParameters, _cacheService);
 
         Assert.NotNull(result);
         Assert.Single(result.Items);
 
-        Assert.Equal(licenses.Last().Id.Value, ((LicenseSimpleUpdateDto)result.Items.First()).Id.Value);
-        Assert.Equal(licenses.Last().Code, ((LicenseSimpleUpdateDto)result.Items.First()).Code);
+        Assert.Equal(licenses.Last().Id.Value, result.Items.First().Id.Value);
+        Assert.Equal(licenses.Last().Code, result.Items.First().Code);
     }
 
     [Fact]
@@ -111,7 +111,7 @@ public class LicenseRepositoryUnitTest(RepositoryFixture fixture) : IClassFixtur
             PageSize = 50,
         };
 
-        PaginatedList result = await repository.GetAllAsync(queryParameters, typeof(LicenseSimpleUpdateDto), _cacheService);
+        var result = await repository.GetAllAsync(queryParameters, _cacheService);
 
         Assert.NotNull(result);
         Assert.Equal(50, result.Items.Count());
@@ -133,18 +133,17 @@ public class LicenseRepositoryUnitTest(RepositoryFixture fixture) : IClassFixtur
             PageSize = 5,
         };
 
-        PaginatedList result = await repository.GetAllAsync(queryParameters, typeof(LicenseSimpleUpdateDto), _cacheService);
+        var result = await repository.GetAllAsync(queryParameters, _cacheService);
 
         List<LicenseEntity> expectedLicenses = licenses.Skip(20).Take(5).ToList();
-        List<object> resultList = result.Items.ToList();
 
         Assert.NotNull(result);
         Assert.Equal(expectedLicenses.Count, result.ItemsCount);
 
         for (int i = 0; i < expectedLicenses.Count; i++)
         {
-            Assert.Equal(expectedLicenses[i].Id.Value, ((LicenseSimpleUpdateDto)resultList[i]).Id.Value);
-            Assert.Equal(expectedLicenses[i].Code, ((LicenseSimpleUpdateDto)resultList[i]).Code);
+            Assert.Equal(expectedLicenses[i].Id.Value, result.Items.ElementAt(i).Id.Value);
+            Assert.Equal(expectedLicenses[i].Code, result.Items.ElementAt(i).Code);
         }
     }
 
@@ -158,7 +157,7 @@ public class LicenseRepositoryUnitTest(RepositoryFixture fixture) : IClassFixtur
 
         LicenseRepository repository = new(context, _noxLoggerStub, unitOfWork);
 
-        var result = await repository.GetByIdAsync(existingLicense.Id, typeof(LicenseSimpleCreateDto));
+        var result = await repository.GetByIdAsync(existingLicense.Id);
 
         Assert.NotNull(result);
     }
@@ -172,7 +171,7 @@ public class LicenseRepositoryUnitTest(RepositoryFixture fixture) : IClassFixtur
         Assert.NotNull(existingLicense);
 
         LicenseRepository repository = new(context, _noxLoggerStub, unitOfWork);
-        LicenseSimpleDto? result = await repository.GetByIdAsync(existingLicense.Id, typeof(LicenseSimpleDto)) as LicenseSimpleDto;
+        LicenseEntity result = await repository.GetByIdAsync(existingLicense.Id);
 
         Assert.NotNull(result);
         Assert.Equal(existingLicense.Code, result.Code);
@@ -208,7 +207,7 @@ public class LicenseRepositoryUnitTest(RepositoryFixture fixture) : IClassFixtur
         await repository.AddAsync(license);
         await unitOfWork.SaveChangesAsync();
 
-        var result = await repository.GetByIdAsync(license.Id, typeof(LicenseSimpleCreateDto)) as LicenseSimpleCreateDto;
+        var result = await repository.GetByIdAsync(license.Id);
 
         // Assert
         Assert.NotNull(result);
@@ -242,7 +241,7 @@ public class LicenseRepositoryUnitTest(RepositoryFixture fixture) : IClassFixtur
         repository.Update(existingLicense);
         await unitOfWork.SaveChangesAsync();
 
-        var result = await repository.GetByIdAsync(existingLicense.Id, typeof(LicenseSimpleCreateDto)) as LicenseSimpleCreateDto;
+        var result = await repository.GetByIdAsync(existingLicense.Id);
 
         Assert.NotNull(result);
         Assert.Equal(existingLicense.Code, result.Code);
@@ -271,7 +270,7 @@ public class LicenseRepositoryUnitTest(RepositoryFixture fixture) : IClassFixtur
 
         var exception = await Assert.ThrowsAsync<EntityNotFoundException<LicenseEntity>>(async () =>
         {
-            var result = await repository.GetByIdAsync(existingLicense.Id, typeof(LicenseSimpleCreateDto));
+            var result = await repository.GetByIdAsync(existingLicense.Id);
         });
 
         Assert.NotNull(exception);

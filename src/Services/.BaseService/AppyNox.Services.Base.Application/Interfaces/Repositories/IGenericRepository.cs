@@ -31,18 +31,16 @@ public interface IGenericRepository<TEntity> where TEntity : class, IEntityWithG
     /// Retrieves all entities asynchronously based on specified query parameters and selected columns.
     /// </summary>
     /// <param name="queryParameters">The query parameters for filtering and pagination.</param>
-    /// <param name="dtoType">An expression defining the columns to select for the entity.</param>
     /// /// <param name="cacheService">The cache service used for caching.</param>
     /// <returns>A collection of entities.</returns>
-    Task<PaginatedList> GetAllAsync(IQueryParameters queryParameters, Type dtoType, ICacheService cacheService);
+    Task<PaginatedList<TEntity>> GetAllAsync(IQueryParameters queryParameters, ICacheService cacheService);
 
     /// <summary>
     /// Retrieves an entity of type TEntity by its ID, selecting specific columns based on the provided expression.
     /// </summary>
     /// <param name="id">The unique identifier of the entity to retrieve.</param>
-    /// <param name="dtoType">An expression defining the columns to select for the entity.</param>
     /// <returns>The projectized object of TEntity </returns>
-    Task<object> GetByIdAsync(Guid id, Type dtoType);
+    Task<TEntity> GetByIdAsync(Guid id);
 
     /// <summary>
     /// Updates an existing entity of type TEntity in the repository.

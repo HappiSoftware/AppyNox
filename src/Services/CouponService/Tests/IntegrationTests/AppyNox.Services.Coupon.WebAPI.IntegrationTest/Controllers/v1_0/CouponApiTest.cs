@@ -8,6 +8,7 @@ using AppyNox.Services.Base.IntegrationTests.Wrapper.Helpers;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDetailDtos.Models.Basic;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDetailTagDtos.Models.Basic;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
+using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Extended;
 using AppyNox.Services.Coupon.Domain.Exceptions.Base;
 using AppyNox.Services.Coupon.WebAPI.IntegrationTest.Fixtures;
 using System.Linq.Dynamic.Core;
@@ -45,7 +46,7 @@ public class CouponApiTest(CouponServiceFixture couponApiTestFixture)
 
         var jsonResponse = await response.Content.ReadAsStringAsync();
 
-        var coupons = NoxResponseUnwrapper.UnwrapData<PaginatedList>(jsonResponse, _jsonSerializerOptions);
+        var coupons = NoxResponseUnwrapper.UnwrapData<PaginatedList<CouponWithAllRelationsDto>>(jsonResponse, _jsonSerializerOptions);
 
         // Assert
         response.EnsureSuccessStatusCode();

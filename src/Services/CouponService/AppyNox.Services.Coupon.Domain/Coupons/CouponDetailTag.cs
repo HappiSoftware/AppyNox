@@ -18,7 +18,7 @@ public class CouponDetailTag : AggregateMember, IHasStronglyTypedId
 
 #nullable disable
 
-    private CouponDetailTag()
+    protected CouponDetailTag()
     {
     }
 
@@ -41,14 +41,14 @@ public class CouponDetailTag : AggregateMember, IHasStronglyTypedId
 
     #region [ Relations ]
 
-    public CouponDetailId CouponDetailId { get; private set; }
+    public virtual CouponDetailId CouponDetailId { get; private set; }
 
     #endregion
 }
 
-public sealed record CouponDetailTagId : IHasGuidId, IValueObject
+public record CouponDetailTagId : IHasGuidId, IValueObject
 {
-    private CouponDetailTagId() { }
+    protected CouponDetailTagId() { }
     public CouponDetailTagId(Guid value)
     {
         Value = value;

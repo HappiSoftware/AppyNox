@@ -51,10 +51,8 @@ public class GenericTicketRepositoryTest : IClassFixture<RepositoryFixture>
 
     #region [ Read ]
 
-    [Theory]
-    [InlineData(typeof(Ticket))]
-    [InlineData(typeof(TicketSimpleDto))]
-    public async Task GetAllAsync_ShouldReturnEntity(Type fetchType)
+    [Fact]
+    public async Task GetAllAsync_ShouldReturnEntity()
     {
         CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
         UnitOfWork unitOfWork = new(context, _noxLoggerStub);
@@ -68,16 +66,14 @@ public class GenericTicketRepositoryTest : IClassFixture<RepositoryFixture>
             PageSize = 1,
         };
 
-        var result = await repository.GetAllAsync(queryParameters, fetchType, _cacheService);
+        var result = await repository.GetAllAsync(queryParameters, _cacheService);
 
         Assert.NotNull(result);
         Assert.Single(result.Items);
     }
 
-    [Theory]
-    [InlineData(typeof(Ticket))]
-    [InlineData(typeof(TicketSimpleDto))]
-    public async Task GetAllAsync_ShouldPaginationReturnTwo(Type fetchType)
+    [Fact]
+    public async Task GetAllAsync_ShouldPaginationReturnTwo()
     {
         CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
         UnitOfWork unitOfWork = new(context, _noxLoggerStub);
@@ -91,15 +87,14 @@ public class GenericTicketRepositoryTest : IClassFixture<RepositoryFixture>
             PageSize = 2,
         };
 
-        var result = await repository.GetAllAsync(queryParameters, fetchType, _cacheService);
+        var result = await repository.GetAllAsync(queryParameters, _cacheService);
 
         Assert.NotNull(result);
         Assert.Equal(2, result.ItemsCount);
     }
 
-    [Theory]
-    [InlineData(typeof(Ticket))]
-    public async Task GetAllAsync_ShouldPaginationReturnCorrectEntity(Type fetchType)
+    [Fact]
+    public async Task GetAllAsync_ShouldPaginationReturnCorrectEntity()
     {
         CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
         UnitOfWork unitOfWork = new(context, _noxLoggerStub);
@@ -115,20 +110,18 @@ public class GenericTicketRepositoryTest : IClassFixture<RepositoryFixture>
             PageSize = 1,
         };
 
-        var result = await repository.GetAllAsync(queryParameters, fetchType, _cacheService);
+        var result = await repository.GetAllAsync(queryParameters, _cacheService);
 
         Assert.NotNull(result);
         Assert.Single(result.Items);
 
-        Assert.Equal(tickets.Last().Id, ((Ticket)result.Items.First()).Id);
-        Assert.Equal(tickets.Last().Title, ((Ticket)result.Items.First()).Title);
-        Assert.Equal(tickets.Last().Content, ((Ticket)result.Items.First()).Content);
+        Assert.Equal(tickets.Last().Id, result.Items.First().Id);
+        Assert.Equal(tickets.Last().Title, result.Items.First().Title);
+        Assert.Equal(tickets.Last().Content, result.Items.First().Content);
     }
 
-    [Theory]
-    [InlineData(typeof(Ticket))]
-    [InlineData(typeof(TicketSimpleDto))]
-    public async Task GetAllAsync_ShouldPaginationReturnFifty(Type fetchType)
+    [Fact]
+    public async Task GetAllAsync_ShouldPaginationReturnFifty()
     {
         CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
         UnitOfWork unitOfWork = new(context, _noxLoggerStub);
@@ -142,15 +135,14 @@ public class GenericTicketRepositoryTest : IClassFixture<RepositoryFixture>
             PageSize = 50,
         };
 
-        var result = await repository.GetAllAsync(queryParameters, fetchType, _cacheService);
+        var result = await repository.GetAllAsync(queryParameters, _cacheService);
 
         Assert.NotNull(result);
         Assert.Equal(50, result.ItemsCount);
     }
 
-    [Theory]
-    [InlineData(typeof(Ticket))]
-    public async Task GetAllAsync_ShouldPaginationReturnFiftyAndCorrectEntities(Type fetchType)
+    [Fact]
+    public async Task GetAllAsync_ShouldPaginationReturnFiftyAndCorrectEntities()
     {
         CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
         UnitOfWork unitOfWork = new(context, _noxLoggerStub);
@@ -166,7 +158,7 @@ public class GenericTicketRepositoryTest : IClassFixture<RepositoryFixture>
             PageSize = 5,
         };
 
-        var result = await repository.GetAllAsync(queryParameters, fetchType, _cacheService);
+        var result = await repository.GetAllAsync(queryParameters, _cacheService);
 
         var expectedTickets = tickets.Skip(20).Take(5).ToList();
         var resultList = result.Items.ToList();
@@ -176,16 +168,14 @@ public class GenericTicketRepositoryTest : IClassFixture<RepositoryFixture>
 
         for (int i = 0; i < expectedTickets.Count; i++)
         {
-            Assert.Equal(expectedTickets[i].Id, ((Ticket)resultList[i]).Id);
-            Assert.Equal(expectedTickets[i].Title, ((Ticket)resultList[i]).Title);
-            Assert.Equal(expectedTickets[i].Content, ((Ticket)resultList[i]).Content);
+            Assert.Equal(expectedTickets[i].Id, resultList[i].Id);
+            Assert.Equal(expectedTickets[i].Title, resultList[i].Title);
+            Assert.Equal(expectedTickets[i].Content, resultList[i].Content);
         }
     }
 
-    [Theory]
-    [InlineData(typeof(Ticket))]
-    [InlineData(typeof(TicketSimpleDto))]
-    public async Task GetByIdAsync_ShouldReturnEntity(Type fetchType)
+    [Fact]
+    public async Task GetByIdAsync_ShouldReturnEntity()
     {
         CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
         UnitOfWork unitOfWork = new(context, _noxLoggerStub);
@@ -193,7 +183,7 @@ public class GenericTicketRepositoryTest : IClassFixture<RepositoryFixture>
         Assert.NotNull(existingTicket);
 
         var repository = new GenericRepository<Ticket>(context, _noxLoggerStub);
-        var result = await repository.GetByIdAsync(existingTicket.Id, fetchType);
+        var result = await repository.GetByIdAsync(existingTicket.Id);
 
         Assert.NotNull(result);
     }
@@ -208,7 +198,7 @@ public class GenericTicketRepositoryTest : IClassFixture<RepositoryFixture>
 
         var repository = new GenericRepository<Ticket>(context, _noxLoggerStub);
 
-        var result = await repository.GetByIdAsync(existingTicket.Id, typeof(TicketExtendedDto)) as TicketExtendedDto;
+        var result = await repository.GetByIdAsync(existingTicket.Id);
 
         Assert.NotNull(result);
 
@@ -246,7 +236,7 @@ public class GenericTicketRepositoryTest : IClassFixture<RepositoryFixture>
         await repository.AddAsync(ticketToAdd);
         await unitOfWork.SaveChangesAsync();
 
-        var result = await repository.GetByIdAsync(ticketToAdd.Id, typeof(Ticket)) as Ticket;
+        var result = await repository.GetByIdAsync(ticketToAdd.Id);
 
         Assert.NotNull(result);
 
@@ -287,7 +277,7 @@ public class GenericTicketRepositoryTest : IClassFixture<RepositoryFixture>
         repository.Update(existingTicket);
         await unitOfWork.SaveChangesAsync();
 
-        var result = await repository.GetByIdAsync(existingTicket.Id, typeof(Ticket)) as Ticket;
+        var result = await repository.GetByIdAsync(existingTicket.Id);
 
         Assert.NotNull(result);
 
@@ -316,7 +306,7 @@ public class GenericTicketRepositoryTest : IClassFixture<RepositoryFixture>
 
         var exception = await Assert.ThrowsAsync<EntityNotFoundException<Ticket>>(async () =>
         {
-            var result = await repository.GetByIdAsync(existingTicket.Id, typeof(Ticket));
+            var result = await repository.GetByIdAsync(existingTicket.Id);
         });
 
         Assert.NotNull(exception);

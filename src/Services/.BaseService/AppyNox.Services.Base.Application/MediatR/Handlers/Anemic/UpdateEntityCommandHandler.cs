@@ -66,7 +66,7 @@ internal class UpdateEntityCommandHandler<TEntity>(
             }
             dynamic idDto = new ExpandoObject();
             idDto.Id = request.Id;
-            await _repository.GetByIdAsync(request.Id, idDto.GetType());
+            await _repository.GetByIdAsync(request.Id);
 
             #endregion
 

@@ -42,6 +42,8 @@ public class CouponDbContext : NoxDatabaseContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         base.OnConfiguring(optionsBuilder);
+        optionsBuilder
+            .UseLazyLoadingProxies();
 
         //optionsBuilder.UseNpgsql("User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_Coupon;Pooling=true");
     }

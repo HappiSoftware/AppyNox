@@ -25,6 +25,8 @@ internal class GetNoxEntityByIdQueryHandler<TEntity, TId>(
 
     private readonly INoxRepository<TEntity> _repository = repository;
 
+    private readonly IMapper _mapper = mapper;
+
     #endregion
 
     #region [ Public Methods ]
@@ -35,7 +37,8 @@ internal class GetNoxEntityByIdQueryHandler<TEntity, TId>(
         {
             Logger.LogInformation($"Fetching entity of type {typeof(TEntity).Name} with ID: {request.Id}.");
             var dtoType = GetDtoType(request.QueryParameters);
-            return await _repository.GetByIdAsync(request.Id, dtoType);
+            var entity = await _repository.GetByIdAsync(request.Id);
+            return _mapper.Map(entity, typeof(TEntity), dtoType);
         }
         catch (Exception ex) when (ex is INoxException)
         {

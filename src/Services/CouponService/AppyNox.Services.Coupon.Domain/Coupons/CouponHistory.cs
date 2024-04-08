@@ -3,7 +3,7 @@ using AppyNox.Services.Base.Domain.Interfaces;
 
 namespace AppyNox.Services.Coupon.Domain.Coupons;
 
-public sealed class CouponHistory : AggregateMember, IHasStronglyTypedId
+public class CouponHistory : AggregateMember, IHasStronglyTypedId
 {
     #region [ Properties ]
 
@@ -17,7 +17,7 @@ public sealed class CouponHistory : AggregateMember, IHasStronglyTypedId
 
     #region [ Relations ]
 
-    public CouponId CouponId { get; private set; }
+    public virtual CouponId CouponId { get; private set; }
 
     #endregion
 
@@ -34,7 +34,7 @@ public sealed class CouponHistory : AggregateMember, IHasStronglyTypedId
     /// <summary>
     /// For ef core migration creating. Do not use this constructor in actual implementations
     /// </summary>
-    private CouponHistory()
+    protected CouponHistory()
     {
     }
 
@@ -53,9 +53,9 @@ public sealed class CouponHistory : AggregateMember, IHasStronglyTypedId
 
 #region [ Value Objects ]
 
-public sealed record CouponHistoryId : IHasGuidId
+public record CouponHistoryId : IHasGuidId
 {
-    private CouponHistoryId() { }
+    protected CouponHistoryId() { }
     public CouponHistoryId(Guid value)
     {
         Value = value;

@@ -33,7 +33,7 @@ public class ProductEntity : AggregateRoot, IHasStronglyTypedId, IHasCode
 
     #region [ Constructors and Factories ]
 
-    private ProductEntity()
+    protected ProductEntity()
     {
     }
 
@@ -52,7 +52,7 @@ public class ProductEntity : AggregateRoot, IHasStronglyTypedId, IHasCode
     #endregion
 }
 
-public sealed record ProductId(Guid Value) : IHasGuidId
+public record ProductId(Guid Value) : IHasGuidId
 {
     public Guid GetGuidValue() => Value;
 }
