@@ -30,7 +30,7 @@ public class GenericCQRSFixture<TEntity> : IDisposable
 
     public readonly Mock<IGenericRepository<TEntity>> MockRepository;
 
-    private readonly Mock<IMapper> _mockMapper;
+    public readonly Mock<IMapper> MockMapper;
 
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
 
@@ -59,7 +59,7 @@ public class GenericCQRSFixture<TEntity> : IDisposable
     public GenericCQRSFixture()
     {
         MockRepository = new();
-        _mockMapper = new();
+        MockMapper = new();
         MockDtoMappingRegistry = new();
         _mockUnitOfWork = new();
         MockServiceProvider = new();
@@ -78,25 +78,17 @@ public class GenericCQRSFixture<TEntity> : IDisposable
 
         #endregion
 
-        _mockMapper.Setup(mapper => mapper.Map(It.IsAny<object>(), It.IsAny<Type>(), It.IsAny<Type>()))
-            .Returns((object source, Type sourceType, Type destinationType) =>
-            {
-                return Activator.CreateInstance(destinationType)!;
-            });
-
         #region [ Handlers ]
 
         _cacheService.Setup(rcs => rcs.GetCachedValueAsync(It.IsAny<string>())).ReturnsAsync((string key) => null);
         _cacheService.Setup(rcs => rcs.SetCachedValueAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<TimeSpan?>()))
             .Returns(Task.CompletedTask);
 
-        GetAllEntitiesCommandHandler = new GetAllEntitiesQueryHandler<TEntity>(MockRepository.Object, _mockMapper.Object, MockDtoMappingRegistry.Object, MockServiceProvider.Object, _noxApplicationLogger, _cacheService.Object);
-        GetEntityByIdCommandHandler = new GetEntityByIdQueryHandler<TEntity>(MockRepository.Object, _mockMapper.Object, MockDtoMappingRegistry.Object, MockServiceProvider.Object, _noxApplicationLogger);
-        CreateEntityCommandHandler = new CreateEntityCommandHandler<TEntity>(MockRepository.Object, _mockMapper.Object, MockDtoMappingRegistry.Object, MockServiceProvider.Object, _noxApplicationLogger, _mockUnitOfWork.Object, _cacheService.Object);
-        UpdateEntityCommandHandler = new UpdateEntityCommandHandler<TEntity>(MockRepository.Object, _mockMapper.Object, MockDtoMappingRegistry.Object, MockServiceProvider.Object, _noxApplicationLogger, _mockUnitOfWork.Object);
-        DeleteEntityCommandHandler = new DeleteEntityCommandHandler<TEntity>(MockRepository.Object, _mockMapper.Object, MockDtoMappingRegistry.Object, MockServiceProvider.Object, _noxApplicationLogger, _mockUnitOfWork.Object, _cacheService.Object);
-
-        #endregion
+        GetAllEntitiesCommandHandler = new GetAllEntitiesQueryHandler<TEntity>(MockRepository.Object, MockMapper.Object, MockDtoMappingRegistry.Object, MockServiceProvider.Object, _noxApplicationLogger, _cacheService.Object);
+        GetEntityByIdCommandHandler = new GetEntityByIdQueryHandler<TEntity>(MockRepository.Object, MockMapper.Object, MockDtoMappingRegistry.Object, MockServiceProvider.Object, _noxApplicationLogger);
+        CreateEntityCommandHandler = new CreateEntityCommandHandler<TEntity>(MockRepository.Object, MockMapper.Object, MockDtoMappingRegistry.Object, MockServiceProvider.Object, _noxApplicationLogger, _mockUnitOfWork.Object, _cacheService.Object);
+        UpdateEntityCommandHandler = new UpdateEntityCommandHandler<TEntity>(MockRepository.Object, MockMapper.Object, MockDtoMappingRegistry.Object, MockServiceProvider.Object, _noxApplicationLogger, _mockUnitOfWork.Object);
+        DeleteEntityCommandHandler = new DeleteEntityCommandHandler<TEntity>(MockRepository.Object, MockMapper.Object, MockDtoMappingRegistry.Object, MockServiceProvider.Object, _noxApplicationLogger, _mockUnitOfWork.Object, _cacheService.Object);
 
         MockMediator.Setup(m => m.Send(It.IsAny<GetEntityByIdQuery<TEntity>>(), It.IsAny<CancellationToken>()))
             .Returns((GetEntityByIdQuery<TEntity> cmd, CancellationToken ct) => GetEntityByIdCommandHandler.Handle(cmd, ct));
@@ -112,6 +104,8 @@ public class GenericCQRSFixture<TEntity> : IDisposable
 
         MockMediator.Setup(m => m.Send(It.IsAny<DeleteEntityCommand<TEntity>>(), It.IsAny<CancellationToken>()))
             .Returns((DeleteEntityCommand<TEntity> cmd, CancellationToken ct) => DeleteEntityCommandHandler.Handle(cmd, ct));
+
+        #endregion
 
         #region [ Localization ]
 

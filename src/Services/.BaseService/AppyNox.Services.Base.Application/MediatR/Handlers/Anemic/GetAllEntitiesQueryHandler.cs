@@ -20,7 +20,7 @@ internal class GetAllEntitiesQueryHandler<TEntity>(
         INoxApplicationLogger logger,
         ICacheService cacheService)
         : BaseHandler<TEntity>(mapper, dtoMappingRegistry, serviceProvider, logger),
-        IRequestHandler<GetAllEntitiesQuery<TEntity>, PaginatedList>
+        IRequestHandler<GetAllEntitiesQuery<TEntity>, PaginatedList<object>>
         where TEntity : class, IEntityWithGuid
 {
     #region [ Fields ]
@@ -29,17 +29,29 @@ internal class GetAllEntitiesQueryHandler<TEntity>(
 
     private readonly IGenericRepository<TEntity> _repository = repository;
 
+    private readonly IMapper _mapper = mapper;
+
     #endregion
 
     #region [ Public Methods ]
 
-    public async Task<PaginatedList> Handle(GetAllEntitiesQuery<TEntity> request, CancellationToken cancellationToken)
+    public async Task<PaginatedList<object>> Handle(GetAllEntitiesQuery<TEntity> request, CancellationToken cancellationToken)
     {
         try
         {
             Logger.LogInformation($"Fetching entities of type '{typeof(TEntity).Name}'");
             var dtoType = GetDtoType(request.QueryParameters);
-            return await _repository.GetAllAsync(request.QueryParameters, dtoType, _cacheService);
+            var paginatedEntityList = await _repository.GetAllAsync(request.QueryParameters, _cacheService);
+            var mappedItems = _mapper.Map(paginatedEntityList.Items, paginatedEntityList.Items.GetType(), typeof(IEnumerable<>).MakeGenericType(dtoType))
+                as IEnumerable<object>;
+            return new PaginatedList<object>
+            {
+                Items = mappedItems!, // risky
+                ItemsCount = paginatedEntityList.ItemsCount,
+                TotalCount = paginatedEntityList.TotalCount,
+                CurrentPage = paginatedEntityList.CurrentPage,
+                PageSize = paginatedEntityList.PageSize
+            };
         }
         catch (Exception ex) when (ex is INoxException)
         {

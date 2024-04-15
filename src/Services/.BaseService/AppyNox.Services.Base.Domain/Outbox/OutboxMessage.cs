@@ -1,6 +1,6 @@
 ﻿namespace AppyNox.Services.Base.Domain.Outbox;
 
-public sealed class OutboxMessage
+public class OutboxMessage
 {
     public Guid Id { get; set; }
 

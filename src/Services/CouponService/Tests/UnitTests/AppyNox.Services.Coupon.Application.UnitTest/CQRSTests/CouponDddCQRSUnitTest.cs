@@ -13,10 +13,12 @@ using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
 using AppyNox.Services.Coupon.Domain.Coupons;
 using AppyNox.Services.Coupon.Domain.Coupons.Builders;
 using AppyNox.Services.Coupon.Domain.Localization;
+using AutoMapper;
 using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.Extensions.Localization;
 using Moq;
+using System.Reflection;
 using System.Text.Json;
 using CouponAggregate = AppyNox.Services.Coupon.Domain.Coupons.Coupon;
 
@@ -46,17 +48,18 @@ public class CouponDddCQRSUnitTest : IClassFixture<NoxCQRSFixture<Domain.Coupons
         _fixture.MockDtoMappingRegistry.Setup(registry => registry.GetDtoType(DtoLevelMappingTypes.DataAccess, typeof(CouponAggregate), CommonDetailLevels.Simple))
             .Returns(typeof(CouponSimpleDto));
 
-        _fixture.MockDtoMappingRegistry.Setup(registry => registry.GetDtoType(DtoLevelMappingTypes.Create, typeof(CouponAggregate), CouponCreateDetailLevel.Simple.GetDisplayName()))
-            .Returns(typeof(CouponSimpleCreateDto));
+        _fixture.MockDtoMappingRegistry.Setup(registry => registry.GetDtoType(DtoLevelMappingTypes.Create, typeof(CouponAggregate), CouponCreateDetailLevel.Bulk.GetDisplayName()))
+            .Returns(typeof(CouponBulkCreateDto));
 
         _fixture.MockDtoMappingRegistry.Setup(registry => registry.GetDtoType(DtoLevelMappingTypes.Update, typeof(CouponAggregate), CouponUpdateDetailLevel.Simple.GetDisplayName()))
             .Returns(typeof(CouponSimpleUpdateDto));
 
-        var validatorMock = new Mock<IValidator<CouponSimpleCreateDto>>();
+        var validatorMock = new Mock<IValidator<CouponBulkCreateDto>>();
         validatorMock
             .Setup(validator => validator.Validate(It.IsAny<ValidationContext<object>>()))
             .Returns(new ValidationResult());
-        _fixture.MockServiceProvider.Setup(service => service.GetService(typeof(IValidator<CouponSimpleCreateDto>)))
+
+        _fixture.MockServiceProvider.Setup(service => service.GetService(typeof(IValidator<CouponBulkCreateDto>)))
             .Returns(validatorMock.Object);
 
         var validatorMockUpdate = new Mock<IValidator<CouponSimpleUpdateDto>>();
@@ -77,21 +80,38 @@ public class CouponDddCQRSUnitTest : IClassFixture<NoxCQRSFixture<Domain.Coupons
             Amount = new AmountDto() { DiscountAmount = 10, MinAmount = 20 },
             CouponDetailId = new CouponDetailIdDto() { Value = Guid.NewGuid() }
         };
-        _fixture.MockRepository.Setup(repo => repo.GetAllAsync(It.IsAny<IQueryParameters>(), It.IsAny<Type>(), It.IsAny<ICacheService>()))
-            .ReturnsAsync(new Mock<PaginatedList>().Object);
+        _fixture.MockRepository.Setup(repo => repo.GetAllAsync(It.IsAny<IQueryParameters>(), It.IsAny<ICacheService>()))
+            .ReturnsAsync(new Mock<PaginatedList<CouponAggregate>>().Object);
 
-        _fixture.MockRepository.Setup(repo => repo.GetByIdAsync(It.IsAny<CouponId>(), It.IsAny<Type>()))
-            .ReturnsAsync(couponSimpleDto);
+        _fixture.MockRepository.Setup(repo => repo.GetByIdAsync(It.IsAny<CouponId>()))
+            .ReturnsAsync(couponEntity);
 
         _fixture.MockRepository.Setup(repo => repo.AddAsync(It.IsAny<CouponAggregate>()))
             .ReturnsAsync(couponEntity);
 
+        #endregion
+
+        #region [ Mapper ]
+
+        Assembly applicationAssembly = Assembly.Load("AppyNox.Services.Coupon.Application");
+        var profiles = applicationAssembly.GetTypes()
+            .Where(t => typeof(Profile).IsAssignableFrom(t))
+            .Select(Activator.CreateInstance)
+            .Cast<Profile>();
+
+        var configuration = new MapperConfiguration(cfg =>
+        {
+            foreach (var profile in profiles)
+            {
+                cfg.AddProfile(profile);
+            }
+        });
+
         _fixture.MockMapper.Setup(mapper => mapper.Map(It.IsAny<object>(), It.IsAny<Type>(), It.IsAny<Type>()))
             .Returns((object source, Type sourceType, Type destinationType) =>
             {
-                if (destinationType == typeof(CouponAggregate))
-                    return couponEntity;
-                return Activator.CreateInstance(destinationType)!;
+                var mapper = configuration.CreateMapper();
+                return mapper.Map(source, sourceType, destinationType);
             });
 
         #endregion
@@ -109,7 +129,6 @@ public class CouponDddCQRSUnitTest : IClassFixture<NoxCQRSFixture<Domain.Coupons
 
         // Assert
         Assert.NotNull(result);
-        Assert.True(result is PaginatedList);
     }
 
     [Fact]
@@ -127,15 +146,34 @@ public class CouponDddCQRSUnitTest : IClassFixture<NoxCQRSFixture<Domain.Coupons
     public async void CreateEntityCommand_ShouldSuccess()
     {
         // Prepare
-        string jsonData = @"{
-            }";
+        string jsonData = @"
+        {
+          ""code"": ""fffj9"",
+          ""amount"":{
+            ""discountAmount"": 2,
+            ""minAmount"": 13
+          },
+          ""description"": ""string"",
+          ""couponDetail"" : {
+            ""detail"" : ""details detail"",
+            ""code"":""deta1"",
+            ""couponDetailTags"": [
+                {
+                    ""tag"" : ""tag1""
+                },
+                {
+                    ""tag"":""tag2""
+                }
+            ]
+          }
+        }";
         JsonDocument jsonDocument = JsonDocument.Parse(jsonData);
         JsonElement root = jsonDocument.RootElement;
         NoxContext.UserId = Guid.Parse("a8bfc75b-2ac3-47e2-b013-8b8a1efba45d");
 
         // Act
         var result = await _fixture.MockMediator.Object
-            .Send<Guid>(new CreateNoxEntityCommand<Domain.Coupons.Coupon>(root, CouponCreateDetailLevel.Simple.GetDisplayName()));
+            .Send<Guid>(new CreateNoxEntityCommand<Domain.Coupons.Coupon>(root, CouponCreateDetailLevel.Bulk.GetDisplayName()));
 
         // Assert
         Assert.True(Guid.TryParse(result.ToString(), out _));

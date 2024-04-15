@@ -18,7 +18,7 @@ public class Ticket : IEntityWithGuid, IAuditable
 
     #region [ Relations ]
 
-    public ICollection<TicketTag>? Tags { get; set; }
+    public virtual ICollection<TicketTag>? Tags { get; set; }
 
     #endregion
 }

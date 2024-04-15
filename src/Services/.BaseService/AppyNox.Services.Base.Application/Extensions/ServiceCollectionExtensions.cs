@@ -25,7 +25,7 @@ public static class ServiceCollectionExtensions
     where TEntity : class, IEntityWithGuid
     {
         // Register GetAllEntitiesQueryHandler
-        services.AddTransient<IRequestHandler<GetAllEntitiesQuery<TEntity>, PaginatedList>,
+        services.AddTransient<IRequestHandler<GetAllEntitiesQuery<TEntity>, PaginatedList<object>>,
             GetAllEntitiesQueryHandler<TEntity>>();
 
         // Register GetEntityByIdQueryHandler
@@ -65,7 +65,7 @@ public static class ServiceCollectionExtensions
         where TId : class, IHasGuidId
     {
         // Register GetAllNoxEntitiesQueryHandler
-        services.AddTransient<IRequestHandler<GetAllNoxEntitiesQuery<TEntity>, PaginatedList>,
+        services.AddTransient<IRequestHandler<GetAllNoxEntitiesQuery<TEntity>, PaginatedList<object>>,
             GetAllNoxEntitiesQueryHandler<TEntity>>();
 
         // Register GetNoxEntityByIdQueryHandler

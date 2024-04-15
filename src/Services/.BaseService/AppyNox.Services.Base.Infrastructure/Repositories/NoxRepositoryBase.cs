@@ -26,8 +26,6 @@ public abstract class NoxRepositoryBase<TEntity> : INoxRepository<TEntity> where
 
     private readonly string _countCacheKey = $"total-count-{typeof(TEntity).Name}";
 
-    private static readonly char[] separator = [',', ' '];
-
     #endregion
 
     #region [ Protected Constructors ]
@@ -48,18 +46,17 @@ public abstract class NoxRepositoryBase<TEntity> : INoxRepository<TEntity> where
     /// </summary>
     /// <typeparam name="TId">The type of the entity's ID.</typeparam>
     /// <param name="id">The ID of the entity to retrieve.</param>
-    /// <param name="dtoType">The type of DTO (Data Transfer Object) to project the entity into.</param>
     /// <returns>A task representing the asynchronous operation, returning the retrieved entity.</returns>
     /// <exception cref="EntityNotFoundException{TEntity}">Thrown when the entity with the specified ID is not found.</exception>
     /// <exception cref="NoxInfrastructureException">Thrown when there is an error retrieving the entity from the database.</exception>
 
-    public async Task<object> GetByIdAsync<TId>(TId id, Type dtoType)
+    public async Task<TEntity> GetByIdAsync<TId>(TId id)
         where TId : IHasGuidId
     {
         try
         {
             _logger.LogInformation($"Attempting to retrieve entity with ID: '{id}' Type: '{typeof(TEntity).Name}'.");
-            object? entity = await _dbSet.Where("Id == @0", id).Select(CreateProjection<TEntity>(dtoType)).AsNoTracking().FirstOrDefaultAsync();
+            TEntity? entity = await _dbSet.Where("Id == @0", id).AsNoTracking().FirstOrDefaultAsync();
 
             if (entity == null)
             {
@@ -86,11 +83,10 @@ public abstract class NoxRepositoryBase<TEntity> : INoxRepository<TEntity> where
     /// Retrieves a paginated list of entities asynchronously based on the specified query parameters.
     /// </summary>
     /// <param name="queryParameters">The query parameters specifying pagination details.</param>
-    /// <param name="dtoType">The type of DTO (Data Transfer Object) to project the entities into.</param>
     /// <param name="cacheService">The cache service used for caching.</param>
     /// <returns>A task representing the asynchronous operation, returning a PaginatedList of entities.</returns>
     /// <exception cref="NoxInfrastructureException">Thrown when there is an error retrieving entities from the database.</exception>
-    public async Task<PaginatedList> GetAllAsync(IQueryParameters queryParameters, Type dtoType, ICacheService cacheService)
+    public async Task<PaginatedList<TEntity>> GetAllAsync(IQueryParameters queryParameters, ICacheService cacheService)
     {
         try
         {
@@ -110,25 +106,24 @@ public abstract class NoxRepositoryBase<TEntity> : INoxRepository<TEntity> where
             .AsNoTracking();
 
             // Validate and apply sorting
-            if (!string.IsNullOrWhiteSpace(queryParameters.SortBy) && IsValidExpression<TEntity>(queryParameters.SortBy))
+            if (!string.IsNullOrWhiteSpace(queryParameters.SortBy) && IsValidExpression(queryParameters.SortBy))
             {
                 query = query.OrderBy(queryParameters.SortBy);
             }
 
             // Validate and apply filtering
-            if (!string.IsNullOrWhiteSpace(queryParameters.Filter) && IsValidExpression<TEntity>(queryParameters.Filter))
+            if (!string.IsNullOrWhiteSpace(queryParameters.Filter) && IsValidExpression(queryParameters.Filter))
             {
                 query = query.Where(queryParameters.Filter);
             }
 
             var entities = await query
-                .Select(CreateProjection<TEntity>(dtoType))
                 .Skip((queryParameters.PageNumber - 1) * queryParameters.PageSize)
                 .Take(queryParameters.PageSize)
                 .ToListAsync();
 
             _logger.LogInformation($"Successfully retrieved entities. Type: '{typeof(TEntity).Name}'.");
-            return new PaginatedList
+            return new PaginatedList<TEntity>
             {
                 Items = entities,
                 ItemsCount = entities.Count,

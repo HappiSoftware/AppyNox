@@ -7,6 +7,7 @@ using AppyNox.Services.Base.IntegrationTests.Wrapper;
 using AppyNox.Services.Base.IntegrationTests.Wrapper.Helpers;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
 using AppyNox.Services.Coupon.Application.Dtos.TicketDtos.Models.Basic;
+using AppyNox.Services.Coupon.Application.Dtos.TicketDtos.Models.Extended;
 using AppyNox.Services.Coupon.Domain.Entities;
 using AppyNox.Services.Coupon.Infrastructure.Repositories;
 using AppyNox.Services.Coupon.WebAPI.IntegrationTest.Fixtures;
@@ -45,7 +46,7 @@ public class TicketApiTest(CouponServiceFixture couponApiTestFixture)
 
         var jsonResponse = await response.Content.ReadAsStringAsync();
 
-        var coupons = NoxResponseUnwrapper.UnwrapData<PaginatedList>(jsonResponse, _jsonSerializerOptions);
+        var coupons = NoxResponseUnwrapper.UnwrapData<PaginatedList<TicketExtendedDto>>(jsonResponse, _jsonSerializerOptions);
 
         // Assert
         response.EnsureSuccessStatusCode();

@@ -43,7 +43,7 @@ public class LicenseEntity : AggregateRoot, IHasStronglyTypedId, IHasCode
 
     #region [ Constructors and Factories ]
 
-    private LicenseEntity()
+    protected LicenseEntity()
     {
     }
 
@@ -69,7 +69,7 @@ public class LicenseEntity : AggregateRoot, IHasStronglyTypedId, IHasCode
     #endregion
 }
 
-public sealed record LicenseId(Guid Value) : IHasGuidId
+public record LicenseId(Guid Value) : IHasGuidId
 {
     public Guid GetGuidValue() => Value;
 }

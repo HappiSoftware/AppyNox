@@ -14,9 +14,9 @@ public class TicketTag : IEntityWithGuid
 
     #region [ Relations ]
 
-    public Guid TicketId { get; set; }
+    public virtual Guid TicketId { get; set; }
 
-    public Ticket Ticket { get; set; } = default!;
+    public virtual Ticket Ticket { get; set; } = default!;
 
     #endregion
 }

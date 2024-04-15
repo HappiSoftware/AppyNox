@@ -42,7 +42,7 @@ public class ProductRepositoryUnitTest(RepositoryFixture fixture) : IClassFixtur
             PageNumber = 1,
             PageSize = 1,
         };
-        PaginatedList result = await repository.GetAllAsync(queryParameters, typeof(ProductSimpleDto), _cacheService);
+        var result = await repository.GetAllAsync(queryParameters, _cacheService);
 
         Assert.NotNull(result);
         Assert.Single(result.Items);
@@ -63,7 +63,7 @@ public class ProductRepositoryUnitTest(RepositoryFixture fixture) : IClassFixtur
             PageSize = 2,
         };
 
-        PaginatedList result = await repository.GetAllAsync(queryParameters, typeof(ProductSimpleDto), _cacheService);
+        var result = await repository.GetAllAsync(queryParameters, _cacheService);
 
         Assert.NotNull(result);
         Assert.Equal(2, result.ItemsCount);
@@ -85,12 +85,12 @@ public class ProductRepositoryUnitTest(RepositoryFixture fixture) : IClassFixtur
             PageNumber = 2,
             PageSize = 1,
         };
-        PaginatedList result = await repository.GetAllAsync(queryParameters, typeof(ProductSimpleUpdateDto), _cacheService);
+        var result = await repository.GetAllAsync(queryParameters, _cacheService);
 
         Assert.NotNull(result);
         Assert.Single(result.Items);
-        Assert.Equal(products.Last().Id.Value, ((ProductSimpleUpdateDto)result.Items.First()).Id.Value);
-        Assert.Equal(products.Last().Name, ((ProductSimpleUpdateDto)result.Items.First()).Name);
+        Assert.Equal(products.Last().Id.Value, result.Items.First().Id.Value);
+        Assert.Equal(products.Last().Name, result.Items.First().Name);
     }
 
     [Fact]
@@ -107,7 +107,7 @@ public class ProductRepositoryUnitTest(RepositoryFixture fixture) : IClassFixtur
             PageNumber = 1,
             PageSize = 50,
         };
-        PaginatedList result = await repository.GetAllAsync(queryParameters, typeof(ProductSimpleUpdateDto), _cacheService);
+        var result = await repository.GetAllAsync(queryParameters, _cacheService);
 
         Assert.NotNull(result);
         Assert.Equal(50, result.ItemsCount);
@@ -128,18 +128,17 @@ public class ProductRepositoryUnitTest(RepositoryFixture fixture) : IClassFixtur
             PageNumber = 5,
             PageSize = 5,
         };
-        PaginatedList result = await repository.GetAllAsync(queryParameters, typeof(ProductSimpleUpdateDto), _cacheService);
+        var result = await repository.GetAllAsync(queryParameters, _cacheService);
 
         List<ProductEntity> expectedProducts = products.Skip(20).Take(5).ToList();
-        List<object> resultList = result.Items.ToList();
 
         Assert.NotNull(result);
         Assert.Equal(expectedProducts.Count, result.ItemsCount);
 
         for (int i = 0; i < expectedProducts.Count; i++)
         {
-            Assert.Equal(expectedProducts[i].Id.Value, ((ProductSimpleUpdateDto)resultList[i]).Id.Value);
-            Assert.Equal(expectedProducts[i].Name, ((ProductSimpleUpdateDto)resultList[i]).Name);
+            Assert.Equal(expectedProducts[i].Id.Value, result.Items.ElementAt(i).Id.Value);
+            Assert.Equal(expectedProducts[i].Name, result.Items.ElementAt(i).Name);
         }
     }
 
@@ -152,7 +151,7 @@ public class ProductRepositoryUnitTest(RepositoryFixture fixture) : IClassFixtur
         Assert.NotNull(existingProducts);
 
         ProductRepository repository = new(context, _noxLoggerStub);
-        var result = await repository.GetByIdAsync(existingProducts.Id, typeof(ProductSimpleDto));
+        var result = await repository.GetByIdAsync(existingProducts.Id);
 
         Assert.NotNull(result);
     }
@@ -166,7 +165,7 @@ public class ProductRepositoryUnitTest(RepositoryFixture fixture) : IClassFixtur
         Assert.NotNull(existingProducts);
 
         ProductRepository repository = new(context, _noxLoggerStub);
-        ProductSimpleDto? result = await repository.GetByIdAsync(existingProducts.Id, typeof(ProductSimpleDto)) as ProductSimpleDto;
+        var result = await repository.GetByIdAsync(existingProducts.Id);
 
         Assert.NotNull(result);
         Assert.Equal(existingProducts.Code, result.Code);
@@ -189,7 +188,7 @@ public class ProductRepositoryUnitTest(RepositoryFixture fixture) : IClassFixtur
         await repository.AddAsync(product);
         await unitOfWork.SaveChangesAsync();
 
-        var result = await repository.GetByIdAsync(product.Id, typeof(ProductSimpleDto)) as ProductSimpleDto;
+        var result = await repository.GetByIdAsync(product.Id);
 
         // Assert
         Assert.NotNull(result);
@@ -218,7 +217,7 @@ public class ProductRepositoryUnitTest(RepositoryFixture fixture) : IClassFixtur
         repository.Update(existingProduct);
         await unitOfWork.SaveChangesAsync();
 
-        var result = await repository.GetByIdAsync(existingProduct.Id, typeof(ProductSimpleDto)) as ProductSimpleDto;
+        var result = await repository.GetByIdAsync(existingProduct.Id);
 
         Assert.NotNull(result);
         Assert.Equal(existingProduct.Id.Value, result.Id.Value);
@@ -245,7 +244,7 @@ public class ProductRepositoryUnitTest(RepositoryFixture fixture) : IClassFixtur
 
         var exception = await Assert.ThrowsAsync<EntityNotFoundException<ProductEntity>>(async () =>
         {
-            var result = await repository.GetByIdAsync(existingProduct.Id, typeof(ProductSimpleDto));
+            var result = await repository.GetByIdAsync(existingProduct.Id);
         });
 
         Assert.NotNull(exception);

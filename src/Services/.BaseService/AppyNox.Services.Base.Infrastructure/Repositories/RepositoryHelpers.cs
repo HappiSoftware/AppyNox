@@ -8,7 +8,7 @@ using System.Net;
 
 namespace AppyNox.Services.Base.Infrastructure.Repositories;
 
-internal static class RepositoryHelpers
+public static class RepositoryHelpers
 {
     #region [ Projection ]
 
@@ -188,7 +188,7 @@ internal static class RepositoryHelpers
         "pg_read_file", "pg_ls_dir", // Functions that can read server files or list directory contents
     };
 
-    public static bool IsValidExpression<TEntity>(string expression)
+    public static bool IsValidExpression(string expression)
     {
         // Ensure the expression doesn't contain any blacklisted terms
         if (Blacklist.Any(blacklisted => expression.Contains(blacklisted, StringComparison.OrdinalIgnoreCase)))

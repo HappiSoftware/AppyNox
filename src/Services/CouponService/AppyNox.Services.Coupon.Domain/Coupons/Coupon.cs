@@ -26,7 +26,7 @@ public class Coupon : AggregateRoot, IHasStronglyTypedId, IHasCode
     /// </summary>
 #nullable disable
 
-    private Coupon()
+    protected Coupon()
     {
     }
 
@@ -53,11 +53,11 @@ public class Coupon : AggregateRoot, IHasStronglyTypedId, IHasCode
 
     #region [ Relations ]
 
-    public CouponDetailId CouponDetailId { get; private set; }
+    public virtual CouponDetailId CouponDetailId { get; private set; }
 
-    public CouponDetail CouponDetail { get; private set; }
+    public virtual CouponDetail CouponDetail { get; private set; }
 
-    public ICollection<CouponHistory>? Histories { get; private set; }
+    public virtual ICollection<CouponHistory>? Histories { get; private set; }
 
     #endregion
 
@@ -84,9 +84,9 @@ public class Coupon : AggregateRoot, IHasStronglyTypedId, IHasCode
     #endregion
 }
 
-public sealed record CouponId : IHasGuidId, IValueObject
+public record CouponId : IHasGuidId, IValueObject
 {
-    private CouponId() { }
+    protected CouponId() { }
     public CouponId(Guid value)
     {
         Value = value;
@@ -95,9 +95,9 @@ public sealed record CouponId : IHasGuidId, IValueObject
     public Guid GetGuidValue() => Value;
 }
 
-public sealed record Amount : IValueObject
+public record Amount : IValueObject
 {
-    private Amount() { }
+    protected Amount() { }
     public double DiscountAmount { get; private set; }
 
     public int MinAmount { get; private set; }

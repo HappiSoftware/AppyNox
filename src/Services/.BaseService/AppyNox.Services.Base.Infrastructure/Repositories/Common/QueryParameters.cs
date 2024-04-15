@@ -1,21 +1,20 @@
 ﻿using AppyNox.Services.Base.Core.Enums;
 
-namespace AppyNox.Services.Base.Infrastructure.Repositories.Common
+namespace AppyNox.Services.Base.Infrastructure.Repositories.Common;
+
+/// <summary>
+/// Represents specific query parameters for data retrieval.
+/// </summary>
+public class QueryParameters : QueryParametersBase
 {
+    #region [ Public Constructors ]
+
     /// <summary>
-    /// Represents specific query parameters for data retrieval.
+    /// Initializes a new instance of the <see cref="QueryParameters"/> class with default settings.
     /// </summary>
-    public class QueryParameters : QueryParametersBase
+    public QueryParameters()
     {
-        #region [ Public Constructors ]
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="QueryParameters"/> class with default settings.
-        /// </summary>
-        public QueryParameters()
-        {
-        }
-
-        #endregion
     }
+
+    #endregion
 }

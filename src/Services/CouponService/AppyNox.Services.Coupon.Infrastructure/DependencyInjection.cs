@@ -3,11 +3,9 @@ using AppyNox.Services.Base.Application.Interfaces.Repositories;
 using AppyNox.Services.Base.Core.Common;
 using AppyNox.Services.Base.Core.Enums;
 using AppyNox.Services.Base.Infrastructure.BackgroundJobs;
-using AppyNox.Services.Base.Infrastructure.Data;
 using AppyNox.Services.Base.Infrastructure.Data.Interceptors;
 using AppyNox.Services.Base.Infrastructure.HostedServices;
 using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
-using AppyNox.Services.Coupon.Domain.Coupons;
 using AppyNox.Services.Coupon.Infrastructure.Data;
 using AppyNox.Services.Coupon.Infrastructure.Repositories;
 using Consul;
@@ -31,10 +29,8 @@ namespace AppyNox.Services.Coupon.Infrastructure
         /// <param name="environment"></param>
         /// <param name="logger"></param>
         /// <returns></returns>
-        public static IServiceCollection AddCouponInfrastructure(this IServiceCollection services, IHostApplicationBuilder builder, ApplicationEnvironment environment, INoxLogger logger)
+        public static IServiceCollection AddCouponInfrastructure(this IServiceCollection services, IConfiguration configuration, ApplicationEnvironment environment, INoxLogger logger)
         {
-            IConfiguration configuration = builder.Configuration;
-
             services.AddSingleton<INoxInfrastructureLogger, NoxInfrastructureLogger>();
             services.AddSingleton<INoxApplicationLogger, NoxApplicationLogger>();
             services.AddSingleton<INoxApiLogger, NoxApiLogger>();
@@ -90,7 +86,7 @@ namespace AppyNox.Services.Coupon.Infrastructure
 
             #endregion
 
-            services.AddScoped(typeof(ICouponRepository), typeof(CouponRepository<Domain.Coupons.Coupon>));
+            services.AddScoped(typeof(ICouponRepository), typeof(CouponRepository));
             services.AddScoped(typeof(INoxRepository<>), typeof(NoxRepository<>));
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddScoped<IUnitOfWork, UnitOfWork>();

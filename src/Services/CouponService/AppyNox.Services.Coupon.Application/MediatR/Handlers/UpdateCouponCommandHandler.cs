@@ -12,11 +12,12 @@ using AutoMapper;
 using FluentValidation;
 using MediatR;
 using System.Net;
+using CouponRoot = AppyNox.Services.Coupon.Domain.Coupons.Coupon;
 
 namespace AppyNox.Services.Coupon.Application.MediatR.Handlers;
 
 public class UpdateCouponCommandHandler(
-        INoxRepository<Domain.Coupons.Coupon> repository,
+        INoxRepository<CouponRoot> repository,
         IMapper mapper,
         IValidator<CouponExtendedUpdateDto> validator,
         INoxApplicationLogger logger,
@@ -26,7 +27,7 @@ public class UpdateCouponCommandHandler(
 {
     #region [ Fields ]
 
-    private readonly INoxRepository<Domain.Coupons.Coupon> _repository = repository;
+    private readonly INoxRepository<CouponRoot> _repository = repository;
 
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
@@ -44,7 +45,7 @@ public class UpdateCouponCommandHandler(
     {
         try
         {
-            _logger.LogInformation($"Updating entity ID: '{request.Dto.Id}' type '{typeof(Domain.Coupons.Coupon).Name}'");
+            _logger.LogInformation($"Updating entity ID: '{request.Dto.Id}' type '{typeof(CouponRoot).Name}'");
             if (request.Id != request.Dto.Id.Value)
             {
                 throw new NoxCouponApplicationException("Ids do not match.", (int)NoxCouponApplicationExceptionCode.IdsMismatch, (int)HttpStatusCode.BadRequest);
@@ -61,8 +62,8 @@ public class UpdateCouponCommandHandler(
             #endregion
 
             CouponId couponId = _mapper.Map<CouponIdDto, CouponId>(request.Dto.Id);
-            Domain.Coupons.Coupon? entity = (await _repository.GetByIdAsync(couponId, typeof(Domain.Coupons.Coupon)) as Domain.Coupons.Coupon)
-                ?? throw new NoxCouponApplicationException("GetByIdAsync returned null", (int)NoxCouponApplicationExceptionCode.UnexpectedUpdateCommandError);
+            CouponRoot entity = (await _repository.GetByIdAsync(couponId)
+                ?? throw new NoxCouponApplicationException("GetByIdAsync returned null", (int)NoxCouponApplicationExceptionCode.UnexpectedUpdateCommandError));
 
             _repository.Update(entity);
 
@@ -78,7 +79,7 @@ public class UpdateCouponCommandHandler(
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Error updating entity of type '{typeof(Domain.Coupons.Coupon).Name}' with ID: {request.Id}.");
+            _logger.LogError(ex, $"Error updating entity of type '{typeof(CouponRoot).Name}' with ID: {request.Id}.");
             throw new NoxCouponApplicationException(ex, (int)NoxCouponApplicationExceptionCode.UnexpectedUpdateCommandError);
         }
     }
