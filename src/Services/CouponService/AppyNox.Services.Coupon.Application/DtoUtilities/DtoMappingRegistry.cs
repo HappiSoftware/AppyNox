@@ -6,6 +6,7 @@ using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.DetailLevel;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
 using AppyNox.Services.Coupon.Application.Dtos.TicketDtos.DetailLevel;
 using AppyNox.Services.Coupon.Application.Dtos.TicketTagDtos.DetailLevel;
+using AppyNox.Services.Coupon.Application.Exceptions.Base;
 using AppyNox.Services.Coupon.Domain.Coupons;
 using AppyNox.Services.Coupon.Domain.Entities;
 using System.Data;
@@ -75,7 +76,9 @@ namespace AppyNox.Services.Coupon.Application.DtoUtilities
                     _ => ticketTagDetailLevelAttribute.DataAccessDetailLevel
                 };
             }
-            throw new ArgumentException("Unsupported attribute type for detail level mapping.");
+            throw new NoxCouponApplicationException(
+                "Unsupported attribute type for detail level mapping. Check DtoMappingRegistry",
+                (int)NoxCouponApplicationExceptionCode.DtoMappingRegistryError);
         }
 
         #endregion

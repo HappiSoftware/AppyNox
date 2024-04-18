@@ -1,11 +1,12 @@
 ﻿using AppyNox.Services.Base.Application.Dtos;
 using AppyNox.Services.Base.Application.DtoUtilities;
-using AppyNox.Services.Base.Application.ExceptionExtensions.Base;
+using AppyNox.Services.Base.Application.Exceptions.Base;
 using AppyNox.Services.Base.Application.Interfaces.Caches;
 using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Application.Interfaces.Repositories;
 using AppyNox.Services.Base.Application.MediatR.Commands;
-using AppyNox.Services.Base.Core.ExceptionExtensions.Base;
+using AppyNox.Services.Base.Core.Common;
+using AppyNox.Services.Base.Core.Exceptions.Base;
 using AppyNox.Services.Base.Domain.Interfaces;
 using AutoMapper;
 using MediatR;
@@ -60,7 +61,7 @@ internal class GetAllEntitiesQueryHandler<TEntity>(
         catch (Exception ex)
         {
             Logger.LogError(ex, $"Error occurred while fetching entities of type '{typeof(TEntity).Name}'");
-            throw new NoxApplicationException(ex, (int)NoxApplicationExceptionCode.GenericGetAllQueryError);
+            throw new NoxApplicationException(exceptionCode: (int)NoxApplicationExceptionCode.GenericGetAllQueryError, innerException: ex);
         }
     }
 

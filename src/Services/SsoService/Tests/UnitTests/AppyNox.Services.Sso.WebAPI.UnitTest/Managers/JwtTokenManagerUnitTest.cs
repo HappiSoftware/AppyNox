@@ -10,8 +10,8 @@ using Moq;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Security.Claims;
-using AppyNox.Services.Sso.WebAPI.ExceptionExtensions;
 using AppyNox.Services.Sso.WebAPI.Localization;
+using AppyNox.Services.Sso.WebAPI.Exceptions;
 
 namespace AppyNox.Services.Sso.WebAPI.UnitTest.Managers
 {

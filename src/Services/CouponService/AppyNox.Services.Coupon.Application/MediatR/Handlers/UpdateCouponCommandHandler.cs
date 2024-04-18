@@ -1,11 +1,11 @@
-﻿using AppyNox.Services.Base.Application.ExceptionExtensions;
+﻿using AppyNox.Services.Base.Application.Exceptions;
 using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Application.Interfaces.Repositories;
 using AppyNox.Services.Base.Core.AsyncLocals;
-using AppyNox.Services.Base.Core.ExceptionExtensions.Base;
+using AppyNox.Services.Base.Core.Exceptions.Base;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Extended;
-using AppyNox.Services.Coupon.Application.ExceptionExtensions.Base;
+using AppyNox.Services.Coupon.Application.Exceptions.Base;
 using AppyNox.Services.Coupon.Application.MediatR.Commands;
 using AppyNox.Services.Coupon.Domain.Coupons;
 using AutoMapper;
@@ -56,7 +56,7 @@ public class UpdateCouponCommandHandler(
             var validationResult = _validator.Validate(request.Dto);
             if (!validationResult.IsValid)
             {
-                throw new FluentValidationException(typeof(CouponExtendedUpdateDto), validationResult);
+                throw new NoxFluentValidationException(typeof(CouponExtendedUpdateDto), validationResult);
             }
 
             #endregion
@@ -80,7 +80,7 @@ public class UpdateCouponCommandHandler(
         catch (Exception ex)
         {
             _logger.LogError(ex, $"Error updating entity of type '{typeof(CouponRoot).Name}' with ID: {request.Id}.");
-            throw new NoxCouponApplicationException(ex, (int)NoxCouponApplicationExceptionCode.UnexpectedUpdateCommandError);
+            throw new NoxCouponApplicationException(exceptionCode: (int)NoxCouponApplicationExceptionCode.UnexpectedUpdateCommandError, innerException: ex);
         }
     }
 

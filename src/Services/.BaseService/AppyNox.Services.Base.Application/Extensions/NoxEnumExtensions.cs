@@ -1,4 +1,4 @@
-﻿using AppyNox.Services.Base.Application.ExceptionExtensions;
+﻿using AppyNox.Services.Base.Application.Exceptions;
 using AppyNox.Services.Base.Core.Extensions;
 using System.ComponentModel.DataAnnotations;
 

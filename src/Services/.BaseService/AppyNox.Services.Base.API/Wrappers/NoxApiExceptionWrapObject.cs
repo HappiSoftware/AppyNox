@@ -1,4 +1,4 @@
-﻿using AppyNox.Services.Base.Core.ExceptionExtensions.Base;
+﻿using AppyNox.Services.Base.Core.Exceptions.Base;
 using System.Text.Json.Serialization;
 
 namespace AppyNox.Services.Base.API.Wrappers;
@@ -11,7 +11,7 @@ internal class NoxApiExceptionWrapObject(NoxException error, Guid correlationId)
     #region [ Properties ]
 
     [JsonPropertyOrder(1)]
-    public string Title { get; set; } = $"{error.Service} {error.Layer}";
+    public string Title { get; set; } = $"{error.Product} {error.Service} {error.Layer}";
 
     [JsonPropertyOrder(2)]
     public int ExceptionCode { get; set; } = error.ExceptionCode;

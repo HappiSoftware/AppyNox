@@ -29,7 +29,7 @@ namespace AppyNox.Services.Coupon.Infrastructure
         /// <param name="environment"></param>
         /// <param name="logger"></param>
         /// <returns></returns>
-        public static IServiceCollection AddCouponInfrastructure(this IServiceCollection services, IConfiguration configuration, ApplicationEnvironment environment, INoxLogger logger)
+        public static IServiceCollection AddCouponInfrastructure(this IServiceCollection services, IConfiguration configuration, INoxLogger logger)
         {
             services.AddSingleton<INoxInfrastructureLogger, NoxInfrastructureLogger>();
             services.AddSingleton<INoxApplicationLogger, NoxApplicationLogger>();
@@ -37,14 +37,7 @@ namespace AppyNox.Services.Coupon.Infrastructure
 
             #region [ Database Configuration ]
 
-            string? connectionString = string.Empty;
-            connectionString = environment switch
-            {
-                ApplicationEnvironment.Development => configuration.GetConnectionString("DevelopmentConnection"),
-                ApplicationEnvironment.Staging => configuration.GetConnectionString("StagingConnection"),
-                ApplicationEnvironment.Production => configuration.GetConnectionString("ProductionConnection"),
-                _ => configuration.GetConnectionString("DefaultConnection"),
-            };
+            string? connectionString = configuration.GetConnectionString("DefaultConnection");
 
             services.AddSingleton<ConvertDomainEventsToOutboxMessagesInterceptor>();
 

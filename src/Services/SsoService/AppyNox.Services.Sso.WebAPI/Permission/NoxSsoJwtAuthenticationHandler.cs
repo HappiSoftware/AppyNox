@@ -1,5 +1,5 @@
 ﻿using AppyNox.Services.Sso.Application.Interfaces.Authentication;
-using AppyNox.Services.Sso.WebAPI.ExceptionExtensions.Base;
+using AppyNox.Services.Sso.WebAPI.Exceptions.Base;
 using AppyNox.Services.Sso.WebAPI.Localization;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -12,11 +12,10 @@ using System.Text.RegularExpressions;
 
 namespace AppyNox.Services.Sso.WebAPI.Permission;
 
-internal partial class NoxSsoJwtAuthenticationHandler(
- IOptionsMonitor<AuthenticationSchemeOptions> options,
- ILoggerFactory logger,
- UrlEncoder encoder,
- ICustomTokenManager jwtTokenManager) : AuthenticationHandler<AuthenticationSchemeOptions>(options, logger, encoder)
+internal partial class NoxSsoJwtAuthenticationHandler(IOptionsMonitor<AuthenticationSchemeOptions> options,
+    ILoggerFactory logger,
+    UrlEncoder encoder,
+    ICustomTokenManager jwtTokenManager) : AuthenticationHandler<AuthenticationSchemeOptions>(options, logger, encoder)
 {
     #region [ Fields ]
 
@@ -38,7 +37,7 @@ internal partial class NoxSsoJwtAuthenticationHandler(
         }
 
         string token = Request.Headers.Authorization.FirstOrDefault()?.Split(" ").Last()
-            ?? throw new NoxSsoApiException(NoxSsoApiResourceService.NullToken, (int)HttpStatusCode.Unauthorized);
+            ?? throw new NoxSsoApiException(NoxSsoApiResourceService.NullToken, statusCode: (int)HttpStatusCode.Unauthorized);
         string audience = GetExpectedAudienceForRequest(Context.Request.Path.ToString());
 
         if (await _jwtTokenManager.VerifyToken(token, audience))
@@ -54,7 +53,7 @@ internal partial class NoxSsoJwtAuthenticationHandler(
             return await Task.FromResult(AuthenticateResult.Success(ticket));
         }
 
-        throw new NoxSsoApiException(NoxSsoApiResourceService.InvalidToken, (int)HttpStatusCode.Unauthorized);
+        throw new NoxSsoApiException(NoxSsoApiResourceService.InvalidToken, statusCode: (int)HttpStatusCode.Unauthorized);
     }
 
     protected static string GetExpectedAudienceForRequest(string requestPath)

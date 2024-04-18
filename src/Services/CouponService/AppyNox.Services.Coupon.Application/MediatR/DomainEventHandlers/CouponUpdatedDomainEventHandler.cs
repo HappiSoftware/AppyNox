@@ -1,7 +1,7 @@
 ﻿using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Application.Interfaces.Repositories;
-using AppyNox.Services.Base.Core.ExceptionExtensions.Base;
-using AppyNox.Services.Coupon.Application.ExceptionExtensions.Base;
+using AppyNox.Services.Base.Core.Exceptions.Base;
+using AppyNox.Services.Coupon.Application.Exceptions.Base;
 using AppyNox.Services.Coupon.Domain.Coupons;
 using MediatR;
 
@@ -34,7 +34,7 @@ internal class CouponUpdatedDomainEventHandler(
         catch (Exception ex)
         {
             _logger.LogError(ex, $"Error processing domain event '{typeof(CouponUpdatedDomainEvent).Name}' for CouponId: {domainEvent.CouponId.Value}");
-            throw new NoxCouponApplicationException(ex, (int)NoxCouponApplicationExceptionCode.UnexpectedDomainEventHandlerError);
+            throw new NoxCouponApplicationException(exceptionCode: (int)NoxCouponApplicationExceptionCode.UnexpectedDomainEventHandlerError, innerException: ex);
         }
     }
 }

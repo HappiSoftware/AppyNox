@@ -1,8 +1,8 @@
-﻿using AppyNox.Services.Sso.Infrastructure.ExceptionExtensions.Base;
-using AppyNox.Services.Sso.Infrastructure.Localization;
+﻿using AppyNox.Services.Sso.Infrastructure.Localization;
 using AppyNox.Services.Sso.SharedEvents.Events;
 using AppyNox.Services.License.SharedEvents.Events;
 using MassTransit;
+using AppyNox.Services.Sso.Infrastructure.Exceptions.Base;
 
 namespace AppyNox.Services.Sso.Infrastructure.MassTransit.Sagas
 {

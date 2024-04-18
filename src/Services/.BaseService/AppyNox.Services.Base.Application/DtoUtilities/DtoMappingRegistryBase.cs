@@ -1,6 +1,5 @@
-﻿using AppyNox.Services.Base.Application.ExceptionExtensions;
+﻿using AppyNox.Services.Base.Application.Exceptions;
 using AppyNox.Services.Base.Application.Extensions;
-using AppyNox.Services.Base.Application.Localization;
 using AppyNox.Services.Base.Core.Enums;
 
 namespace AppyNox.Services.Base.Application.DtoUtilities

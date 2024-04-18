@@ -1,11 +1,9 @@
 ﻿using AppyNox.Services.Base.Application.Interfaces.Caches;
-using AppyNox.Services.Base.Infrastructure.ExceptionExtensions;
-using AppyNox.Services.Base.Infrastructure.ExceptionExtensions.Base;
+using AppyNox.Services.Base.Infrastructure.Exceptions;
+using AppyNox.Services.Base.Infrastructure.Exceptions.Base;
 using AppyNox.Services.Base.Infrastructure.Repositories.Common;
 using AppyNox.Services.Base.Infrastructure.UnitTests.Fixtures;
 using AppyNox.Services.Base.Infrastructure.UnitTests.Stubs;
-using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
-using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Extended;
 using AppyNox.Services.Coupon.Domain.Coupons;
 using AppyNox.Services.Coupon.Domain.Coupons.Builders;
 using AppyNox.Services.Coupon.Domain.Exceptions.Base;
@@ -17,9 +15,6 @@ using Microsoft.Extensions.Localization;
 using Moq;
 using System.Net;
 using CouponAggregate = AppyNox.Services.Coupon.Domain.Coupons.Coupon;
-using AppyNox.Services.Base.Application.Extensions;
-using AppyNox.Services.Base.Application.Dtos;
-using Microsoft.AspNetCore.Mvc;
 
 namespace AppyNox.Services.Coupon.Infrastructure.UnitTest.RepositoryTests;
 
@@ -495,7 +490,7 @@ public class CouponRepositoryUnitTest : IClassFixture<RepositoryFixture>
         await repository.RemoveByIdAsync(existingCoupon.Id);
         await unitOfWork.SaveChangesAsync();
 
-        var exception = await Assert.ThrowsAsync<EntityNotFoundException<CouponAggregate>>(async () =>
+        var exception = await Assert.ThrowsAsync<NoxEntityNotFoundException<CouponAggregate>>(async () =>
         {
             var result = await repository.GetByIdAsync(existingCoupon.Id);
         });

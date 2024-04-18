@@ -1,4 +1,4 @@
-﻿using AppyNox.Services.Base.Core.ExceptionExtensions.Base;
+﻿using AppyNox.Services.Base.Core.Exceptions.Base;
 using FluentValidation.Results;
 using System.Text.Json.Serialization;
 

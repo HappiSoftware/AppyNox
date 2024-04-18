@@ -1,6 +1,6 @@
 ﻿using AppyNox.Services.Base.Application.Constants;
 using AppyNox.Services.Base.Application.Interfaces.Caches;
-using AppyNox.Services.Base.Infrastructure.ExceptionExtensions;
+using AppyNox.Services.Base.Infrastructure.Exceptions;
 using AppyNox.Services.Base.Infrastructure.Repositories.Common;
 using AppyNox.Services.Base.Infrastructure.UnitTests.Fixtures;
 using AppyNox.Services.Base.Infrastructure.UnitTests.Stubs;
@@ -304,7 +304,7 @@ public class GenericTicketRepositoryTest : IClassFixture<RepositoryFixture>
         await repository.RemoveByIdAsync(existingTicket.Id);
         await unitOfWork.SaveChangesAsync();
 
-        var exception = await Assert.ThrowsAsync<EntityNotFoundException<Ticket>>(async () =>
+        var exception = await Assert.ThrowsAsync<NoxEntityNotFoundException<Ticket>>(async () =>
         {
             var result = await repository.GetByIdAsync(existingTicket.Id);
         });

@@ -110,7 +110,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppyNox.Services.Sso.WebAPI
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Benchmarks", "Benchmarks", "{909B33DD-BC66-411C-9CDD-27FCFB39A11E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppyNox.Services.Coupon.Benchmark", "src\Services\CouponService\Tests\Benchmarks\AppyNox.Services.Coupon.Benchmark\AppyNox.Services.Coupon.Benchmark.csproj", "{BB4BC444-008B-475A-9A8D-6F64FFE6B67F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppyNox.Services.Coupon.Benchmark", "src\Services\CouponService\Tests\Benchmarks\AppyNox.Services.Coupon.Benchmark\AppyNox.Services.Coupon.Benchmark.csproj", "{BB4BC444-008B-475A-9A8D-6F64FFE6B67F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

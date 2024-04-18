@@ -48,7 +48,7 @@ public class LicenseRepository(LicenseDatabaseContext context, INoxInfrastructur
         }
         catch (Exception ex)
         {
-            throw new NoxLicenseInfrastructureException(ex);
+            throw new NoxLicenseInfrastructureException(innerException: ex);
         }
     }
 

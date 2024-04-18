@@ -29,7 +29,7 @@ namespace AppyNox.Services.License.Infrastructure
         /// <param name="environment"></param>
         /// <param name="logger"></param>
         /// <returns></returns>
-        public static IServiceCollection AddLicenseInfrastructure(this IServiceCollection services, IHostApplicationBuilder builder, ApplicationEnvironment environment, INoxLogger logger)
+        public static IServiceCollection AddLicenseInfrastructure(this IServiceCollection services, IHostApplicationBuilder builder, INoxLogger logger)
         {
             IConfiguration configuration = builder.Configuration;
 
@@ -39,14 +39,7 @@ namespace AppyNox.Services.License.Infrastructure
 
             #region [ Database Configuration ]
 
-            string? connectionString = string.Empty;
-            connectionString = environment switch
-            {
-                ApplicationEnvironment.Development => configuration.GetConnectionString("DevelopmentConnection"),
-                ApplicationEnvironment.Staging => configuration.GetConnectionString("StagingConnection"),
-                ApplicationEnvironment.Production => configuration.GetConnectionString("ProductionConnection"),
-                _ => configuration.GetConnectionString("DefaultConnection"),
-            };
+            string? connectionString = configuration.GetConnectionString("DefaultConnection");
 
             services.AddDbContext<LicenseDatabaseContext>(options =>
                 options.UseNpgsql(connectionString));

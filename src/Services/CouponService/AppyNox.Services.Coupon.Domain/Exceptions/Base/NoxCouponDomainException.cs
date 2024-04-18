@@ -1,8 +1,9 @@
-﻿using AppyNox.Services.Base.Domain.ExceptionExtensions.Base;
+﻿using AppyNox.Services.Base.Core.Enums;
+using AppyNox.Services.Base.Domain.Exceptions.Base;
 
 namespace AppyNox.Services.Coupon.Domain.Exceptions.Base;
 
-#region [ NoxCouponDomainException Code]
+#region [ NoxCouponDomainException Code ]
 
 internal enum NoxCouponDomainExceptionCode
 {
@@ -15,20 +16,7 @@ internal enum NoxCouponDomainExceptionCode
 
 #endregion
 
-internal class NoxCouponDomainException : NoxDomainException
+internal class NoxCouponDomainException(string message, int exceptionCode)
+    : NoxDomainExceptionBase(ExceptionProduct.AppyNox, NoxCouponCommonStrings.Service, message, exceptionCode)
 {
-    #region [ Fields ]
-
-    private const string _service = "Coupon";
-
-    #endregion
-
-    #region [ Internal Constructors ]
-
-    internal NoxCouponDomainException(string message, int exceptionCode)
-        : base(message, exceptionCode, _service)
-    {
-    }
-
-    #endregion
 }

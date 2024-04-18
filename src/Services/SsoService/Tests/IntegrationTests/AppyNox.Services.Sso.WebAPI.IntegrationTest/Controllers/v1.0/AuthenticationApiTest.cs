@@ -1,11 +1,11 @@
 ﻿using AppyNox.Services.Base.API.Constants;
 using AppyNox.Services.Base.API.Wrappers;
-using AppyNox.Services.Base.Application.ExceptionExtensions.Base;
+using AppyNox.Services.Base.Application.Exceptions.Base;
 using AppyNox.Services.Base.IntegrationTests.URIs;
 using AppyNox.Services.Base.IntegrationTests.Wrapper;
 using AppyNox.Services.Base.IntegrationTests.Wrapper.Helpers;
 using AppyNox.Services.Sso.Application.DTOs.RefreshTokenDtos.Models;
-using AppyNox.Services.Sso.WebAPI.ExceptionExtensions.Base;
+using AppyNox.Services.Sso.WebAPI.Exceptions.Base;
 using AppyNox.Services.Sso.WebAPI.IntegrationTest.Fixtures;
 using System.Net;
 using System.Text;
