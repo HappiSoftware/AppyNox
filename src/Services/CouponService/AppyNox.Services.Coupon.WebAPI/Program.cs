@@ -94,7 +94,7 @@ builder.ConfigureRedis(configuration);
 #region [ Dependency Injection For Layers ]
 
 noxLogger.LogInformation("Registering DI's for layers.");
-builder.Services.AddCouponInfrastructure(configuration, builder.Environment.GetEnvironment(), noxLogger);
+builder.Services.AddCouponInfrastructure(configuration, noxLogger);
 builder.Services.AddCouponApplication();
 noxLogger.LogInformation("Registering DI's for layers completed.");
 

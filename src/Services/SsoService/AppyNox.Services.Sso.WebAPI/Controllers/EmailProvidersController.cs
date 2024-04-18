@@ -1,7 +1,7 @@
 ﻿using AppyNox.Services.Base.API.Controllers;
 using AppyNox.Services.Sso.Domain.Entities;
 using AppyNox.Services.Sso.Infrastructure.Data;
-using AppyNox.Services.Sso.WebAPI.ExceptionExtensions.Base;
+using AppyNox.Services.Sso.WebAPI.Exceptions.Base;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;

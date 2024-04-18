@@ -1,6 +1,6 @@
 ﻿using AppyNox.Services.Base.Application.Dtos;
 using AppyNox.Services.Base.Application.Interfaces.Caches;
-using AppyNox.Services.Base.Infrastructure.ExceptionExtensions;
+using AppyNox.Services.Base.Infrastructure.Exceptions;
 using AppyNox.Services.Base.Infrastructure.Repositories.Common;
 using AppyNox.Services.Base.Infrastructure.UnitTests.Fixtures;
 using AppyNox.Services.Base.Infrastructure.UnitTests.Stubs;
@@ -242,7 +242,7 @@ public class ProductRepositoryUnitTest(RepositoryFixture fixture) : IClassFixtur
         await repository.RemoveByIdAsync(existingProduct.Id);
         await unitOfWork.SaveChangesAsync();
 
-        var exception = await Assert.ThrowsAsync<EntityNotFoundException<ProductEntity>>(async () =>
+        var exception = await Assert.ThrowsAsync<NoxEntityNotFoundException<ProductEntity>>(async () =>
         {
             var result = await repository.GetByIdAsync(existingProduct.Id);
         });

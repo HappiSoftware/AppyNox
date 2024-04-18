@@ -1,9 +1,10 @@
 ﻿using AppyNox.Services.Base.Application.DtoUtilities;
-using AppyNox.Services.Base.Application.ExceptionExtensions.Base;
+using AppyNox.Services.Base.Application.Exceptions.Base;
 using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Application.Interfaces.Repositories;
 using AppyNox.Services.Base.Application.MediatR.Commands;
-using AppyNox.Services.Base.Core.ExceptionExtensions.Base;
+using AppyNox.Services.Base.Core.Common;
+using AppyNox.Services.Base.Core.Exceptions.Base;
 using AppyNox.Services.Base.Domain.Interfaces;
 using AutoMapper;
 using MediatR;
@@ -46,7 +47,7 @@ internal class GetEntityByIdQueryHandler<TEntity>(
         catch (Exception ex)
         {
             Logger.LogError(ex, $"Error fetching entity with ID: {request.Id}.");
-            throw new NoxApplicationException(ex, (int)NoxApplicationExceptionCode.GenericGetByIdQueryError);
+            throw new NoxApplicationException(exceptionCode: (int)NoxApplicationExceptionCode.GenericGetByIdQueryError, innerException: ex);
         }
     }
 

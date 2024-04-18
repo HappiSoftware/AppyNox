@@ -1,6 +1,6 @@
 ﻿using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Core.Common;
-using AppyNox.Services.Base.Infrastructure.ExceptionExtensions.Base;
+using AppyNox.Services.Base.Infrastructure.Exceptions.Base;
 using Consul;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;

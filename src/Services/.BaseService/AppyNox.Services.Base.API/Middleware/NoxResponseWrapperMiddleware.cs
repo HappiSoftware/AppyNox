@@ -1,11 +1,11 @@
-﻿using AppyNox.Services.Base.API.ExceptionExtensions.Interfaces;
+﻿using AppyNox.Services.Base.API.Exceptions.Interfaces;
 using AppyNox.Services.Base.API.Localization;
 using AppyNox.Services.Base.API.Middleware.Options;
 using AppyNox.Services.Base.API.Wrappers;
 using AppyNox.Services.Base.API.Wrappers.Results;
-using AppyNox.Services.Base.Application.ExceptionExtensions;
+using AppyNox.Services.Base.Application.Exceptions;
 using AppyNox.Services.Base.Application.Interfaces.Loggers;
-using AppyNox.Services.Base.Core.ExceptionExtensions.Base;
+using AppyNox.Services.Base.Core.Exceptions.Base;
 using AppyNox.Services.Base.Core.Extensions;
 using Microsoft.AspNetCore.Http;
 using System.Text.Json;
@@ -146,7 +146,7 @@ public class NoxResponseWrapperMiddleware(RequestDelegate next,
     private async Task HandleKnownExceptionAsync(HttpContext context, NoxException exception, Stream originalBodyStream)
     {
         Guid correlationId = exception.CorrelationId;
-        object errorResponseBody = exception is FluentValidationException fluentException
+        object errorResponseBody = exception is NoxFluentValidationException fluentException
             ? new NoxApiValidationExceptionWrapObject(exception, correlationId, fluentException.ValidationResult.Errors.AsEnumerable())
             : new NoxApiExceptionWrapObject(exception, correlationId);
 

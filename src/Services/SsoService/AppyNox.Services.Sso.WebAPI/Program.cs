@@ -65,23 +65,6 @@ NoxLogger noxLogger = new(logger, "SsoHost");
 
 #endregion
 
-#region [ Identity ]
-
-builder.Services.AddIdentity<ApplicationUser, ApplicationRole>().AddSignInManager()
-        .AddEntityFrameworkStores<IdentityDatabaseContext>().AddRoles<ApplicationRole>();
-
-builder.Services.Configure<IdentityOptions>(options =>
-{
-    // Configure password requirements
-    options.Password.RequireDigit = true;
-    options.Password.RequiredLength = 6;
-    options.Password.RequireNonAlphanumeric = true;
-    options.Password.RequireUppercase = true;
-    options.Password.RequireLowercase = true;
-});
-
-#endregion
-
 #region [ Configure Services ]
 
 // Add services to the container.
@@ -108,14 +91,12 @@ builder.Services.AddSwaggerGen(options =>
 
 builder.Services.AddHealthChecks();
 
-builder.ConfigureRedis(configuration);
-
 #endregion
 
 #region [ Dependency Injection For Layers ]
 
 noxLogger.LogInformation("Registering DI's for layers.");
-builder.Services.AddSsoInfrastructure(configuration, builder.Environment.GetEnvironment());
+builder.AddSsoInfrastructure(builder.Configuration, noxLogger);
 builder.Services.AddSsoApplication(configuration);
 noxLogger.LogInformation("Registering DI's for layers completed.");
 

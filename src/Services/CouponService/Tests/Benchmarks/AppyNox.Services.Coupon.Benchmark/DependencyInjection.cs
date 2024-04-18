@@ -9,7 +9,7 @@ using AppyNox.Services.Coupon.Infrastructure;
 using AppyNox.Services.Base.Application.Interfaces.Caches;
 using AppyNox.Services.Base.Infrastructure.Services.CacheServices;
 using StackExchange.Redis;
-using AppyNox.Services.Base.API.Configuration;
+using AppyNox.Services.Base.Infrastructure.Configuration;
 
 namespace AppyNox.Services.Coupon.Benchmark;
 
@@ -48,6 +48,6 @@ internal static class DependencyInjection
         serviceCollection.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(redisConfig.ConnectionString));
         serviceCollection.AddSingleton<ICacheService, RedisCacheService>();
 
-        serviceCollection.AddCouponInfrastructure(configuration, ApplicationEnvironment.Development, noxLogger);
+        serviceCollection.AddCouponInfrastructure(configuration, noxLogger);
     }
 }

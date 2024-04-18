@@ -1,5 +1,5 @@
 ﻿using AppyNox.Services.Base.API.Authentication;
-using AppyNox.Services.Base.API.ExceptionExtensions;
+using AppyNox.Services.Base.API.Exceptions;
 using AppyNox.Services.Base.API.Localization;
 using AppyNox.Services.Base.Core.Common;
 using Microsoft.AspNetCore.Identity;

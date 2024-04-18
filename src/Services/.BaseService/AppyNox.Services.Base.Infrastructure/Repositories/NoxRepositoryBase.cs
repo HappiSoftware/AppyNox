@@ -1,11 +1,12 @@
 ﻿using AppyNox.Services.Base.Application.Dtos;
 using AppyNox.Services.Base.Application.Interfaces.Caches;
+using AppyNox.Services.Base.Application.Interfaces.Exceptions;
 using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Application.Interfaces.Repositories;
-using AppyNox.Services.Base.Core.ExceptionExtensions.Base;
+using AppyNox.Services.Base.Core.Exceptions.Base;
 using AppyNox.Services.Base.Domain.Interfaces;
-using AppyNox.Services.Base.Infrastructure.ExceptionExtensions;
-using AppyNox.Services.Base.Infrastructure.ExceptionExtensions.Base;
+using AppyNox.Services.Base.Infrastructure.Exceptions;
+using AppyNox.Services.Base.Infrastructure.Exceptions.Base;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Dynamic.Core;
 using System.Linq.Dynamic.Core.Exceptions;
@@ -47,7 +48,7 @@ public abstract class NoxRepositoryBase<TEntity> : INoxRepository<TEntity> where
     /// <typeparam name="TId">The type of the entity's ID.</typeparam>
     /// <param name="id">The ID of the entity to retrieve.</param>
     /// <returns>A task representing the asynchronous operation, returning the retrieved entity.</returns>
-    /// <exception cref="EntityNotFoundException{TEntity}">Thrown when the entity with the specified ID is not found.</exception>
+    /// <exception cref="NoxEntityNotFoundException{TEntity}">Thrown when the entity with the specified ID is not found.</exception>
     /// <exception cref="NoxInfrastructureException">Thrown when there is an error retrieving the entity from the database.</exception>
 
     public async Task<TEntity> GetByIdAsync<TId>(TId id)
@@ -62,20 +63,20 @@ public abstract class NoxRepositoryBase<TEntity> : INoxRepository<TEntity> where
             {
                 _logger.LogWarning($"Entity with ID: {id} not found.");
 
-                throw new EntityNotFoundException<TEntity>(((IHasGuidId)id).GetGuidValue());
+                throw new NoxEntityNotFoundException<TEntity>(((IHasGuidId)id).GetGuidValue());
             }
 
             _logger.LogInformation($"Successfully retrieved entity with ID: '{id}' Type: '{typeof(TEntity).Name}'.");
             return entity;
         }
-        catch (NoxInfrastructureException)
+        catch (Exception ex) when (ex is INoxInfrastructureException)
         {
             throw;
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, $"Error retrieving entity with ID: '{id}' Type: '{typeof(TEntity).Name}'.");
-            throw new NoxInfrastructureException(ex, (int)NoxInfrastructureExceptionCode.DataFetchingError);
+            throw new NoxInfrastructureException(exceptionCode: (int)NoxInfrastructureExceptionCode.DataFetchingError, innerException: ex);
         }
     }
 
@@ -138,12 +139,12 @@ public abstract class NoxRepositoryBase<TEntity> : INoxRepository<TEntity> where
         }
         catch (Exception ex) when (ex is ParseException)
         {
-            throw new NoxInfrastructureException(ex, "QueryParameter values were in wrong format.", (int)NoxInfrastructureExceptionCode.QueryParameterError, (int)HttpStatusCode.BadRequest);
+            throw new NoxInfrastructureException("QueryParameter values were in wrong format.", (int)NoxInfrastructureExceptionCode.QueryParameterError, (int)HttpStatusCode.BadRequest, ex);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, $"Error retrieving entities. Type: '{typeof(TEntity).Name}'.");
-            throw new NoxInfrastructureException(ex, (int)NoxInfrastructureExceptionCode.MultipleDataFetchingError);
+            throw new NoxInfrastructureException(exceptionCode: (int)NoxInfrastructureExceptionCode.MultipleDataFetchingError, innerException: ex);
         }
     }
 
@@ -166,7 +167,7 @@ public abstract class NoxRepositoryBase<TEntity> : INoxRepository<TEntity> where
         catch (Exception ex)
         {
             _logger.LogError(ex, $"Error adding a new entity. Type: '{typeof(TEntity).Name}'.");
-            throw new NoxInfrastructureException(ex, (int)NoxInfrastructureExceptionCode.AddingDataError);
+            throw new NoxInfrastructureException(exceptionCode: (int)NoxInfrastructureExceptionCode.AddingDataError, innerException: ex);
         }
     }
 
@@ -194,7 +195,7 @@ public abstract class NoxRepositoryBase<TEntity> : INoxRepository<TEntity> where
         catch (Exception ex)
         {
             _logger.LogError(ex, $"Error attempting to mark entity for update with ID: '{entity.GetTypedId}' Type: '{typeof(TEntity).Name}'.");
-            throw new NoxInfrastructureException(ex, (int)NoxInfrastructureExceptionCode.UpdatingDataError);
+            throw new NoxInfrastructureException(exceptionCode: (int)NoxInfrastructureExceptionCode.UpdatingDataError, innerException: ex);
         }
     }
 
@@ -213,7 +214,7 @@ public abstract class NoxRepositoryBase<TEntity> : INoxRepository<TEntity> where
             if (entity == null)
             {
                 _logger.LogWarning($"Entity with ID: '{id}' not found.");
-                throw new EntityNotFoundException<TEntity>(id.GetGuidValue());
+                throw new NoxEntityNotFoundException<TEntity>(id.GetGuidValue());
             }
             _dbSet.Remove(entity);
             _logger.LogInformation($"Successfully deleted entity with ID: '{id.GetGuidValue}' Type: '{typeof(TEntity).Name}'.");
@@ -221,7 +222,7 @@ public abstract class NoxRepositoryBase<TEntity> : INoxRepository<TEntity> where
         catch (Exception ex)
         {
             _logger.LogError(ex, $"Error deleting entity with ID: '{id.GetGuidValue}' Type: '{typeof(TEntity).Name}'.");
-            throw new NoxInfrastructureException(ex, (int)NoxInfrastructureExceptionCode.DeletingDataError);
+            throw new NoxInfrastructureException(exceptionCode: (int)NoxInfrastructureExceptionCode.DeletingDataError, innerException: ex);
         }
     }
 

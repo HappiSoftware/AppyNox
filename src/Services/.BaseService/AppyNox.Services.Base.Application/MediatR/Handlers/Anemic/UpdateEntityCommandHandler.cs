@@ -1,13 +1,14 @@
 ﻿using AppyNox.Services.Base.Application.Dtos;
 using AppyNox.Services.Base.Application.DtoUtilities;
-using AppyNox.Services.Base.Application.ExceptionExtensions.Base;
+using AppyNox.Services.Base.Application.Exceptions.Base;
 using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Application.Interfaces.Repositories;
 using AppyNox.Services.Base.Application.Localization;
 using AppyNox.Services.Base.Application.MediatR.Commands;
 using AppyNox.Services.Base.Core.AsyncLocals;
+using AppyNox.Services.Base.Core.Common;
 using AppyNox.Services.Base.Core.Enums;
-using AppyNox.Services.Base.Core.ExceptionExtensions.Base;
+using AppyNox.Services.Base.Core.Exceptions.Base;
 using AppyNox.Services.Base.Core.Extensions;
 using AppyNox.Services.Base.Domain.Interfaces;
 using AutoMapper;
@@ -54,15 +55,17 @@ internal class UpdateEntityCommandHandler<TEntity>(
 
             if (dtoObject is not IUpdateDto)
             {
-                throw new NoxApplicationException(NoxApplicationResourceService.IUpdateDtoNullId,
-                                                  (int)NoxApplicationExceptionCode.IUpdateDtoNullId,
-                                                  (int)HttpStatusCode.UnprocessableContent);
+                throw new NoxApplicationException(
+                    NoxApplicationResourceService.IUpdateDtoNullId,
+                    (int)NoxApplicationExceptionCode.IUpdateDtoNullId,
+                    (int)HttpStatusCode.UnprocessableContent);
             }
             if (dtoObject is IUpdateDto updateDto && !updateDto.Id.Equals(request.Id))
             {
-                throw new NoxApplicationException(NoxApplicationResourceService.MismatchedIdInUpdate.Format(updateDto.Id, request.Id),
-                                                  (int)NoxApplicationExceptionCode.MismatchedIdInUpdate,
-                                                  (int)HttpStatusCode.UnprocessableContent);
+                throw new NoxApplicationException(
+                    NoxApplicationResourceService.MismatchedIdInUpdate.Format(updateDto.Id, request.Id),
+                    (int)NoxApplicationExceptionCode.MismatchedIdInUpdate,
+                    (int)HttpStatusCode.UnprocessableContent);
             }
             dynamic idDto = new ExpandoObject();
             idDto.Id = request.Id;
@@ -89,7 +92,7 @@ internal class UpdateEntityCommandHandler<TEntity>(
         catch (Exception ex)
         {
             Logger.LogError(ex, $"Error updating entity of type '{typeof(TEntity).Name}' with ID: {request.Id}.");
-            throw new NoxApplicationException(ex, (int)NoxApplicationExceptionCode.GenericUpdateCommandError);
+            throw new NoxApplicationException(exceptionCode: (int)NoxApplicationExceptionCode.GenericUpdateCommandError, innerException: ex);
         }
     }
 

@@ -89,7 +89,7 @@ builder.ConfigureRedis(configuration);
 
 noxLogger.LogInformation("Registering DI's for layers.");
 builder.Services.AddLicenseApplication();
-builder.Services.AddLicenseInfrastructure(builder, builder.Environment.GetEnvironment(), noxLogger);
+builder.Services.AddLicenseInfrastructure(builder, noxLogger);
 noxLogger.LogInformation("Registering DI's for layers completed.");
 
 #endregion
