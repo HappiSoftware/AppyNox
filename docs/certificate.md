@@ -12,7 +12,7 @@ After cloning the repository, add development SSL certificates to the services f
 
 2. **Edit Environment Variables**
 
-   Add `C:\Program Files\OpenSSL-Win64\bin` to System variables. Path may change based on your installation location.
+   Add `C:\Program Files\OpenSSL-Win64\bin` to System variables (In Path). Path may change based on your installation location.
 
 <br>
 

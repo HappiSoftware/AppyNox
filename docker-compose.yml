@@ -51,7 +51,6 @@ services:
       - appynox-consul
     volumes:
       - ./src/Gateways/AppyNox.Gateway.OcelotGateway/ssl:/https2:ro
-      - ./src/Gateways/AppyNox.Gateway.OcelotGateway/ssl/crt:/usr/local/share/ca-certificates/:ro
     ports:
       - "7000:443"
 
