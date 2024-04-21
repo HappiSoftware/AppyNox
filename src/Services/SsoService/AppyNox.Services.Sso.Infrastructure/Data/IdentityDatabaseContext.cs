@@ -105,12 +105,13 @@ namespace AppyNox.Services.Sso.Infrastructure.Data
 
         private Guid GetCurrentCompanyId()
         {
-            return SsoContext.CompanyId != Guid.Empty ? SsoContext.CompanyId : NoxContext.CompanyId;
+            return SsoContext.CompanyId;
         }
 
         private Guid GetCurrentUserId()
         {
-            //return NoxContext.UserId;
+            // TODO inspect here
+            //return NoxContext.UserId; // I dont remember why this line was added. Turned off this filtering for now
             return Guid.Empty;
         }
 
