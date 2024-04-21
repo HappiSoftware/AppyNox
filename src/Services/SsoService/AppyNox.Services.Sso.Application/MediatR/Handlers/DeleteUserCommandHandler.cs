@@ -1,4 +1,5 @@
-﻿using AppyNox.Services.Sso.Application.Exceptions;
+﻿using AppyNox.Services.Base.Core.AsyncLocals;
+using AppyNox.Services.Sso.Application.Exceptions;
 using AppyNox.Services.Sso.Application.MediatR.Commands;
 using AppyNox.Services.Sso.Domain.Entities;
 using MediatR;

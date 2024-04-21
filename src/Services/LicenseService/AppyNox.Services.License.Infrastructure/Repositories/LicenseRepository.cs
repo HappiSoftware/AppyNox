@@ -6,6 +6,7 @@ using AppyNox.Services.License.Domain.Entities;
 using AppyNox.Services.License.Infrastructure.Data;
 using AppyNox.Services.License.Infrastructure.ExceptionExtensions;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Dynamic.Core;
 
 namespace AppyNox.Services.License.Infrastructure.Repositories;
 
@@ -31,7 +32,7 @@ public class LicenseRepository(LicenseDatabaseContext context, INoxInfrastructur
     public async Task<int> GetUserCountForLicenseKeyAsync(Guid licenseId, CancellationToken cancellationToken)
     {
         return await _context.ApplicationUserLicenses
-                                      .CountAsync(ul => ul.LicenseId.Value == licenseId, cancellationToken);
+                .CountAsync(aul => aul.LicenseId == new LicenseId(licenseId), cancellationToken);
     }
 
     public async Task AssignLicenseToApplicationUserAsync(Guid licenseId, Guid applicationUserId)

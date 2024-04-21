@@ -33,7 +33,7 @@ internal sealed class CouponHistoryConfiguration(CouponId couponId) : IEntityTyp
             CouponId = couponId,
             MinimumAmount = 100,
             CreatedBy = "System",
-            CreationDate = DateTime.UtcNow,
+            CreationDate = DateTime.SpecifyKind(new DateTime(2024, 4, 21), DateTimeKind.Utc),
             UpdatedBy = (string?)null,
             UpdateDate = (DateTime?)null
         });

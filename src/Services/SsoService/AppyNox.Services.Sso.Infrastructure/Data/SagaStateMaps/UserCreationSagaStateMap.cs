@@ -24,6 +24,10 @@ namespace AppyNox.Services.Sso.Infrastructure.Data.SagaStateMaps
             entity.Property(x => x.ConfirmPassword).HasColumnName("ConfirmPassword");
             entity.Property(x => x.UserId).HasColumnName("UserId");
             entity.Property(x => x.LicenseId).HasColumnName("LicenseId");
+            entity.Property(x => x.Name).HasColumnName("Name");
+            entity.Property(x => x.Surname).HasColumnName("Surname");
+            entity.Property(x => x.Code).HasColumnName("Code");
+            entity.Property(x => x.CompanyId).HasColumnName("CompanyId");
         }
 
         #endregion

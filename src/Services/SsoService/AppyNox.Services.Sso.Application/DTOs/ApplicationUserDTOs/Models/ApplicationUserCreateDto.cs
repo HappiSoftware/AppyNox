@@ -20,6 +20,9 @@ public class ApplicationUserCreateDto : IHasCode
 
     public string LicenseKey { get; set; } = string.Empty;
 
+    public string Name { get; set; } = string.Empty;
+    public string Surname { get; set; } = string.Empty;
+
     #endregion
 
     #region [ IHasCode ]

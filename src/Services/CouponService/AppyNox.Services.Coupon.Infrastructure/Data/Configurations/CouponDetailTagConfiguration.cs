@@ -40,7 +40,7 @@ internal class CouponDetailTagConfiguration(CouponDetailId detailId, CouponDetai
                 Tag = "Tag Description",
                 CouponDetailId = detailId,
                 CreatedBy = "System",
-                CreationDate = DateTime.UtcNow,
+                CreationDate = DateTime.SpecifyKind(new DateTime(2024, 4, 21), DateTimeKind.Utc),
                 UpdatedBy = (string?)null,
                 UpdateDate = (DateTime?)null
             });

@@ -29,9 +29,9 @@ internal class TicketConfiguration(Guid ticketId) : IEntityTypeConfiguration<Tic
             Id = ticketId,
             Title = "Title",
             Content = "Ticket content",
-            ReportDate = DateTime.UtcNow,
+            ReportDate = DateTime.SpecifyKind(new DateTime(2024, 4, 21), DateTimeKind.Utc),
             CreatedBy = "System",
-            CreationDate = DateTime.UtcNow,
+            CreationDate = DateTime.SpecifyKind(new DateTime(2024, 4, 21), DateTimeKind.Utc),
             UpdatedBy = (string?)null,
             UpdateDate = (DateTime?)null
         });

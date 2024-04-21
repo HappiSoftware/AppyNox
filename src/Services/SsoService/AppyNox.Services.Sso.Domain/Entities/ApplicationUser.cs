@@ -11,6 +11,10 @@ namespace AppyNox.Services.Sso.Domain.Entities
 
         public bool IsAdmin { get; set; }
 
+        public string Name { get; set; } = string.Empty;
+
+        public string Surname { get; set; } = string.Empty;
+
         #endregion
 
         #region [ Relations ]
