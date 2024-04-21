@@ -145,13 +145,7 @@ public class RolesController(IMapper mapper, RoleManager<ApplicationRole> roleMa
         roleEntity.CompanyId = SsoContext.CompanyId;
         await _roleManager.CreateAsync(roleEntity);
 
-        object response = new
-        {
-            id = roleEntity.Id,
-            value = identityRoleDto
-        };
-
-        return CreatedAtAction(nameof(GetById), response);
+        return CreatedAtAction(nameof(GetById), new { id = roleEntity.Id }, roleEntity.Id);
     }
 
     [HttpDelete("{id}")]

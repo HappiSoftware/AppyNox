@@ -51,9 +51,11 @@ namespace AppyNox.Services.Sso.Infrastructure.Data
 
             Guid adminUserId = Guid.Parse("a8bfc75b-2ac3-47e2-b013-8b8a1efba45d");
             Guid superAdminUserId = Guid.Parse("6e54d3e3-90d0-4604-91b4-77009cedd760");
+            Guid notAdminUserId = Guid.Parse("2c0e21cf-4845-4b0f-a653-6b7c414af2f9");
 
             Guid adminRoleId = Guid.Parse("e24e99e7-00e4-4007-a042-565eac12d96d");
             Guid superAdminRoleId = Guid.Parse("f51a5d58-ff38-4563-9d32-f658ef2b40d0");
+            Guid notAdminRoleId = Guid.Parse("4d0f77eb-2ad5-4b43-848e-826cd32d684b");
 
             Guid companyId = Guid.Parse("221e8b2c-59d5-4e5b-b010-86c239b66738");
             Guid happiCompanyId = Guid.Parse("0ebae1bf-6610-4967-a8ed-b149219caf68");
@@ -63,10 +65,10 @@ namespace AppyNox.Services.Sso.Infrastructure.Data
             #region [ Entity Configurations ]
 
             builder.ApplyConfiguration(new CompanyConfiguration(happiCompanyId, companyId));
-            builder.ApplyConfiguration(new ApplicationRoleConfiguration(adminRoleId, companyId, superAdminRoleId, happiCompanyId));
-            builder.ApplyConfiguration(new ApplicationUserConfiguration(adminUserId, companyId, superAdminUserId, happiCompanyId));
-            builder.ApplyConfiguration(new ApplicationRoleClaimConfiguration(adminRoleId));
-            builder.ApplyConfiguration(new ApplicationUserRoleConfiguration(adminRoleId, adminUserId, superAdminRoleId, superAdminUserId));
+            builder.ApplyConfiguration(new ApplicationRoleConfiguration(adminRoleId, companyId, superAdminRoleId, notAdminRoleId, happiCompanyId));
+            builder.ApplyConfiguration(new ApplicationUserConfiguration(adminUserId, companyId, superAdminUserId, notAdminUserId, happiCompanyId));
+            builder.ApplyConfiguration(new ApplicationRoleClaimConfiguration(adminRoleId, notAdminRoleId));
+            builder.ApplyConfiguration(new ApplicationUserRoleConfiguration(adminRoleId, adminUserId, superAdminRoleId, superAdminUserId, notAdminRoleId, notAdminUserId));
 
             #endregion
 

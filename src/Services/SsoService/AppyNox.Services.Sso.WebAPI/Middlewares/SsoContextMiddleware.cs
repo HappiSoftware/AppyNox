@@ -39,29 +39,15 @@ public class SsoContextMiddleware(RequestDelegate next, INoxApiLogger logger)
 
             #region [ IsAdmin ]
 
-            string? isAdmin = context.User.FindFirst("admin")?.Value;
-            if (!string.IsNullOrEmpty(isAdmin))
-            {
-                SsoContext.IsAdmin = true;
-            }
-            else
-            {
-                SsoContext.IsAdmin = false;
-            }
+            bool isAdmin = context.User.HasClaim(c => c.Type == "role" && c.Value == "admin");
+            SsoContext.IsAdmin = isAdmin;
 
             #endregion
 
             #region [ IsSuperAdmin ]
 
-            string? isSuperAdmin = context.User.FindFirst("superadmin")?.Value;
-            if (!string.IsNullOrEmpty(isSuperAdmin))
-            {
-                SsoContext.IsSuperAdmin = true;
-            }
-            else
-            {
-                SsoContext.IsSuperAdmin = false;
-            }
+            bool isSuperAdmin = context.User.HasClaim(c => c.Type == "role" && c.Value == "superadmin");
+            SsoContext.IsSuperAdmin = isSuperAdmin;
 
             #endregion
 
