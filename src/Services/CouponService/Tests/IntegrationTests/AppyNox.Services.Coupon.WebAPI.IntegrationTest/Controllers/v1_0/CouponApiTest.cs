@@ -1,7 +1,7 @@
 using AppyNox.Services.Base.API.Constants;
 using AppyNox.Services.Base.API.Wrappers;
-using AppyNox.Services.Base.Application.Dtos;
 using AppyNox.Services.Base.Application.Exceptions.Base;
+using AppyNox.Services.Base.Core.Common;
 using AppyNox.Services.Base.IntegrationTests.URIs;
 using AppyNox.Services.Base.IntegrationTests.Wrapper;
 using AppyNox.Services.Base.IntegrationTests.Wrapper.Helpers;

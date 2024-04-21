@@ -1,7 +1,7 @@
-﻿using AppyNox.Services.Base.Application.Dtos;
-using AppyNox.Services.Base.Application.MediatR.Commands;
+﻿using AppyNox.Services.Base.Application.MediatR.Commands;
 using AppyNox.Services.Base.Application.MediatR.Handlers.Anemic;
 using AppyNox.Services.Base.Application.MediatR.Handlers.DDD;
+using AppyNox.Services.Base.Core.Common;
 using AppyNox.Services.Base.Domain.Interfaces;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;

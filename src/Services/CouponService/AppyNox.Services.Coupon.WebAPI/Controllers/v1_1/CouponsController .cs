@@ -1,9 +1,9 @@
 ﻿using AppyNox.Services.Base.API.Constants;
 using AppyNox.Services.Base.API.Controllers;
 using AppyNox.Services.Base.API.ViewModels;
-using AppyNox.Services.Base.Application.Dtos;
 using AppyNox.Services.Base.Application.Extensions;
 using AppyNox.Services.Base.Application.MediatR.Commands;
+using AppyNox.Services.Base.Core.Common;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Extended;
 using AppyNox.Services.Coupon.Application.MediatR.Commands;

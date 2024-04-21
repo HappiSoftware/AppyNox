@@ -1,5 +1,4 @@
-﻿using AppyNox.Services.Base.Application.Dtos;
-using AppyNox.Services.Base.Application.DtoUtilities;
+﻿using AppyNox.Services.Base.Application.DtoUtilities;
 using AppyNox.Services.Base.Application.Exceptions.Base;
 using AppyNox.Services.Base.Application.Interfaces.Caches;
 using AppyNox.Services.Base.Application.Interfaces.Loggers;

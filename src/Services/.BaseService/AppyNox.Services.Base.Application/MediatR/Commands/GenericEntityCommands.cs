@@ -1,5 +1,5 @@
-﻿using AppyNox.Services.Base.Application.Dtos;
-using AppyNox.Services.Base.Application.Interfaces.Repositories;
+﻿using AppyNox.Services.Base.Application.Interfaces.Repositories;
+using AppyNox.Services.Base.Core.Common;
 using AppyNox.Services.Base.Domain.Interfaces;
 using MediatR;
 using System;

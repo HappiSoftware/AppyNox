@@ -1,7 +1,7 @@
-﻿using AppyNox.Services.Base.Application.Dtos;
-using AppyNox.Services.Base.Application.Interfaces.Caches;
+﻿using AppyNox.Services.Base.Application.Interfaces.Caches;
 using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Application.Interfaces.Repositories;
+using AppyNox.Services.Base.Core.Common;
 using AppyNox.Services.Base.Infrastructure.Repositories;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Extended;
 using AppyNox.Services.Coupon.Infrastructure.Data;
