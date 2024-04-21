@@ -1,10 +1,10 @@
 ﻿using AppyNox.Services.Base.Application.Constants;
-using AppyNox.Services.Base.Application.Dtos;
 using AppyNox.Services.Base.Application.Interfaces.Caches;
 using AppyNox.Services.Base.Application.Interfaces.Repositories;
 using AppyNox.Services.Base.Application.MediatR.Commands;
 using AppyNox.Services.Base.Application.UnitTests.CQRSFixtures;
 using AppyNox.Services.Base.Core.AsyncLocals;
+using AppyNox.Services.Base.Core.Common;
 using AppyNox.Services.Base.Core.Enums;
 using AppyNox.Services.Base.Core.Extensions;
 using AppyNox.Services.License.Application.Dtos.LicenseDtos.DetailLevel;

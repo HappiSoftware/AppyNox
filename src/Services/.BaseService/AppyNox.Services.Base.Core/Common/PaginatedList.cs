@@ -1,4 +1,4 @@
-﻿namespace AppyNox.Services.Base.Application.Dtos;
+﻿namespace AppyNox.Services.Base.Core.Common;
 
 public class PaginatedList<TEntity>
 {
