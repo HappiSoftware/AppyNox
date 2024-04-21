@@ -17,6 +17,8 @@ internal enum NoxSsoInfrastructureExceptionCode
     DeleteUserConsumerError = 1003,
 
     CreateUserConsumerError = 1004,
+
+    UserCreationSagaLicenseIdOrCompanyIdNullError = 1005
 }
 
 #endregion

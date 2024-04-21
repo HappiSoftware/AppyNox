@@ -3,6 +3,7 @@ using System;
 using AppyNox.Services.License.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AppyNox.Services.License.Infrastructure.Migrations
 {
     [DbContext(typeof(LicenseDatabaseContext))]
-    partial class LicenseDatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20240421015523_StandardizeAuditDates")]
+    partial class StandardizeAuditDates
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -50,7 +53,7 @@ namespace AppyNox.Services.License.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("OutboxMessages", (string)null);
+                    b.ToTable("OutboxMessages");
                 });
 
             modelBuilder.Entity("AppyNox.Services.License.Domain.Entities.ApplicationUserLicenseMacAddress", b =>
@@ -70,7 +73,7 @@ namespace AppyNox.Services.License.Infrastructure.Migrations
 
                     b.HasIndex("ApplicationUserLicenseId");
 
-                    b.ToTable("ApplicationUserLicenseMacAddresses", (string)null);
+                    b.ToTable("ApplicationUserLicenseMacAddresses");
                 });
 
             modelBuilder.Entity("AppyNox.Services.License.Domain.Entities.ApplicationUserLicenses", b =>
@@ -92,7 +95,7 @@ namespace AppyNox.Services.License.Infrastructure.Migrations
                     b.HasIndex("UserId", "LicenseId")
                         .IsUnique();
 
-                    b.ToTable("ApplicationUserLicenses", (string)null);
+                    b.ToTable("ApplicationUserLicenses");
                 });
 
             modelBuilder.Entity("AppyNox.Services.License.Domain.Entities.LicenseEntity", b =>
@@ -151,7 +154,7 @@ namespace AppyNox.Services.License.Infrastructure.Migrations
 
                     b.HasIndex("UpdateDate");
 
-                    b.ToTable("Licenses", (string)null);
+                    b.ToTable("Licenses");
 
                     b.HasData(
                         new
@@ -205,7 +208,7 @@ namespace AppyNox.Services.License.Infrastructure.Migrations
 
                     b.HasIndex("UpdateDate");
 
-                    b.ToTable("Products", (string)null);
+                    b.ToTable("Products");
 
                     b.HasData(
                         new

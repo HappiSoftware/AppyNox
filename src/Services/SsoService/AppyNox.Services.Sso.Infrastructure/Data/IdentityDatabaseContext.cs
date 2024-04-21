@@ -5,6 +5,8 @@ using AppyNox.Services.Base.Core.AsyncLocals;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.Extensions.Configuration;
 
 namespace AppyNox.Services.Sso.Infrastructure.Data
 {
@@ -35,8 +37,7 @@ namespace AppyNox.Services.Sso.Infrastructure.Data
         #region [ Properties ]
 
         public DbSet<Company> Companies { get; set; }
-
-        public DbSet<EmailProvider> EmailProviders { get; set; }
+        public override DbSet<ApplicationUser> Users { get; set; }
 
         #endregion
 
@@ -66,7 +67,6 @@ namespace AppyNox.Services.Sso.Infrastructure.Data
             builder.ApplyConfiguration(new ApplicationUserConfiguration(adminUserId, companyId, superAdminUserId, happiCompanyId));
             builder.ApplyConfiguration(new ApplicationRoleClaimConfiguration(adminRoleId));
             builder.ApplyConfiguration(new ApplicationUserRoleConfiguration(adminRoleId, adminUserId, superAdminRoleId, superAdminUserId));
-            builder.ApplyConfiguration(new EmailProviderConfiguration());
 
             #endregion
 
@@ -110,7 +110,9 @@ namespace AppyNox.Services.Sso.Infrastructure.Data
 
         private Guid GetCurrentUserId()
         {
-            return NoxContext.UserId;
+            // TODO inspect here
+            //return NoxContext.UserId; // I dont remember why this line was added. Turned off this filtering for now
+            return Guid.Empty;
         }
 
         private bool IsConnectRequest()
@@ -119,5 +121,24 @@ namespace AppyNox.Services.Sso.Infrastructure.Data
         }
 
         #endregion
+    }
+
+    internal class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<IdentityDatabaseContext>
+    {
+        public IdentityDatabaseContext CreateDbContext(string[] args)
+        {
+            IConfigurationRoot configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.Development.json")
+                .AddEnvironmentVariables()
+                .Build();
+
+            var builder = new DbContextOptionsBuilder<IdentityDatabaseContext>();
+            var connectionString = configuration.GetConnectionString("DefaultConnection");
+
+            builder.UseNpgsql(connectionString);
+
+            return new IdentityDatabaseContext(builder.Options);
+        }
     }
 }

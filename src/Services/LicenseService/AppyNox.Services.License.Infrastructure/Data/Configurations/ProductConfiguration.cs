@@ -44,7 +44,7 @@ namespace AppyNox.Services.License.Infrastructure.Data.Configurations
                     Code = "PROD1",
                     Name = "AppyNox",
                     CreatedBy = "System",
-                    CreationDate = DateTime.UtcNow,
+                    CreationDate = DateTime.SpecifyKind(new DateTime(2024, 4, 21), DateTimeKind.Utc),
                     UpdatedBy = (string?)null,
                     UpdateDate = (DateTime?)null
                 });

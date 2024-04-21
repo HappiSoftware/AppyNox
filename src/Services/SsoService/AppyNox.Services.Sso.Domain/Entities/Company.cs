@@ -24,7 +24,5 @@ public class Company : IHasCode
 
     public virtual ICollection<ApplicationRole>? Roles { get; set; }
 
-    public virtual ICollection<EmailProvider> EmailProviders { get; set; } = [];
-
     #endregion
 }

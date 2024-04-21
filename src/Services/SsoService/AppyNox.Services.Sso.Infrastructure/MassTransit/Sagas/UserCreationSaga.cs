@@ -30,6 +30,9 @@ namespace AppyNox.Services.Sso.Infrastructure.MassTransit.Sagas
                         context.Saga.Email = context.Message.Email;
                         context.Saga.Password = context.Message.Password;
                         context.Saga.ConfirmPassword = context.Message.ConfirmPassword;
+                        context.Saga.Name = context.Message.Name;
+                        context.Saga.Surname = context.Message.Surname;
+                        context.Saga.Code = context.Message.Code;
                     })
                     .Send(new Uri("queue:validate-license"), context => new ValidateLicenseMessage
                     (
@@ -43,8 +46,13 @@ namespace AppyNox.Services.Sso.Infrastructure.MassTransit.Sagas
                     .If(context => context.Message.IsValid, x => x
                         .Then(context =>
                         {
-                            context.Saga.LicenseId = context.Message.LicenseId
-                            ?? throw new NoxSsoInfrastructureException(NoxSsoInfrastructureResourceService.UserCreationSagaCorrelationIdError, (int)NoxSsoInfrastructureExceptionCode.UserCreationSagaLicenseIdNull);
+                            
+                            if(context.Message.LicenseId == null || context.Message.CompanyId == null)
+                            {
+                                throw new NoxSsoInfrastructureException("CompanyId or LicenseId was null.", (int)NoxSsoInfrastructureExceptionCode.UserCreationSagaLicenseIdOrCompanyIdNullError);
+                            }
+                            context.Saga.LicenseId = context.Message.LicenseId ?? Guid.Empty;
+                            context.Saga.CompanyId = context.Message.CompanyId ?? Guid.Empty;
                         })
                         .Send(new Uri("queue:create-user"), context => new CreateApplicationUserMessage
                             (
@@ -53,8 +61,11 @@ namespace AppyNox.Services.Sso.Infrastructure.MassTransit.Sagas
                                 context.Saga.Email,
                                 context.Saga.Password,
                                 context.Saga.ConfirmPassword,
-                                context.Message.CompanyId
-                                    ?? throw new NoxSsoInfrastructureException(NoxSsoInfrastructureResourceService.UserCreationSagaCompanyIdError, (int)NoxSsoInfrastructureExceptionCode.UserCreationSagaLicenseIdNull)
+                                context.Saga.CompanyId,
+                                context.Saga.Name,
+                                context.Saga.Surname,
+                                context.Saga.Code
+
                             ))
                         .TransitionTo(CreatingUser)
                     ));
@@ -81,6 +92,8 @@ namespace AppyNox.Services.Sso.Infrastructure.MassTransit.Sagas
                             ));
                     })
                     .Finalize());
+
+            SetCompletedWhenFinalized();
         }
 
         #endregion
@@ -122,9 +135,14 @@ namespace AppyNox.Services.Sso.Infrastructure.MassTransit.Sagas
 
         public string ConfirmPassword { get; set; } = string.Empty;
 
+        public string Name { get; set; } = string.Empty ;
+        public string Surname { get; set; } = string.Empty;
+        public string Code { get; set; } = string.Empty;
+
         public Guid UserId { get; set; }
 
         public Guid LicenseId { get; set; }
+        public Guid CompanyId { get; set; }
 
         #endregion
     }

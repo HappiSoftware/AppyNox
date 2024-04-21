@@ -24,6 +24,8 @@ namespace AppyNox.Services.Sso.Application.Validators.ApplicationUserValidators
             RuleFor(x => x.Password).Equal(x => x.ConfirmPassword).WithMessage("Passwords should match").WithErrorCode("PASSWORDS_SHOULD_MATCH");
             RuleFor(x => x.Password).BeAValidPassword(passwordValidator, userManager);
             RuleFor(x => x.Email).CheckEmailValidity(databaseChecks);
+            RuleFor(x => x.Name).NotNull().NotEmpty().WithMessage("Name required");
+            RuleFor(x => x.Surname).NotNull().NotEmpty().WithMessage("Surname required");
         }
 
         #endregion

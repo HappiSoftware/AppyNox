@@ -58,6 +58,9 @@ internal partial class NoxSsoJwtAuthenticationHandler(IOptionsMonitor<Authentica
 
     protected static string GetExpectedAudienceForRequest(string requestPath)
     {
+        return "AppyNox";
+
+        // AppyNoxEmail is deprecated but didnt removed from the codebase. Lies down here for future references.
         if (EmailProviderPathRegex().IsMatch(requestPath))
         {
             return "AppyNoxEmail";

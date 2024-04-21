@@ -32,7 +32,7 @@ namespace AppyNox.Services.Coupon.Infrastructure.Data.Configurations
                    Code = "EXD10",
                    Detail = "TestDetail",
                    CreatedBy = "System",
-                   CreationDate = DateTime.UtcNow,
+                   CreationDate = DateTime.SpecifyKind(new DateTime(2024, 4, 21), DateTimeKind.Utc),
                    UpdatedBy = (string?)null,
                    UpdateDate = (DateTime?)null
                });

@@ -27,7 +27,10 @@ internal sealed class CreateApplicationUserMessageConsumer(IMediator mediator) :
                 Password = context.Message.Password,
                 ConfirmPassword = context.Message.ConfirmPassword,
                 Email = context.Message.Email,
-                CompanyId = context.Message.CompanyId
+                CompanyId = context.Message.CompanyId,
+                Name = context.Message.Name,
+                Surname = context.Message.Surname,
+                Code = context.Message.Code
             };
             var response = await _mediator.Send(new CreateUserCommand(dto));
 

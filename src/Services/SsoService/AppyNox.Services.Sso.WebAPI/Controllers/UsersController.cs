@@ -10,6 +10,7 @@ using AppyNox.Services.Sso.WebAPI.Extensions;
 using AppyNox.Services.Sso.WebAPI.Localization;
 using AppyNox.Services.Sso.WebAPI.Permission;
 using Asp.Versioning;
+using FluentValidation;
 using FluentValidation.Results;
 using MassTransit;
 using Microsoft.AspNetCore.Authorization;
@@ -24,13 +25,15 @@ namespace AppyNox.Services.Sso.WebAPI.Controllers;
 [ApiController]
 [ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/[controller]")]
-public class UsersController(UsersControllerBaseDependencies usersControllerBaseDependencies, IPublishEndpoint publishEndpoint) : ControllerBase
+public class UsersController(UsersControllerBaseDependencies usersControllerBaseDependencies, IPublishEndpoint publishEndpoint, IValidator<ApplicationUserCreateDto> userDtoValidator) : ControllerBase
 {
     #region [ Fields ]
 
     private readonly UsersControllerBaseDependencies _baseDependencies = usersControllerBaseDependencies;
 
     private readonly IPublishEndpoint _publishEndpoint = publishEndpoint;
+
+    private readonly IValidator<ApplicationUserCreateDto> _userDtoValidator = userDtoValidator;
 
     #endregion
 
@@ -107,6 +110,11 @@ public class UsersController(UsersControllerBaseDependencies usersControllerBase
     [Authorize(Permissions.Users.Create)]
     public async Task<IActionResult> Post(ApplicationUserCreateDto registerDto)
     {
+        ValidationResult validationResult = await _userDtoValidator.ValidateAsync(registerDto);
+        if(!validationResult.IsValid)
+        {
+            throw new NoxFluentValidationException(typeof(ApplicationUserCreateDto), validationResult);
+        }
         StartUserCreationMessage startUserCreationEvent = new
         (
             NoxContext.CorrelationId,
@@ -114,7 +122,10 @@ public class UsersController(UsersControllerBaseDependencies usersControllerBase
             registerDto.UserName,
             registerDto.Email,
             registerDto.Password,
-            registerDto.ConfirmPassword
+            registerDto.ConfirmPassword,
+            registerDto.Name,
+            registerDto.Surname,
+            registerDto.Code
         );
         await _publishEndpoint.Publish(startUserCreationEvent);
 

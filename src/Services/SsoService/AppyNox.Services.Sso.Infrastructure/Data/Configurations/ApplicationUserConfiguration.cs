@@ -41,6 +41,8 @@ namespace AppyNox.Services.Sso.Infrastructure.Data.Configurations
             #region [ Configurations ]
 
             builder.Property(x => x.Code).IsRequired().HasMaxLength(5);
+            builder.Property(x => x.Name).IsRequired().HasMaxLength(30);
+            builder.Property(x => x.Surname).IsRequired().HasMaxLength(15);
 
             builder.HasOne(c => c.Company)
                 .WithMany(cd => cd.Users)
@@ -65,7 +67,9 @@ namespace AppyNox.Services.Sso.Infrastructure.Data.Configurations
                 PasswordHash = hasher.HashPassword(new ApplicationUser(), "Admin@123"),
                 IsAdmin = true,
                 CompanyId = _companyId,
-                SecurityStamp = Guid.NewGuid().ToString()
+                SecurityStamp = Guid.NewGuid().ToString(),
+                Name = "Name1",
+                Surname = "Surname1",
             },
             new ApplicationUser
             {
@@ -79,7 +83,9 @@ namespace AppyNox.Services.Sso.Infrastructure.Data.Configurations
                 PasswordHash = hasher.HashPassword(new ApplicationUser(), "SAdmin@123"),
                 IsAdmin = true,
                 CompanyId = _happiCompanyId,
-                SecurityStamp = Guid.NewGuid().ToString()
+                SecurityStamp = Guid.NewGuid().ToString(),
+                Name = "Name2",
+                Surname = "Surname2",
             });
 
             #endregion

@@ -19,6 +19,10 @@ namespace AppyNox.Services.License.Infrastructure.Data.Configurations
 
             builder.HasIndex(aul => new { aul.UserId, aul.LicenseId }).IsUnique();
 
+            builder.Property(aul => aul.LicenseId).HasConversion(
+                licenseId => licenseId.Value,
+                value => new LicenseId(value));
+
             builder.HasOne(aul => aul.License)
                 .WithMany(l => l.ApplicationUserLicenses)
                 .HasForeignKey(aul => aul.LicenseId)

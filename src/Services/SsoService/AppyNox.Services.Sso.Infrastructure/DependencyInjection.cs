@@ -8,15 +8,19 @@ using AppyNox.Services.Sso.Application.Validators.SharedRules;
 using AppyNox.Services.Sso.Domain.Entities;
 using AppyNox.Services.Sso.Infrastructure.Data;
 using AppyNox.Services.Sso.Infrastructure.MassTransit.Consumers;
+using AppyNox.Services.Sso.Infrastructure.MassTransit.Filters;
 using AppyNox.Services.Sso.Infrastructure.MassTransit.Sagas;
 using AppyNox.Services.Sso.Infrastructure.Services;
+using AppyNox.Services.Sso.SharedEvents.Events;
 using Consul;
 using MassTransit;
+using MassTransit.Middleware;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Quartz.Impl.AdoJobStore.Common;
 
 namespace AppyNox.Services.Sso.Infrastructure;
 
@@ -121,6 +125,18 @@ public static class DependencyInjection
                         }
                     );
 
+                    // Apply filters to the send and publish pipelines
+                    configurator.ConfigureSend(sendConfig =>
+                    {
+                        sendConfig.UseFilter(new AddSsoContextToSendContextFilter());
+                    });
+
+                    configurator.ConfigurePublish(publishConfig =>
+                    {
+                        publishConfig.UseFilter(new AddSsoContextToSendContextFilter());
+                    });
+
+
                     #region [ Endpoints ]
 
                     configurator.ReceiveEndpoint(
@@ -128,6 +144,7 @@ public static class DependencyInjection
                         e =>
                         {
                             e.ConfigureConsumer<CreateApplicationUserMessageConsumer>(context);
+                            e.UseConsumeFilter<SsoContextConsumeFilter<CreateApplicationUserMessageConsumer>>(context);
                         }
                     );
                     configurator.ReceiveEndpoint(
@@ -135,6 +152,7 @@ public static class DependencyInjection
                         e =>
                         {
                             e.ConfigureConsumer<DeleteApplicationUserMessageConsumer>(context);
+                            e.UseConsumeFilter<SsoContextConsumeFilter<DeleteApplicationUserMessage>>(context);
                         }
                     );
 

@@ -59,7 +59,7 @@ internal class CouponConfiguration(CouponId couponId1, CouponId couponId2, Coupo
                 Detail = "Detail1",
                 CouponDetailId = couponDetailId,
                 CreatedBy = "System",
-                CreationDate = DateTime.UtcNow,
+                CreationDate = DateTime.SpecifyKind(new DateTime(2024, 4, 21), DateTimeKind.Utc),
                 UpdatedBy = (string?)null,
                 UpdateDate = (DateTime?)null
             });
@@ -83,7 +83,7 @@ internal class CouponConfiguration(CouponId couponId1, CouponId couponId2, Coupo
                 Detail = "Detail2",
                 CouponDetailId = couponDetailId,
                 CreatedBy = "System",
-                CreationDate = DateTime.UtcNow,
+                CreationDate = DateTime.SpecifyKind(new DateTime(2024, 4, 21), DateTimeKind.Utc),
                 UpdatedBy = (string?)null,
                 UpdateDate = (DateTime?)null
             });

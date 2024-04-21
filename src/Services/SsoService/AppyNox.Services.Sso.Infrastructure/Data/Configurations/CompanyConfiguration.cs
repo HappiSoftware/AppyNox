@@ -51,12 +51,6 @@ namespace AppyNox.Services.Sso.Infrastructure.Data.Configurations
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Cascade);
 
-            builder.HasMany(c => c.EmailProviders)
-                .WithOne()
-                .HasForeignKey(c => c.CompanyId)
-                .IsRequired()
-                .OnDelete(DeleteBehavior.Cascade);
-
             builder.Property(x => x.Name).IsRequired();
 
             #endregion
