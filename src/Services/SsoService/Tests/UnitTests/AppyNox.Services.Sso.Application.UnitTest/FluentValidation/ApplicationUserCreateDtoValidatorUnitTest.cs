@@ -52,7 +52,7 @@ namespace AppyNox.Services.Sso.Application.UnitTest.FluentValidation
         public async Task Validate_Code_ShouldMatchExpected(string? code, bool expectedIsValid)
         {
             // Arrange
-            var dto = new ApplicationUserCreateDto { Code = code!, UserName = "validUser", Password = _validPassword, ConfirmPassword = _validPassword, Email = "test@happisoft.com" };
+            var dto = new ApplicationUserCreateDto { Code = code!, UserName = "validUser", Password = _validPassword, ConfirmPassword = _validPassword, Email = "test@happisoft.com", Name= "Name", Surname= "Surname" };
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -68,7 +68,7 @@ namespace AppyNox.Services.Sso.Application.UnitTest.FluentValidation
         public async Task Validate_Username_ShouldMatchExpected(string? username, bool expectedIsValid)
         {
             // Arrange
-            var dto = new ApplicationUserCreateDto { Code = "USR01", UserName = username!, Password = _validPassword, ConfirmPassword = _validPassword, Email = "test@happisoft.com" };
+            var dto = new ApplicationUserCreateDto { Code = "USR01", UserName = username!, Password = _validPassword, ConfirmPassword = _validPassword, Email = "test@happisoft.com", Name = "Name", Surname = "Surname" };
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -85,7 +85,7 @@ namespace AppyNox.Services.Sso.Application.UnitTest.FluentValidation
         public async Task Validate_Email_ShouldMatchExpected(string? email, bool expectedIsValid)
         {
             // Arrange
-            var dto = new ApplicationUserCreateDto { Code = "USR01", UserName = "TestUser", Password = _validPassword, ConfirmPassword = _validPassword, Email = email! };
+            var dto = new ApplicationUserCreateDto { Code = "USR01", UserName = "TestUser", Password = _validPassword, ConfirmPassword = _validPassword, Email = email!, Name = "Name", Surname = "Surname" };
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -95,7 +95,40 @@ namespace AppyNox.Services.Sso.Application.UnitTest.FluentValidation
         }
 
         [Theory]
+        [InlineData("Name", true)]
+        [InlineData("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", false)] // 31 length
+        [InlineData("", false)]
+        [InlineData(null, false)]
+        public async Task Validate_Name_ShouldMatchExpected(string? name, bool expectedIsValid)
+        {
+            // Arrange
+            var dto = new ApplicationUserCreateDto { Code = "USR01", UserName = "TestUser", Password = _validPassword, ConfirmPassword = _validPassword, Email = "test@happisoft.com", Name = name!, Surname = "Surname" };
 
+            // Act
+            var result = await _validator.ValidateAsync(dto);
+
+            // Assert
+            Assert.Equal(expectedIsValid, result.IsValid);
+        }
+
+        [Theory]
+        [InlineData("Surname", true)]
+        [InlineData("aaaaaaaaaaaaaaaa", false)] // 15 length
+        [InlineData("", false)]
+        [InlineData(null, false)]
+        public async Task Validate_Surname_ShouldMatchExpected(string? surname, bool expectedIsValid)
+        {
+            // Arrange
+            var dto = new ApplicationUserCreateDto { Code = "USR01", UserName = "TestUser", Password = _validPassword, ConfirmPassword = _validPassword, Email = "test@happisoft.com", Name = "Name1", Surname = surname! };
+
+            // Act
+            var result = await _validator.ValidateAsync(dto);
+
+            // Assert
+            Assert.Equal(expectedIsValid, result.IsValid);
+        }
+
+        [Theory]
         // Valid password cases
         [InlineData("A1!bcde", true)] // Meets all requirements
         [InlineData("1!aAxyz", true)] // Meets all requirements in different order
@@ -116,7 +149,7 @@ namespace AppyNox.Services.Sso.Application.UnitTest.FluentValidation
         public async Task Validate_Password_ShouldMatchExpected(string password, bool expectedIsValid)
         {
             // Arrange
-            var dto = new ApplicationUserCreateDto { Code = "USR01", UserName = "TestUser", Password = password, ConfirmPassword = password, Email = "test@happisoft.com" };
+            var dto = new ApplicationUserCreateDto { Code = "USR01", UserName = "TestUser", Password = password, ConfirmPassword = password, Email = "test@happisoft.com", Name = "Name", Surname = "Surname" };
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -131,7 +164,7 @@ namespace AppyNox.Services.Sso.Application.UnitTest.FluentValidation
         public async Task Validate_PasswordConfirmPassword_ShouldMatch(string password, string confirmPassword, bool expectedIsValid)
         {
             // Arrange
-            var dto = new ApplicationUserCreateDto { Code = "USR01", UserName = "TestUser", Password = password, ConfirmPassword = confirmPassword, Email = "test@happisoft.com" };
+            var dto = new ApplicationUserCreateDto { Code = "USR01", UserName = "TestUser", Password = password, ConfirmPassword = confirmPassword, Email = "test@happisoft.com", Name = "Name", Surname = "Surname" };
 
             // Act
             var result = await _validator.ValidateAsync(dto);
@@ -147,7 +180,7 @@ namespace AppyNox.Services.Sso.Application.UnitTest.FluentValidation
         public async Task Validate_DatabaseChecks_ShouldMatchExpected(string username, string email, bool expectedIsValid)
         {
             // Arrange
-            var dto = new ApplicationUserCreateDto { Code = "USR01", UserName = username, Email = email, Password = _validPassword, ConfirmPassword = _validPassword };
+            var dto = new ApplicationUserCreateDto { Code = "USR01", UserName = username, Email = email, Password = _validPassword, ConfirmPassword = _validPassword, Name = "Name", Surname = "Surname" };
             _databaseChecksMock.Setup(x => x.IsUsernameUniqueAsync(username, It.IsAny<CancellationToken>())).ReturnsAsync(username != "existingUser");
             _databaseChecksMock.Setup(x => x.IsEmailUniqueAsync(email, It.IsAny<CancellationToken>())).ReturnsAsync(email != "existing@example.com");
 

@@ -24,8 +24,12 @@ namespace AppyNox.Services.Sso.Application.Validators.ApplicationUserValidators
             RuleFor(x => x.Password).Equal(x => x.ConfirmPassword).WithMessage("Passwords should match").WithErrorCode("PASSWORDS_SHOULD_MATCH");
             RuleFor(x => x.Password).BeAValidPassword(passwordValidator, userManager);
             RuleFor(x => x.Email).CheckEmailValidity(databaseChecks);
-            RuleFor(x => x.Name).NotNull().NotEmpty().WithMessage("Name required");
-            RuleFor(x => x.Surname).NotNull().NotEmpty().WithMessage("Surname required");
+            RuleFor(x => x.Name)
+                .NotNull().NotEmpty().WithMessage("Name required")
+                .MaximumLength(30).WithMessage("Name must not exceed 30 characters");
+            RuleFor(x => x.Surname)
+                .NotNull().NotEmpty().WithMessage("Surname required")
+                .MaximumLength(15).WithMessage("Surname must not exceed 15 characters");
         }
 
         #endregion
