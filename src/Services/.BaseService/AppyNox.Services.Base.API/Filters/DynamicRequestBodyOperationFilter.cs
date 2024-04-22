@@ -8,17 +8,17 @@ using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Collections;
+using System.Collections.Concurrent;
 
 namespace AppyNox.Services.Base.API.Filters;
 
-public class DynamicRequestBodyOperationFilter : IOperationFilter
+public class DynamicRequestBodyOperationFilter(IDtoMappingRegistryBase mappingService) : IOperationFilter
 {
-    private readonly IDtoMappingRegistryBase _mappingService;
+    private readonly IDtoMappingRegistryBase _mappingService = mappingService;
 
-    public DynamicRequestBodyOperationFilter(IDtoMappingRegistryBase mappingService)
-    {
-        _mappingService = mappingService;
-    }
+    // Caches
+    private static readonly ConcurrentDictionary<string, object> _paginatedExampleCache = new ConcurrentDictionary<string, object>();
+    private static readonly ConcurrentDictionary<string, object> _exampleCache = new ConcurrentDictionary<string, object>();
 
     public void Apply(OpenApiOperation operation, OperationFilterContext context)
     {
@@ -47,7 +47,7 @@ public class DynamicRequestBodyOperationFilter : IOperationFilter
         if (attribute != null)
         {
             var possibleTypes = _mappingService.GetDtoTypesForEntity(attribute.EntityType, attribute.MappingType);
-            if (possibleTypes != null && possibleTypes.Any())
+            if (possibleTypes != null && possibleTypes.Count != 0)
             {
                 var oneOfSchema = new OpenApiSchema
                 {
@@ -81,7 +81,6 @@ public class DynamicRequestBodyOperationFilter : IOperationFilter
             }
         }
     }
-
 
     private void HandleGetOperation(OpenApiOperation operation, OperationFilterContext context)
     {
@@ -184,7 +183,7 @@ public class DynamicRequestBodyOperationFilter : IOperationFilter
         {
             OneOf = possibleTypes.Select(type => context.SchemaGenerator.GenerateSchema(type, context.SchemaRepository)).ToList()
         };
-
+        
         var paginatedListSchema = new OpenApiSchema
         {
             Type = "object",
@@ -208,6 +207,14 @@ public class DynamicRequestBodyOperationFilter : IOperationFilter
 
     private static NoxApiResponse CreatePaginatedExampleInstance(Type itemType)
     {
+        string typeName = itemType.FullName
+            ?? throw new NoxApiException("Type name cannot be null", (int)NoxApiExceptionCode.SwaggerGenerationException);
+
+        if (_paginatedExampleCache.TryGetValue(typeName, out object? instance))
+        {
+            return new NoxApiResponse(instance, "Get Request Successful.");
+        }
+
         var exampleItem = CreateExampleInstance(itemType);
         var listType = typeof(PaginatedList<>).MakeGenericType([itemType]);
         var paginatedListInstance = Activator.CreateInstance(listType);
@@ -231,6 +238,8 @@ public class DynamicRequestBodyOperationFilter : IOperationFilter
         var pageSizeProperty = listType.GetProperty("PageSize");
         pageSizeProperty?.SetValue(paginatedListInstance, 1);
 
+        _paginatedExampleCache.TryAdd(typeName, paginatedListInstance);
+
         return new NoxApiResponse(paginatedListInstance, "Get Request Successful.");
     }
 
@@ -238,7 +247,15 @@ public class DynamicRequestBodyOperationFilter : IOperationFilter
 
     private static object CreateExampleInstance(Type type)
     {
-        var instance = Activator.CreateInstance(type);
+        string typeName = type.FullName
+            ?? throw new NoxApiException("Type name cannot be null", (int)NoxApiExceptionCode.SwaggerGenerationException);
+
+        if (_exampleCache.TryGetValue(typeName, out object? instance))
+        {
+            return instance;
+        }
+
+        instance = Activator.CreateInstance(type);
 
         foreach (var property in type.GetProperties())
         {
@@ -282,6 +299,8 @@ public class DynamicRequestBodyOperationFilter : IOperationFilter
                 }
             }
         }
-        return instance ?? throw new NoxApiException($"Could not instantiate example instance for {type.Name}", (int)NoxApiExceptionCode.SwaggerGenerationException);
+        _exampleCache.TryAdd(typeName, instance 
+            ?? throw new NoxApiException($"Could not instantiate example instance for {type.Name}", (int)NoxApiExceptionCode.SwaggerGenerationException));
+        return instance;
     }
 }
