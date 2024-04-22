@@ -1,7 +1,6 @@
 ﻿using AppyNox.Services.Base.API.Constants;
 using AppyNox.Services.Base.API.Controllers;
 using AppyNox.Services.Base.API.ViewModels;
-using AppyNox.Services.Base.Application.Extensions;
 using AppyNox.Services.Base.Application.MediatR.Commands;
 using AppyNox.Services.Base.Core.Common;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
@@ -53,6 +52,14 @@ public class CouponsController(IMediator mediator) : NoxController
     {
         await _mediator.Send(new UpdateCouponCommand(id, couponDto));
         return NoContent();
+    }
+
+    [HttpGet]
+    [Authorize("Coupons.View.Admin")]
+    [Route("/api/v{version:apiVersion}/coupons/admin-test")]
+    public IActionResult TestAdminEndpoint()
+    {
+        return Ok("Request successful");
     }
 
     #endregion

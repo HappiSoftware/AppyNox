@@ -14,8 +14,9 @@ namespace AppyNox.Services.Sso.Infrastructure.Data.Configurations
     /// <param name="adminUserId">The ID of the admin user for seeding data.</param>
     /// <param name="companyId">The ID of the admin user company for seeding data.</param>
     /// <param name="superAdminId">The ID of the super admin user for seeding data.</param>
+    /// <param name="notAdminUserId">The ID of the not admin user for seeding data.</param>
     /// <param name="happiCompanyId">The ID of the super admin company user for seeding data.</param>
-    internal class ApplicationUserConfiguration(Guid adminUserId, Guid companyId, Guid superAdminId, Guid happiCompanyId)
+    internal class ApplicationUserConfiguration(Guid adminUserId, Guid companyId, Guid superAdminId, Guid notAdminUserId, Guid happiCompanyId)
         : IEntityTypeConfiguration<ApplicationUser>
     {
         #region [ Fields ]
@@ -23,6 +24,8 @@ namespace AppyNox.Services.Sso.Infrastructure.Data.Configurations
         private readonly Guid _adminUserId = adminUserId;
 
         private readonly Guid _superAdminId = superAdminId;
+
+        private readonly Guid _notAdminUserId = notAdminUserId;
 
         private readonly Guid _companyId = companyId;
 
@@ -86,6 +89,22 @@ namespace AppyNox.Services.Sso.Infrastructure.Data.Configurations
                 SecurityStamp = Guid.NewGuid().ToString(),
                 Name = "Name2",
                 Surname = "Surname2",
+            },
+            new ApplicationUser
+            {
+                Id = _notAdminUserId,
+                Code = "USR03",
+                UserName = "TestUser3",
+                NormalizedUserName = "TESTUSER3",
+                Email = "test3@happisoft.com",
+                NormalizedEmail = "TEST3@HAPPISOFT.COM",
+                EmailConfirmed = true,
+                PasswordHash = hasher.HashPassword(new ApplicationUser(), "NAdmin@123"),
+                IsAdmin = false,
+                CompanyId = _happiCompanyId,
+                SecurityStamp = Guid.NewGuid().ToString(),
+                Name = "Name3",
+                Surname = "Surname3",
             });
 
             #endregion

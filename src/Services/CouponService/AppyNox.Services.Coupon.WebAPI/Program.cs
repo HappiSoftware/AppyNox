@@ -28,6 +28,7 @@ using Microsoft.OpenApi.Models;
 using Serilog;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Reflection;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -179,6 +180,7 @@ if (builder.Environment.IsDevelopment())
 builder.Services.AddAuthorization(options =>
 {
     List<string> _claims = [.. Permissions.Coupons.Metrics];
+    List<string> _adminclaims = [.. Permissions.CouponsAdmin.Metrics];
 
     foreach (var item in _claims)
     {
@@ -187,6 +189,17 @@ builder.Services.AddAuthorization(options =>
             builder.AddRequirements(new PermissionRequirement(item, "API.Permission"));
         });
     }
+
+    // Admin only policies
+    foreach (var item in _adminclaims)
+    {
+        options.AddPolicy($"{item}.Admin", builder =>
+        {
+            builder.AddRequirements(new PermissionRequirement(item, "API.Permission"))
+            .AddRequirements(new PermissionRequirement("admin", "role"));
+        });
+    }
+
 });
 
 builder.Services.AddScoped<IAuthorizationHandler, NoxJwtAuthorizationHandler>();

@@ -40,6 +40,7 @@ public class JwtTokenManager(UserManager<ApplicationUser> userManager,
     /// Creates a JWT token for a specified user.
     /// </summary>
     /// <param name="userId">The user's identifier.</param>
+    /// <param name="audience">The user's audience.</param>
     /// <returns>A JWT token string.</returns>
     /// <exception cref="NoxSsoApiException">Thrown when user information is not found.</exception>
     public async Task<string> CreateToken(string userId, string audience)
@@ -51,13 +52,13 @@ public class JwtTokenManager(UserManager<ApplicationUser> userManager,
 
         IList<string> roles = await _userManager.GetRolesAsync(user ?? throw new NoxSsoApiException(NoxSsoApiResourceService.WrongCredentials, statusCode: (int)HttpStatusCode.NotFound));
 
-        claims.Add(new Claim(ClaimTypes.Name, user.Email ?? throw new NoxSsoApiException(NoxSsoApiResourceService.WrongCredentials, statusCode: (int)HttpStatusCode.NotFound)));
+        claims.Add(new Claim(ClaimTypes.Name, user.UserName ?? throw new NoxSsoApiException(NoxSsoApiResourceService.WrongCredentials, statusCode: (int)HttpStatusCode.NotFound)));
         claims.Add(new Claim(ClaimTypes.NameIdentifier, userId.ToString()));
         claims.Add(new Claim("company", user.CompanyId.ToString()));
 
         if (user.IsAdmin)
         {
-            claims.Add(new Claim("admin", "true"));
+            claims.Add(new Claim(ClaimTypes.Role, "admin"));
         }
 
         //create an empty list for userClaims
@@ -70,8 +71,14 @@ public class JwtTokenManager(UserManager<ApplicationUser> userManager,
                 ?? throw new NoxSsoApiException(NoxSsoApiResourceService.WrongCredentials, statusCode: (int)HttpStatusCode.NotFound);
             if (role.Name == "SuperAdmin")
             {
-                claims.Add(new Claim("superadmin", "true"));
-                claims.Remove(new Claim("admin", "true")); // SAdmin will not use admin anyways, remove if added to prevent complications
+                claims.Add(new Claim(ClaimTypes.Role, "superadmin"));
+
+                // SAdmin will not use admin anyways, remove if added to prevent complications
+                var adminClaim = claims.FirstOrDefault(c => c.Type == ClaimTypes.Role && c.Value == "admin");
+                if (adminClaim != null)
+                {
+                    claims.Remove(adminClaim);
+                } 
             }
 
             userClaims = userClaims.Concat(await _roleManager.GetClaimsAsync(role));
@@ -79,7 +86,7 @@ public class JwtTokenManager(UserManager<ApplicationUser> userManager,
 
         foreach (var item in userClaims)
         {
-            claims.Add(new Claim("claim", item.Value));
+            claims.Add(new Claim(item.Type, item.Value));
         }
 
         var tokenDescriptor = new SecurityTokenDescriptor

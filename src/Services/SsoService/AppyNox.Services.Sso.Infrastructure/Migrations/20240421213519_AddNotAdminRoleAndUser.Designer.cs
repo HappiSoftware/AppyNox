@@ -3,6 +3,7 @@ using System;
 using AppyNox.Services.Sso.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AppyNox.Services.Sso.Infrastructure.Migrations
 {
     [DbContext(typeof(IdentityDatabaseContext))]
-    partial class IdentityDatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20240421213519_AddNotAdminRoleAndUser")]
+    partial class AddNotAdminRoleAndUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -186,7 +189,7 @@ namespace AppyNox.Services.Sso.Infrastructure.Migrations
                             AccessFailedCount = 0,
                             Code = "USR01",
                             CompanyId = new Guid("221e8b2c-59d5-4e5b-b010-86c239b66738"),
-                            ConcurrencyStamp = "7e533c75-f2d5-4a55-ab78-fa897ae6f44d",
+                            ConcurrencyStamp = "437863ec-af59-4efa-9968-361310f9e8dd",
                             Email = "admin@email.com",
                             EmailConfirmed = true,
                             IsAdmin = true,
@@ -194,9 +197,9 @@ namespace AppyNox.Services.Sso.Infrastructure.Migrations
                             Name = "Name1",
                             NormalizedEmail = "ADMIN@EMAIL.COM",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEI3nZbtfb+oc+ISBiSz64tvw3qyJG7r9r0icBPGsWto1pLW5+3Peg29QjzId5MDjsw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAELnfbR9d48u1qTkAzBZBjFJbv7qvV021fxuwXh7o3MSlccEXsz60HfkDozO0nJsINg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "7f038812-7850-4d10-a6bd-af0a84357319",
+                            SecurityStamp = "c8592cdf-bcf2-4f3b-add4-3ec4905cb6d1",
                             Surname = "Surname1",
                             TwoFactorEnabled = false,
                             UserName = "admin"
@@ -207,7 +210,7 @@ namespace AppyNox.Services.Sso.Infrastructure.Migrations
                             AccessFailedCount = 0,
                             Code = "USR02",
                             CompanyId = new Guid("0ebae1bf-6610-4967-a8ed-b149219caf68"),
-                            ConcurrencyStamp = "a464461f-35cb-4176-877d-18f550071d87",
+                            ConcurrencyStamp = "ea4e032c-53a6-4813-85e4-5b2794fb74be",
                             Email = "sadmin@email.com",
                             EmailConfirmed = true,
                             IsAdmin = true,
@@ -215,9 +218,9 @@ namespace AppyNox.Services.Sso.Infrastructure.Migrations
                             Name = "Name2",
                             NormalizedEmail = "SADMIN@EMAIL.COM",
                             NormalizedUserName = "SUPERADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEHHcLKp0ScXN2dQJ51Wh1CPva9WmhqSoeHRpphLgixD/vysTeTexxqfn6EU3cmtVUw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEMdANce2goQO2RsMV/OuRA/Z4CXqGJOPa93FofvGgTlnpkFJVllhHUVh3gTcd3SRLQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "5227a5d4-0bec-47c1-8946-8861955840a8",
+                            SecurityStamp = "af9bb84c-7597-40b9-bc59-66a85b7735a9",
                             Surname = "Surname2",
                             TwoFactorEnabled = false,
                             UserName = "superadmin"
@@ -228,7 +231,7 @@ namespace AppyNox.Services.Sso.Infrastructure.Migrations
                             AccessFailedCount = 0,
                             Code = "USR03",
                             CompanyId = new Guid("0ebae1bf-6610-4967-a8ed-b149219caf68"),
-                            ConcurrencyStamp = "003dd3c8-a3a1-465e-b823-09c52949ccb7",
+                            ConcurrencyStamp = "6d43abea-fd1a-4696-8850-77968b1add67",
                             Email = "test3@happisoft.com",
                             EmailConfirmed = true,
                             IsAdmin = false,
@@ -236,9 +239,9 @@ namespace AppyNox.Services.Sso.Infrastructure.Migrations
                             Name = "Name3",
                             NormalizedEmail = "TEST3@HAPPISOFT.COM",
                             NormalizedUserName = "TESTUSER3",
-                            PasswordHash = "AQAAAAIAAYagAAAAEAaWsXB34zA44VfCLFN0ZDnuq0HG6rtB+19gP+qCJairxC/FkkiBoN9Vem4ouc9QnA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAECLYcfkXfyBQCor7YvrRzbPsvyDlRV0E4ZuwwPtUSMZNiWLIkND7fgcmU+F01dt4XQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "098b4d9e-371f-45d4-bc64-635cea26f318",
+                            SecurityStamp = "80ae1d82-5cd3-49ae-b29f-d47b4cc27d3a",
                             Surname = "Surname3",
                             TwoFactorEnabled = false,
                             UserName = "TestUser3"
@@ -306,133 +309,133 @@ namespace AppyNox.Services.Sso.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            ClaimType = "API.Permission",
+                            ClaimType = "Permission",
                             ClaimValue = "Users.View",
                             RoleId = new Guid("e24e99e7-00e4-4007-a042-565eac12d96d")
                         },
                         new
                         {
                             Id = 2,
-                            ClaimType = "API.Permission",
+                            ClaimType = "Permission",
                             ClaimValue = "Users.Create",
                             RoleId = new Guid("e24e99e7-00e4-4007-a042-565eac12d96d")
                         },
                         new
                         {
                             Id = 3,
-                            ClaimType = "API.Permission",
+                            ClaimType = "Permission",
                             ClaimValue = "Users.Edit",
                             RoleId = new Guid("e24e99e7-00e4-4007-a042-565eac12d96d")
                         },
                         new
                         {
                             Id = 4,
-                            ClaimType = "API.Permission",
+                            ClaimType = "Permission",
                             ClaimValue = "Users.Delete",
                             RoleId = new Guid("e24e99e7-00e4-4007-a042-565eac12d96d")
                         },
                         new
                         {
                             Id = 5,
-                            ClaimType = "API.Permission",
+                            ClaimType = "Permission",
                             ClaimValue = "Roles.View",
                             RoleId = new Guid("e24e99e7-00e4-4007-a042-565eac12d96d")
                         },
                         new
                         {
                             Id = 6,
-                            ClaimType = "API.Permission",
+                            ClaimType = "Permission",
                             ClaimValue = "Roles.Create",
                             RoleId = new Guid("e24e99e7-00e4-4007-a042-565eac12d96d")
                         },
                         new
                         {
                             Id = 7,
-                            ClaimType = "API.Permission",
+                            ClaimType = "Permission",
                             ClaimValue = "Roles.Edit",
                             RoleId = new Guid("e24e99e7-00e4-4007-a042-565eac12d96d")
                         },
                         new
                         {
                             Id = 8,
-                            ClaimType = "API.Permission",
+                            ClaimType = "Permission",
                             ClaimValue = "Roles.Delete",
                             RoleId = new Guid("e24e99e7-00e4-4007-a042-565eac12d96d")
                         },
                         new
                         {
                             Id = 9,
-                            ClaimType = "API.Permission",
+                            ClaimType = "Permission",
                             ClaimValue = "Roles.AssignPermission",
                             RoleId = new Guid("e24e99e7-00e4-4007-a042-565eac12d96d")
                         },
                         new
                         {
                             Id = 10,
-                            ClaimType = "API.Permission",
+                            ClaimType = "Permission",
                             ClaimValue = "Roles.WithdrawPermission",
                             RoleId = new Guid("e24e99e7-00e4-4007-a042-565eac12d96d")
                         },
                         new
                         {
                             Id = 11,
-                            ClaimType = "API.Permission",
+                            ClaimType = "Permission",
                             ClaimValue = "Coupons.View",
                             RoleId = new Guid("e24e99e7-00e4-4007-a042-565eac12d96d")
                         },
                         new
                         {
                             Id = 12,
-                            ClaimType = "API.Permission",
+                            ClaimType = "Permission",
                             ClaimValue = "Coupons.Create",
                             RoleId = new Guid("e24e99e7-00e4-4007-a042-565eac12d96d")
                         },
                         new
                         {
                             Id = 13,
-                            ClaimType = "API.Permission",
+                            ClaimType = "Permission",
                             ClaimValue = "Coupons.Edit",
                             RoleId = new Guid("e24e99e7-00e4-4007-a042-565eac12d96d")
                         },
                         new
                         {
                             Id = 14,
-                            ClaimType = "API.Permission",
+                            ClaimType = "Permission",
                             ClaimValue = "Coupons.Delete",
                             RoleId = new Guid("e24e99e7-00e4-4007-a042-565eac12d96d")
                         },
                         new
                         {
                             Id = 15,
-                            ClaimType = "API.Permission",
+                            ClaimType = "Permission",
                             ClaimValue = "Licenses.View",
                             RoleId = new Guid("e24e99e7-00e4-4007-a042-565eac12d96d")
                         },
                         new
                         {
                             Id = 16,
-                            ClaimType = "API.Permission",
+                            ClaimType = "Permission",
                             ClaimValue = "Licenses.Create",
                             RoleId = new Guid("e24e99e7-00e4-4007-a042-565eac12d96d")
                         },
                         new
                         {
                             Id = 17,
-                            ClaimType = "API.Permission",
+                            ClaimType = "Permission",
                             ClaimValue = "Licenses.Edit",
                             RoleId = new Guid("e24e99e7-00e4-4007-a042-565eac12d96d")
                         },
                         new
                         {
                             Id = 18,
-                            ClaimType = "API.Permission",
+                            ClaimType = "Permission",
                             ClaimValue = "Licenses.Delete",
                             RoleId = new Guid("e24e99e7-00e4-4007-a042-565eac12d96d")
                         },
                         new
                         {
                             Id = 19,
-                            ClaimType = "API.Permission",
+                            ClaimType = "Permission",
                             ClaimValue = "Coupons.View",
                             RoleId = new Guid("4d0f77eb-2ad5-4b43-848e-826cd32d684b")
                         });

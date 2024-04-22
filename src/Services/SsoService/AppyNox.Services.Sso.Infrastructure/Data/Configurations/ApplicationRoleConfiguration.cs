@@ -14,8 +14,9 @@ namespace AppyNox.Services.Sso.Infrastructure.Data.Configurations
     /// <param name="adminRoleId">The ID of the admin role for seeding data.</param>
     /// <param name="companyId">The ID of the admin role company for seeding data.</param>
     /// <param name="superAdminRoleId">The ID of the super admin role for seeding data.</param>
+    /// <param name="notAdminRoleId">The ID of the not admin role for seeding data.</param>
     /// <param name="happiCompanyId">The ID of the super admin role company for seeding data.</param>
-    internal class ApplicationRoleConfiguration(Guid adminRoleId, Guid companyId, Guid superAdminRoleId, Guid happiCompanyId)
+    internal class ApplicationRoleConfiguration(Guid adminRoleId, Guid companyId, Guid superAdminRoleId, Guid notAdminRoleId, Guid happiCompanyId)
         : IEntityTypeConfiguration<ApplicationRole>
     {
         #region [ Fields ]
@@ -25,6 +26,8 @@ namespace AppyNox.Services.Sso.Infrastructure.Data.Configurations
         private readonly Guid _companyId = companyId;
 
         private readonly Guid _superAdminRoleId = superAdminRoleId;
+
+        private readonly Guid _notAdminRoleId = notAdminRoleId;
 
         private readonly Guid _happiCompanyId = happiCompanyId;
 
@@ -68,6 +71,15 @@ namespace AppyNox.Services.Sso.Infrastructure.Data.Configurations
                 Name = "SuperAdmin",
                 Description = "RoleDescription",
                 NormalizedName = "SUPERADMIN",
+                CompanyId = _happiCompanyId
+            },
+            new ApplicationRole
+            {
+                Id = _notAdminRoleId,
+                Code = "Role3",
+                Name = "NotAdmin",
+                Description = "RoleDescription",
+                NormalizedName = "NOTADMIN",
                 CompanyId = _happiCompanyId
             });
 

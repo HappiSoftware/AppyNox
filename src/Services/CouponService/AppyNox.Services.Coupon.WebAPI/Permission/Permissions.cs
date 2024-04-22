@@ -23,6 +23,17 @@ public static class Permissions
 
         #endregion
     }
+    public static class CouponsAdmin
+    {
+        #region [ Fields ]
+
+        public const string View = "Coupons.View";
+
+        public static readonly ImmutableArray<string> Metrics =
+               [View];
+
+        #endregion
+    }
 
     #endregion
 }

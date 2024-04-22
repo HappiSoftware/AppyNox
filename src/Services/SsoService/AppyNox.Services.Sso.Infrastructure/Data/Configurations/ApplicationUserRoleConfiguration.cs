@@ -14,7 +14,9 @@ namespace AppyNox.Services.Sso.Infrastructure.Data.Configurations
     /// <param name="adminUserId">The ID of the admin user for seeding data.</param>
     /// <param name="superAdminRoleId">The ID of the super admin role for seeding data.</param>
     /// <param name="superAdminUserId">The ID of the super admin user for seeding data.</param>
-    internal class ApplicationUserRoleConfiguration(Guid adminRoleId, Guid adminUserId, Guid superAdminRoleId, Guid superAdminUserId)
+    /// <param name="notAdminRoleId">The ID of the not admin user for seeding data.</param>
+    /// <param name="notAdminUserId">The ID of the not admin user for seeding data.</param>
+    internal class ApplicationUserRoleConfiguration(Guid adminRoleId, Guid adminUserId, Guid superAdminRoleId, Guid superAdminUserId, Guid notAdminRoleId, Guid notAdminUserId)
         : IEntityTypeConfiguration<IdentityUserRole<Guid>>
     {
         #region [ Fields ]
@@ -26,6 +28,10 @@ namespace AppyNox.Services.Sso.Infrastructure.Data.Configurations
         private readonly Guid _superAdminRoleId = superAdminRoleId;
 
         private readonly Guid _superAdminUserId = superAdminUserId;
+
+        private readonly Guid _notAdminRoleId = notAdminRoleId;
+
+        private readonly Guid _notAdminUserId = notAdminUserId;
 
         #endregion
 
@@ -41,7 +47,8 @@ namespace AppyNox.Services.Sso.Infrastructure.Data.Configurations
 
             builder.HasData(
                 new IdentityUserRole<Guid> { RoleId = _adminRoleId, UserId = _adminUserId },
-                new IdentityUserRole<Guid> { RoleId = _superAdminRoleId, UserId = _superAdminUserId }
+                new IdentityUserRole<Guid> { RoleId = _superAdminRoleId, UserId = _superAdminUserId },
+                new IdentityUserRole<Guid> { RoleId = _notAdminRoleId, UserId = _notAdminUserId }
             );
 
             #endregion

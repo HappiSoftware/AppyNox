@@ -3,6 +3,7 @@ using System;
 using AppyNox.Services.Sso.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AppyNox.Services.Sso.Infrastructure.Migrations
 {
     [DbContext(typeof(IdentityDatabaseContext))]
-    partial class IdentityDatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20240421230517_UpdateClaimTypesForApiClaims")]
+    partial class UpdateClaimTypesForApiClaims
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

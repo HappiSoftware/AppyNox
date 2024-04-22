@@ -3,6 +3,7 @@ using AppyNox.Services.Sso.WebAPI.Exceptions;
 using AppyNox.Services.Sso.WebAPI.Exceptions.Base;
 using AppyNox.Services.Sso.WebAPI.Localization;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace AppyNox.Services.Sso.WebAPI.Permission;
 
@@ -12,7 +13,7 @@ public class NoxSsoAuthorizationHandler : AuthorizationHandler<PermissionRequire
 
     protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, PermissionRequirement requirement)
     {
-        if (context.User.HasClaim(c => c.Type == "superadmin"))
+        if (context.User.Claims.Any(c => c.Type == "role" && c.Value == "superadmin"))
         {
             context.Succeed(requirement);
             return Task.CompletedTask;
@@ -20,7 +21,7 @@ public class NoxSsoAuthorizationHandler : AuthorizationHandler<PermissionRequire
 
         if (context.User.HasClaim(c => c.Type == "nameid"))
         {
-            if (context.User.HasClaim(c => c.Value == requirement.Permission))
+            if (context.User.HasClaim(c => c.Type == requirement.Type && c.Value == requirement.Permission))
             {
                 context.Succeed(requirement);
             }
