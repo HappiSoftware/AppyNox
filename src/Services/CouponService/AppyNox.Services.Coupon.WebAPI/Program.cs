@@ -1,6 +1,7 @@
 using AppyNox.Services.Base.API.Authentication;
 using AppyNox.Services.Base.API.Constants;
 using AppyNox.Services.Base.API.Extensions;
+using AppyNox.Services.Base.API.Filters;
 using AppyNox.Services.Base.API.Localization;
 using AppyNox.Services.Base.API.Middleware;
 using AppyNox.Services.Base.API.Middleware.Options;
@@ -134,6 +135,7 @@ if (builder.Environment.IsDevelopment())
     noxLogger.LogInformation("Adjusting swagger endpoints.");
     builder.Services.AddSwaggerGen(opt =>
     {
+        opt.OperationFilter<DynamicRequestBodyOperationFilter>();
         opt.SwaggerDoc($"v{NoxVersions.v1_0}", new OpenApiInfo { Title = "Coupon Service", Version = NoxVersions.v1_0 });
         opt.SwaggerDoc($"v{NoxVersions.v1_1}", new OpenApiInfo { Title = "Coupon Service", Version = NoxVersions.v1_1 });
         opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme

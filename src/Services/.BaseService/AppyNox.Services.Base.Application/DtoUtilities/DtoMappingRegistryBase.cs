@@ -1,6 +1,7 @@
 ﻿using AppyNox.Services.Base.Application.Exceptions;
 using AppyNox.Services.Base.Application.Extensions;
 using AppyNox.Services.Base.Core.Enums;
+using AppyNox.Services.Base.Core.Extensions;
 
 namespace AppyNox.Services.Base.Application.DtoUtilities
 {
@@ -48,6 +49,43 @@ namespace AppyNox.Services.Base.Application.DtoUtilities
             }
 
             throw new AccessTypeNotFoundException(entityType);
+        }
+
+        public Dictionary<string, Type> GetDtoTypesForEntity(Type entityType, DtoLevelMappingTypes mappingType)
+        {
+            Dictionary<string, Type> result = [];
+
+            if (_entityToDtoDetailLevelMappings.TryGetValue(entityType, out var entityAllDtoLevelMappings))
+            {
+                if (entityAllDtoLevelMappings.TryGetValue(mappingType, out var entityDtoLevelMappings))
+                {
+                    if (entityDtoLevelMappings is Type actualEnumType && actualEnumType.IsEnum)
+                    {
+                        foreach (Enum value in Enum.GetValues(actualEnumType))
+                        {
+                            var key = (entityType, mappingType, value);
+                            if (_entityDetailLevelToDtoTypeMappings.TryGetValue(key, out var dtoType) && dtoType != null)
+                            {
+                                result.Add(value.GetDisplayName(), dtoType);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        throw new DtoTypesForEntityException("The provided type is not an enum or is null.");
+                    }
+                }
+                else
+                {
+                    throw new DtoTypesForEntityException("Mapping type not found.");
+                }
+            }
+            else
+            {
+                throw new DtoTypesForEntityException("Entity type not found in mappings.");
+            }
+
+            return result;
         }
 
         #endregion

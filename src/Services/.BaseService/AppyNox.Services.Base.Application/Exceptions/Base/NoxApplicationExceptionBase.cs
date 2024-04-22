@@ -39,7 +39,9 @@ internal enum NoxApplicationExceptionCode
 
     UnsupportedLevelAttribute = 1014,
 
-    MismatchedIdInUpdate = 1015
+    MismatchedIdInUpdate = 1015,
+
+    DtoTypesForEntityMethodError = 1016
 }
 
 #endregion

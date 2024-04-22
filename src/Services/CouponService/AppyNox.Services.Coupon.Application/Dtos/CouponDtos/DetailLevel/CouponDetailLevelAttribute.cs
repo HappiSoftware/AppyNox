@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace AppyNox.Services.Coupon.Application.Dtos.CouponDtos.DetailLevel
 {
