@@ -267,6 +267,18 @@ public class DynamicRequestBodyOperationFilter(IDtoMappingRegistryBase mappingSe
             {
                 property.SetValue(instance, 1, null);
             }
+            else if (property.PropertyType == typeof(long) || property.PropertyType == typeof(long?))
+            {
+                property.SetValue(instance, 1L, null);
+            }
+            else if (property.PropertyType == typeof(double) || property.PropertyType == typeof(double?))
+            {
+                property.SetValue(instance, 1.0, null);
+            }
+            else if (property.PropertyType == typeof(decimal) || property.PropertyType == typeof(decimal?))
+            {
+                property.SetValue(instance, 1.0m, null);
+            }
             else if (property.PropertyType == typeof(Guid) || property.PropertyType == typeof(Guid?))
             {
                 property.SetValue(instance, Guid.NewGuid(), null);
