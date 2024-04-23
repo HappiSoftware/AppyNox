@@ -1,7 +1,10 @@
 # Changelog
 All notable changes to AppyNox will be documented in this file.
 
-## [1.9.0](https://github.com/HappiSoftware/AppyNox/compare/v1.8.0...v1.9.0) - NOT RELEASED
+## [1.10.0](https://github.com/HappiSoftware/AppyNox/compare/v1.9.0...v1.10.0) - NOT RELEASED
+
+
+## [1.9.0](https://github.com/HappiSoftware/AppyNox/compare/v1.8.0...v1.9.0) - 2024.04.24
 ### Added 
 - Feature request: Benchmarks for repository classes ([#265](https://github.com/HappiSoftware/AppyNox/issues/265))
 - Feature request: Moving Paginated List to Core Layer ([#269](https://github.com/HappiSoftware/AppyNox/issues/269))
