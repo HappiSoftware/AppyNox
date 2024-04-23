@@ -50,7 +50,7 @@ namespace AppyNox.Services.Base.Infrastructure.UnitTests.Fixtures
                 .Options;
 
             // Using Activator to create an instance of TContext
-            return Activator.CreateInstance(typeof(TContext), options) as TContext
+            return Activator.CreateInstance(typeof(TContext), [options, null]) as TContext
                 ?? throw new InvalidOperationException("Could not create an instance of the database context.");
         }
 

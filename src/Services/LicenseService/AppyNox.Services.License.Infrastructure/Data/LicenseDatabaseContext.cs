@@ -1,22 +1,16 @@
-﻿using AppyNox.Services.Base.Infrastructure.Data;
+﻿using AppyNox.Services.Base.Application.Interfaces.Encryption;
+using AppyNox.Services.Base.Infrastructure.Data;
 using AppyNox.Services.License.Domain.Entities;
 using AppyNox.Services.License.Infrastructure.Data.Configurations;
 using Microsoft.EntityFrameworkCore;
 
 namespace AppyNox.Services.License.Infrastructure.Data
 {
-    public class LicenseDatabaseContext : NoxDatabaseContext
+    public class LicenseDatabaseContext(DbContextOptions<LicenseDatabaseContext> options, IEncryptionService? encryptionService = null) 
+        : NoxDatabaseContext(options, encryptionService)
     {
+
         #region [ Public Constructors ]
-
-        public LicenseDatabaseContext()
-        {
-        }
-
-        public LicenseDatabaseContext(DbContextOptions<LicenseDatabaseContext> options)
-            : base(options)
-        {
-        }
 
         #endregion
 

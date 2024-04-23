@@ -1,10 +1,12 @@
-﻿using AppyNox.Services.Base.Application.Interfaces.Loggers;
+﻿using AppyNox.Services.Base.Application.Interfaces.Encryption;
+using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Application.Interfaces.Repositories;
 using AppyNox.Services.Base.Core.Common;
 using AppyNox.Services.Base.Core.Enums;
 using AppyNox.Services.Base.Infrastructure.BackgroundJobs;
 using AppyNox.Services.Base.Infrastructure.Data.Interceptors;
 using AppyNox.Services.Base.Infrastructure.HostedServices;
+using AppyNox.Services.Base.Infrastructure.Services;
 using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
 using AppyNox.Services.Coupon.Infrastructure.Data;
 using AppyNox.Services.Coupon.Infrastructure.Repositories;
@@ -43,12 +45,17 @@ namespace AppyNox.Services.Coupon.Infrastructure
 
             services.AddDbContext<CouponDbContext>((sp, options) =>
             {
-                var interceptor = sp.GetService<ConvertDomainEventsToOutboxMessagesInterceptor>();
+                ConvertDomainEventsToOutboxMessagesInterceptor outboxMessageInterceptor = sp.GetService<ConvertDomainEventsToOutboxMessagesInterceptor>() 
+                    ?? throw new ArgumentException("ConvertDomainEventsToOutboxMessagesInterceptor was null!");
+
                 options.UseNpgsql(connectionString)
-                .AddInterceptors(interceptor ?? throw new ArgumentException("ConvertDomainEventsToOutboxMessagesInterceptor was null!"));
+                .AddInterceptors(outboxMessageInterceptor);
             });
 
             logger.LogInformation($"Connection String: {connectionString}");
+
+            // Encryption
+            services.AddSingleton<IEncryptionService, EncryptionService>();
 
             #endregion
 

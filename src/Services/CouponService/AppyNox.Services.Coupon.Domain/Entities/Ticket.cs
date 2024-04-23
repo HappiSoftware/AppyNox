@@ -1,4 +1,5 @@
-﻿using AppyNox.Services.Base.Domain.Interfaces;
+﻿using AppyNox.Services.Base.Domain.Attributes;
+using AppyNox.Services.Base.Domain.Interfaces;
 
 namespace AppyNox.Services.Coupon.Domain.Entities;
 
@@ -10,6 +11,7 @@ public class Ticket : IEntityWithGuid, IAuditable
 
     public string Title { get; set; } = string.Empty;
 
+    [Encrypt]
     public string Content { get; set; } = string.Empty;
 
     public DateTime ReportDate { get; set; }

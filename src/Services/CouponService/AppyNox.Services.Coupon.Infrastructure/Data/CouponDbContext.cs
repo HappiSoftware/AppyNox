@@ -1,4 +1,5 @@
-﻿using AppyNox.Services.Base.Infrastructure.Data;
+﻿using AppyNox.Services.Base.Application.Interfaces.Encryption;
+using AppyNox.Services.Base.Infrastructure.Data;
 using AppyNox.Services.Coupon.Domain.Coupons;
 using AppyNox.Services.Coupon.Domain.Entities;
 using AppyNox.Services.Coupon.Infrastructure.Data.Configurations;
@@ -6,19 +7,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AppyNox.Services.Coupon.Infrastructure.Data;
 
-public class CouponDbContext : NoxDatabaseContext
+public class CouponDbContext(DbContextOptions<CouponDbContext> options, IEncryptionService? encryptionService = null)
+        : NoxDatabaseContext(options, encryptionService)
 {
+
     #region [ Public Constructors ]
-
-    public CouponDbContext()
-    {
-    }
-
-    public CouponDbContext(DbContextOptions options)
-        : base(options)
-    {
-    }
-
     #endregion
 
     #region [ Properties ]
