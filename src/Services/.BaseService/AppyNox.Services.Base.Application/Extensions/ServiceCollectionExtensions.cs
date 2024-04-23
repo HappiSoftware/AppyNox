@@ -5,7 +5,6 @@ using AppyNox.Services.Base.Core.Common;
 using AppyNox.Services.Base.Domain.Interfaces;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
-using System.Reflection;
 
 namespace AppyNox.Services.Base.Application.Extensions;
 

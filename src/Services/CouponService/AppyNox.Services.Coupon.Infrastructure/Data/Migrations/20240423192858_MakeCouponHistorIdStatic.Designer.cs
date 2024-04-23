@@ -3,6 +3,7 @@ using System;
 using AppyNox.Services.Coupon.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AppyNox.Services.Coupon.Infrastructure.Migrations
 {
     [DbContext(typeof(CouponDbContext))]
-    partial class CouponDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240423192858_MakeCouponHistorIdStatic")]
+    partial class MakeCouponHistorIdStatic
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -53,7 +56,7 @@ namespace AppyNox.Services.Coupon.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("OutboxMessages", (string)null);
+                    b.ToTable("OutboxMessages");
                 });
 
             modelBuilder.Entity("AppyNox.Services.Coupon.Domain.Coupons.Coupon", b =>
@@ -101,7 +104,7 @@ namespace AppyNox.Services.Coupon.Infrastructure.Migrations
 
                     b.HasIndex("UpdateDate");
 
-                    b.ToTable("Coupons", (string)null);
+                    b.ToTable("Coupons");
 
                     b.HasData(
                         new
@@ -158,7 +161,7 @@ namespace AppyNox.Services.Coupon.Infrastructure.Migrations
 
                     b.HasIndex("UpdateDate");
 
-                    b.ToTable("CouponDetails", (string)null);
+                    b.ToTable("CouponDetails");
 
                     b.HasData(
                         new
@@ -205,7 +208,7 @@ namespace AppyNox.Services.Coupon.Infrastructure.Migrations
 
                     b.HasIndex("UpdateDate");
 
-                    b.ToTable("CouponDetailTags", (string)null);
+                    b.ToTable("CouponDetailTags");
 
                     b.HasData(
                         new
@@ -253,7 +256,7 @@ namespace AppyNox.Services.Coupon.Infrastructure.Migrations
 
                     b.HasIndex("UpdateDate");
 
-                    b.ToTable("CouponHistories", (string)null);
+                    b.ToTable("CouponHistories");
 
                     b.HasData(
                         new
@@ -303,7 +306,7 @@ namespace AppyNox.Services.Coupon.Infrastructure.Migrations
 
                     b.HasIndex("UpdateDate");
 
-                    b.ToTable("Tickets", (string)null);
+                    b.ToTable("Tickets");
 
                     b.HasData(
                         new
@@ -334,7 +337,7 @@ namespace AppyNox.Services.Coupon.Infrastructure.Migrations
 
                     b.HasIndex("TicketId");
 
-                    b.ToTable("TicketTags", (string)null);
+                    b.ToTable("TicketTags");
 
                     b.HasData(
                         new
@@ -353,7 +356,7 @@ namespace AppyNox.Services.Coupon.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsOne("AppyNox.Services.Coupon.Domain.Coupons.Coupon.Amount#AppyNox.Services.Coupon.Domain.Coupons.Amount", "Amount", b1 =>
+                    b.OwnsOne("AppyNox.Services.Coupon.Domain.Coupons.Amount", "Amount", b1 =>
                         {
                             b1.Property<Guid>("CouponId")
                                 .HasColumnType("uuid");
@@ -366,7 +369,7 @@ namespace AppyNox.Services.Coupon.Infrastructure.Migrations
 
                             b1.HasKey("CouponId");
 
-                            b1.ToTable("Coupons", (string)null);
+                            b1.ToTable("Coupons");
 
                             b1.WithOwner()
                                 .HasForeignKey("CouponId");

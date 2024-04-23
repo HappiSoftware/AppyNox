@@ -15,7 +15,7 @@ public class AuditInformation
 
     public DateTime CreationDate { get; set; }
 
-    public string UpdatedBy { get; set; } = string.Empty;
+    public string? UpdatedBy { get; set; }
 
     public DateTime? UpdateDate { get; set; }
 }

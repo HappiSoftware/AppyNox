@@ -28,7 +28,7 @@ internal sealed class CouponHistoryConfiguration(CouponId couponId) : IEntityTyp
 
         builder.HasData(new
         {
-            Id = new CouponHistoryId(Guid.NewGuid()),
+            Id = new CouponHistoryId(new Guid("f8a63ca2-5c0b-4cf9-9000-3b54ac51e6bf")),
             Date = DateTime.SpecifyKind(new DateTime(2024, 4, 22), DateTimeKind.Utc),
             CouponId = couponId,
             MinimumAmount = 100,

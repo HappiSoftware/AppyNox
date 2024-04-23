@@ -11,6 +11,18 @@ public abstract class AggregateRoot : IAuditable
 
     #endregion
 
+    #region [ IAuditable ]
+
+    public string CreatedBy { get; } = string.Empty;
+
+    public DateTime CreationDate { get; }
+
+    public string? UpdatedBy { get; }
+
+    public DateTime? UpdateDate { get; }
+
+    #endregion
+
     #region [ Properties ]
 
     public IReadOnlyCollection<IDomainEvent> GetDomainEvents() => _domainEvents.ToList();

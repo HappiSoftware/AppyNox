@@ -2,7 +2,6 @@
 using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Application.Interfaces.Repositories;
 using AppyNox.Services.Base.Core.Common;
-using AppyNox.Services.Base.Core.Enums;
 using AppyNox.Services.Base.Infrastructure.BackgroundJobs;
 using AppyNox.Services.Base.Infrastructure.Data.Interceptors;
 using AppyNox.Services.Base.Infrastructure.HostedServices;

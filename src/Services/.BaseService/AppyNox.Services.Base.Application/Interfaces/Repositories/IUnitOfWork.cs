@@ -26,13 +26,7 @@ public interface IUnitOfWork : IDisposable
     /// Saves all changes made in the context of the unit of work.
     /// </summary>
     /// <returns>The number of objects written to the underlying database.</returns>
-    Task<int> SaveChangesAsync(string userId = "Unknown");
-
-    /// <summary>
-    /// Sets UserId for audit information
-    /// </summary>
-    /// <param name="userId"></param>
-    void SetCurrentUser(string userId);
+    Task<int> SaveChangesAsync(bool isSystem = false);
 
     #endregion
 }

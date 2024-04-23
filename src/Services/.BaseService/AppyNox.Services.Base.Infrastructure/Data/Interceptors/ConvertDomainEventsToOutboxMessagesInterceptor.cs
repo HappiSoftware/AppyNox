@@ -1,4 +1,5 @@
-﻿using AppyNox.Services.Base.Domain;
+﻿using AppyNox.Services.Base.Core.AsyncLocals;
+using AppyNox.Services.Base.Domain;
 using AppyNox.Services.Base.Domain.Outbox;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
