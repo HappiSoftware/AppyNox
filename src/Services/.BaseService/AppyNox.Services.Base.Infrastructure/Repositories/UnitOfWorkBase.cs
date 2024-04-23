@@ -1,5 +1,6 @@
 ﻿using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Application.Interfaces.Repositories;
+using AppyNox.Services.Base.Core.AsyncLocals;
 using AppyNox.Services.Base.Domain.Interfaces;
 using AppyNox.Services.Base.Infrastructure.Exceptions;
 using Microsoft.EntityFrameworkCore;
@@ -23,8 +24,6 @@ public abstract class UnitOfWorkBase(DbContext dbContext, INoxInfrastructureLogg
 
     private bool _disposed = false;
 
-    private string _currentUserId = "Unknown";
-
     #endregion
 
     #region [ Public Methods ]
@@ -35,16 +34,6 @@ public abstract class UnitOfWorkBase(DbContext dbContext, INoxInfrastructureLogg
     ~UnitOfWorkBase()
     {
         Dispose(false);
-    }
-
-    /// <summary>
-    /// Sets userId field for IAuditableEntity classes.
-    /// <para>Used for generating CreatedBy and UpdatedBy columns</para>
-    /// </summary>
-    /// <param name="userId">UserId from JWT token</param>
-    public void SetCurrentUser(string userId)
-    {
-        _currentUserId = userId;
     }
 
     /// <summary>
@@ -89,29 +78,35 @@ public abstract class UnitOfWorkBase(DbContext dbContext, INoxInfrastructureLogg
     /// Saves all changes made in the context of the database asynchronously.
     /// </summary>
     /// <returns>The number of objects written to the underlying database.</returns>
-    public async Task<int> SaveChangesAsync(string userId = "Unknown")
+    public async Task<int> SaveChangesAsync(bool isSystem = false)
     {
-        if (!"Unknown".Equals(userId))
+        string userId = "Unknown";
+        if(NoxContext.UserId != Guid.Empty)
         {
-            _currentUserId = userId;
-            _logger.LogInformation($"UserId is specified, changing the currentUserId to {userId}");
+            userId = NoxContext.UserId.ToString();
+        }
+        if(isSystem)
+        {
+            userId = "System";
         }
 
-        _logger.LogInformation($"Attempting to saving changes to the database asynchronously, responsible user: {_currentUserId}.");
-
-        foreach (var entry in _dbContext.ChangeTracker.Entries<IAuditable>())
+        foreach (var entry in dbContext.ChangeTracker.Entries<IAuditable>())
         {
             if (entry.State == EntityState.Added)
             {
                 entry.Property("CreationDate").CurrentValue = DateTime.UtcNow;
-                entry.Property("CreatedBy").CurrentValue = _currentUserId;
+                entry.Property("CreatedBy").CurrentValue = userId;
             }
             else if (entry.State == EntityState.Modified)
             {
+                entry.Property("CreatedBy").IsModified = false;
+                entry.Property("CreationDate").IsModified = false;
                 entry.Property("UpdateDate").CurrentValue = DateTime.UtcNow;
-                entry.Property("UpdatedBy").CurrentValue = _currentUserId;
+                entry.Property("UpdatedBy").CurrentValue = userId;
             }
         }
+
+        _logger.LogInformation($"Attempting to saving changes to the database asynchronously, responsible user: {userId}.");
 
         return await _dbContext.SaveChangesAsync();
     }

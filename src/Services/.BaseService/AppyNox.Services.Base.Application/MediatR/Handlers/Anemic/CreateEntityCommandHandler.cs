@@ -62,7 +62,7 @@ internal sealed class CreateEntityCommandHandler<TEntity>(
 
             TEntity mappedEntity = Mapper.Map(dtoObject, dtoType, entityType);
             await _repository.AddAsync(mappedEntity);
-            await _unitOfWork.SaveChangesAsync(NoxContext.UserId.ToString());
+            await _unitOfWork.SaveChangesAsync();
             await UpdateTotalCountOnCache(_cacheService, $"total-count-{typeof(TEntity).Name}", true);
             return mappedEntity.Id;
         }

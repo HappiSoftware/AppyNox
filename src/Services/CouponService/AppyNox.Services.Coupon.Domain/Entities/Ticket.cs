@@ -18,6 +18,18 @@ public class Ticket : IEntityWithGuid, IAuditable
 
     #endregion
 
+    #region [ IAuditable ]
+
+    public string CreatedBy { get; } = string.Empty;
+
+    public DateTime CreationDate { get; }
+
+    public string? UpdatedBy { get; }
+
+    public DateTime? UpdateDate { get; }
+
+    #endregion
+
     #region [ Relations ]
 
     public virtual ICollection<TicketTag>? Tags { get; set; }

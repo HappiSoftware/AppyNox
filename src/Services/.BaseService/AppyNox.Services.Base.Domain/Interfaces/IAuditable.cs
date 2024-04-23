@@ -2,5 +2,8 @@
 
 public interface IAuditable
 {
-    // Marker interface, properties are managed as shadow properties in the DbContext
+    string CreatedBy { get; }
+    DateTime CreationDate { get; }
+    string? UpdatedBy { get; }
+    DateTime? UpdateDate { get; }
 }

@@ -71,7 +71,7 @@ public class UpdateCouponCommandHandler(
 
             entity.UpdateDetail(request.Dto.Detail);
 
-            await _unitOfWork.SaveChangesAsync(NoxContext.UserId.ToString());
+            await _unitOfWork.SaveChangesAsync();
         }
         catch (Exception ex) when (ex is INoxException)
         {

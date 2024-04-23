@@ -1,5 +1,4 @@
-﻿using AppyNox.Services.Base.Application.Dtos;
-using AppyNox.Services.Base.Domain.Interfaces;
+﻿using AppyNox.Services.Base.Application.Extensions;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Extended;
 using AppyNox.Services.Coupon.Domain.Coupons;
@@ -46,7 +45,7 @@ public class CouponProfile : Profile
                     .Build();
             });
 
-        CreateMap<CouponAggreagete, CouponSimpleDto>();
+        CreateMap<CouponAggreagete, CouponSimpleDto>().MapAuditInformation();
 
         CreateMap<CouponAggreagete, CouponWithAllRelationsDto>();
 

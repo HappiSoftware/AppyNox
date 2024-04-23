@@ -83,7 +83,7 @@ internal class UpdateEntityCommandHandler<TEntity>(
 
             TEntity mappedEntity = Mapper.Map(dtoObject, dtoType, typeof(TEntity));
             _repository.Update(mappedEntity);
-            await _unitOfWork.SaveChangesAsync(NoxContext.UserId.ToString());
+            await _unitOfWork.SaveChangesAsync();
         }
         catch (Exception ex) when (ex is INoxException)
         {

@@ -24,7 +24,7 @@ internal class CouponUpdatedDomainEventHandler(
         {
             CouponHistory statusHistory = new(domainEvent.CouponId, domainEvent.MinimumAmount);
             await _repository.AddAsync(statusHistory);
-            await _unitOfWork.SaveChangesAsync("System");
+            await _unitOfWork.SaveChangesAsync(true);
             _logger.LogInformation($"Successfully processed CouponUpdatedDomainEvent for CouponId: {domainEvent.CouponId.Value} with MinimumAmount: {domainEvent.MinimumAmount}");
         }
         catch (Exception ex) when (ex is INoxException)
