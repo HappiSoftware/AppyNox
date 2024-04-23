@@ -1,4 +1,5 @@
-﻿using AppyNox.Services.Base.IntegrationTests.Ductus;
+﻿using AppyNox.Services.Base.Infrastructure.Services;
+using AppyNox.Services.Base.IntegrationTests.Ductus;
 using AppyNox.Services.Base.IntegrationTests.Helpers;
 using AppyNox.Services.Base.IntegrationTests.Stubs;
 using AppyNox.Services.Base.IntegrationTests.URIs;
@@ -39,7 +40,9 @@ public class CouponServiceFixture : DockerComposeTestBase
             .UseNpgsql(appsettings.GetConnectionString("TestConnection"))
             .Options;
 
-        DbContext = new CouponDbContext(options);
+        EncryptionService encryptionService = new(appsettings);
+
+        DbContext = new CouponDbContext(options, encryptionService);
     }
 
     #endregion

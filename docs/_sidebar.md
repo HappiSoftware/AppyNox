@@ -11,5 +11,6 @@
   - [Appsettings Configurations](appsettings.md)
   - [GitHub Configurations](github.md)
   - [Redis](redis.md)
+  - [User Secrets](usersecrets.md)
 - DevOps Documentations
   - [Docker Swarm](dockerswarm.md)
