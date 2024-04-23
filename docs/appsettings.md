@@ -13,7 +13,7 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
 ```json
 {
   "Serilog": {
-    "Using": ["Serilog.Sinks.Console", "Serilog.Sinks.Debug"],
+    "Using": [ "Serilog.Sinks.Console", "Serilog.Sinks.Debug" ],
     "MinimumLevel": {
       "Default": "Debug",
       "Override": {
@@ -33,10 +33,9 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
         "Args": { "restrictedToMinimumLevel": "Debug" }
       }
     ],
-    "Enrich": ["FromLogContext"]
+    "Enrich": [ "FromLogContext" ]
   },
   "ConnectionStrings": {
-    "DevelopmentConnection": "User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_Coupon;Pooling=true",
     "DefaultConnection": "User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_Coupon;Pooling=true"
   },
   "JwtSettings": {
@@ -53,7 +52,7 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
     "Scheme": "http",
     "ServiceHost": "localhost",
     "ServicePort": "7002",
-    "Tags": ["Coupon", "Coupons"],
+    "Tags": [ "Coupon", "Coupons" ],
     "HealthCheckUrl": "health-check",
     "HealthCheckIntervalSeconds": 30,
     "HealthCheckTimeoutSeconds": 5
@@ -72,7 +71,7 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
 ```json
 {
   "Serilog": {
-    "Using": ["Serilog.Sinks.Console", "Serilog.Sinks.File"],
+    "Using": [ "Serilog.Sinks.Console", "Serilog.Sinks.File" ],
     "MinimumLevel": {
       "Default": "Information",
       "Override": {
@@ -90,11 +89,10 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
         }
       }
     ],
-    "Enrich": ["FromLogContext"]
+    "Enrich": [ "FromLogContext" ]
   },
   "ConnectionStrings": {
-    "StagingConnection": "User ID=postgres;Password=coupon_password;Server=appynox-coupon-db;Port=5432;Database=AppyNox_Coupon_Test",
-    "DefaultConnection": "User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_Coupon",
+    "DefaultConnection": "User ID=postgres;Password=coupon_password;Server=appynox-coupon-db;Port=5432;Database=AppyNox_Coupon_Test",
     "TestConnection": "User ID=postgres;Password=coupon_password;Server=localhost;Port=5434;Database=AppyNox_Coupon_Test"
   },
   "JwtSettings": {
@@ -111,13 +109,17 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
     "Scheme": "http",
     "ServiceHost": "appynox-services-coupon-webapi",
     "ServicePort": "7002",
-    "Tags": ["Coupon", "Coupons"],
+    "Tags": [ "Coupon", "Coupons" ],
     "HealthCheckUrl": "health-check",
     "HealthCheckIntervalSeconds": 30,
     "HealthCheckTimeoutSeconds": 5
   },
   "Redis": {
     "ConnectionString": "appynox-redis"
+  },
+  "Encryption": {
+    "Key": "Xj7xynADC4/fLF/R30B5IvAWDcmawemI+Ng+p96P5Vs=",
+    "IV": "wuiFPQA3L3G1qOt8Y5BkhQ=="
   }
 }
 ```
@@ -130,7 +132,7 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
 ```json
 {
   "Serilog": {
-    "Using": ["Serilog.Sinks.Console", "Serilog.Sinks.File"],
+    "Using": [ "Serilog.Sinks.Console", "Serilog.Sinks.File" ],
     "MinimumLevel": {
       "Default": "Warning",
       "Override": {
@@ -148,11 +150,10 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
         }
       }
     ],
-    "Enrich": ["FromLogContext"]
+    "Enrich": [ "FromLogContext" ]
   },
   "ConnectionStrings": {
-    "ProductionConnection": "User ID=postgres;Password=coupon_password;Server=appynox-coupon-db;Port=5432;Database=AppyNox_Coupon",
-    "DefaultConnection": "User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_Coupon;Pooling=true"
+    "DefaultConnection": "User ID=postgres;Password=coupon_password;Server=appynox-coupon-db;Port=5432;Database=AppyNox_Coupon"
   },
   "JwtSettings": {
     "SecretKey": "XPFk7n/yI+Sm9DtWlZ/6TYawZs22meQjENPNMmZ9ONA=",
@@ -168,7 +169,7 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
     "Scheme": "http",
     "ServiceHost": "appynox-services-coupon-webapi",
     "ServicePort": "7002",
-    "Tags": ["Coupon", "Coupons"],
+    "Tags": [ "Coupon", "Coupons" ],
     "HealthCheckUrl": "health-check",
     "HealthCheckIntervalSeconds": 30,
     "HealthCheckTimeoutSeconds": 5
@@ -195,7 +196,7 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
 ```json
 {
   "Serilog": {
-    "Using": ["Serilog.Sinks.Console", "Serilog.Sinks.Debug"],
+    "Using": [ "Serilog.Sinks.Console", "Serilog.Sinks.Debug" ],
     "MinimumLevel": {
       "Default": "Debug",
       "Override": {
@@ -210,10 +211,9 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
         "Args": { "restrictedToMinimumLevel": "Debug" }
       }
     ],
-    "Enrich": ["FromLogContext"]
+    "Enrich": [ "FromLogContext" ]
   },
   "ConnectionStrings": {
-    "DevelopmentConnection": "User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_Sso",
     "DefaultConnection": "User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_Sso",
     "TestConnection": "",
     "SagaConnection": "User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_Sso_Saga"
@@ -241,7 +241,7 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
     "Scheme": "http",
     "ServiceHost": "localhost",
     "ServicePort": "7001",
-    "Tags": ["Sso", "SSO"],
+    "Tags": [ "Sso", "SSO" ],
     "HealthCheckUrl": "health-check",
     "HealthCheckIntervalSeconds": 30,
     "HealthCheckTimeoutSeconds": 5
@@ -265,7 +265,7 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
 ```json
 {
   "Serilog": {
-    "Using": ["Serilog.Sinks.Console", "Serilog.Sinks.File"],
+    "Using": [ "Serilog.Sinks.Console", "Serilog.Sinks.File" ],
     "MinimumLevel": {
       "Default": "Information",
       "Override": {
@@ -283,13 +283,13 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
         }
       }
     ],
-    "Enrich": ["FromLogContext"]
+    "Enrich": [ "FromLogContext" ]
   },
   "ConnectionStrings": {
-    "StagingConnection": "User ID=postgres;Password=auth_password;Server=appynox-sso-db;Port=5432;Database=AppyNox_Sso_Test",
-    "DefaultConnection": "User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_Sso",
-    "TestConnection": "",
-    "SagaConnection": "User ID=postgres;Password=auth_saga_password;Server=appynox-sso-saga-db;Port=5432;Database=AppyNox_Sso_Saga_Test"
+    "DefaultConnection": "User ID=postgres;Password=auth_password;Server=appynox-sso-db;Port=5432;Database=AppyNox_Sso_Test",
+    "TestConnection": "User ID=postgres;Password=auth_password;Server=localhost;Port=5435;Database=AppyNox_Sso_Test",
+    "SagaConnection": "User ID=postgres;Password=auth_saga_password;Server=appynox-sso-saga-db;Port=5432;Database=AppyNox_Sso_Saga_Test",
+    "SagaTestConnection": "User ID=postgres;Password=auth_saga_password;Server=localhost;Port=5430;Database=AppyNox_Sso_Saga_Test"
   },
   "JwtSettings": {
     "AppyNox": {
@@ -314,7 +314,7 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
     "Scheme": "http",
     "ServiceHost": "appynox-services-sso-webapi",
     "ServicePort": "7001",
-    "Tags": ["Sso", "SSO"],
+    "Tags": [ "Sso", "SSO" ],
     "HealthCheckUrl": "health-check",
     "HealthCheckIntervalSeconds": 30,
     "HealthCheckTimeoutSeconds": 5
@@ -338,7 +338,7 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
 ```json
 {
   "Serilog": {
-    "Using": ["Serilog.Sinks.Console", "Serilog.Sinks.File"],
+    "Using": [ "Serilog.Sinks.Console", "Serilog.Sinks.File" ],
     "MinimumLevel": {
       "Default": "Warning",
       "Override": {
@@ -356,11 +356,10 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
         }
       }
     ],
-    "Enrich": ["FromLogContext"]
+    "Enrich": [ "FromLogContext" ]
   },
   "ConnectionStrings": {
-    "ProductionConnection": "User ID=postgres;Password=auth_password;Server=appynox-sso-db;Port=5432;Database=AppyNox_Sso",
-    "DefaultConnection": "User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_Sso;Pooling=true",
+    "DefaultConnection": "User ID=postgres;Password=auth_password;Server=appynox-sso-db;Port=5432;Database=AppyNox_Sso",
     "SagaConnection": "User ID=postgres;Password=auth_saga_password;Server=appynox-sso-saga-db;Port=5432;Database=AppyNox_Sso_Saga"
   },
   "JwtSettings": {
@@ -386,7 +385,7 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
     "Scheme": "http",
     "ServiceHost": "appynox-services-sso-webapi",
     "ServicePort": "7001",
-    "Tags": ["Sso", "SSO"],
+    "Tags": [ "Sso", "SSO" ],
     "HealthCheckUrl": "health-check",
     "HealthCheckIntervalSeconds": 30,
     "HealthCheckTimeoutSeconds": 5
@@ -832,7 +831,7 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
 ```json
 {
   "Serilog": {
-    "Using": ["Serilog.Sinks.Console", "Serilog.Sinks.Debug"],
+    "Using": [ "Serilog.Sinks.Console", "Serilog.Sinks.Debug" ],
     "MinimumLevel": {
       "Default": "Debug",
       "Override": {
@@ -852,10 +851,9 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
         "Args": { "restrictedToMinimumLevel": "Debug" }
       }
     ],
-    "Enrich": ["FromLogContext"]
+    "Enrich": [ "FromLogContext" ]
   },
   "ConnectionStrings": {
-    "DevelopmentConnection": "User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_License;Pooling=true",
     "DefaultConnection": "User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_License;Pooling=true"
   },
   "JwtSettings": {
@@ -872,7 +870,7 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
     "Scheme": "http",
     "ServiceHost": "localhost",
     "ServicePort": "7003",
-    "Tags": ["License", "Licensing"],
+    "Tags": [ "License", "Licensing" ],
     "HealthCheckUrl": "health",
     "HealthCheckIntervalSeconds": 30,
     "HealthCheckTimeoutSeconds": 5
@@ -896,7 +894,7 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
 ```json
 {
   "Serilog": {
-    "Using": ["Serilog.Sinks.Console", "Serilog.Sinks.File"],
+    "Using": [ "Serilog.Sinks.Console", "Serilog.Sinks.File" ],
     "MinimumLevel": {
       "Default": "Information",
       "Override": {
@@ -914,11 +912,10 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
         }
       }
     ],
-    "Enrich": ["FromLogContext"]
+    "Enrich": [ "FromLogContext" ]
   },
   "ConnectionStrings": {
-    "StagingConnection": "User ID=postgres;Password=license_password;Server=appynox-license-db;Port=5432;Database=AppyNox_License_Test",
-    "DefaultConnection": "User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_License_Test",
+    "DefaultConnection": "User ID=postgres;Password=license_password;Server=appynox-license-db;Port=5432;Database=AppyNox_License_Test",
     "TestConnection": "User ID=postgres;Password=license_password;Server=localhost;Port=5436;Database=AppyNox_License_Test"
   },
   "JwtSettings": {
@@ -935,7 +932,7 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
     "Scheme": "http",
     "ServiceHost": "appynox-services-license-webapi",
     "ServicePort": "7003",
-    "Tags": ["License", "Licensing"],
+    "Tags": [ "License", "Licensing" ],
     "HealthCheckUrl": "health",
     "HealthCheckIntervalSeconds": 30,
     "HealthCheckTimeoutSeconds": 5
@@ -959,7 +956,7 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
 ```json
 {
   "Serilog": {
-    "Using": ["Serilog.Sinks.Console", "Serilog.Sinks.File"],
+    "Using": [ "Serilog.Sinks.Console", "Serilog.Sinks.File" ],
     "MinimumLevel": {
       "Default": "Warning",
       "Override": {
@@ -977,11 +974,10 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
         }
       }
     ],
-    "Enrich": ["FromLogContext"]
+    "Enrich": [ "FromLogContext" ]
   },
   "ConnectionStrings": {
-    "ProductionConnection": "User ID=postgres;Password=license_password;Server=appynox-license-db;Port=5432;Database=AppyNox_License",
-    "DefaultConnection": "User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_License;Pooling=true"
+    "DefaultConnection": "User ID=postgres;Password=license_password;Server=appynox-license-db;Port=5432;Database=AppyNox_License"
   },
   "JwtSettings": {
     "SecretKey": "XPFk7n/yI+Sm9DtWlZ/6TYawZs22meQjENPNMmZ9ONA=",
@@ -997,7 +993,7 @@ Since appsettings files are gitignored, you must create the `appsettings.{Enviro
     "Scheme": "http",
     "ServiceHost": "appynox-services-license-webapi",
     "ServicePort": "7003",
-    "Tags": ["License", "Licensing"],
+    "Tags": [ "License", "Licensing" ],
     "HealthCheckUrl": "health",
     "HealthCheckIntervalSeconds": 30,
     "HealthCheckTimeoutSeconds": 5
