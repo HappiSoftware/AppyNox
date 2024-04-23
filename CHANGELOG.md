@@ -2,6 +2,22 @@
 All notable changes to AppyNox will be documented in this file.
 
 ## [1.9.0](https://github.com/HappiSoftware/AppyNox/compare/v1.8.0...v1.9.0) - NOT RELEASED
+### Added 
+- Feature request: Benchmarks for repository classes ([#265](https://github.com/HappiSoftware/AppyNox/issues/265))
+- Feature request: Moving Paginated List to Core Layer ([#269](https://github.com/HappiSoftware/AppyNox/issues/269))
+- Feature request: NoxAuthorization should allow admin only endpoints ([#274](https://github.com/HappiSoftware/AppyNox/issues/274))
+- Feature request: DynamicRequestBodyOperationFilter for Swagger should be avaliable ([#276](https://github.com/HappiSoftware/AppyNox/issues/276))
+- Feature request: Nox Infrastructure should allow encrypting for database values ([#278](https://github.com/HappiSoftware/AppyNox/issues/278))
+
+### Improved
+- Refactoring request: nupkgs folder should be removed ([#200](https://github.com/HappiSoftware/AppyNox/issues/200))
+- Refactoring request: NoxException should simplified ([#267](https://github.com/HappiSoftware/AppyNox/issues/267))
+- Refactoring request: SsoService Create/Delete User Endpoint Maintenance ([#270](https://github.com/HappiSoftware/AppyNox/issues/270))
+- Documentation request: Update appsettings in docs ([#282](https://github.com/HappiSoftware/AppyNox/issues/282))
+- Documentation request: Add user-secret docs and update ChangeLog for v1.9.0 ([#284](https://github.com/HappiSoftware/AppyNox/issues/284))
+
+### Fixed
+- Bug report: #265 Disabled Audit Information Retrieval too ([#280](https://github.com/HappiSoftware/AppyNox/issues/280))
 
 
 ## [1.8.0](https://github.com/HappiSoftware/AppyNox/compare/v1.7.0...v1.8.0) - 2024.04.08

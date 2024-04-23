@@ -227,7 +227,7 @@ public class TicketApiTest(CouponServiceFixture couponApiTestFixture)
         var updateDate = _couponApiTestFixture.DbContext.Entry(updatedTicket).Property("UpdateDate").CurrentValue as DateTime?;
         var updatedBy = _couponApiTestFixture.DbContext.Entry(updatedTicket).Property("UpdatedBy").CurrentValue as string;
         Assert.Equal(updatedTicket.Title, updatedTitle);
-        Assert.Equal(updatedTicket.Content, updatedContent);
+        Assert.Equal(updatedTicket.Content, updatedContent); // Encrypted data
         Assert.NotNull(updateDate);
         Assert.False(string.IsNullOrEmpty(updatedBy));
 
