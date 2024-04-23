@@ -1,7 +1,9 @@
-﻿using AppyNox.Services.Base.API.Constants;
+﻿using AppyNox.Services.Base.API.Attributes;
+using AppyNox.Services.Base.API.Constants;
 using AppyNox.Services.Base.API.Controllers;
 using AppyNox.Services.Base.API.ViewModels;
 using AppyNox.Services.Base.Application.MediatR.Commands;
+using AppyNox.Services.Base.Core.Enums;
 using AppyNox.Services.Coupon.Domain.Coupons;
 using Asp.Versioning;
 using MediatR;
@@ -27,6 +29,7 @@ public class CouponsController(IMediator mediator) : NoxController
 
     [HttpGet]
     [Authorize(Coupons.View)]
+    [SwaggerDynamicRequestBody(typeof(CouponAggreagate), DtoLevelMappingTypes.DataAccess, true)]
     public async Task<IActionResult> GetAll([FromQuery] QueryParametersViewModel queryParameters)
     {
         return base.Ok(await _mediator.Send(new GetAllNoxEntitiesQuery<CouponAggreagate>(queryParameters)));
@@ -34,6 +37,7 @@ public class CouponsController(IMediator mediator) : NoxController
 
     [HttpGet("{id}")]
     [Authorize(Coupons.View)]
+    [SwaggerDynamicRequestBody(typeof(CouponAggreagate), DtoLevelMappingTypes.DataAccess)]
     public async Task<IActionResult> GetById(Guid id, [FromQuery] QueryParametersViewModel queryParameters)
     {
         return base.Ok(await _mediator.Send(new GetNoxEntityByIdQuery<CouponAggreagate, CouponId>(new CouponId(id), queryParameters)));
@@ -41,6 +45,7 @@ public class CouponsController(IMediator mediator) : NoxController
 
     [HttpPost]
     [Authorize(Coupons.Create)]
+    [SwaggerDynamicRequestBody(typeof(CouponAggreagate), DtoLevelMappingTypes.Create)]
     public async Task<IActionResult> Create([FromBody] dynamic couponDto, string detailLevel = "Simple")
     {
         Guid result = await _mediator.Send(new CreateNoxEntityCommand<CouponAggreagate>(couponDto, detailLevel));

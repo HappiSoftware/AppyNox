@@ -1,6 +1,6 @@
 ﻿namespace AppyNox.Services.Base.Core.Common;
 
-public class PaginatedList<TEntity>
+public class PaginatedList<ItemType>
 {
     #region [ Properties ]
 
@@ -14,7 +14,7 @@ public class PaginatedList<TEntity>
 
     public int TotalPages => (int)Math.Ceiling(TotalCount / (double)PageSize);
 
-    public IEnumerable<TEntity> Items { get; set; } = [];
+    public IEnumerable<ItemType> Items { get; set; } = [];
 
     #endregion
 }

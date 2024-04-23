@@ -24,6 +24,8 @@ internal enum NoxApiExceptionCode
     AuthorizationFailed = 1004,
 
     AuthorizationInvalidToken = 1005,
+
+    SwaggerGenerationException = 1006
 }
 
 #endregion
