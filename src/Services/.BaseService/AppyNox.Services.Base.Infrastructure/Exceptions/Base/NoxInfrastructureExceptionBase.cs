@@ -31,7 +31,9 @@ internal enum NoxInfrastructureExceptionCode
 
     QueryParameterError = 1008,
 
-    SqlInjectionError = 1009
+    SqlInjectionError = 1009,
+
+    InvalidEncryptionSettingError = 1010
 }
 
 #endregion

@@ -1,10 +1,8 @@
-﻿using AppyNox.Services.Base.Application.Dtos;
-using AppyNox.Services.Base.Application.Interfaces.Caches;
+﻿using AppyNox.Services.Base.Application.Interfaces.Caches;
 using AppyNox.Services.Base.Infrastructure.Exceptions;
 using AppyNox.Services.Base.Infrastructure.Repositories.Common;
 using AppyNox.Services.Base.Infrastructure.UnitTests.Fixtures;
 using AppyNox.Services.Base.Infrastructure.UnitTests.Stubs;
-using AppyNox.Services.License.Application.Dtos.LicenseDtos.Models.Base;
 using AppyNox.Services.License.Domain.Entities;
 using AppyNox.Services.License.Infrastructure.Data;
 using AppyNox.Services.License.Infrastructure.Repositories;
