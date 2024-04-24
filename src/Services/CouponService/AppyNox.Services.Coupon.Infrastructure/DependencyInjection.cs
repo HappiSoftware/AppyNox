@@ -26,7 +26,8 @@ namespace AppyNox.Services.Coupon.Infrastructure
         /// Centralized Dependency Injection For Infrastructure Layer.
         /// </summary>
         /// <param name="services"></param>
-        /// <param name="configuration"></param>
+        /// <param name="builder"></param>
+        /// <param name="environment"></param>
         /// <param name="logger"></param>
         /// <returns></returns>
         public static IServiceCollection AddCouponInfrastructure(this IServiceCollection services, IConfiguration configuration, INoxLogger logger)

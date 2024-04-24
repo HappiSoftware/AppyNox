@@ -2,8 +2,6 @@
 All notable changes to AppyNox will be documented in this file.
 
 ## [1.10.0](https://github.com/HappiSoftware/AppyNox/compare/v1.9.0...v1.10.0) - NOT RELEASED
-### Added 
-- Feature request: Other Products Request to be able to use BaseHandler ([#289](https://github.com/HappiSoftware/AppyNox/issues/289))
 
 
 ## [1.9.0](https://github.com/HappiSoftware/AppyNox/compare/v1.8.0...v1.9.0) - 2024.04.24

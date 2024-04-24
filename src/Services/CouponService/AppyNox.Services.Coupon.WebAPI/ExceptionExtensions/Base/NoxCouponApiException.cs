@@ -1,7 +1,6 @@
 ﻿using AppyNox.Services.Base.API.Exceptions.Base;
 using AppyNox.Services.Base.Core.Common;
 using AppyNox.Services.Base.Core.Enums;
-using AppyNox.Services.Coupon.Domain;
 
 namespace AppyNox.Services.Coupon.WebAPI.ExceptionExtensions.Base;
 
@@ -20,7 +19,7 @@ internal class NoxCouponApiException(
     Exception? innerException = null)
     : NoxApiExceptionBase(
         ExceptionProduct.AppyNox,
-        NoxCouponCommonStrings.Service,
+        NoxExceptionStrings.Base,
         message,
         exceptionCode,
         statusCode,
