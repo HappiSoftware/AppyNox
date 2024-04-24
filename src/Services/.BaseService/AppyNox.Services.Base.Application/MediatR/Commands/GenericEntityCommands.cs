@@ -2,7 +2,6 @@
 using AppyNox.Services.Base.Core.Common;
 using AppyNox.Services.Base.Domain.Interfaces;
 using MediatR;
-using System;
 using System.Diagnostics.CodeAnalysis;
 
 namespace AppyNox.Services.Base.Application.MediatR.Commands;

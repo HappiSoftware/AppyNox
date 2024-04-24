@@ -10,7 +10,7 @@ using System.Text.Json;
 
 namespace AppyNox.Services.Base.Application.MediatR;
 
-internal abstract class BaseHandler<TEntity>(
+public abstract class BaseHandler<TEntity>(
         IMapper mapper,
         IDtoMappingRegistryBase dtoMappingRegistry,
         IServiceProvider serviceProvider,
