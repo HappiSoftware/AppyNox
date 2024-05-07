@@ -8,33 +8,22 @@ using System.Net;
 
 namespace AppyNox.Services.Base.Infrastructure.HostedServices;
 
-public class ConsulHostedService : IHostedService
+public class ConsulHostedService(IConsulClient consulClient, IConfiguration configuration, INoxInfrastructureLogger logger) : IHostedService
 {
     #region [ Fields ]
 
-    private readonly IConsulClient _consulClient;
+    private readonly IConsulClient _consulClient = consulClient;
 
-    private readonly ConsulConfiguration _consulConfig;
+    private readonly ConsulConfiguration _consulConfig = configuration.GetSection("consul").Get<ConsulConfiguration>() ??
+            throw new NoxInfrastructureException("Consul configuration is not defined. Service will not be discovered.", (int)NoxInfrastructureExceptionCode.DevelopmentError, (int)HttpStatusCode.ServiceUnavailable);
 
-    private readonly INoxInfrastructureLogger _logger;
+    private readonly INoxInfrastructureLogger _logger = logger;
 
     #endregion
 
     #region [ Events ]
 
     public event Func<Exception, Task>? OnConsulConnectionFailed;
-
-    #endregion
-
-    #region [ Public Constructors ]
-
-    public ConsulHostedService(IConsulClient consulClient, IConfiguration configuration, INoxInfrastructureLogger logger)
-    {
-        _consulClient = consulClient;
-        _logger = logger;
-        _consulConfig = configuration.GetSection("consul").Get<ConsulConfiguration>() ??
-            throw new NoxInfrastructureException("Consul configuration is not defined. Service will not be discovered.", (int)NoxInfrastructureExceptionCode.DevelopmentError, (int)HttpStatusCode.ServiceUnavailable);
-    }
 
     #endregion
 
@@ -55,7 +44,14 @@ public class ConsulHostedService : IHostedService
                 Name = _consulConfig.ServiceName,
                 Address = _consulConfig.ServiceHost,
                 Port = _consulConfig.ServicePort,
-                Tags = _consulConfig.Tags
+                Tags = _consulConfig.Tags,
+                Check = new AgentServiceCheck
+                {
+                    HTTP = $"{_consulConfig.Scheme}://{_consulConfig.ServiceHost}:{_consulConfig.ServicePort}/{_consulConfig.HealthCheckUrl}",
+                    Interval = TimeSpan.FromSeconds(_consulConfig.HealthCheckIntervalSeconds),
+                    Timeout = TimeSpan.FromSeconds(_consulConfig.HealthCheckTimeoutSeconds),
+                    DeregisterCriticalServiceAfter = TimeSpan.FromMinutes(1)
+                }
             };
 
             _logger.LogInformation($"Registering service with Consul: {registration.Name}");
@@ -82,9 +78,16 @@ public class ConsulHostedService : IHostedService
 
         _logger.LogInformation($"Deregistering service from Consul: {registration.ID}");
 
-        await _consulClient.Agent.ServiceDeregister(registration.ID, cancellationToken);
-
-        _logger.LogInformation($"Deregistering service from Consul is successful: {registration.ID}");
+        try
+        {
+            await _consulClient.Agent.ServiceDeregister(registration.ID, cancellationToken);
+            _logger.LogInformation($"Deregistering service from Consul is successful: {registration.ID}");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to deregister service from Consul.");
+            throw;
+        }
     }
 
     #endregion

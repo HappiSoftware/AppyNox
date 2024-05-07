@@ -31,7 +31,7 @@ public class NoxContextMiddleware(RequestDelegate next, INoxApiLogger logger)
     {
         try
         {
-            if (context.Request.Path.StartsWithSegments("/swagger"))
+            if (context.Request.Path.StartsWithSegments("/swagger") || context.Request.Path.StartsWithSegments("/api/health"))
             {
                 await _next(context);
                 return;

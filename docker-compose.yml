@@ -15,8 +15,8 @@ services:
   appynox-rabbitmq-service:
     image: rabbitmq:management
     environment:
-      RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
+      RABBITMQ_DEFAULT_USER: HappiCorp
+      RABBITMQ_DEFAULT_PASS: HappiCorp
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     command:
@@ -38,7 +38,7 @@ services:
     command: ["redis-server", "--aclfile", "/etc/redis/redis.acl"] 
 
   appynox-redisinsight:
-    image: redislabs/redisinsight
+    image: redis/redisinsight:latest
     volumes:
       - redisinsight_data:/db
 

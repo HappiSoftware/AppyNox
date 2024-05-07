@@ -2,17 +2,14 @@ using AppyNox.Services.Base.API.Authentication;
 using AppyNox.Services.Base.API.Constants;
 using AppyNox.Services.Base.API.Extensions;
 using AppyNox.Services.Base.API.Filters;
-using AppyNox.Services.Base.API.Localization;
 using AppyNox.Services.Base.API.Middleware;
 using AppyNox.Services.Base.API.Middleware.Options;
 using AppyNox.Services.Base.API.Permissions;
 using AppyNox.Services.Base.Application.Interfaces.Authentication;
 using AppyNox.Services.Base.Application.Interfaces.Loggers;
-using AppyNox.Services.Base.Application.Localization;
 using AppyNox.Services.Base.Core.Common;
 using AppyNox.Services.Base.Infrastructure.Extensions;
 using AppyNox.Services.Base.Infrastructure.HostedServices;
-using AppyNox.Services.Base.Infrastructure.Localization;
 using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
 using AppyNox.Services.Coupon.Application;
 using AppyNox.Services.Coupon.Domain;
@@ -29,7 +26,6 @@ using Microsoft.OpenApi.Models;
 using Serilog;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Reflection;
-using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
