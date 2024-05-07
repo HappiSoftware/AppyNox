@@ -2,6 +2,7 @@
 using AppyNox.Services.Base.Core.Common;
 using AppyNox.Services.Base.Core.Enums;
 using AppyNox.Services.Base.Core.Exceptions.Base;
+using Newtonsoft.Json.Linq;
 
 namespace AppyNox.Services.Base.API.Exceptions.Base;
 
@@ -103,6 +104,18 @@ internal class NoxApiException(
         message,
         exceptionCode,
         statusCode,
+        innerException)
+{
+}
+
+internal class NoxExceptionClone(NoxException exception, Exception innerException)
+: NoxApiExceptionBase(
+        (ExceptionProduct)Enum.Parse(typeof(ExceptionProduct), exception.Product), 
+        // Important, we do not expect a constructed NoxException have Product property something else than ExceptionProduct 
+        exception.Service,
+        exception.Message,
+        exception.ExceptionCode,
+        exception.StatusCode,
         innerException)
 {
 }

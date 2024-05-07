@@ -23,16 +23,16 @@ internal class NoxApiExceptionWrapObject(NoxException error, Guid correlationId)
     public Guid CorrelationId { get; set; } = correlationId;
 
     [JsonPropertyOrder(5)]
-    public NoxSimpleExceptionData? InnerException { get; set; } = error.InnerException != null ? new NoxSimpleExceptionData(error.InnerException) : null;
+    public NoxSimpleExceptionData? InnerException { get; set; } = error.InnerException != null ? new NoxSimpleExceptionData(error.InnerException, error.InnerExceptionMessage) : null;
 
     #endregion
 }
 
-internal class NoxSimpleExceptionData(Exception exception)
+internal class NoxSimpleExceptionData(Exception exception, string innerExceptionMessage)
 {
     #region [ Properties ]
 
-    public string Message { get; set; } = exception.Message;
+    public string Message { get; set; } = innerExceptionMessage;
 
     public string? StackTrace { get; set; } = exception.StackTrace;
 

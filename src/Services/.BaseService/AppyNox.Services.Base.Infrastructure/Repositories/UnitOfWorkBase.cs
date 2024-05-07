@@ -90,7 +90,7 @@ public abstract class UnitOfWorkBase(DbContext dbContext, INoxInfrastructureLogg
             userId = "System";
         }
 
-        foreach (var entry in dbContext.ChangeTracker.Entries<IAuditable>())
+        foreach (var entry in _dbContext.ChangeTracker.Entries<IAuditable>())
         {
             if (entry.State == EntityState.Added)
             {

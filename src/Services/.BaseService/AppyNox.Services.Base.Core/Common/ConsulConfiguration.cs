@@ -38,6 +38,13 @@ public class ConsulConfiguration
     public string[]? Tags { get; set; }
 
     /// <summary>
+    /// Gets or sets the host address of the service. Should be only used when Consul and Microservice host is different.
+    /// For example when Consul is running on docker and microservices are running on the host machine. 
+    /// In this case set 'HealthCheckServiceHost' => 'host.docker.internal'
+    /// </summary>
+    public string? HealthCheckServiceHost { get; set; }
+
+    /// <summary>
     /// Gets or sets the URL for the service's health check endpoint.
     /// </summary>
     public string? HealthCheckUrl { get; set; }

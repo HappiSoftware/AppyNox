@@ -1,4 +1,5 @@
-﻿using AppyNox.Services.Base.API.Exceptions.Interfaces;
+﻿using AppyNox.Services.Base.API.Exceptions.Base;
+using AppyNox.Services.Base.API.Exceptions.Interfaces;
 using AppyNox.Services.Base.API.Localization;
 using AppyNox.Services.Base.API.Middleware.Options;
 using AppyNox.Services.Base.API.Wrappers;
@@ -90,7 +91,18 @@ public class NoxResponseWrapperMiddleware(RequestDelegate next,
         catch (Exception exception)
         {
             _logger.LogError(exception, NoxApiResourceService.UnknownExceptionThrown);
-            await HandleUnknownExceptionAsync(context, exception, originalBodyStream);
+            if (exception.InnerException is NoxException noxException)
+            {
+                // Handle the specific case where the inner exception is a NoxException
+                NoxExceptionClone swappedException = new(noxException, exception);
+                _logger.LogError(noxException, "Inner NoxException detected.");
+                await HandleKnownExceptionAsync(context, swappedException, originalBodyStream);
+            }
+            else
+            {
+                // Continue with handling a truly unknown exception
+                await HandleUnknownExceptionAsync(context, exception, originalBodyStream);
+            }
         }
     }
 
