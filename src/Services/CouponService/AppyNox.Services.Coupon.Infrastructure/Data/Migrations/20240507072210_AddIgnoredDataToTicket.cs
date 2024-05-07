@@ -22,8 +22,8 @@ namespace AppyNox.Services.Coupon.Infrastructure.Migrations
                 table: "Tickets",
                 keyColumn: "Id",
                 keyValue: new Guid("69472ec0-4da6-4fdd-93cc-b0a529d7f5e0"),
-                columns: new[] { "Content", "IgnoredData" },
-                values: new object[] { "Ticket content", "Ignored data" });
+                columns: new[] { "IgnoredData" },
+                values: new object[] { "Ignored data" });
         }
 
         /// <inheritdoc />
@@ -32,13 +32,6 @@ namespace AppyNox.Services.Coupon.Infrastructure.Migrations
             migrationBuilder.DropColumn(
                 name: "IgnoredData",
                 table: "Tickets");
-
-            migrationBuilder.UpdateData(
-                table: "Tickets",
-                keyColumn: "Id",
-                keyValue: new Guid("69472ec0-4da6-4fdd-93cc-b0a529d7f5e0"),
-                column: "Content",
-                value: "VJoH8lwQ25woMbFp2sf1vA==");
         }
     }
 }

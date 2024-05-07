@@ -68,6 +68,7 @@ public static class HostApplicationBuilderExtensions
         IConfiguration configuration = builder.Configuration;
         string environmentName = builder.Environment.EnvironmentName;
         Uri consulUri = new(configuration["ConsulConfiguration:Address"] ?? "http://localhost:8500");
+        await IsConsulAvailable(consulUri);
 
         IConsulClient consulClient = new ConsulClient(config =>
         {
@@ -139,6 +140,21 @@ public static class HostApplicationBuilderExtensions
             {
                 throw new Exception($"An error occurred while trying to upload configurations to Consul for '{microServiceName}' in '{environmentName}'.", ex);
             }
+        }
+    }
+
+    private static async Task<bool> IsConsulAvailable(Uri consulUri)
+    {
+        using var httpClient = new HttpClient();
+        httpClient.BaseAddress = consulUri;
+        try
+        {
+            var response = await httpClient.GetAsync("/v1/status/leader");
+            return response.IsSuccessStatusCode && !string.IsNullOrWhiteSpace(await response.Content.ReadAsStringAsync());
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Consul is not available. Cannot proceed with configuration kv.", ex);
         }
     }
 
