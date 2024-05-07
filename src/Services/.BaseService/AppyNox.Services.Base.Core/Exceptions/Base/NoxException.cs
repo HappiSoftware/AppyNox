@@ -42,6 +42,8 @@ public abstract class NoxException(
 
     private readonly Guid _correlationId = NoxContext.CorrelationId;
 
+    private readonly string _innerExceptionMessage = innerException?.Message ?? NoxExceptionStrings.EmptyMessage;
+
     #endregion
 
     #region [ Properties ]
@@ -76,6 +78,11 @@ public abstract class NoxException(
     /// Gets the correlation id of the request
     /// </summary>
     public Guid CorrelationId => _correlationId;
+
+    /// <summary>
+    /// Gets the inner exception message
+    /// </summary>
+    public string InnerExceptionMessage => _innerExceptionMessage;
 
     #endregion
 }

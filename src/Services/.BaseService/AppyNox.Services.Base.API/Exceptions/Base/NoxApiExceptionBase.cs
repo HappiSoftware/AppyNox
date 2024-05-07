@@ -106,3 +106,15 @@ internal class NoxApiException(
         innerException)
 {
 }
+
+internal class NoxExceptionClone(NoxException exception, Exception innerException)
+: NoxApiExceptionBase(
+        (ExceptionProduct)Enum.Parse(typeof(ExceptionProduct), exception.Product), 
+        // Important, we do not expect a constructed NoxException have Product property something else than ExceptionProduct 
+        exception.Service,
+        exception.Message,
+        exception.ExceptionCode,
+        exception.StatusCode,
+        innerException)
+{
+}

@@ -3,7 +3,7 @@ using AppyNox.Services.Base.Core.Common;
 using AppyNox.Services.Base.Core.Enums;
 using AppyNox.Services.Coupon.Domain;
 
-namespace AppyNox.Services.Coupon.WebAPI.ExceptionExtensions.Base;
+namespace AppyNox.Services.Coupon.WebAPI.Exceptions.Base;
 
 #region [ NoxCouponApiException Code ]
 

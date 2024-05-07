@@ -16,5 +16,7 @@ public interface INoxException
 
     Guid CorrelationId { get; }
 
+    string InnerExceptionMessage { get; }
+
     #endregion
 }
