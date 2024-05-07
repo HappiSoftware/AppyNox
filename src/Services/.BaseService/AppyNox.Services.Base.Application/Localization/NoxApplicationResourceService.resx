@@ -130,7 +130,7 @@
     <value>Request responded with one or more validation errors for '{0}'.</value>
   </data>
   <data name="IUpdateDtoNullId" xml:space="preserve">
-    <value>Id is required in body while updating. Provided data transfer object: {0}</value>
+    <value>Id is required in body while updating.</value>
   </data>
   <data name="LevelNotFoundForEntity" xml:space="preserve">
     <value>This '{0}' level is not found in dto-entity mapping for '{1}'.</value>

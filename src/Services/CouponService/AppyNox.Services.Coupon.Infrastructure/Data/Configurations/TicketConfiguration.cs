@@ -30,6 +30,7 @@ internal class TicketConfiguration(Guid ticketId) : IEntityTypeConfiguration<Tic
             Title = "Title",
             Content = "Ticket content",
             ReportDate = DateTime.SpecifyKind(new DateTime(2024, 4, 21), DateTimeKind.Utc),
+            IgnoredData = "Ignored data",
             CreatedBy = "System",
             CreationDate = DateTime.SpecifyKind(new DateTime(2024, 4, 21), DateTimeKind.Utc),
             UpdatedBy = (string?)null,

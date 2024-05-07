@@ -130,7 +130,7 @@
     <value>İstek, '{0}' için bir veya daha fazla doğrulama hatasıyla yanıtlandı.</value>
   </data>
   <data name="IUpdateDtoNullId" xml:space="preserve">
-    <value>Güncelleme sırasında gövdede kimlik gereklidir. Sağlanan veri aktarım nesnesi: {0}</value>
+    <value>Güncelleme sırasında gövdede kimlik gereklidir.</value>
   </data>
   <data name="LevelNotFoundForEntity" xml:space="preserve">
     <value>Bu '{0}' düzeyi, '{1}' için dto-varlık eşlemesinde bulunamadı.</value>
