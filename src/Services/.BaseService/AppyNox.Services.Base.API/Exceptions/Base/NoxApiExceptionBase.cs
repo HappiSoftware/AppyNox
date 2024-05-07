@@ -2,7 +2,6 @@
 using AppyNox.Services.Base.Core.Common;
 using AppyNox.Services.Base.Core.Enums;
 using AppyNox.Services.Base.Core.Exceptions.Base;
-using Newtonsoft.Json.Linq;
 
 namespace AppyNox.Services.Base.API.Exceptions.Base;
 
