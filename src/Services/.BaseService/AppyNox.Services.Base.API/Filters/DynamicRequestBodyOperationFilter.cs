@@ -5,10 +5,11 @@ using AppyNox.Services.Base.Application.DtoUtilities;
 using AppyNox.Services.Base.Core.Common;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
-using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Collections;
 using System.Collections.Concurrent;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace AppyNox.Services.Base.API.Filters;
 
@@ -16,9 +17,15 @@ public class DynamicRequestBodyOperationFilter(IDtoMappingRegistryBase mappingSe
 {
     private readonly IDtoMappingRegistryBase _mappingService = mappingService;
 
+    private static readonly JsonSerializerOptions _serializerOptions = new()
+    {
+        WriteIndented = true,
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+    };
+
     // Caches
-    private static readonly ConcurrentDictionary<string, object> _paginatedExampleCache = new ConcurrentDictionary<string, object>();
-    private static readonly ConcurrentDictionary<string, object> _exampleCache = new ConcurrentDictionary<string, object>();
+    private static readonly ConcurrentDictionary<string, object> _paginatedExampleCache = new();
+    private static readonly ConcurrentDictionary<string, object> _exampleCache = new();
 
     public void Apply(OpenApiOperation operation, OperationFilterContext context)
     {
@@ -67,7 +74,7 @@ public class DynamicRequestBodyOperationFilter(IDtoMappingRegistryBase mappingSe
                     mediaType.Examples.Add(displayName, new OpenApiExample
                     {
                         Summary = $"Example for {displayName}",
-                        Value = new OpenApiString(JsonConvert.SerializeObject(exampleInstance))
+                        Value = new OpenApiString(JsonSerializer.Serialize(exampleInstance, _serializerOptions))
                     });
                 }
 
@@ -140,7 +147,7 @@ public class DynamicRequestBodyOperationFilter(IDtoMappingRegistryBase mappingSe
             mediaType.Examples.Add(displayName, new OpenApiExample
             {
                 Summary = $"Example for {displayName}",
-                Value = new OpenApiString(JsonConvert.SerializeObject(exampleInstance))
+                Value = new OpenApiString(JsonSerializer.Serialize(exampleInstance, _serializerOptions))
             });
         }
     }
@@ -259,6 +266,11 @@ public class DynamicRequestBodyOperationFilter(IDtoMappingRegistryBase mappingSe
 
         foreach (var property in type.GetProperties())
         {
+            if (Attribute.IsDefined(property, typeof(JsonIgnoreAttribute)))
+            {
+                continue; // Skip the current iteration if JsonIgnore is found
+            }
+
             if (property.PropertyType == typeof(string))
             {
                 property.SetValue(instance, "Sample Text", null);

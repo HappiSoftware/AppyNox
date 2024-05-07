@@ -4,6 +4,8 @@ using AppyNox.Services.Coupon.Domain.Coupons;
 using AppyNox.Services.Coupon.Domain.Entities;
 using AppyNox.Services.Coupon.Infrastructure.Data.Configurations;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.Extensions.Configuration;
 
 namespace AppyNox.Services.Coupon.Infrastructure.Data;
 
@@ -37,8 +39,6 @@ public class CouponDbContext(DbContextOptions<CouponDbContext> options, IEncrypt
         base.OnConfiguring(optionsBuilder);
         optionsBuilder
             .UseLazyLoadingProxies();
-
-        //optionsBuilder.UseNpgsql("User ID=postgres;Password=sapass;Server=localhost;Port=5432;Database=AppyNox_Coupon;Pooling=true");
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -72,4 +72,23 @@ public class CouponDbContext(DbContextOptions<CouponDbContext> options, IEncrypt
     }
 
     #endregion
+
+    internal class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<CouponDbContext>
+    {
+        public CouponDbContext CreateDbContext(string[] args)
+        {
+            IConfigurationRoot configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.Development.json")
+                .AddEnvironmentVariables()
+                .Build();
+
+            var builder = new DbContextOptionsBuilder<CouponDbContext>();
+            var connectionString = configuration.GetConnectionString("DefaultConnection");
+
+            builder.UseNpgsql(connectionString);
+
+            return new CouponDbContext(builder.Options);
+        }
+    }
 }

@@ -62,8 +62,7 @@ namespace AppyNox.Services.Base.Application.Localization
         internal static LocalizedString UnexpectedError => GetMessage("UnexpectedError");
 
         /// <summary>
-        /// Id is required in body while updating. Provided data transfer object: {0}
-        /// <para>{0}: DtoType</para>
+        /// Id is required in body while updating.
         /// </summary>
         internal static LocalizedString IUpdateDtoNullId => GetMessage("IUpdateDtoNullId");
 

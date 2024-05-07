@@ -16,6 +16,8 @@ public class Ticket : IEntityWithGuid, IAuditable
 
     public DateTime ReportDate { get; set; }
 
+    public string IgnoredData { get; set; } = string.Empty;
+
     #endregion
 
     #region [ IAuditable ]
