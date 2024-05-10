@@ -13,7 +13,7 @@ namespace AppyNox.Services.License.Application
     {
         #region [ Public Methods ]
 
-        public static void AddLicenseApplication(this IServiceCollection services)
+        public static IServiceCollection AddLicenseApplication(this IServiceCollection services)
         {
             Assembly applicationAssembly = Assembly.Load("AppyNox.Services.License.Application");
             services.AddAutoMapper(applicationAssembly);
@@ -32,6 +32,8 @@ namespace AppyNox.Services.License.Application
             #endregion
 
             services.AddSingleton(typeof(IDtoMappingRegistryBase), typeof(DtoMappingRegistry));
+
+            return services;
         }
 
         #endregion

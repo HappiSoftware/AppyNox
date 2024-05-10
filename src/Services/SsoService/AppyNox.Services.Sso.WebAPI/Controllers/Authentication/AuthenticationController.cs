@@ -1,9 +1,12 @@
 ﻿using AppyNox.Services.Base.API.Constants;
 using AppyNox.Services.Base.API.Wrappers;
 using AppyNox.Services.Base.Application.Exceptions;
+using AppyNox.Services.Base.Core.Exceptions.Base;
+using AppyNox.Services.Base.Infrastructure.Exceptions.Interfaces;
 using AppyNox.Services.Sso.Application.DTOs.AccountDtos.Models;
 using AppyNox.Services.Sso.Application.DTOs.RefreshTokenDtos.Models;
 using AppyNox.Services.Sso.Application.Interfaces.Authentication;
+using AppyNox.Services.Sso.Infrastructure.Exceptions;
 using AppyNox.Services.Sso.WebAPI.Exceptions;
 using AppyNox.Services.Sso.WebAPI.Exceptions.Base;
 using AppyNox.Services.Sso.WebAPI.Localization;
@@ -81,13 +84,13 @@ public class AuthenticationController(ICustomUserManager customUserManager,
         {
             await _customTokenManager.VerifyToken(model.Token, model.Audience);
         }
-        catch (NoxAuthenticationException)
-        {
-            throw;
-        }
-        catch (NoxTokenExpiredException)
+        catch (Exception ex) when (ex is INoxTokenExpiredException)
         {
             // expected, do not take action
+        }
+        catch (Exception ex) when (ex is INoxAuthenticationException)
+        {
+            throw;
         }
 
         var userId = _customTokenManager.GetUserInfoByToken(model.Token, model.Audience);

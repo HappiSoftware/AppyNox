@@ -117,6 +117,30 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ExpiredToken" xml:space="preserve">
+    <value>JWT belirtecinin süresi doldu.</value>
+  </data>
+  <data name="InvalidAudience" xml:space="preserve">
+    <value>Geçersiz veya desteklenmeyen kitle</value>
+  </data>
+  <data name="InvalidToken" xml:space="preserve">
+    <value>Alınan JWT belirteci geçersiz.</value>
+  </data>
+  <data name="NullToken" xml:space="preserve">
+    <value>JWT belirteci boş.</value>
+  </data>
+  <data name="RefreshTokenError" xml:space="preserve">
+    <value>Yenileme jetonu kaydedilemedi. Lütfen tekrar deneyin.</value>
+  </data>
+  <data name="RefreshTokenNotFound" xml:space="preserve">
+    <value>Yenileme jetonu bulunamadı. Yeni bir tane almak için lütfen tekrar giriş yapın.</value>
+  </data>
+  <data name="Teapot" xml:space="preserve">
+    <value>Ben bir çaydanlığım.</value>
+  </data>
+  <data name="UnauthorizedAccess" xml:space="preserve">
+    <value>Bu işlemi yapmaya yekiniz bulunmamaktadır.</value>
+  </data>
   <data name="UserCreationSagaCompanyIdError" xml:space="preserve">
     <value>CreateApplicationUserMessage için Şirket Kimliği boş olamaz.</value>
   </data>
@@ -125,5 +149,8 @@
   </data>
   <data name="UserCreationSagaLicenseIdError" xml:space="preserve">
     <value>IsValid doğruysa Lisans Kimliği, LicenseValidatedEvent'te boş olamaz.</value>
+  </data>
+  <data name="WrongCredentials" xml:space="preserve">
+    <value>Kimlik Bilgileri Yanlış.</value>
   </data>
 </root>

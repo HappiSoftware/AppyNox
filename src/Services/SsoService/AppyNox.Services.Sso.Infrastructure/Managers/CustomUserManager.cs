@@ -1,12 +1,13 @@
-﻿using AppyNox.Services.Sso.Application.DTOs.AccountDtos.Models;
+﻿using AppyNox.Services.Base.Application.Interfaces.Exceptions;
+using AppyNox.Services.Sso.Application.DTOs.AccountDtos.Models;
 using AppyNox.Services.Sso.Application.Interfaces.Authentication;
 using AppyNox.Services.Sso.Domain.Entities;
-using AppyNox.Services.Sso.WebAPI.Exceptions.Base;
-using AppyNox.Services.Sso.WebAPI.Localization;
+using AppyNox.Services.Sso.Infrastructure.Exceptions.Base;
+using AppyNox.Services.Sso.Infrastructure.Localization;
 using Microsoft.AspNetCore.Identity;
 using System.Net;
 
-namespace AppyNox.Services.Sso.WebAPI.Managers;
+namespace AppyNox.Services.Sso.Infrastructure.Managers;
 
 /// <summary>
 /// Custom implementation of user management functionalities.
@@ -41,13 +42,13 @@ public class CustomUserManager : ICustomUserManager
     /// </summary>
     /// <param name="user">The user's login information.</param>
     /// <returns>A tuple containing the JWT token and refresh token.</returns>
-    /// <exception cref="NoxSsoApiException">Thrown when authentication fails.</exception>
+    /// <exception cref="NoxSsoInfrastructureException">Thrown when authentication fails.</exception>
     public async Task<(string jwtToken, string refreshToken)> Authenticate(LoginDto user)
     {
         var loggedUser = await _userManager.FindByNameAsync(user.UserName);
         if (loggedUser == null || string.IsNullOrEmpty(loggedUser.UserName))
         {
-            throw new NoxSsoApiException(NoxSsoApiResourceService.WrongCredentials, (int)NoxSsoApiExceptionCode.WrongCredentials, statusCode: (int)HttpStatusCode.BadRequest);
+            throw new NoxSsoInfrastructureException(NoxSsoInfrastructureResourceService.WrongCredentials, (int)NoxSsoInfrastructureExceptionCode.WrongCredentials, statusCode: (int)HttpStatusCode.BadRequest);
         }
 
         //validate credentials !! 3. parameter is for rememberme
@@ -63,8 +64,8 @@ public class CustomUserManager : ICustomUserManager
         }
 
         // Account is locked
-        if (result.IsLockedOut) throw new NoxSsoApiException(NoxSsoApiResourceService.Teapot, statusCode: (int)HttpStatusCode.Locked);
-        else throw new NoxSsoApiException(NoxSsoApiResourceService.WrongCredentials, (int)NoxSsoApiExceptionCode.WrongCredentials, (int)HttpStatusCode.BadRequest);
+        if (result.IsLockedOut) throw new NoxSsoInfrastructureException(NoxSsoInfrastructureResourceService.Teapot, statusCode: (int)HttpStatusCode.Locked);
+        else throw new NoxSsoInfrastructureException(NoxSsoInfrastructureResourceService.WrongCredentials, (int)NoxSsoInfrastructureExceptionCode.WrongCredentials, (int)HttpStatusCode.BadRequest);
     }
 
     /// <summary>
@@ -78,14 +79,14 @@ public class CustomUserManager : ICustomUserManager
         try
         {
             var user = await _userManager.FindByIdAsync(userId)
-                ?? throw new NoxSsoApiException(NoxSsoApiResourceService.WrongCredentials, statusCode: (int)HttpStatusCode.BadRequest);
+                ?? throw new NoxSsoInfrastructureException(NoxSsoInfrastructureResourceService.WrongCredentials, statusCode: (int)HttpStatusCode.BadRequest);
 
             await _userManager.RemoveAuthenticationTokenAsync(user, "RefreshTokenProvider", "RefreshToken");
             await _userManager.SetAuthenticationTokenAsync(user, "RefreshTokenProvider", "RefreshToken", refreshToken);
         }
         catch (Exception)
         {
-            throw new NoxSsoApiException(NoxSsoApiResourceService.RefreshTokenError, statusCode: (int)NoxSsoApiExceptionCode.RefreshToken);
+            throw new NoxSsoInfrastructureException(NoxSsoInfrastructureResourceService.RefreshTokenError, statusCode: (int)NoxSsoInfrastructureExceptionCode.RefreshToken);
         }
     }
 
@@ -94,20 +95,20 @@ public class CustomUserManager : ICustomUserManager
     /// </summary>
     /// <param name="userId">The user's identifier.</param>
     /// <returns>The stored refresh token.</returns>
-    /// <exception cref="NoxSsoApiException">Thrown when the user or refresh token is not found.</exception>
+    /// <exception cref="NoxSsoInfrastructureException">Thrown when the user or refresh token is not found.</exception>
     public async Task<string> RetrieveStoredRefreshToken(string userId)
     {
         try
         {
             var user = await _userManager.FindByIdAsync(userId)
-                ?? throw new NoxSsoApiException(NoxSsoApiResourceService.WrongCredentials, (int)NoxSsoApiExceptionCode.WrongCredentials, (int)HttpStatusCode.BadRequest);
+                ?? throw new NoxSsoInfrastructureException(NoxSsoInfrastructureResourceService.WrongCredentials, (int)NoxSsoInfrastructureExceptionCode.WrongCredentials, (int)HttpStatusCode.BadRequest);
 
             return await _userManager.GetAuthenticationTokenAsync(user, "RefreshTokenProvider", "RefreshToken")
-                ?? throw new NoxSsoApiException(NoxSsoApiResourceService.RefreshTokenNotFound, (int)NoxSsoApiExceptionCode.RefreshTokenNotFound, (int)HttpStatusCode.BadRequest);
+                ?? throw new NoxSsoInfrastructureException(NoxSsoInfrastructureResourceService.RefreshTokenNotFound, (int)NoxSsoInfrastructureExceptionCode.RefreshTokenNotFound, (int)HttpStatusCode.BadRequest);
         }
         catch (Exception)
         {
-            throw new NoxSsoApiException(NoxSsoApiResourceService.RefreshTokenNotFound, (int)NoxSsoApiExceptionCode.RefreshTokenNotFound, (int)HttpStatusCode.BadRequest);
+            throw new NoxSsoInfrastructureException(NoxSsoInfrastructureResourceService.RefreshTokenNotFound, (int)NoxSsoInfrastructureExceptionCode.RefreshTokenNotFound, (int)HttpStatusCode.BadRequest);
         }
     }
 

@@ -1,7 +1,7 @@
 ﻿using AppyNox.Services.Base.Core.Common;
 using System.Text;
 
-namespace AppyNox.Services.Sso.WebAPI.Configuration
+namespace AppyNox.Services.Sso.Infrastructure.Configuration
 {
     /// <summary>
     /// Contains configuration settings for JWT (JSON Web Token).

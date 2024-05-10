@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 
-namespace AppyNox.Services.Base.API.Permissions;
+namespace AppyNox.Services.Base.Infrastructure.Authentication;
 
 public class PermissionRequirement(string permission, string type) : IAuthorizationRequirement
 {

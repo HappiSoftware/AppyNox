@@ -186,7 +186,7 @@ namespace AppyNox.Services.Sso.Infrastructure.Migrations
                             AccessFailedCount = 0,
                             Code = "USR01",
                             CompanyId = new Guid("221e8b2c-59d5-4e5b-b010-86c239b66738"),
-                            ConcurrencyStamp = "7e533c75-f2d5-4a55-ab78-fa897ae6f44d",
+                            ConcurrencyStamp = "22983e7e-7b0c-4f6a-9f2d-15b29bea4c0b",
                             Email = "admin@email.com",
                             EmailConfirmed = true,
                             IsAdmin = true,
@@ -194,9 +194,9 @@ namespace AppyNox.Services.Sso.Infrastructure.Migrations
                             Name = "Name1",
                             NormalizedEmail = "ADMIN@EMAIL.COM",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEI3nZbtfb+oc+ISBiSz64tvw3qyJG7r9r0icBPGsWto1pLW5+3Peg29QjzId5MDjsw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEDWddlD4GknyLTTEs3lk/gv7traAFYlK6AGy7r3VNVjjEeX+6kLq1n3wmwFfcGrFkw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "7f038812-7850-4d10-a6bd-af0a84357319",
+                            SecurityStamp = "6507632d-22d1-47e4-bd52-d913ea933fd8",
                             Surname = "Surname1",
                             TwoFactorEnabled = false,
                             UserName = "admin"
@@ -207,7 +207,7 @@ namespace AppyNox.Services.Sso.Infrastructure.Migrations
                             AccessFailedCount = 0,
                             Code = "USR02",
                             CompanyId = new Guid("0ebae1bf-6610-4967-a8ed-b149219caf68"),
-                            ConcurrencyStamp = "a464461f-35cb-4176-877d-18f550071d87",
+                            ConcurrencyStamp = "497c55b0-62da-4921-9345-b58b82bd029c",
                             Email = "sadmin@email.com",
                             EmailConfirmed = true,
                             IsAdmin = true,
@@ -215,9 +215,9 @@ namespace AppyNox.Services.Sso.Infrastructure.Migrations
                             Name = "Name2",
                             NormalizedEmail = "SADMIN@EMAIL.COM",
                             NormalizedUserName = "SUPERADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEHHcLKp0ScXN2dQJ51Wh1CPva9WmhqSoeHRpphLgixD/vysTeTexxqfn6EU3cmtVUw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAELIkY6pXxeKuXd7ew84/YcKeqb/o5iJB8wsQz+QB6BpCHfHC0oPlqZgan3FEsyml5A==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "5227a5d4-0bec-47c1-8946-8861955840a8",
+                            SecurityStamp = "75362c3d-0a90-4699-9ad0-40e165470f4c",
                             Surname = "Surname2",
                             TwoFactorEnabled = false,
                             UserName = "superadmin"
@@ -228,7 +228,7 @@ namespace AppyNox.Services.Sso.Infrastructure.Migrations
                             AccessFailedCount = 0,
                             Code = "USR03",
                             CompanyId = new Guid("0ebae1bf-6610-4967-a8ed-b149219caf68"),
-                            ConcurrencyStamp = "003dd3c8-a3a1-465e-b823-09c52949ccb7",
+                            ConcurrencyStamp = "2e373f72-2fc9-4a34-86d0-fde55a9da142",
                             Email = "test3@happisoft.com",
                             EmailConfirmed = true,
                             IsAdmin = false,
@@ -236,9 +236,9 @@ namespace AppyNox.Services.Sso.Infrastructure.Migrations
                             Name = "Name3",
                             NormalizedEmail = "TEST3@HAPPISOFT.COM",
                             NormalizedUserName = "TESTUSER3",
-                            PasswordHash = "AQAAAAIAAYagAAAAEAaWsXB34zA44VfCLFN0ZDnuq0HG6rtB+19gP+qCJairxC/FkkiBoN9Vem4ouc9QnA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAENuCjXeryRGU+1fBWsWdIj7+T5zuOyWbxsZULjz89iIxl4V8NEKq8xa+12X3v718DA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "098b4d9e-371f-45d4-bc64-635cea26f318",
+                            SecurityStamp = "4a2fcd07-8517-43c7-b4e2-23c81c408fe6",
                             Surname = "Surname3",
                             TwoFactorEnabled = false,
                             UserName = "TestUser3"
@@ -427,6 +427,34 @@ namespace AppyNox.Services.Sso.Infrastructure.Migrations
                             Id = 18,
                             ClaimType = "API.Permission",
                             ClaimValue = "Licenses.Delete",
+                            RoleId = new Guid("e24e99e7-00e4-4007-a042-565eac12d96d")
+                        },
+                        new
+                        {
+                            Id = 20,
+                            ClaimType = "API.Permission",
+                            ClaimValue = "Products.View",
+                            RoleId = new Guid("e24e99e7-00e4-4007-a042-565eac12d96d")
+                        },
+                        new
+                        {
+                            Id = 21,
+                            ClaimType = "API.Permission",
+                            ClaimValue = "Products.Create",
+                            RoleId = new Guid("e24e99e7-00e4-4007-a042-565eac12d96d")
+                        },
+                        new
+                        {
+                            Id = 22,
+                            ClaimType = "API.Permission",
+                            ClaimValue = "Products.Edit",
+                            RoleId = new Guid("e24e99e7-00e4-4007-a042-565eac12d96d")
+                        },
+                        new
+                        {
+                            Id = 23,
+                            ClaimType = "API.Permission",
+                            ClaimValue = "Products.Delete",
                             RoleId = new Guid("e24e99e7-00e4-4007-a042-565eac12d96d")
                         },
                         new

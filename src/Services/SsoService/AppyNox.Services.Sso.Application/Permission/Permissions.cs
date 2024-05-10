@@ -1,6 +1,6 @@
 ﻿using System.Collections.Immutable;
 
-namespace AppyNox.Services.Sso.WebAPI.Permission
+namespace AppyNox.Services.Sso.Application.Permission
 {
     /// <summary>
     /// Defines static permission strings for role and user operations.

@@ -5,6 +5,7 @@ using AppyNox.Services.Base.IntegrationTests.URIs;
 using AppyNox.Services.Base.IntegrationTests.Wrapper;
 using AppyNox.Services.Base.IntegrationTests.Wrapper.Helpers;
 using AppyNox.Services.Sso.Application.DTOs.RefreshTokenDtos.Models;
+using AppyNox.Services.Sso.Infrastructure.Exceptions.Base;
 using AppyNox.Services.Sso.WebAPI.Exceptions.Base;
 using AppyNox.Services.Sso.WebAPI.IntegrationTest.Fixtures;
 using System.Net;
@@ -89,10 +90,10 @@ public class AuthenticationApiTest(SsoServiceFixture ssoApiTestFixture)
     }
 
     [Theory]
-    [InlineData("wrong", "Admin@123", "AppyNox", (int)NoxSsoApiExceptionCode.WrongCredentials, HttpStatusCode.BadRequest)]
-    [InlineData("admin", "wrong", "AppyNox", (int)NoxSsoApiExceptionCode.WrongCredentials, HttpStatusCode.BadRequest)]
-    [InlineData("admin", "Admin@123", "wrong", (int)NoxSsoApiExceptionCode.InvalidAudience, HttpStatusCode.BadRequest)]
-    [InlineData("admin", "wrong", "wrong", (int)NoxSsoApiExceptionCode.WrongCredentials, HttpStatusCode.BadRequest)]
+    [InlineData("wrong", "Admin@123", "AppyNox", (int)NoxSsoInfrastructureExceptionCode.WrongCredentials, HttpStatusCode.BadRequest)]
+    [InlineData("admin", "wrong", "AppyNox", (int)NoxSsoInfrastructureExceptionCode.WrongCredentials, HttpStatusCode.BadRequest)]
+    [InlineData("admin", "Admin@123", "wrong", (int)NoxSsoInfrastructureExceptionCode.InvalidAudience, HttpStatusCode.BadRequest)]
+    [InlineData("admin", "wrong", "wrong", (int)NoxSsoInfrastructureExceptionCode.WrongCredentials, HttpStatusCode.BadRequest)]
     [Order(2)]
     public async Task ConnectToken_ShouldReturnCorrectErrorResponse(string username, string password, string audience, int exceptionCode, HttpStatusCode statusCode)
     {
@@ -264,12 +265,12 @@ public class AuthenticationApiTest(SsoServiceFixture ssoApiTestFixture)
 
     [Theory]
     [InlineData(true, false, "AppyNox", (int)NoxSsoApiExceptionCode.RefreshTokenInvalid, HttpStatusCode.Unauthorized)]
-    [InlineData(false, false, "AppyNox", (int)NoxSsoApiExceptionCode.AuthenticationInvalidToken, HttpStatusCode.Unauthorized)]
-    [InlineData(false, true, "AppyNox", (int)NoxSsoApiExceptionCode.AuthenticationInvalidToken, HttpStatusCode.Unauthorized)]
+    [InlineData(false, false, "AppyNox", (int)NoxSsoInfrastructureExceptionCode.AuthenticationInvalidToken, HttpStatusCode.Unauthorized)]
+    [InlineData(false, true, "AppyNox", (int)NoxSsoInfrastructureExceptionCode.AuthenticationInvalidToken, HttpStatusCode.Unauthorized)]
     [InlineData(true, false, "AppyFleet", (int)NoxSsoApiExceptionCode.RefreshTokenInvalid, HttpStatusCode.Unauthorized)]
-    [InlineData(false, false, "AppyFleet", (int)NoxSsoApiExceptionCode.AuthenticationInvalidToken, HttpStatusCode.Unauthorized)]
-    [InlineData(false, true, "AppyFleet", (int)NoxSsoApiExceptionCode.AuthenticationInvalidToken, HttpStatusCode.Unauthorized)]
-    [InlineData(false, false, "NoAudience", (int)NoxSsoApiExceptionCode.InvalidAudience, HttpStatusCode.BadRequest)] // no need to use verified tokens, audience is confirmed first
+    [InlineData(false, false, "AppyFleet", (int)NoxSsoInfrastructureExceptionCode.AuthenticationInvalidToken, HttpStatusCode.Unauthorized)]
+    [InlineData(false, true, "AppyFleet", (int)NoxSsoInfrastructureExceptionCode.AuthenticationInvalidToken, HttpStatusCode.Unauthorized)]
+    [InlineData(false, false, "NoAudience", (int)NoxSsoInfrastructureExceptionCode.InvalidAudience, HttpStatusCode.BadRequest)] // no need to use verified tokens, audience is confirmed first
     [Order(4)]
     public async Task RefreshToken_ShouldReturnCorrectErrorResponse(bool useVerifiedToken, bool useVerifiedRefreshToken, string audience, int exceptionCode, HttpStatusCode httpStatusCode)
     {

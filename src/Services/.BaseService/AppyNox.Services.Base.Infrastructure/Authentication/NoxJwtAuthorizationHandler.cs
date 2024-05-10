@@ -1,13 +1,12 @@
-﻿using AppyNox.Services.Base.API.Permissions;
-using AppyNox.Services.Sso.WebAPI.Exceptions;
-using AppyNox.Services.Sso.WebAPI.Exceptions.Base;
-using AppyNox.Services.Sso.WebAPI.Localization;
+﻿using AppyNox.Services.Base.Infrastructure.Exceptions;
+using AppyNox.Services.Base.Infrastructure.Exceptions.Base;
+using AppyNox.Services.Base.Infrastructure.Localization;
 using Microsoft.AspNetCore.Authorization;
-using System.Security.Claims;
 
-namespace AppyNox.Services.Sso.WebAPI.Permission;
+namespace AppyNox.Services.Base.Infrastructure.Authentication;
 
-public class NoxSsoAuthorizationHandler : AuthorizationHandler<PermissionRequirement>
+public class NoxJwtAuthorizationHandler
+    : AuthorizationHandler<PermissionRequirement>
 {
     #region [ Protected Methods ]
 
@@ -27,12 +26,12 @@ public class NoxSsoAuthorizationHandler : AuthorizationHandler<PermissionRequire
             }
             else
             {
-                throw new NoxAuthorizationException(NoxSsoApiResourceService.UnauthorizedAccess, (int)NoxSsoApiExceptionCode.AuthorizationFailed);
+                throw new NoxAuthorizationException(NoxInfrastructureResourceService.UnauthorizedAccess, (int)NoxInfrastructureExceptionCode.AuthorizationFailed);
             }
         }
         else
         {
-            throw new NoxAuthorizationException(NoxSsoApiResourceService.InvalidToken, (int)NoxSsoApiExceptionCode.AuthorizationInvalidToken);
+            throw new NoxAuthorizationException(NoxInfrastructureResourceService.InvalidToken, (int)NoxInfrastructureExceptionCode.AuthorizationInvalidToken);
         }
 
         return Task.CompletedTask;

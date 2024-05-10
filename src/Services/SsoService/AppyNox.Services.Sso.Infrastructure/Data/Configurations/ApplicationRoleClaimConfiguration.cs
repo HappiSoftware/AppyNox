@@ -54,6 +54,11 @@ namespace AppyNox.Services.Sso.Infrastructure.Data.Configurations
                 new IdentityRoleClaim<Guid> { Id = 17, RoleId = _adminRoleId, ClaimType = "API.Permission", ClaimValue = "Licenses.Edit" },
                 new IdentityRoleClaim<Guid> { Id = 18, RoleId = _adminRoleId, ClaimType = "API.Permission", ClaimValue = "Licenses.Delete" },
 
+                new IdentityRoleClaim<Guid> { Id = 20, RoleId = _adminRoleId, ClaimType = "API.Permission", ClaimValue = "Products.View" },
+                new IdentityRoleClaim<Guid> { Id = 21, RoleId = _adminRoleId, ClaimType = "API.Permission", ClaimValue = "Products.Create" },
+                new IdentityRoleClaim<Guid> { Id = 22, RoleId = _adminRoleId, ClaimType = "API.Permission", ClaimValue = "Products.Edit" },
+                new IdentityRoleClaim<Guid> { Id = 23, RoleId = _adminRoleId, ClaimType = "API.Permission", ClaimValue = "Products.Delete" },
+
                 // NotAdmin Role Claims
                 new IdentityRoleClaim<Guid> { Id = 19, RoleId = _notAdminRoleId, ClaimType = "API.Permission", ClaimValue = "Coupons.View" }
             );

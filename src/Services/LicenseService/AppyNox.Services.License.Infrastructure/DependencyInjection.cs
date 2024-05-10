@@ -1,19 +1,14 @@
 ﻿using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Application.Interfaces.Repositories;
-using AppyNox.Services.Base.Core.Common;
-using AppyNox.Services.Base.Core.Enums;
-using AppyNox.Services.Base.Infrastructure.HostedServices;
-using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
+using AppyNox.Services.Base.Infrastructure;
 using AppyNox.Services.License.Application.Interfaces;
+using AppyNox.Services.License.Application.Permission;
 using AppyNox.Services.License.Infrastructure.Data;
 using AppyNox.Services.License.Infrastructure.MassTransit.Consumers;
 using AppyNox.Services.License.Infrastructure.Repositories;
-using Consul;
 using MassTransit;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
 namespace AppyNox.Services.License.Infrastructure
 {
@@ -21,48 +16,32 @@ namespace AppyNox.Services.License.Infrastructure
     {
         #region [ Public Methods ]
 
-        /// <summary>
-        /// Centralized Dependency Injection For Infrastructure Layer.
-        /// </summary>
-        /// <param name="services"></param>
-        /// <param name="builder"></param>
-        /// <param name="environment"></param>
-        /// <param name="logger"></param>
-        /// <returns></returns>
-        public static IServiceCollection AddLicenseInfrastructure(this IServiceCollection services, IHostApplicationBuilder builder, INoxLogger logger)
+        public static IServiceCollection AddLicenseInfrastructure(this IServiceCollection services, IConfiguration configuration, INoxLogger logger)
         {
-            IConfiguration configuration = builder.Configuration;
-
-            services.AddSingleton<INoxInfrastructureLogger, NoxInfrastructureLogger>();
-            services.AddSingleton<INoxApplicationLogger, NoxApplicationLogger>();
-            services.AddSingleton<INoxApiLogger, NoxApiLogger>();
-
-            #region [ Database Configuration ]
-
-            string? connectionString = configuration.GetConnectionString("DefaultConnection");
-
-            services.AddDbContext<LicenseDatabaseContext>(options =>
-                options.UseNpgsql(connectionString));
-
-            logger.LogInformation($"Connection String: {connectionString}");
-
-            #endregion
-
-            #region [ Consul Discovery Service ]
-
-            services.AddSingleton<IConsulClient, ConsulClient>(p => new ConsulClient(consulConfig =>
+            services.AddInfrastructureServices<LicenseDatabaseContext>(logger, options =>
             {
-                var address = configuration["ConsulConfiguration:Address"] ?? "http://localhost:8500";
-                consulConfig.Address = new Uri(address);
-            }));
-            services.AddSingleton<IHostedService, ConsulHostedService>();
-            services.Configure<ConsulConfiguration>(configuration.GetSection("consul"));
-
-            #endregion
+                options.DbContextAssemblyName = "AppyNox.Services.License.Infrastructure";
+                options.UseOutBoxMessageMechanism = true;
+                options.OutBoxMessageJobIntervalSeconds = 10;
+                options.UseConsul = true;
+                options.UseRedis = true;
+                options.UseJwtAuthentication = true;
+                options.RegisterIAuthorizationHandler = true;
+                options.Claims = [.. Permissions.Licenses.Metrics, .. Permissions.Products.Metrics];
+                options.Configuration = configuration;
+            });
 
             #region [ MassTransit ]
 
-            builder.Services.AddMassTransit(busConfigurator =>
+            string hostUrl = configuration["MessageBroker:Host"]
+                ?? throw new InvalidOperationException("MessageBroker:Host is not defined!");
+
+            string username = configuration["MessageBroker:Username"]
+                ?? throw new InvalidOperationException("MessageBroker:Username is not defined!");
+            string password = configuration["MessageBroker:Password"]
+                ?? throw new InvalidOperationException("MessageBroker:Password is not defined!");
+
+            services.AddMassTransit(busConfigurator =>
             {
                 #region [ Consumers ]
 
@@ -73,16 +52,17 @@ namespace AppyNox.Services.License.Infrastructure
 
                 #region [ RabbitMQ ]
 
+
                 busConfigurator.UsingRabbitMq((context, configurator) =>
                 {
-                    configurator.Host(new Uri(builder.Configuration["MessageBroker:Host"]!), h =>
-                    {
-                        h.Username(builder.Configuration["MessageBroker:Username"]!);
-                        h.Password(builder.Configuration["MessageBroker:Password"]!);
-                    });
-
-                    #region [ Endpoints ]
-
+                    configurator.Host(
+                        new Uri(hostUrl),
+                        h =>
+                        {
+                            h.Username(username);
+                            h.Password(password);
+                        }
+                    );
                     configurator.ReceiveEndpoint("validate-license", e =>
                     {
                         e.ConfigureConsumer<ValidateLicenseMessageConsumer>(context);
@@ -92,8 +72,6 @@ namespace AppyNox.Services.License.Infrastructure
                     {
                         e.ConfigureConsumer<AssignLicenseToUserMessageConsumer>(context);
                     });
-
-                    #endregion
 
                     configurator.ConfigureEndpoints(context);
                 });

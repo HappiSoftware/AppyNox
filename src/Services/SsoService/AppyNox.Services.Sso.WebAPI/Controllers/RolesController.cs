@@ -17,7 +17,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
 using System.Security.Claims;
-using static AppyNox.Services.Sso.WebAPI.Permission.Permissions;
+using static AppyNox.Services.Sso.Application.Permission.Permissions;
 
 namespace AppyNox.Services.Sso.WebAPI.Controllers;
 

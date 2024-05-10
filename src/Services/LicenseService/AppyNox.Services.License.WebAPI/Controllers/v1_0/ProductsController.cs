@@ -3,9 +3,11 @@ using AppyNox.Services.Base.API.Helpers;
 using AppyNox.Services.Base.API.ViewModels;
 using AppyNox.Services.Base.Application.MediatR.Commands;
 using AppyNox.Services.Base.Infrastructure.Repositories.Common;
+using AppyNox.Services.License.Application.Permission;
 using AppyNox.Services.License.Domain.Entities;
 using Asp.Versioning;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AppyNox.Services.License.WebAPI.Controllers.v1_0
@@ -24,18 +26,21 @@ namespace AppyNox.Services.License.WebAPI.Controllers.v1_0
         #region [ CRUD Endpoints ]
 
         [HttpGet]
+        [Authorize(Permissions.Products.View)]
         public async Task<IActionResult> GetAll([FromQuery] QueryParametersViewModel queryParameters)
         {
             return Ok(await _mediator.Send(new GetAllNoxEntitiesQuery<ProductEntity>(queryParameters)));
         }
 
         [HttpGet("{id}")]
+        [Authorize(Permissions.Products.View)]
         public async Task<IActionResult> GetById(Guid id, [FromQuery] QueryParametersViewModel queryParameters)
         {
             return Ok(await _mediator.Send(new GetNoxEntityByIdQuery<ProductEntity, ProductId>(new ProductId(id), queryParameters)));
         }
 
         [HttpPost]
+        [Authorize(Permissions.Products.Create)]
         public async Task<IActionResult> Create([FromBody] dynamic productDto, string detailLevel = "Simple")
         {
             Guid result = await _mediator.Send(new CreateNoxEntityCommand<ProductEntity>(productDto, detailLevel));
@@ -54,6 +59,7 @@ namespace AppyNox.Services.License.WebAPI.Controllers.v1_0
         //}
 
         [HttpDelete("{id}")]
+        [Authorize(Permissions.Products.Delete)]
         public async Task<IActionResult> Delete(Guid id)
         {
             await _mediator.Send(new DeleteNoxEntityCommand<ProductEntity, ProductId>(new ProductId(id)));

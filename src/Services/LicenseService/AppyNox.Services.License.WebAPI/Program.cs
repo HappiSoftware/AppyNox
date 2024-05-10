@@ -1,25 +1,17 @@
-using AppyNox.Services.Base.API.Authentication;
 using AppyNox.Services.Base.API.Constants;
 using AppyNox.Services.Base.API.Extensions;
 using AppyNox.Services.Base.API.Middleware;
 using AppyNox.Services.Base.API.Middleware.Options;
-using AppyNox.Services.Base.API.Permissions;
-using AppyNox.Services.Base.Application.Interfaces.Authentication;
 using AppyNox.Services.Base.Application.Interfaces.Loggers;
-using AppyNox.Services.Base.Core.Common;
 using AppyNox.Services.Base.Infrastructure.Extensions;
 using AppyNox.Services.Base.Infrastructure.HostedServices;
 using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
 using AppyNox.Services.License.Application;
 using AppyNox.Services.License.Infrastructure;
 using AppyNox.Services.License.Infrastructure.Data;
-using AppyNox.Services.License.WebAPI.Permission;
 using Asp.Versioning;
 using Asp.Versioning.Conventions;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Localization;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using Swashbuckle.AspNetCore.SwaggerGen;
@@ -81,46 +73,19 @@ builder.Services.AddApiVersioning(options =>
     options.Conventions.Add(new VersionByNamespaceConvention());
 });
 
-builder.ConfigureRedis(configuration);
-
 #endregion
 
 #region [ Dependency Injection For Layers ]
 
 noxLogger.LogInformation("Registering DI's for layers.");
-builder.Services.AddLicenseApplication();
-builder.Services.AddLicenseInfrastructure(builder, noxLogger);
+builder.Services
+    .AddLicenseApplication()
+    .AddLicenseInfrastructure(configuration, noxLogger);
 noxLogger.LogInformation("Registering DI's for layers completed.");
 
 #endregion
 
-#region [ JWT Configuration ]
-
-noxLogger.LogInformation("Registering JWT Configuration.");
-var jwtConfiguration = new JwtConfiguration();
-configuration.GetSection("JwtSettings").Bind(jwtConfiguration);
-builder.Services.AddSingleton(jwtConfiguration);
-
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = "NoxJwtScheme";
-    options.DefaultChallengeScheme = "NoxJwtScheme";
-}).AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = jwtConfiguration.Issuer,
-        ValidAudience = jwtConfiguration.Audience,
-        IssuerSigningKey = new SymmetricSecurityKey(jwtConfiguration.GetSecretKeyBytes())
-    };
-})
-.AddScheme<AuthenticationSchemeOptions, NoxJwtAuthenticationHandler>("NoxJwtScheme", options =>
-{
-});
+#region [ Swagger Configuration ]
 
 if (builder.Environment.IsDevelopment())
 {
@@ -168,24 +133,6 @@ if (builder.Environment.IsDevelopment())
     });
     noxLogger.LogInformation("Adjusting swagger endpoints completed.");
 }
-
-// Add Policy-based Authorization
-builder.Services.AddAuthorization(options =>
-{
-    List<string> _claims = [.. Permissions.Licenses.Metrics];
-
-    foreach (var item in _claims)
-    {
-        options.AddPolicy(item, builder =>
-        {
-            builder.AddRequirements(new PermissionRequirement(item, "API.Permission"));
-        });
-    }
-});
-
-builder.Services.AddScoped<IAuthorizationHandler, NoxJwtAuthorizationHandler>();
-builder.Services.AddScoped<INoxTokenManager, NoxTokenManager>();
-noxLogger.LogInformation("Registering JWT Configuration completed.");
 
 #endregion
 

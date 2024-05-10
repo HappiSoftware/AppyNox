@@ -1,8 +1,6 @@
 ﻿using AppyNox.Services.Base.Application.Interfaces.Caches;
 using AppyNox.Services.Base.Application.Interfaces.Repositories;
 using AppyNox.Services.Base.Infrastructure.Repositories.Common;
-using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
-using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Extended;
 using AppyNox.Services.Coupon.Infrastructure.Repositories;
 using BenchmarkDotNet.Attributes;
 using Microsoft.Extensions.DependencyInjection;

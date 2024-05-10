@@ -1,7 +1,7 @@
-﻿using AppyNox.Services.Base.API.Exceptions;
-using AppyNox.Services.Base.API.Exceptions.Base;
-using AppyNox.Services.Base.API.Localization;
-using AppyNox.Services.Base.Application.Interfaces.Authentication;
+﻿using AppyNox.Services.Base.Application.Interfaces.Authentication;
+using AppyNox.Services.Base.Infrastructure.Exceptions;
+using AppyNox.Services.Base.Infrastructure.Exceptions.Base;
+using AppyNox.Services.Base.Infrastructure.Localization;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -11,7 +11,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
 
-namespace AppyNox.Services.Base.API.Permissions;
+namespace AppyNox.Services.Base.Infrastructure.Authentication;
 
 public class NoxJwtAuthenticationHandler(
         IOptionsMonitor<AuthenticationSchemeOptions> options,
@@ -44,7 +44,7 @@ public class NoxJwtAuthenticationHandler(
         }
 
         string token = Request.Headers.Authorization.FirstOrDefault()?.Split(" ").Last()
-            ?? throw new NoxAuthenticationException(NoxApiResourceService.NullToken, (int)NoxApiExceptionCode.AuthenticationNullToken);
+            ?? throw new NoxAuthenticationException(NoxInfrastructureResourceService.NullToken, (int)NoxInfrastructureExceptionCode.AuthenticationNullToken);
 
         if (await _jwtTokenManager.VerifyToken(token))
         {
@@ -59,7 +59,7 @@ public class NoxJwtAuthenticationHandler(
             return await Task.FromResult(AuthenticateResult.Success(ticket));
         }
 
-        throw new NoxAuthenticationException(NoxApiResourceService.InvalidToken, (int)NoxApiExceptionCode.AuthenticationInvalidToken);
+        throw new NoxAuthenticationException(NoxInfrastructureResourceService.InvalidToken, (int)NoxInfrastructureExceptionCode.AuthenticationInvalidToken);
     }
 
     #endregion

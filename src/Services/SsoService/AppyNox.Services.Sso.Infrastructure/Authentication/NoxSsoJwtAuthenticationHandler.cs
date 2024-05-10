@@ -1,8 +1,10 @@
 ﻿using AppyNox.Services.Sso.Application.Interfaces.Authentication;
-using AppyNox.Services.Sso.WebAPI.Exceptions.Base;
-using AppyNox.Services.Sso.WebAPI.Localization;
+using AppyNox.Services.Sso.Infrastructure.Exceptions.Base;
+using AppyNox.Services.Sso.Infrastructure.Localization;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
@@ -10,9 +12,9 @@ using System.Security.Claims;
 using System.Text.Encodings.Web;
 using System.Text.RegularExpressions;
 
-namespace AppyNox.Services.Sso.WebAPI.Permission;
+namespace AppyNox.Services.Sso.Infrastructure.Authentication;
 
-internal partial class NoxSsoJwtAuthenticationHandler(IOptionsMonitor<AuthenticationSchemeOptions> options,
+public partial class NoxSsoJwtAuthenticationHandler(IOptionsMonitor<AuthenticationSchemeOptions> options,
     ILoggerFactory logger,
     UrlEncoder encoder,
     ICustomTokenManager jwtTokenManager) : AuthenticationHandler<AuthenticationSchemeOptions>(options, logger, encoder)
@@ -37,7 +39,7 @@ internal partial class NoxSsoJwtAuthenticationHandler(IOptionsMonitor<Authentica
         }
 
         string token = Request.Headers.Authorization.FirstOrDefault()?.Split(" ").Last()
-            ?? throw new NoxSsoApiException(NoxSsoApiResourceService.NullToken, statusCode: (int)HttpStatusCode.Unauthorized);
+            ?? throw new NoxSsoInfrastructureException(NoxSsoInfrastructureResourceService.NullToken, statusCode: (int)HttpStatusCode.Unauthorized);
         string audience = GetExpectedAudienceForRequest(Context.Request.Path.ToString());
 
         if (await _jwtTokenManager.VerifyToken(token, audience))
@@ -53,7 +55,7 @@ internal partial class NoxSsoJwtAuthenticationHandler(IOptionsMonitor<Authentica
             return await Task.FromResult(AuthenticateResult.Success(ticket));
         }
 
-        throw new NoxSsoApiException(NoxSsoApiResourceService.InvalidToken, statusCode: (int)HttpStatusCode.Unauthorized);
+        throw new NoxSsoInfrastructureException(NoxSsoInfrastructureResourceService.InvalidToken, statusCode: (int)HttpStatusCode.Unauthorized);
     }
 
     protected static string GetExpectedAudienceForRequest(string requestPath)

@@ -8,31 +8,11 @@ namespace AppyNox.Services.Sso.WebAPI.Exceptions.Base;
 
 internal enum NoxSsoApiExceptionCode
 {
-    SsoServiceApiError = 999,
+    SignInError = 1000,
 
-    AuthenticationInvalidToken = 1000,
+    Teapot = 1001,
 
-    AuthenticationNullToken = 1001,
-
-    ExpiredToken = 1002,
-
-    AuthorizationFailed = 1003,
-
-    AuthorizationInvalidToken = 1004,
-
-    InvalidAudience = 1005,
-
-    RefreshToken = 1006,
-
-    WrongCredentials = 1007,
-
-    RefreshTokenNotFound = 1008,
-
-    SignInError = 1009,
-
-    Teapot = 1010,
-
-    RefreshTokenInvalid = 1011,
+    RefreshTokenInvalid = 1002,
 }
 
 #endregion

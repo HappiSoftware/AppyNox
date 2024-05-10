@@ -1,7 +1,9 @@
-﻿using AppyNox.Services.Sso.Domain.Entities;
-using AppyNox.Services.Sso.WebAPI.Managers;
-using AppyNox.Services.Base.API.Localization;
-using AppyNox.Services.Base.Core.Common;
+﻿using AppyNox.Services.Base.Core.Common;
+using AppyNox.Services.Sso.Domain.Entities;
+using AppyNox.Services.Sso.Infrastructure.Exceptions;
+using AppyNox.Services.Sso.Infrastructure.Localization;
+using AppyNox.Services.Sso.Infrastructure.Managers;
+using AppyNox.Services.Sso.WebAPI.Localization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Localization;
@@ -10,8 +12,6 @@ using Moq;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Security.Claims;
-using AppyNox.Services.Sso.WebAPI.Localization;
-using AppyNox.Services.Sso.WebAPI.Exceptions;
 
 namespace AppyNox.Services.Sso.WebAPI.UnitTest.Managers
 {
@@ -50,8 +50,10 @@ namespace AppyNox.Services.Sso.WebAPI.UnitTest.Managers
 
             var localizerFactory = new Mock<IStringLocalizerFactory>();
             localizerFactory.Setup(lf => lf.Create(typeof(NoxSsoApiResourceService))).Returns(localizer.Object);
+            localizerFactory.Setup(lf => lf.Create(typeof(NoxSsoInfrastructureResourceService))).Returns(localizer.Object);
 
             NoxSsoApiResourceService.Initialize(localizerFactory.Object);
+            NoxSsoInfrastructureResourceService.Initialize(localizerFactory.Object);
         }
 
         #endregion
