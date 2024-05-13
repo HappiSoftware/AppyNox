@@ -1,4 +1,5 @@
-﻿using AppyNox.Services.Base.Domain;
+﻿using AppyNox.Services.Base.Domain.DDD;
+using AppyNox.Services.Base.Domain.DDD.Interfaces;
 using AppyNox.Services.Base.Domain.Interfaces;
 
 namespace AppyNox.Services.License.Domain.Entities;
@@ -52,7 +53,11 @@ public class ProductEntity : AggregateRoot, IHasStronglyTypedId, IHasCode
     #endregion
 }
 
-public record ProductId(Guid Value) : IHasGuidId
+public record ProductId : NoxId
 {
-    public Guid GetGuidValue() => Value;
+    protected ProductId() { }
+    public ProductId(Guid value)
+    {
+        Value = value;
+    }
 }

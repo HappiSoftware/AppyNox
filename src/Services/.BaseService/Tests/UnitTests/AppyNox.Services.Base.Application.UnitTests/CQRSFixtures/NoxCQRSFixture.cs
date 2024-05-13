@@ -7,7 +7,8 @@ using AppyNox.Services.Base.Application.MediatR.Commands;
 using AppyNox.Services.Base.Application.MediatR.Handlers.DDD;
 using AppyNox.Services.Base.Application.UnitTests.Stubs;
 using AppyNox.Services.Base.Core.Enums;
-using AppyNox.Services.Base.Domain.Interfaces;
+using AppyNox.Services.Base.Domain.DDD;
+using AppyNox.Services.Base.Domain.DDD.Interfaces;
 using AutoMapper;
 using MediatR;
 using Microsoft.Extensions.Localization;
@@ -17,7 +18,7 @@ namespace AppyNox.Services.Base.Application.UnitTests.CQRSFixtures
 {
     public class NoxCQRSFixture<TEntity, TId> : IDisposable
         where TEntity : class, IHasStronglyTypedId
-        where TId : class, IHasGuidId
+        where TId : NoxId
     {
         #region [ Fields ]
 

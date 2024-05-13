@@ -1,4 +1,6 @@
-﻿namespace AppyNox.Services.Base.Domain.Interfaces;
+﻿using AppyNox.Services.Base.Domain.Interfaces;
+
+namespace AppyNox.Services.Base.Domain.DDD.Interfaces;
 
 /// <summary>
 /// Used for Domain Driven Design. If you are using Anemic Domain Modeling, use
@@ -7,7 +9,6 @@
 public interface IHasStronglyTypedId
 {
     #region [ Public Methods ]
-
     Guid GetTypedId();
 
     #endregion

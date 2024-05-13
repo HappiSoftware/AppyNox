@@ -8,7 +8,7 @@ using AppyNox.Services.Base.Core.AsyncLocals;
 using AppyNox.Services.Base.Core.Common;
 using AppyNox.Services.Base.Core.Enums;
 using AppyNox.Services.Base.Core.Exceptions.Base;
-using AppyNox.Services.Base.Domain.Interfaces;
+using AppyNox.Services.Base.Domain.DDD.Interfaces;
 using AutoMapper;
 using MediatR;
 using System.Text.Json;

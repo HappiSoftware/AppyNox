@@ -4,7 +4,8 @@ using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Application.Interfaces.Repositories;
 using AppyNox.Services.Base.Core.Common;
 using AppyNox.Services.Base.Core.Exceptions.Base;
-using AppyNox.Services.Base.Domain.Interfaces;
+using AppyNox.Services.Base.Domain.DDD;
+using AppyNox.Services.Base.Domain.DDD.Interfaces;
 using AppyNox.Services.Base.Infrastructure.Exceptions;
 using AppyNox.Services.Base.Infrastructure.Exceptions.Base;
 using Microsoft.EntityFrameworkCore;
@@ -52,7 +53,7 @@ public abstract class NoxRepositoryBase<TEntity> : INoxRepository<TEntity> where
     /// <exception cref="NoxInfrastructureException">Thrown when there is an error retrieving the entity from the database.</exception>
 
     public async Task<TEntity> GetByIdAsync<TId>(TId id)
-        where TId : IHasGuidId
+        where TId : NoxId
     {
         try
         {
@@ -63,7 +64,7 @@ public abstract class NoxRepositoryBase<TEntity> : INoxRepository<TEntity> where
             {
                 _logger.LogWarning($"Entity with ID: {id} not found.");
 
-                throw new NoxEntityNotFoundException<TEntity>(((IHasGuidId)id).GetGuidValue());
+                throw new NoxEntityNotFoundException<TEntity>(id.Value);
             }
 
             _logger.LogInformation($"Successfully retrieved entity with ID: '{id}' Type: '{typeof(TEntity).Name}'.");
@@ -205,23 +206,23 @@ public abstract class NoxRepositoryBase<TEntity> : INoxRepository<TEntity> where
     /// <param name="id">The id of the entity to remove.</param>
     /// <exception cref="NoxInfrastructureException">Thrown if an unexpected error occurs.</exception>
     public async Task RemoveByIdAsync<TId>(TId id) where TId
-        : IHasGuidId
+        : NoxId
     {
         try
         {
-            _logger.LogInformation($"Attempting to delete entity with ID: '{id.GetGuidValue}' Type: '{typeof(TEntity).Name}'.");
+            _logger.LogInformation($"Attempting to delete entity with ID: '{id.Value}' Type: '{typeof(TEntity).Name}'.");
             var entity = await _dbSet.FindAsync([id]);
             if (entity == null)
             {
                 _logger.LogWarning($"Entity with ID: '{id}' not found.");
-                throw new NoxEntityNotFoundException<TEntity>(id.GetGuidValue());
+                throw new NoxEntityNotFoundException<TEntity>(id.Value);
             }
             _dbSet.Remove(entity);
-            _logger.LogInformation($"Successfully deleted entity with ID: '{id.GetGuidValue}' Type: '{typeof(TEntity).Name}'.");
+            _logger.LogInformation($"Successfully deleted entity with ID: '{id.Value}' Type: '{typeof(TEntity).Name}'.");
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Error deleting entity with ID: '{id.GetGuidValue}' Type: '{typeof(TEntity).Name}'.");
+            _logger.LogError(ex, $"Error deleting entity with ID: '{id.Value}' Type: '{typeof(TEntity).Name}'.");
             throw new NoxInfrastructureException(exceptionCode: (int)NoxInfrastructureExceptionCode.DeletingDataError, innerException: ex);
         }
     }

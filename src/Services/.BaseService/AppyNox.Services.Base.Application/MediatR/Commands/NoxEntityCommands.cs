@@ -1,6 +1,7 @@
 ﻿using AppyNox.Services.Base.Application.Interfaces.Repositories;
 using AppyNox.Services.Base.Core.Common;
-using AppyNox.Services.Base.Domain.Interfaces;
+using AppyNox.Services.Base.Domain.DDD;
+using AppyNox.Services.Base.Domain.DDD.Interfaces;
 using MediatR;
 using System.Diagnostics.CodeAnalysis;
 
@@ -13,7 +14,7 @@ public record GetAllNoxEntitiesQuery<TEntity>(IQueryParameters QueryParameters) 
 [SuppressMessage("Sonar Code Smell", "S2326:Unused type parameters should be removed", Justification = "TEntity is used to specify the type of entity being created")]
 public record GetNoxEntityByIdQuery<TEntity, TId>(TId Id, IQueryParameters QueryParameters) : IRequest<object>
     where TEntity : class, IHasStronglyTypedId
-    where TId : IHasGuidId;
+    where TId : NoxId;
 
 [SuppressMessage("Sonar Code Smell", "S2326:Unused type parameters should be removed", Justification = "TEntity is used to specify the type of entity being created")]
 public record CreateNoxEntityCommand<TEntity>(dynamic Dto, string DetailLevel) : IRequest<Guid>
@@ -22,4 +23,4 @@ public record CreateNoxEntityCommand<TEntity>(dynamic Dto, string DetailLevel) :
 [SuppressMessage("Sonar Code Smell", "S2326:Unused type parameters should be removed", Justification = "TEntity is used to specify the type of entity being created")]
 public record DeleteNoxEntityCommand<TEntity, TId>(TId Id) : IRequest
     where TEntity : class, IHasStronglyTypedId
-    where TId : class, IHasGuidId;
+    where TId : NoxId;

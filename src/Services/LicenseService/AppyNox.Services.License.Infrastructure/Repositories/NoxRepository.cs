@@ -1,5 +1,5 @@
 ﻿using AppyNox.Services.Base.Application.Interfaces.Loggers;
-using AppyNox.Services.Base.Domain.Interfaces;
+using AppyNox.Services.Base.Domain.DDD.Interfaces;
 using AppyNox.Services.Base.Infrastructure.Repositories;
 using AppyNox.Services.License.Infrastructure.Data;
 

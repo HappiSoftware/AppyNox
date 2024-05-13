@@ -1,5 +1,5 @@
-﻿using AppyNox.Services.Base.Domain;
-using AppyNox.Services.Base.Domain.Interfaces;
+﻿using AppyNox.Services.Base.Domain.DDD;
+using AppyNox.Services.Base.Domain.DDD.Interfaces;
 
 namespace AppyNox.Services.Coupon.Domain.Coupons;
 
@@ -53,15 +53,13 @@ public class CouponHistory : AggregateMember, IHasStronglyTypedId
 
 #region [ Value Objects ]
 
-public record CouponHistoryId : IHasGuidId
+public record CouponHistoryId : NoxId
 {
     protected CouponHistoryId() { }
     public CouponHistoryId(Guid value)
     {
         Value = value;
     }
-    public Guid Value { get; private set; }
-    public Guid GetGuidValue() => Value;
 }
 
 #endregion

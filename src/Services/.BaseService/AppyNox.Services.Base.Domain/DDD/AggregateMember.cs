@@ -1,9 +1,9 @@
 ﻿using AppyNox.Services.Base.Domain.Interfaces;
 using MediatR;
 
-namespace AppyNox.Services.Base.Domain;
+namespace AppyNox.Services.Base.Domain.DDD;
 
-public abstract class AggregateRoot : IAuditable
+public abstract class AggregateMember : IAuditable
 {
     #region [ Fields ]
 
