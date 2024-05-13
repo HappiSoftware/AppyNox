@@ -1,4 +1,5 @@
-﻿using AppyNox.Services.Base.Domain;
+﻿using AppyNox.Services.Base.Domain.DDD;
+using AppyNox.Services.Base.Domain.DDD.Interfaces;
 using AppyNox.Services.Base.Domain.Interfaces;
 using AppyNox.Services.Coupon.Domain.Coupons.Builders;
 using AppyNox.Services.Coupon.Domain.Exceptions.Base;
@@ -84,15 +85,13 @@ public class Coupon : AggregateRoot, IHasStronglyTypedId, IHasCode
     #endregion
 }
 
-public record CouponId : IHasGuidId, IValueObject
+public record CouponId : NoxId
 {
     protected CouponId() { }
     public CouponId(Guid value)
     {
         Value = value;
     }
-    public Guid Value { get; private set; }
-    public Guid GetGuidValue() => Value;
 }
 
 public record Amount : IValueObject

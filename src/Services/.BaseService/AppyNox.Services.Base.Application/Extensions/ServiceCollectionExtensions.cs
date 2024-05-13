@@ -2,6 +2,8 @@
 using AppyNox.Services.Base.Application.MediatR.Handlers.Anemic;
 using AppyNox.Services.Base.Application.MediatR.Handlers.DDD;
 using AppyNox.Services.Base.Core.Common;
+using AppyNox.Services.Base.Domain.DDD;
+using AppyNox.Services.Base.Domain.DDD.Interfaces;
 using AppyNox.Services.Base.Domain.Interfaces;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -61,7 +63,7 @@ public static class ServiceCollectionExtensions
     /// <returns>The updated <see cref="IServiceCollection"/> after registration.</returns>
     public static IServiceCollection AddNoxEntityCommands<TEntity, TId>(this IServiceCollection services)
     where TEntity : class, IHasStronglyTypedId
-        where TId : class, IHasGuidId
+        where TId : NoxId
     {
         // Register GetAllNoxEntitiesQueryHandler
         services.AddTransient<IRequestHandler<GetAllNoxEntitiesQuery<TEntity>, PaginatedList<object>>,

@@ -1,4 +1,4 @@
-﻿using AppyNox.Services.Base.Domain;
+﻿using AppyNox.Services.Base.Domain.DDD;
 
 namespace AppyNox.Services.Coupon.Domain.Coupons;
 

@@ -1,4 +1,5 @@
-﻿using AppyNox.Services.Base.Domain;
+﻿using AppyNox.Services.Base.Domain.DDD;
+using AppyNox.Services.Base.Domain.DDD.Interfaces;
 using AppyNox.Services.Base.Domain.Interfaces;
 
 namespace AppyNox.Services.License.Domain.Entities;
@@ -69,7 +70,11 @@ public class LicenseEntity : AggregateRoot, IHasStronglyTypedId, IHasCode
     #endregion
 }
 
-public record LicenseId(Guid Value) : IHasGuidId
+public record LicenseId : NoxId
 {
-    public Guid GetGuidValue() => Value;
+    protected LicenseId() { }
+    public LicenseId(Guid value)
+    {
+        Value = value;
+    }
 }

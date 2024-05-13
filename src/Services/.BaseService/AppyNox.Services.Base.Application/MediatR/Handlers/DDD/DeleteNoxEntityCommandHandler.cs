@@ -6,7 +6,8 @@ using AppyNox.Services.Base.Application.Interfaces.Repositories;
 using AppyNox.Services.Base.Application.MediatR.Commands;
 using AppyNox.Services.Base.Core.Common;
 using AppyNox.Services.Base.Core.Exceptions.Base;
-using AppyNox.Services.Base.Domain.Interfaces;
+using AppyNox.Services.Base.Domain.DDD;
+using AppyNox.Services.Base.Domain.DDD.Interfaces;
 using AutoMapper;
 using MediatR;
 
@@ -23,7 +24,7 @@ internal sealed class DeleteNoxEntityCommandHandler<TEntity, TId>(
         : BaseHandler<TEntity>(mapper, dtoMappingRegistry, serviceProvider, logger),
         IRequestHandler<DeleteNoxEntityCommand<TEntity, TId>>
         where TEntity : class, IHasStronglyTypedId
-        where TId : class, IHasGuidId
+        where TId : NoxId
 {
     #region [ Fields ]
 
@@ -41,7 +42,7 @@ internal sealed class DeleteNoxEntityCommandHandler<TEntity, TId>(
     {
         try
         {
-            Logger.LogInformation($"Deleting entity of type '{typeof(TEntity).Name}' with ID: {request.Id.GetGuidValue}.");
+            Logger.LogInformation($"Deleting entity of type '{typeof(TEntity).Name}' with ID: {request.Id.Value}.");
             await _repository.RemoveByIdAsync(request.Id);
             await _unitOfWork.SaveChangesAsync();
             await UpdateTotalCountOnCache(_cacheService, $"total-count-{typeof(TEntity).Name}", false);
@@ -52,7 +53,7 @@ internal sealed class DeleteNoxEntityCommandHandler<TEntity, TId>(
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, $"Error deleting entity of type '{typeof(TEntity).Name}' with ID: {request.Id.GetGuidValue}.");
+            Logger.LogError(ex, $"Error deleting entity of type '{typeof(TEntity).Name}' with ID: {request.Id.Value}.");
             throw new NoxApplicationException(exceptionCode: (int)NoxApplicationExceptionCode.GenericDeleteCommandError, innerException: ex);
         }
     }

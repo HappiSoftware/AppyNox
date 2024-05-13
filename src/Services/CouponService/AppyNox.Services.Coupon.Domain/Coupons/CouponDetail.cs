@@ -1,4 +1,5 @@
-﻿using AppyNox.Services.Base.Domain;
+﻿using AppyNox.Services.Base.Domain.DDD;
+using AppyNox.Services.Base.Domain.DDD.Interfaces;
 using AppyNox.Services.Base.Domain.Interfaces;
 using AppyNox.Services.Coupon.Domain.Coupons.Builders;
 
@@ -52,13 +53,11 @@ public class CouponDetail : AggregateMember, IHasStronglyTypedId, IHasCode
     #endregion
 }
 
-public record CouponDetailId : IHasGuidId, IValueObject
+public record CouponDetailId : NoxId
 {
     protected CouponDetailId() { }
     public CouponDetailId(Guid value)
     {
         Value = value;
     }
-    public Guid Value { get; private set; }
-    public Guid GetGuidValue() => Value;
 }

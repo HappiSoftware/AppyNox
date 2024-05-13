@@ -5,6 +5,7 @@ using AppyNox.Services.Base.API.ViewModels;
 using AppyNox.Services.Base.Application.MediatR.Commands;
 using AppyNox.Services.Base.Core.Enums;
 using AppyNox.Services.Coupon.Domain.Coupons;
+using AppyNox.Services.Coupon.Domain.Coupons.Builders;
 using Asp.Versioning;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;

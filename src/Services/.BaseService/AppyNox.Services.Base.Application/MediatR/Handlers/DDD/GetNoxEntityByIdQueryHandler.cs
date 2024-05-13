@@ -5,7 +5,8 @@ using AppyNox.Services.Base.Application.Interfaces.Repositories;
 using AppyNox.Services.Base.Application.MediatR.Commands;
 using AppyNox.Services.Base.Core.Common;
 using AppyNox.Services.Base.Core.Exceptions.Base;
-using AppyNox.Services.Base.Domain.Interfaces;
+using AppyNox.Services.Base.Domain.DDD;
+using AppyNox.Services.Base.Domain.DDD.Interfaces;
 using AutoMapper;
 using MediatR;
 
@@ -20,7 +21,7 @@ internal class GetNoxEntityByIdQueryHandler<TEntity, TId>(
         : BaseHandler<TEntity>(mapper, dtoMappingRegistry, serviceProvider, logger),
         IRequestHandler<GetNoxEntityByIdQuery<TEntity, TId>, object>
         where TEntity : class, IHasStronglyTypedId
-        where TId : class, IHasGuidId
+        where TId : NoxId
 {
     #region [ Fields ]
 

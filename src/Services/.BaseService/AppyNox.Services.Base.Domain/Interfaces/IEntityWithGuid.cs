@@ -1,4 +1,6 @@
-﻿namespace AppyNox.Services.Base.Domain.Interfaces;
+﻿using AppyNox.Services.Base.Domain.DDD.Interfaces;
+
+namespace AppyNox.Services.Base.Domain.Interfaces;
 
 /// <summary>
 /// Used for Anemic Domain Modeling. If you are using Domain Driven Design, use

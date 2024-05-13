@@ -1,5 +1,5 @@
 ﻿using AppyNox.Services.Base.Application.Interfaces.Loggers;
-using AppyNox.Services.Base.Domain;
+using AppyNox.Services.Base.Domain.DDD;
 using AppyNox.Services.Base.Domain.Outbox;
 using AppyNox.Services.Base.Infrastructure.Data;
 using MediatR;
