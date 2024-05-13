@@ -42,18 +42,6 @@ public static class HostApplicationBuilderExtensions
         });
     }
 
-    public static void ConfigureRedis(this IHostApplicationBuilder builder, IConfiguration configuration)
-    {
-        RedisConfiguration? redisConfig = configuration.GetSection("Redis").Get<RedisConfiguration>();
-        if (redisConfig == null || string.IsNullOrWhiteSpace(redisConfig.ConnectionString))
-        {
-            throw new InvalidOperationException("Redis configuration is missing or invalid.");
-        }
-
-        builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(redisConfig.ConnectionString));
-        builder.Services.AddSingleton<ICacheService, RedisCacheService>();
-    }
-
     /// <summary>
     /// Adds and loads configuration settings from Consul for a specified microservice. This method initializes a Consul
     /// client, uploads local configuration files (appsettings or ocelot) to the Consul KV store, and configures the application

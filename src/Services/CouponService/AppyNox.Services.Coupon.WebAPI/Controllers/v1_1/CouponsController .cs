@@ -11,7 +11,7 @@ using Asp.Versioning;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using static AppyNox.Services.Coupon.WebAPI.Permission.Permissions;
+using static AppyNox.Services.Coupon.Application.Permission.Permissions;
 
 namespace AppyNox.Services.Coupon.WebAPI.Controllers.v1_1;
 

@@ -1,13 +1,13 @@
-﻿using AppyNox.Services.Base.API.Exceptions;
-using AppyNox.Services.Base.API.Exceptions.Base;
-using AppyNox.Services.Base.API.Localization;
-using AppyNox.Services.Base.Application.Interfaces.Authentication;
+﻿using AppyNox.Services.Base.Application.Interfaces.Authentication;
 using AppyNox.Services.Base.Core.Common;
+using AppyNox.Services.Base.Infrastructure.Exceptions;
+using AppyNox.Services.Base.Infrastructure.Exceptions.Base;
+using AppyNox.Services.Base.Infrastructure.Localization;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 
-namespace AppyNox.Services.Base.API.Authentication;
+namespace AppyNox.Services.Base.Infrastructure.Authentication;
 
 public class NoxTokenManager(JwtConfiguration jwtConfiguration) : INoxTokenManager
 {
@@ -26,7 +26,7 @@ public class NoxTokenManager(JwtConfiguration jwtConfiguration) : INoxTokenManag
     /// </summary>
     /// <param name="token">The JWT token to validate.</param>
     /// <returns>True if the token is valid; otherwise, false.</returns>
-    /// <exception cref="NoxApiException">Thrown when token has expired.</exception>
+    /// <exception cref="NoxTokenExpiredException">Thrown when token has expired.</exception>
     public async Task<bool> VerifyToken(string token)
     {
         var validationParameters = new TokenValidationParameters
@@ -48,11 +48,11 @@ public class NoxTokenManager(JwtConfiguration jwtConfiguration) : INoxTokenManag
         }
         catch (SecurityTokenExpiredException)
         {
-            throw new NoxTokenExpiredException(NoxApiResourceService.ExpiredToken);
+            throw new NoxTokenExpiredException(NoxInfrastructureResourceService.ExpiredToken);
         }
         catch (Exception)
         {
-            throw new NoxAuthenticationException(NoxApiResourceService.InvalidToken, (int)NoxApiExceptionCode.AuthenticationInvalidToken);
+            throw new NoxAuthenticationException(NoxInfrastructureResourceService.InvalidToken, (int)NoxInfrastructureExceptionCode.AuthenticationInvalidToken);
         }
     }
 
@@ -61,13 +61,13 @@ public class NoxTokenManager(JwtConfiguration jwtConfiguration) : INoxTokenManag
     /// </summary>
     /// <param name="token">The JWT token.</param>
     /// <returns>User information if token is valid.</returns>
-    /// <exception cref="NoxApiException">Thrown when token is invalid or user information is not found.</exception>
+    /// <exception cref="NoxInfrastructureException">Thrown when token is invalid or user information is not found.</exception>
     public string GetUserInfoByToken(string token)
     {
         if (string.IsNullOrWhiteSpace(token)) return string.Empty;
 
         var jwtToken = _tokenHandler.ReadToken(token.Replace("\"", string.Empty)) as JwtSecurityToken
-            ?? throw new NoxApiException(NoxApiResourceService.WrongCredentials, (int)HttpStatusCode.NotFound);
+            ?? throw new NoxInfrastructureException(NoxInfrastructureResourceService.WrongCredentials, (int)HttpStatusCode.NotFound);
 
         var claim = jwtToken.Claims.FirstOrDefault(x => x.Type == "nameid");
         if (claim != null) return claim.Value;

@@ -15,17 +15,7 @@ internal enum NoxApiExceptionCode
 
     CorrelationIdError = 1000,
 
-    AuthenticationInvalidToken = 1001,
-
-    AuthenticationNullToken = 1002,
-
-    ExpiredToken = 1003,
-
-    AuthorizationFailed = 1004,
-
-    AuthorizationInvalidToken = 1005,
-
-    SwaggerGenerationException = 1006
+    SwaggerGenerationException = 1001
 }
 
 #endregion

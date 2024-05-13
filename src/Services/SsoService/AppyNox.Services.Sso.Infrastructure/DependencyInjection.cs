@@ -1,12 +1,16 @@
 ﻿using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Core.Common;
-using AppyNox.Services.Base.Core.Enums;
-using AppyNox.Services.Base.Infrastructure.Extensions;
+using AppyNox.Services.Base.Infrastructure.Authentication;
 using AppyNox.Services.Base.Infrastructure.HostedServices;
 using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
+using AppyNox.Services.Sso.Application.Interfaces.Authentication;
+using AppyNox.Services.Sso.Application.Permission;
 using AppyNox.Services.Sso.Application.Validators.SharedRules;
 using AppyNox.Services.Sso.Domain.Entities;
+using AppyNox.Services.Sso.Infrastructure.Authentication;
+using AppyNox.Services.Sso.Infrastructure.Configuration;
 using AppyNox.Services.Sso.Infrastructure.Data;
+using AppyNox.Services.Sso.Infrastructure.Managers;
 using AppyNox.Services.Sso.Infrastructure.MassTransit.Consumers;
 using AppyNox.Services.Sso.Infrastructure.MassTransit.Filters;
 using AppyNox.Services.Sso.Infrastructure.MassTransit.Sagas;
@@ -14,13 +18,14 @@ using AppyNox.Services.Sso.Infrastructure.Services;
 using AppyNox.Services.Sso.SharedEvents.Events;
 using Consul;
 using MassTransit;
-using MassTransit.Middleware;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Quartz.Impl.AdoJobStore.Common;
+using Microsoft.IdentityModel.Tokens;
 
 namespace AppyNox.Services.Sso.Infrastructure;
 
@@ -37,12 +42,11 @@ public static class DependencyInjection
     /// <param name="builder">The IHostApplicationBuilder of the program.</param>
     /// <param name="configuration">The IConfiguration instance to access application settings.</param>
     public static IServiceCollection AddSsoInfrastructure(
-        this IHostApplicationBuilder builder,
+        this IServiceCollection services,
         IConfiguration configuration,
         INoxLogger noxLogger
     )
     {
-        IServiceCollection services = builder.Services;
 
         services.AddSingleton<INoxInfrastructureLogger, NoxInfrastructureLogger>();
 
@@ -53,8 +57,6 @@ public static class DependencyInjection
         services.AddDbContext<IdentityDatabaseContext>(
             options => options.UseNpgsql(connectionString)
         );
-
-        services.AddHttpContextAccessor();
 
         #endregion
 
@@ -184,7 +186,55 @@ public static class DependencyInjection
 
         #endregion
 
-        builder.ConfigureRedis(configuration);
+        #region [ Jwt Settings ]
+
+        noxLogger.LogInformation("Registering JWT Configuration.");
+        var jwtConfiguration = new SsoJwtConfiguration();
+        configuration.GetSection("JwtSettings:AppyNox").Bind(jwtConfiguration);
+
+        // Add JWT Authentication
+        services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = "NoxSsoJwtScheme";
+            options.DefaultChallengeScheme = "NoxSsoJwtScheme";
+        }).AddJwtBearer(options =>
+        {
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = jwtConfiguration.Issuer,
+                ValidAudience = jwtConfiguration.Audience,
+                IssuerSigningKey = new SymmetricSecurityKey(jwtConfiguration.GetSecretKeyBytes())
+            };
+        })
+        .AddScheme<AuthenticationSchemeOptions, NoxSsoJwtAuthenticationHandler>("NoxSsoJwtScheme", options =>
+        {
+        });
+
+        services.AddScoped<ICustomTokenManager, JwtTokenManager>();
+        services.AddScoped<ICustomUserManager, CustomUserManager>();
+
+        // Add Policy-based Authorization
+        services.AddAuthorization(options =>
+        {
+            List<string> _claims = [.. Permissions.Users.Metrics, .. Permissions.Roles.Metrics];
+
+            foreach (var item in _claims)
+            {
+                options.AddPolicy(item, builder =>
+                {
+                    builder.AddRequirements(new PermissionRequirement(item, "API.Permission"));
+                });
+            }
+        });
+
+        services.AddScoped<IAuthorizationHandler, NoxSsoAuthorizationHandler>();
+        noxLogger.LogInformation("Registering JWT Configuration completed.");
+
+        #endregion
 
         services.AddScoped<IDatabaseChecks, ValidatorDatabaseChecker>();
 

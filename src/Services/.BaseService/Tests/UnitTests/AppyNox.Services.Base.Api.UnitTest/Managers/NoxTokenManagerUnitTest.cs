@@ -1,20 +1,15 @@
-﻿using AppyNox.Services.Base.API.Authentication;
-using AppyNox.Services.Base.API.Exceptions;
-using AppyNox.Services.Base.API.Localization;
+﻿using AppyNox.Services.Base.API.Localization;
 using AppyNox.Services.Base.Core.Common;
-using Microsoft.AspNetCore.Identity;
+using AppyNox.Services.Base.Infrastructure.Authentication;
+using AppyNox.Services.Base.Infrastructure.Exceptions;
+using AppyNox.Services.Base.Infrastructure.Localization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Localization;
 using Microsoft.IdentityModel.Tokens;
 using Moq;
-using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Net;
 using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AppyNox.Services.Base.Api.UnitTest.Managers
 {
@@ -53,8 +48,10 @@ namespace AppyNox.Services.Base.Api.UnitTest.Managers
 
             var localizerFactory = new Mock<IStringLocalizerFactory>();
             localizerFactory.Setup(lf => lf.Create(typeof(NoxApiResourceService))).Returns(localizer.Object);
+            localizerFactory.Setup(lf => lf.Create(typeof(NoxInfrastructureResourceService))).Returns(localizer.Object);
 
             NoxApiResourceService.Initialize(localizerFactory.Object);
+            NoxInfrastructureResourceService.Initialize(localizerFactory.Object);
         }
 
         #endregion

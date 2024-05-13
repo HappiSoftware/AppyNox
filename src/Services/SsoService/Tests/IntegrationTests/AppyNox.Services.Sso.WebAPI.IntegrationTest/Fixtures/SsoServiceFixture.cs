@@ -1,9 +1,6 @@
-﻿using AppyNox.Services.Base.Core.Common;
-using AppyNox.Services.Base.IntegrationTests.Ductus;
+﻿using AppyNox.Services.Base.IntegrationTests.Ductus;
 using AppyNox.Services.Base.IntegrationTests.Helpers;
 using AppyNox.Services.Sso.Infrastructure.Data;
-using AppyNox.Services.Sso.WebAPI.Configuration;
-using Consul;
 using Ductus.FluentDocker.Model.Common;
 using Ductus.FluentDocker.Services;
 using Ductus.FluentDocker.Services.Impl;

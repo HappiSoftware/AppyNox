@@ -1,29 +1,21 @@
 using AppyNox.Services.Base.API.Constants;
 using AppyNox.Services.Base.API.Extensions;
 using AppyNox.Services.Base.API.Middleware.Options;
-using AppyNox.Services.Base.API.Permissions;
 using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Infrastructure.Extensions;
 using AppyNox.Services.Base.Infrastructure.HostedServices;
 using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
 using AppyNox.Services.Sso.Application;
-using AppyNox.Services.Sso.Application.Interfaces.Authentication;
 using AppyNox.Services.Sso.Domain.Entities;
 using AppyNox.Services.Sso.Infrastructure;
 using AppyNox.Services.Sso.Infrastructure.Data;
 using AppyNox.Services.Sso.Infrastructure.Localization;
-using AppyNox.Services.Sso.WebAPI.Configuration;
 using AppyNox.Services.Sso.WebAPI.ControllerDependencies;
 using AppyNox.Services.Sso.WebAPI.Localization;
-using AppyNox.Services.Sso.WebAPI.Managers;
 using AppyNox.Services.Sso.WebAPI.Middlewares;
-using AppyNox.Services.Sso.WebAPI.Permission;
 using Asp.Versioning;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Localization;
-using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
@@ -96,8 +88,8 @@ builder.Services.AddHealthChecks();
 #region [ Dependency Injection For Layers ]
 
 noxLogger.LogInformation("Registering DI's for layers.");
-builder.AddSsoInfrastructure(builder.Configuration, noxLogger);
 builder.Services.AddSsoApplication(configuration);
+builder.Services.AddSsoInfrastructure(configuration, noxLogger);
 noxLogger.LogInformation("Registering DI's for layers completed.");
 
 #endregion
@@ -107,56 +99,6 @@ noxLogger.LogInformation("Registering DI's for layers completed.");
 builder.Services.AddScoped<PasswordValidator<ApplicationUser>>();
 builder.Services.AddScoped<PasswordHasher<ApplicationUser>>();
 builder.Services.AddScoped<UsersControllerBaseDependencies>();
-
-#endregion
-
-#region [ Jwt Settings ]
-
-noxLogger.LogInformation("Registering JWT Configuration.");
-var jwtConfiguration = new SsoJwtConfiguration();
-configuration.GetSection("JwtSettings:AppyNox").Bind(jwtConfiguration);
-
-// Add JWT Authentication
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = "NoxSsoJwtScheme";
-    options.DefaultChallengeScheme = "NoxSsoJwtScheme";
-}).AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = jwtConfiguration.Issuer,
-        ValidAudience = jwtConfiguration.Audience,
-        IssuerSigningKey = new SymmetricSecurityKey(jwtConfiguration.GetSecretKeyBytes())
-    };
-})
-.AddScheme<AuthenticationSchemeOptions, NoxSsoJwtAuthenticationHandler>("NoxSsoJwtScheme", options =>
-{
-});
-
-builder.Services.AddScoped<ICustomTokenManager, JwtTokenManager>();
-builder.Services.AddScoped<ICustomUserManager, CustomUserManager>();
-
-// Add Policy-based Authorization
-builder.Services.AddAuthorization(options =>
-{
-    List<string> _claims = [.. Permissions.Users.Metrics, .. Permissions.Roles.Metrics];
-
-    foreach (var item in _claims)
-    {
-        options.AddPolicy(item, builder =>
-        {
-            builder.AddRequirements(new PermissionRequirement(item, "API.Permission"));
-        });
-    }
-});
-
-builder.Services.AddScoped<IAuthorizationHandler, NoxSsoAuthorizationHandler>();
-noxLogger.LogInformation("Registering JWT Configuration completed.");
 
 #endregion
 

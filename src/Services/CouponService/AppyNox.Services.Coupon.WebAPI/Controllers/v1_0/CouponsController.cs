@@ -9,7 +9,7 @@ using Asp.Versioning;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using static AppyNox.Services.Coupon.WebAPI.Permission.Permissions;
+using static AppyNox.Services.Coupon.Application.Permission.Permissions;
 using CouponAggreagate = AppyNox.Services.Coupon.Domain.Coupons.Coupon;
 
 namespace AppyNox.Services.Coupon.WebAPI.Controllers.v1_0;

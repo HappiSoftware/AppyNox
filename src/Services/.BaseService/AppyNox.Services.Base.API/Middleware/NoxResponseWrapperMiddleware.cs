@@ -1,6 +1,4 @@
-﻿using AppyNox.Services.Base.API.Exceptions.Base;
-using AppyNox.Services.Base.API.Exceptions.Interfaces;
-using AppyNox.Services.Base.API.Localization;
+﻿using AppyNox.Services.Base.API.Localization;
 using AppyNox.Services.Base.API.Middleware.Options;
 using AppyNox.Services.Base.API.Wrappers;
 using AppyNox.Services.Base.API.Wrappers.Results;
@@ -8,6 +6,7 @@ using AppyNox.Services.Base.Application.Exceptions;
 using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Core.Exceptions.Base;
 using AppyNox.Services.Base.Core.Extensions;
+using AppyNox.Services.Base.Infrastructure.Exceptions.Interfaces;
 using Microsoft.AspNetCore.Http;
 using System.Text.Json;
 
@@ -91,18 +90,7 @@ public class NoxResponseWrapperMiddleware(RequestDelegate next,
         catch (Exception exception)
         {
             _logger.LogError(exception, NoxApiResourceService.UnknownExceptionThrown);
-            if (exception.InnerException is NoxException noxException)
-            {
-                // Handle the specific case where the inner exception is a NoxException
-                NoxExceptionClone swappedException = new(noxException, exception);
-                _logger.LogError(noxException, "Inner NoxException detected.");
-                await HandleKnownExceptionAsync(context, swappedException, originalBodyStream);
-            }
-            else
-            {
-                // Continue with handling a truly unknown exception
-                await HandleUnknownExceptionAsync(context, exception, originalBodyStream);
-            }
+            await HandleUnknownExceptionAsync(context, exception, originalBodyStream);
         }
     }
 
@@ -116,6 +104,7 @@ public class NoxResponseWrapperMiddleware(RequestDelegate next,
         {
             StatusCodes.Status400BadRequest => NoxApiResourceService.BadRequestWrapper,
             StatusCodes.Status401Unauthorized => NoxApiResourceService.UnauthorizedWrapper,
+            StatusCodes.Status403Forbidden => NoxApiResourceService.ForbiddenAccess,
             StatusCodes.Status404NotFound => NoxApiResourceService.NotFoundWrapper,
             StatusCodes.Status405MethodNotAllowed => NoxApiResourceService.MethodNotAllowedWrapper,
             StatusCodes.Status415UnsupportedMediaType => NoxApiResourceService.UnsupportedMediaTypeWrapper,

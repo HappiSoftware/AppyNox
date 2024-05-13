@@ -33,7 +33,17 @@ internal enum NoxInfrastructureExceptionCode
 
     SqlInjectionError = 1009,
 
-    InvalidEncryptionSettingError = 1010
+    InvalidEncryptionSettingError = 1010,
+
+    AuthenticationInvalidToken = 1011,
+
+    AuthenticationNullToken = 1012,
+
+    ExpiredToken = 1013,
+
+    AuthorizationFailed = 1014,
+
+    AuthorizationInvalidToken = 1015,
 }
 
 #endregion
