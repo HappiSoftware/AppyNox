@@ -1,7 +1,10 @@
 # Changelog
 All notable changes to AppyNox will be documented in this file.
 
-## [1.10.0](https://github.com/HappiSoftware/AppyNox/compare/v1.9.0...v1.10.0) - NOT RELEASED
+## [1.11.0](https://github.com/HappiSoftware/AppyNox/compare/v1.10.0...v1.11.0) - NOT RELEASED
+
+
+## [1.10.0](https://github.com/HappiSoftware/AppyNox/compare/v1.9.0...v1.10.0) - 2024.05.15
 ### Added 
 - Feature request: Other Products Request to be able to use BaseHandler ([#289](https://github.com/HappiSoftware/AppyNox/issues/289))
 - Feature request: Swaggers should be maintained in services ([#204](https://github.com/HappiSoftware/AppyNox/issues/204))
