@@ -4,6 +4,14 @@ All notable changes to AppyNox will be documented in this file.
 ## [1.10.0](https://github.com/HappiSoftware/AppyNox/compare/v1.9.0...v1.10.0) - NOT RELEASED
 ### Added 
 - Feature request: Other Products Request to be able to use BaseHandler ([#289](https://github.com/HappiSoftware/AppyNox/issues/289))
+- Feature request: Swaggers should be maintained in services ([#204](https://github.com/HappiSoftware/AppyNox/issues/204))
+- Feature request: AutoMapper Exception should be handled ([#227](https://github.com/HappiSoftware/AppyNox/issues/227))
+- Feature request: SwaggerDynamicRequestBody should bypass JsonIgnored Properties ([#288](https://github.com/HappiSoftware/AppyNox/issues/288))
+- Feature request: Consul continuous health checks Should be available ([#293](https://github.com/HappiSoftware/AppyNox/issues/293))
+- Feature request: Implement Implicit Casting for Strongly Typed Ids ([#298](https://github.com/HappiSoftware/AppyNox/issues/298))
+
+### Improved
+- Refactoring request: General Maintenance ([#296](https://github.com/HappiSoftware/AppyNox/issues/296))
 
 
 ## [1.9.0](https://github.com/HappiSoftware/AppyNox/compare/v1.8.0...v1.9.0) - 2024.04.24
