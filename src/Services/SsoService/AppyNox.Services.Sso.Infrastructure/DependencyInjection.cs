@@ -2,6 +2,7 @@
 using AppyNox.Services.Base.Core.Common;
 using AppyNox.Services.Base.Infrastructure.Authentication;
 using AppyNox.Services.Base.Infrastructure.HostedServices;
+using AppyNox.Services.Base.Infrastructure.MassTransit.Bus;
 using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
 using AppyNox.Services.Sso.Application.Interfaces.Authentication;
 using AppyNox.Services.Sso.Application.Permission;
@@ -166,6 +167,48 @@ public static class DependencyInjection
 
             #endregion
         });
+
+        #region [INoxBus Configuration]
+
+        services.AddMassTransit<INoxBus>(busConfigurator =>
+        {
+            #region [ Consumers ]
+
+            busConfigurator.AddConsumer<CheckUserAvailabilityMessageConsumer>();
+
+            #endregion
+
+            #region [ RabbitMQ ]
+
+            busConfigurator.UsingRabbitMq(
+                (context, configurator) =>
+                {
+                    configurator.Host(
+                        new Uri(configuration["NoxMessageBroker:Host"]!),
+                        h =>
+                        {
+                            h.Username(configuration["NoxMessageBroker:Username"]!);
+                            h.Password(configuration["NoxMessageBroker:Password"]!);
+                        }
+                    );
+
+                    #region [ Endpoints ]
+
+                    configurator.ReceiveEndpoint("check-user-availability-in-sso", e =>
+                    {
+                        e.ConfigureConsumer<CheckUserAvailabilityMessageConsumer>(context);
+                    });
+
+                    #endregion
+
+                    configurator.ConfigureEndpoints(context);
+                }
+            );
+
+            #endregion
+        });
+
+        #endregion
 
         #endregion
 

@@ -2,6 +2,7 @@ version: '3.8'
 
 volumes:
   rabbitmq_data: 
+  common_rabbitmq_data: 
   consul_data: 
   redis_data: 
   redisinsight_data: 
@@ -19,6 +20,21 @@ services:
       RABBITMQ_DEFAULT_PASS: HappiCorp
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
+    command:
+      [
+        "bash",
+        "-c",
+        "chmod 400 /var/lib/rabbitmq/.erlang.cookie; rabbitmq-server"
+      ]
+    restart: on-failure
+
+  appynox-common-rabbitmq-service:
+    image: rabbitmq:management
+    environment:
+      RABBITMQ_DEFAULT_USER: NoxFleetComm
+      RABBITMQ_DEFAULT_PASS: NoxFleetComm
+    volumes:
+      - common_rabbitmq_data:/var/lib/rabbitmq
     command:
       [
         "bash",
