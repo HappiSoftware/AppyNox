@@ -3,6 +3,7 @@ using AppyNox.Services.Base.Core.Common;
 using AppyNox.Services.Base.Core.MassTransit.Bus;
 using AppyNox.Services.Base.Infrastructure.Authentication;
 using AppyNox.Services.Base.Infrastructure.HostedServices;
+using AppyNox.Services.Base.Infrastructure.MassTransit.Bus;
 using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
 using AppyNox.Services.Sso.Application.Interfaces.Authentication;
 using AppyNox.Services.Sso.Application.Permission;
