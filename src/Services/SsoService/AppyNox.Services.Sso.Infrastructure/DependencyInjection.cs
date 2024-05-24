@@ -1,5 +1,6 @@
 ﻿using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Core.Common;
+using AppyNox.Services.Base.Core.MassTransit.Bus;
 using AppyNox.Services.Base.Infrastructure.Authentication;
 using AppyNox.Services.Base.Infrastructure.HostedServices;
 using AppyNox.Services.Base.Infrastructure.MassTransit.Bus;
