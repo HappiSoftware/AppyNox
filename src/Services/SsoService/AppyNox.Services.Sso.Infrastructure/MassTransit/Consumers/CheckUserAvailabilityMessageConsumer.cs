@@ -1,4 +1,4 @@
-﻿using AppyNox.Services.Base.Core.MassTransit.CommonEvents;
+using AppyNox.Services.Base.Core.MassTransit.CommonEvents;
 using AppyNox.Services.Sso.Domain.Entities;
 using MassTransit;
 using Microsoft.AspNetCore.Identity;
