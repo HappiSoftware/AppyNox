@@ -18,6 +18,19 @@ services:
       - "5672:5672"
       - "15672:15672"
 
+  appynox-common-rabbitmq-service:
+    networks:
+      - nox_network
+    healthcheck:
+      test: [ "CMD", "rabbitmqctl", "status" ]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: always
+    ports:
+      - "5673:5672"
+      - "15673:15672"
+
   appynox-redis:
     networks:
       - nox_network

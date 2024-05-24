@@ -3,6 +3,8 @@ version: '3.8'
 networks:
   nox_network:
     driver: overlay
+  nox_common_network:
+    external: true
 
 services:
   appynox-rabbitmq-service:
@@ -11,6 +13,13 @@ services:
       RABBITMQ_DEFAULT_PASS: HappiCorp
     networks:
       - nox_network
+
+  appynox-common-rabbitmq-service:
+    environment:
+      RABBITMQ_DEFAULT_USER: NoxFleetComm
+      RABBITMQ_DEFAULT_PASS: NoxFleetComm
+    networks:
+      - nox_common_network
 
   appynox-consul:
     deploy:
