@@ -192,11 +192,23 @@ public static class DependencyInjection
                         }
                     );
 
+                    // Apply filters to the send and publish pipelines
+                    configurator.ConfigureSend(sendConfig =>
+                    {
+                        sendConfig.UseFilter(new AddSsoContextToSendContextFilter());
+                    });
+
+                    configurator.ConfigurePublish(publishConfig =>
+                    {
+                        publishConfig.UseFilter(new AddSsoContextToSendContextFilter());
+                    });
+
                     #region [ Endpoints ]
 
                     configurator.ReceiveEndpoint("check-user-availability-in-sso", e =>
                     {
                         e.ConfigureConsumer<CheckUserAvailabilityMessageConsumer>(context);
+                        e.UseConsumeFilter<SsoContextConsumeFilter<CheckUserAvailabilityMessageConsumer>>(context);
                     });
 
                     #endregion

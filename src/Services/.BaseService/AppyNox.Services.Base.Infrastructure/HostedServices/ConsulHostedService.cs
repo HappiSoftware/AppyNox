@@ -44,14 +44,14 @@ public class ConsulHostedService(IConsulClient consulClient, IConfiguration conf
                 Name = _consulConfig.ServiceName,
                 Address = _consulConfig.ServiceHost,
                 Port = _consulConfig.ServicePort,
-                Tags = _consulConfig.Tags
-                //Check = new AgentServiceCheck
-                //{
-                //    HTTP = $"{_consulConfig.Scheme}://{_consulConfig.HealthCheckServiceHost ?? _consulConfig.ServiceHost}:{_consulConfig.ServicePort}/{_consulConfig.HealthCheckUrl}",
-                //    Interval = TimeSpan.FromSeconds(_consulConfig.HealthCheckIntervalSeconds),
-                //    Timeout = TimeSpan.FromSeconds(_consulConfig.HealthCheckTimeoutSeconds),
-                //    DeregisterCriticalServiceAfter = TimeSpan.FromMinutes(1)
-                //}
+                Tags = _consulConfig.Tags,
+                Check = new AgentServiceCheck
+                {
+                    HTTP = $"{_consulConfig.Scheme}://{_consulConfig.HealthCheckServiceHost ?? _consulConfig.ServiceHost}:{_consulConfig.ServicePort}/{_consulConfig.HealthCheckUrl}",
+                    Interval = TimeSpan.FromSeconds(_consulConfig.HealthCheckIntervalSeconds),
+                    Timeout = TimeSpan.FromSeconds(_consulConfig.HealthCheckTimeoutSeconds),
+                    DeregisterCriticalServiceAfter = TimeSpan.FromMinutes(1)
+                }
             };
 
             _logger.LogInformation($"Registering service with Consul: {registration.Name}");
