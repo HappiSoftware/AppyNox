@@ -3,6 +3,6 @@
 namespace AppyNox.Services.Base.Core.MassTransit.CommonEvents;
 
 
-public record CheckUserAvailabilityMessage(Guid CorrelationId, Guid UserId, string Email) : CorrelatedBy<Guid>;
+public record CheckUserAvailabilityMessage(Guid CorrelationId, Guid UserId, Guid CompanyId, string Email) : CorrelatedBy<Guid>;
 public record UserIsAvailableEvent(Guid CorrelationId, Guid UserId) : CorrelatedBy<Guid>;
 public record UserIsNotAvailableEvent(Guid CorrelationId, Guid UserId) : CorrelatedBy<Guid>;

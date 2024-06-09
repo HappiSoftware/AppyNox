@@ -1,5 +1,6 @@
 using AppyNox.Services.Base.Core.MassTransit.CommonEvents;
 using AppyNox.Services.Sso.Domain.Entities;
+using AppyNox.Services.Sso.Infrastructure.AsyncLocals;
 using MassTransit;
 using Microsoft.AspNetCore.Identity;
 
@@ -19,6 +20,9 @@ internal sealed class CheckUserAvailabilityMessageConsumer(UserManager<Applicati
     {
         try
         {
+            SsoContext.IsAdmin = true;
+            SsoContext.CompanyId = context.Message.CompanyId;
+
             var identityUser = await _userManager.FindByEmailAsync(context.Message.Email);
 
             if (identityUser == null)
