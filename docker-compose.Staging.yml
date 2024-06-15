@@ -17,6 +17,21 @@ services:
       timeout: 5s
       retries: 20
 
+  appynox-common-rabbitmq-service:
+    environment:
+      RABBITMQ_DEFAULT_USER: NoxFleetComm
+      RABBITMQ_DEFAULT_PASS: NoxFleetComm
+    networks:
+      - integration-test
+    healthcheck:
+      test: [ "CMD-SHELL", "rabbitmq-diagnostics -q ping" ]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    ports:
+      - "5673:5672"
+      - "15673:15672"
+
   appynox-redis:
     networks:
       - integration-test

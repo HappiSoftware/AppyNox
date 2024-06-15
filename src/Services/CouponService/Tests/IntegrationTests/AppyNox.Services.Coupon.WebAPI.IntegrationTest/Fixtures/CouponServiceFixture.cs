@@ -70,22 +70,23 @@ public class CouponServiceFixture : DockerComposeTestBase
         return new DockerComposeCompositeService(DockerHost,
             new Ductus.FluentDocker.Model.Compose.DockerComposeConfig
             {
-                ComposeFilePath = new List<string> { file, fileStaging },
+                ComposeFilePath = [file, fileStaging],
                 ForceRecreate = true,
                 RemoveOrphans = true,
                 StopOnDispose = true,
                 Services =
                 [
                     "appynox-rabbitmq-service",
-                        "appynox-consul",
-                        "appynox-gateway-ocelotgateway",
-                        "appynox-coupon-db",
-                        "appynox-redis",
-                        "appynox-services-coupon-webapi",
-                        "appynox-sso-db",
-                        "appynox-sso-saga-db",
-                        "appynox-services-sso-webapi",
-                        "appynox-redis"
+                    "appynox-common-rabbitmq-service",
+                    "appynox-consul",
+                    "appynox-gateway-ocelotgateway",
+                    "appynox-coupon-db",
+                    "appynox-redis",
+                    "appynox-services-coupon-webapi",
+                    "appynox-sso-db",
+                    "appynox-sso-saga-db",
+                    "appynox-services-sso-webapi",
+                    "appynox-redis"
                 ]
             });
     }
