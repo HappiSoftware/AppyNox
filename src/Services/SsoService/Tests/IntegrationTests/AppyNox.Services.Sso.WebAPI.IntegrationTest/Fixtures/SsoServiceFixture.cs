@@ -82,12 +82,13 @@ public class SsoServiceFixture : DockerComposeTestBase
                 Services =
                 [
                     "appynox-rabbitmq-service",
-                        "appynox-consul",
-                        "appynox-gateway-ocelotgateway",
-                        "appynox-sso-db",
-                        "appynox-sso-saga-db",
-                        "appynox-redis",
-                        "appynox-services-sso-webapi"
+                    "appynox-common-rabbitmq-service",
+                    "appynox-consul",
+                    "appynox-gateway-ocelotgateway",
+                    "appynox-sso-db",
+                    "appynox-sso-saga-db",
+                    "appynox-redis",
+                    "appynox-services-sso-webapi"
                 ],
             });
     }

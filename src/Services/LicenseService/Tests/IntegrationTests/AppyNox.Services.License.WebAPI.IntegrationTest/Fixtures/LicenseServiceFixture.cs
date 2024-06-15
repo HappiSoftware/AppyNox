@@ -72,6 +72,7 @@ namespace AppyNox.Services.License.WebAPI.IntegrationTest.Fixtures
                     Services =
                     [
                         "appynox-rabbitmq-service",
+                        "appynox-common-rabbitmq-service",
                         "appynox-consul",
                         "appynox-gateway-ocelotgateway",
                         "appynox-license-db",
