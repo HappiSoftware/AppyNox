@@ -1,10 +1,12 @@
 ﻿using AppyNox.Services.Base.Application.Dtos;
+using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Domain.Interfaces;
 using AppyNox.Services.Base.Infrastructure.Exceptions.Base;
 using Microsoft.EntityFrameworkCore;
 using System.Collections;
 using System.Linq.Expressions;
 using System.Net;
+using System.Text.RegularExpressions;
 
 namespace AppyNox.Services.Base.Infrastructure.Repositories;
 
@@ -188,13 +190,23 @@ public static class RepositoryHelpers
         "pg_read_file", "pg_ls_dir", // Functions that can read server files or list directory contents
     };
 
-    public static bool IsValidExpression(string expression)
+    public static bool IsValidExpression(string expression, INoxInfrastructureLogger logger)
     {
-        // Ensure the expression doesn't contain any blacklisted terms
-        if (Blacklist.Any(blacklisted => expression.Contains(blacklisted, StringComparison.OrdinalIgnoreCase)))
+        // Find all blacklisted terms that match the expression
+        var maliciousKeywords = Blacklist.Where(blacklisted =>
+            Regex.IsMatch(expression, $@"\b{Regex.Escape(blacklisted)}\b", RegexOptions.IgnoreCase))
+            .ToList();
+
+        if (maliciousKeywords.Count != 0)
         {
-            throw new NoxInfrastructureException("Malicious behavior detected.", (int)NoxInfrastructureExceptionCode.SqlInjectionError, (int)HttpStatusCode.BadRequest);
+            string maliciousKeywordsString = string.Join(", ", maliciousKeywords);
+            NoxInfrastructureException exp = new($"Malicious behavior detected. Keywords: '{maliciousKeywordsString}'",
+                                                 (int)NoxInfrastructureExceptionCode.SqlInjectionError,
+                                                 (int)HttpStatusCode.BadRequest);
+            logger.LogCritical(exp, $"Malicious keyword(s) used in query parameters: '{maliciousKeywordsString}'");
+            throw exp;
         }
+
         return true;
     }
 

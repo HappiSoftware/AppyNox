@@ -32,6 +32,25 @@ services:
       - "5672:5672"
       - "15672:15672"
 
+  appynox-common-rabbitmq-service:
+    image: rabbitmq:management
+    environment:
+      RABBITMQ_DEFAULT_USER: NoxFleetComm
+      RABBITMQ_DEFAULT_PASS: NoxFleetComm
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    command:
+      [
+        "bash",
+        "-c",
+        "chmod 400 /var/lib/rabbitmq/.erlang.cookie; rabbitmq-server"
+      ]
+    networks:
+      - nox_network
+    ports:
+      - "5673:5672"
+      - "15673:15672"
+
   appynox-consul:
     image: "hashicorp/consul:latest"
     deploy:

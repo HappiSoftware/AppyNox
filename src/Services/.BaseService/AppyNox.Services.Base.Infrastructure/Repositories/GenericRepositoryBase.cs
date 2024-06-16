@@ -109,13 +109,13 @@ public abstract class GenericRepositoryBase<TEntity> : IGenericRepository<TEntit
             .AsNoTracking();
 
             // Validate and apply sorting
-            if (!string.IsNullOrWhiteSpace(queryParameters.SortBy) && IsValidExpression(queryParameters.SortBy))
+            if (!string.IsNullOrWhiteSpace(queryParameters.SortBy) && IsValidExpression(queryParameters.SortBy, _logger))
             {
                 query = query.OrderBy(queryParameters.SortBy);
             }
 
             // Validate and apply filtering
-            if (!string.IsNullOrWhiteSpace(queryParameters.Filter) && IsValidExpression(queryParameters.Filter))
+            if (!string.IsNullOrWhiteSpace(queryParameters.Filter) && IsValidExpression(queryParameters.Filter, _logger))
             {
                 query = query.Where(queryParameters.Filter);
             }
