@@ -41,19 +41,17 @@ public class CouponRepository(CouponDbContext context, INoxInfrastructureLogger 
             var query = _context.Coupons
                 .AsQueryable();
 
-            if (!string.IsNullOrEmpty(queryParameters.SortBy) && IsValidExpression(queryParameters.SortBy))
+            if (!string.IsNullOrEmpty(queryParameters.SortBy) && IsValidExpression(queryParameters.SortBy, _logger))
             {
                 query = query.OrderBy(queryParameters.SortBy);
             }
 
-            if (!string.IsNullOrEmpty(queryParameters.Filter) && IsValidExpression(queryParameters.Filter))
+            if (!string.IsNullOrEmpty(queryParameters.Filter) && IsValidExpression(queryParameters.Filter, _logger))
             {
                 query = query.Where(queryParameters.Filter);
             }
 
             var entities = await query
-
-                //.Select(CreateProjection<TEntity>(dtoType))
                 .Skip((queryParameters.PageNumber - 1) * queryParameters.PageSize)
                 .Take(queryParameters.PageSize)
                 .ToListAsync();
