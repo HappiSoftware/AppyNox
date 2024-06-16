@@ -15,6 +15,9 @@ public class TicketSimpleCreateValidator : DtoValidatorBase<TicketSimpleCreateDt
 
         RuleFor(ticket => ticket.Content)
             .NotNull().NotEmpty().WithMessage("Content can not be null");
+
+        RuleFor(ticket => ticket.ReportDate)
+            .NotNull().NotEmpty().WithMessage("ReportDate can not be null");
     }
 
     #endregion

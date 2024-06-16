@@ -69,7 +69,7 @@ internal sealed class CreateEntityCommandHandler<TEntity>(
         }
         catch (Exception ex)
         {
-            throw new NoxApplicationException(exceptionCode: (int)NoxApplicationExceptionCode.GenericCreateCommandError, innerException: ex);
+            throw new NoxApplicationException(ex.Message, exceptionCode: (int)NoxApplicationExceptionCode.GenericCreateCommandError, innerException: ex.InnerException);
         }
     }
 
