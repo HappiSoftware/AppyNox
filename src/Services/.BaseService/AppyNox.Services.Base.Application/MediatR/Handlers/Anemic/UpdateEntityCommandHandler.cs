@@ -69,7 +69,7 @@ internal class UpdateEntityCommandHandler<TEntity>(
             }
             dynamic idDto = new ExpandoObject();
             idDto.Id = request.Id;
-            await _repository.GetByIdAsync(request.Id);
+            TEntity existingEntity = await _repository.GetByIdAsync(request.Id);
 
             #endregion
 
@@ -81,8 +81,7 @@ internal class UpdateEntityCommandHandler<TEntity>(
 
             #endregion
 
-            TEntity mappedEntity = Mapper.Map(dtoObject, dtoType, typeof(TEntity));
-            _repository.Update(mappedEntity);
+            _repository.Update(existingEntity, dtoObject);
             await _unitOfWork.SaveChangesAsync();
         }
         catch (Exception ex) when (ex is INoxException)

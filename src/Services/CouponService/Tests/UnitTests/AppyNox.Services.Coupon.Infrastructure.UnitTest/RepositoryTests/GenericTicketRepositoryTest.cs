@@ -5,23 +5,21 @@ using AppyNox.Services.Base.Infrastructure.Repositories.Common;
 using AppyNox.Services.Base.Infrastructure.UnitTests.Fixtures;
 using AppyNox.Services.Base.Infrastructure.UnitTests.Stubs;
 using AppyNox.Services.Coupon.Application.Dtos.TicketDtos.Models.Basic;
-using AppyNox.Services.Coupon.Application.Dtos.TicketDtos.Models.Extended;
+using AppyNox.Services.Coupon.Domain.Coupons;
 using AppyNox.Services.Coupon.Domain.Entities;
 using AppyNox.Services.Coupon.Domain.Localization;
 using AppyNox.Services.Coupon.Infrastructure.Data;
 using AppyNox.Services.Coupon.Infrastructure.Repositories;
 using AppyNox.Services.Coupon.Infrastructure.UnitTest.Seeds;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using Moq;
-using System.IO;
 
 namespace AppyNox.Services.Coupon.Infrastructure.UnitTest.RepositoryTests;
 
 public class GenericTicketRepositoryTest : IClassFixture<RepositoryFixture>
 {
     #region [ Fields ]
-
-    private readonly RepositoryFixture _fixture;
 
     private readonly NoxInfrastructureLoggerStub _noxLoggerStub;
 
@@ -33,7 +31,6 @@ public class GenericTicketRepositoryTest : IClassFixture<RepositoryFixture>
 
     public GenericTicketRepositoryTest(RepositoryFixture fixture)
     {
-        _fixture = fixture;
         _noxLoggerStub = fixture.NoxLoggerStub;
         _cacheService = fixture.RedisCacheService.Object;
         var localizer = new Mock<IStringLocalizer>();
@@ -265,26 +262,24 @@ public class GenericTicketRepositoryTest : IClassFixture<RepositoryFixture>
 
         // Hold ticket old data
         Guid id = existingTicket.Id;
-        string title = existingTicket.Title;
-        string content = existingTicket.Content;
+        string title = $"{existingTicket.Title} updated";
+        string content = $"{existingTicket.Content} updated";
         DateTime reportDate = existingTicket.ReportDate;
 
-        // Update ticket entity
-        existingTicket.Title = $"{title} updated";
-        existingTicket.Content = $"{content} updated";
-        existingTicket.ReportDate = reportDate.AddDays(2);
+        // Create the update dto
+        TicketSimpleUpdateDto ticketSimpleUpdateDto = new() { Id = id, Content = content, Title = title};
 
-        repository.Update(existingTicket);
+        repository.Update(existingTicket, ticketSimpleUpdateDto);
         await unitOfWork.SaveChangesAsync();
 
-        var result = await repository.GetByIdAsync(existingTicket.Id);
+        var result = await repository.GetByIdAsync(id);
 
         Assert.NotNull(result);
 
         Assert.Equal(id, result.Id);
-        Assert.Equal(existingTicket.Id, result.Id);
-        Assert.Equal(existingTicket.Title, result.Title);
-        Assert.Equal(existingTicket.Content, result.Content);
+        Assert.Equal(title, result.Title);
+        Assert.Equal(content, result.Content);
+        Assert.Equal(reportDate, result.ReportDate); // make sure the value which is not in update dto is not changed.
     }
 
     #endregion

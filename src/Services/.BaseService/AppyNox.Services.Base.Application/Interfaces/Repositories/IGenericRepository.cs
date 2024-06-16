@@ -46,7 +46,8 @@ public interface IGenericRepository<TEntity> where TEntity : class, IEntityWithG
     /// Updates an existing entity of type TEntity in the repository.
     /// </summary>
     /// <param name="entity">The entity to update.</param>
-    void Update(TEntity entity);
+    /// <param name="changedPropertiesDto">The changed properties.</param>
+    void Update(TEntity entity, dynamic changedPropertiesDto);
 
     #endregion
 }

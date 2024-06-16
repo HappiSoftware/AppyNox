@@ -44,6 +44,8 @@ internal enum NoxInfrastructureExceptionCode
     AuthorizationFailed = 1014,
 
     AuthorizationInvalidToken = 1015,
+
+    PatchingDataError = 1016
 }
 
 #endregion

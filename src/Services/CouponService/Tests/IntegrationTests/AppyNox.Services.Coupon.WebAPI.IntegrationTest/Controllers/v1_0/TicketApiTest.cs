@@ -99,7 +99,8 @@ public class TicketApiTest(CouponServiceFixture couponApiTestFixture)
         TicketSimpleCreateDto ticketSimpleCreateDto = new()
         {
             Title = "new title",
-            Content = "new content"
+            Content = "new content",
+            ReportDate = DateTime.UtcNow,
         };
         var jsonRequest = JsonSerializer.Serialize(ticketSimpleCreateDto);
         var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");

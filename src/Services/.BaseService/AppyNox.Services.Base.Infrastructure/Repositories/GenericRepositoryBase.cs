@@ -176,19 +176,16 @@ public abstract class GenericRepositoryBase<TEntity> : IGenericRepository<TEntit
     /// Updates an existing entity of type TEntity in the repository.
     /// </summary>
     /// <param name="entity">The entity to update.</param>
+    /// <param name="changedPropertiesDto">The changed properties.</param>
     /// <exception cref="NoxInfrastructureException">Thrown if an unexpected error occurs.</exception>
-    public void Update(TEntity entity)
+    public void Update(TEntity entity, dynamic changedPropertiesDto)
     {
         try
         {
             _logger.LogInformation($"Attempting to update entity with ID: '{entity.Id}' Type: '{typeof(TEntity).Name}'.");
             _context.Set<TEntity>().Entry(entity).State = EntityState.Unchanged;
 
-            if (!_context.Set<TEntity>().Local.Any(e => e == entity))
-            {
-                _context.Set<TEntity>().Attach(entity);
-            }
-
+            _context.Entry(entity).CurrentValues.SetValues(changedPropertiesDto);
             _context.Entry(entity).State = EntityState.Modified;
 
             _logger.LogInformation($"Entity marked as modified for update with ID: '{entity.Id}' Type: '{typeof(TEntity).Name}'.");

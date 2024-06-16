@@ -15,5 +15,7 @@ public class TicketSimpleCreateDto
     [JsonIgnore]
     public string IgnoredData { get; set; } = string.Empty;
 
+    public DateTime ReportDate { get; set; }
+
     #endregion
 }
