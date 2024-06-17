@@ -124,7 +124,7 @@ namespace AppyNox.Services.License.Application.UnitTest.CQRSTests
         #region [ Public Methods ]
 
         [Fact]
-        public async void GetAllEntitiesQuery_ShouldSuccess()
+        public async Task GetAllEntitiesQuery_ShouldSuccess()
         {
             // Act
             var result = await _fixture.MockMediator.Object.Send(new GetAllNoxEntitiesQuery<LicenseEntity>(_fixture.MockQueryParameters.Object));
@@ -134,7 +134,7 @@ namespace AppyNox.Services.License.Application.UnitTest.CQRSTests
         }
 
         [Fact]
-        public async void GetEntityByIdQuery_ShouldSuccess()
+        public async Task GetEntityByIdQuery_ShouldSuccess()
         {
             // Act
             var result = await _fixture.MockMediator.Object.Send(new GetNoxEntityByIdQuery<LicenseEntity, LicenseId>(It.IsAny<LicenseId>(), _fixture.MockQueryParameters.Object));
@@ -145,7 +145,7 @@ namespace AppyNox.Services.License.Application.UnitTest.CQRSTests
         }
 
         [Fact]
-        public async void CreateEntityCommand_ShouldSuccess()
+        public async Task CreateEntityCommand_ShouldSuccess()
         {
             // Prepare
             string jsonData = @"{

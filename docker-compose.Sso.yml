@@ -161,8 +161,8 @@ services:
       - ASPNETCORE_URLS=http://+:7001
       - WAIT_HOSTS=appynox-sso-db:5432,appynox-sso-saga-db:5432,appynox-rabbitmq-service:5672
       - WAIT_TIMEOUT=300
-      - WAIT_SLEEP_INTERVAL=30
-      - WAIT_HOST_CONNECT_TIMEOUT=30
+      - WAIT_SLEEP_INTERVAL=10
+      - WAIT_HOST_CONNECT_TIMEOUT=10
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro

@@ -2,7 +2,7 @@
 	<PropertyGroup>
 		<TargetFramework>net8.0</TargetFramework>
 		<PackageId>NoxAPI</PackageId>
-		<Version>1.10.2</Version>
+		<Version>1.11.0</Version>
 		<Authors>Behlül UYSAL, Yasin DERE</Authors>
 		<Company>HappiSoftware</Company>
 		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
@@ -12,7 +12,7 @@
 		<Description>
 			The NoxAPI package provides foundational services and utilities for Nox MicroService API Layer.
 		</Description>
-		<PackageReleaseNotes>https://github.com/HappiSoftware/AppyNox/releases/tag/v1.10.0</PackageReleaseNotes>
+		<PackageReleaseNotes>https://github.com/HappiSoftware/AppyNox/releases/tag/v1.11.0</PackageReleaseNotes>
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
 		<PackageIcon>icon.png</PackageIcon>
 	</PropertyGroup>
@@ -24,11 +24,11 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Asp.Versioning.Mvc" Version="8.0.0" />
-		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
-		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.1" />
-		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.1" />
-		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.9.0" />
+		<PackageReference Include="Asp.Versioning.Mvc" Version="8.1.0" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.6" />
+		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.6" />
+		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.9.2" />
 	</ItemGroup>
 
 	<ItemGroup>

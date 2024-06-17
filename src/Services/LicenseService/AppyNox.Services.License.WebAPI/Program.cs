@@ -123,12 +123,12 @@ if (builder.Environment.IsDevelopment())
         {
             if (!apiDesc.TryGetMethodInfo(out MethodInfo methodInfo)) return false;
 
-            var versions = methodInfo.DeclaringType
+            var versions = methodInfo.DeclaringType?
                 .GetCustomAttributes(true)
                 .OfType<ApiVersionAttribute>()
                 .SelectMany(attr => attr.Versions);
 
-            return versions.Any(v => $"v{v}" == version);
+            return versions?.Any(v => $"v{v}" == version) ?? false;
         });
     });
     noxLogger.LogInformation("Adjusting swagger endpoints completed.");

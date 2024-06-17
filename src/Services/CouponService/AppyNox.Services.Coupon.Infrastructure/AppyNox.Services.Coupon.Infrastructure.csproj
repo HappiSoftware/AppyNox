@@ -8,13 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\.BaseService\AppyNox.Services.Base.Infrastructure\AppyNox.Services.Base.Infrastructure.csproj" />
     <ProjectReference Include="..\AppyNox.Services.Coupon.Application\AppyNox.Services.Coupon.Application.csproj" />
     <ProjectReference Include="..\AppyNox.Services.Coupon.Domain\AppyNox.Services.Coupon.Domain.csproj" />
