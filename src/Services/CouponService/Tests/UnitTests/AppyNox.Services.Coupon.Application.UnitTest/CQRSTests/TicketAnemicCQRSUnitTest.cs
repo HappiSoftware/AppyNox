@@ -138,7 +138,7 @@ public class TicketAnemicCQRSUnitTest : IClassFixture<GenericCQRSFixture<Ticket>
     }
 
     [Fact]
-    public async void GetEntityByIdQuery_ShouldSuccess()
+    public async Task GetEntityByIdQuery_ShouldSuccess()
     {
         // Act
         var result = await _fixture.MockMediator.Object.Send(new GetEntityByIdQuery<Ticket>(It.IsAny<Guid>(), _fixture.MockQueryParameters.Object));
@@ -149,7 +149,7 @@ public class TicketAnemicCQRSUnitTest : IClassFixture<GenericCQRSFixture<Ticket>
     }
 
     [Fact]
-    public async void CreateEntityCommand_ShouldSuccess()
+    public async Task CreateEntityCommand_ShouldSuccess()
     {
         // Prepare
         string jsonData = @"{

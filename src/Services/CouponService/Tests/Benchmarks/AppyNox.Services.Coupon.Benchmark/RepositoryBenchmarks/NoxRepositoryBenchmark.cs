@@ -11,7 +11,7 @@ namespace AppyNox.Services.Coupon.Benchmark.RepositoryBenchmarks;
 [MemoryDiagnoser]
 public class NoxRepositoryBenchmark
 {
-    private IServiceProvider ServiceProvider;
+    private IServiceProvider ServiceProvider = default!;
 
     [GlobalSetup]
     public void Setup()
