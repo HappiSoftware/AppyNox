@@ -4,7 +4,7 @@ All notable changes to AppyNox will be documented in this file.
 ## [1.12.0](https://github.com/HappiSoftware/AppyNox/compare/v1.11.0...v1.12.0) - NOT RELEASED
 
 
-## [1.11.0](https://github.com/HappiSoftware/AppyNox/compare/v1.10.0...v1.11.0) - NOT RELEASED
+## [1.11.0](https://github.com/HappiSoftware/AppyNox/compare/v1.10.0...v1.11.0) - 2024.06.17
 ### Added 
 - Feature request: Multiple RabbitMQ and User checking event ([#302](https://github.com/HappiSoftware/AppyNox/issues/302)) - Developed by Pixel Phantoms
 
