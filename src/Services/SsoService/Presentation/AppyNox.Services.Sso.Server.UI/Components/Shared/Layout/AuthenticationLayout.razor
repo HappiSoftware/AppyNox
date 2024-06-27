@@ -1,0 +1,22 @@
+﻿@using AppyNox.Services.Sso.Server.UI.Components.Shared.Themes
+@using AppyNox.Services.Sso.Server.UI.Constants
+@layout MainLayout
+@inherits LayoutComponentBase
+@inject LayoutService LayoutService
+
+
+<AuthorizeView>
+    <NotAuthorized>
+        <MudContainer MaxWidth="MaxWidth.Medium" Class="d-flex align-center" Style="height: 100vh;">
+            <div class="d-flex flex-column mud-width-full">
+                <MudPaper Elevation="2" Width="100%" MaxWidth="3568px" MaxHeight="404px">
+                    @Body
+                </MudPaper>
+            </div>
+        </MudContainer>
+    </NotAuthorized>
+    <Authorized>
+        <RedirectToHome/>
+    </Authorized>
+</AuthorizeView>
+

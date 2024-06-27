@@ -1,0 +1,22 @@
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.Extensions.Localization
+@using Microsoft.AspNetCore.Authorization;
+
+@* Namespaces *@
+@using AppyNox.Services.Sso.Server.UI.Services
+@using AppyNox.Services.Sso.Server.UI.Components.Redirections
+@using AppyNox.Services.Sso.Server.UI.Services.Layout
+@using AppyNox.Services.Sso.Server.UI.Constants
+
+@* Packages *@
+@using MudBlazor
+
+
+@* Injections *@
+@inject NavigationManager Navigation
+@inject ISnackbar Snackbar
+
+@* Components *@
+@using AppyNox.Services.Sso.Server.UI.Components.Localization

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using AppyNox.Services.Base.Core.Constants;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -9,17 +10,13 @@ public static class HostApplicationBuilderExtensions
 {
     #region [ Public Methods ]
 
-    public static void ConfigureLocalization(this IHostApplicationBuilder builder, string resourcesPath = "", params string[] supportedCultures)
+    public static void ConfigureLocalization(this IHostApplicationBuilder builder, string resourcesPath = "")
     {
         builder.Services.AddLocalization(options => options.ResourcesPath = resourcesPath);
 
         builder.Services.Configure<RequestLocalizationOptions>(options =>
         {
-            if (supportedCultures.Length <= 0)
-            {
-                supportedCultures = ["en-US", "tr-TR"];
-            }
-
+            string[] supportedCultures = LocalizationConstants.SupportedLanguages.Select(x => x.Code).ToArray();
             options.SetDefaultCulture(supportedCultures[0])
                 .AddSupportedCultures(supportedCultures)
                 .AddSupportedUICultures(supportedCultures);

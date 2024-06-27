@@ -1,4 +1,4 @@
-﻿using AppyNox.Services.Sso.Infrastructure.AsyncLocals;
+﻿using AppyNox.Services.Sso.Application.AsyncLocals;
 using MassTransit;
 
 namespace AppyNox.Services.Sso.Infrastructure.MassTransit.Filters;

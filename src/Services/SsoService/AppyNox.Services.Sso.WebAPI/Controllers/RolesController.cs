@@ -1,10 +1,10 @@
 ﻿using AppyNox.Services.Base.Application.Exceptions;
 using AppyNox.Services.Base.Core.Extensions;
+using AppyNox.Services.Sso.Application.AsyncLocals;
 using AppyNox.Services.Sso.Application.DTOs.ApplicationRoleDTOs.Models;
 using AppyNox.Services.Sso.Application.DTOs.ClaimDtos.Models;
 using AppyNox.Services.Sso.Application.Validators.ApplicationRoleValidators;
 using AppyNox.Services.Sso.Domain.Entities;
-using AppyNox.Services.Sso.Infrastructure.AsyncLocals;
 using AppyNox.Services.Sso.WebAPI.Exceptions.Base;
 using AppyNox.Services.Sso.WebAPI.Extensions;
 using AppyNox.Services.Sso.WebAPI.Localization;

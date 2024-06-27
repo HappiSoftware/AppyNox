@@ -1,4 +1,4 @@
-﻿namespace AppyNox.Services.Sso.Infrastructure.AsyncLocals
+﻿namespace AppyNox.Services.Sso.Application.AsyncLocals
 {
     /// <summary>
     ///  Provides a context for storing and retrieving the current request's Company ID.

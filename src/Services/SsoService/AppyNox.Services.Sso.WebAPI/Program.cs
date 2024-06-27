@@ -96,8 +96,6 @@ noxLogger.LogInformation("Registering DI's for layers completed.");
 
 #region [ Dependency Injection Setup ]
 
-builder.Services.AddScoped<PasswordValidator<ApplicationUser>>();
-builder.Services.AddScoped<PasswordHasher<ApplicationUser>>();
 builder.Services.AddScoped<UsersControllerBaseDependencies>();
 
 #endregion

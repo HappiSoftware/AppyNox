@@ -1,0 +1,83 @@
+﻿@using AppyNox.Services.Sso.Server.UI.Components.Shared.Themes
+@using AppyNox.Services.Sso.Server.UI.Services.UserPreferences
+@inherits LayoutComponentBase
+@implements IDisposable
+
+@inject LayoutService LayoutService
+
+<PageTitle>AppyNox Sso</PageTitle>
+
+<MudLayout>
+    <MudRTLProvider RightToLeft="@LayoutService.IsRTL">
+        <ThemesMenu ThemingDrawerOpen="_themingDrawerOpen"
+            ThemingDrawerOpenChanged="ThemingDrawerOpenChangedHandler"
+            UserPreferences="_userPreferences"
+            UserPreferencesChanged="LayoutService.UpdateUserPreferences" />
+
+        <ThemesButton OnClick="@(() => _themingDrawerOpen = true)" />
+        <MudDialogProvider />
+        <MudSnackbarProvider />
+        <MudPopoverProvider />
+        <MudThemeProvider @ref="@_mudThemeProvider" Theme="@LayoutService.CurrentTheme" IsDarkMode="@LayoutService.IsDarkMode" IsDarkModeChanged="@LayoutService.SetDarkMode"/>
+        @Body
+    </MudRTLProvider>
+</MudLayout>
+@code
+{
+    private UserPreferences _userPreferences = new();
+    private bool _themingDrawerOpen;
+    private ErrorBoundary? _errorBoundary { set; get; }
+
+    private MudThemeProvider _mudThemeProvider = null!;
+    private bool _defaultDarkMode;
+
+    protected override void OnParametersSet()
+    {
+        ResetBoundary();
+    }
+
+    private void ResetBoundary()
+    {
+        // On each page navigation, reset any error state
+        _errorBoundary?.Recover();
+    }
+
+    protected void ThemingDrawerOpenChangedHandler(bool state)
+    {
+        _themingDrawerOpen = state;
+    }
+
+    public void Dispose()
+    {
+        LayoutService.MajorUpdateOccured -= LayoutServiceOnMajorUpdateOccured;
+        GC.SuppressFinalize(this);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+        if (firstRender)
+        {
+            await ApplyUserPreferences();
+            StateHasChanged();
+        }
+    }
+
+    private async Task ApplyUserPreferences()
+    {
+        _defaultDarkMode = await _mudThemeProvider.GetSystemPreference();
+        await LayoutService.ApplyUserPreferences(_defaultDarkMode);
+    }
+
+    protected override void OnInitialized()
+    {
+        LayoutService.MajorUpdateOccured += LayoutServiceOnMajorUpdateOccured;
+        LayoutService.SetBaseTheme(Theme.ApplicationTheme());
+    }
+
+    private void LayoutServiceOnMajorUpdateOccured(object? sender, EventArgs e)
+    {
+        StateHasChanged();
+    }
+
+}

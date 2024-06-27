@@ -1,5 +1,4 @@
 ﻿using AppyNox.Services.Sso.Domain.Entities;
-using AppyNox.Services.Sso.Infrastructure.AsyncLocals;
 using AppyNox.Services.Sso.Infrastructure.Data.Configurations;
 using AppyNox.Services.Base.Core.AsyncLocals;
 using Microsoft.AspNetCore.Identity;
@@ -7,6 +6,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
+using AppyNox.Services.Sso.Application.AsyncLocals;
 
 namespace AppyNox.Services.Sso.Infrastructure.Data
 {
