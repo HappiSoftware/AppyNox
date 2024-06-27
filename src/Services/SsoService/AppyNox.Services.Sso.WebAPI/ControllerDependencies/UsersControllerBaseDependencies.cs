@@ -7,37 +7,26 @@ namespace AppyNox.Services.Sso.WebAPI.ControllerDependencies
     /// <summary>
     /// Provides dependencies for user-related controllers.
     /// </summary>
-    public class UsersControllerBaseDependencies
+    public class UsersControllerBaseDependencies(IMapper mapper, UserManager<ApplicationUser> userManager,
+        IUserValidator<ApplicationUser> userValidator, RoleManager<ApplicationRole> roleManager, IPasswordValidator<ApplicationUser> passwordValidator,
+        IPasswordHasher<ApplicationUser> passwordHasher)
     {
         #region [ Fields ]
 
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager = userManager;
 
-        private readonly RoleManager<ApplicationRole> _roleManager;
+        private readonly RoleManager<ApplicationRole> _roleManager = roleManager;
 
-        private readonly IUserValidator<ApplicationUser> _userValidator;
+        private readonly IUserValidator<ApplicationUser> _userValidator = userValidator;
 
-        private readonly IMapper _mapper;
+        private readonly IMapper _mapper = mapper;
 
-        private readonly PasswordValidator<ApplicationUser> _passwordValidator;
+        private readonly IPasswordValidator<ApplicationUser> _passwordValidator = passwordValidator;
 
-        private readonly PasswordHasher<ApplicationUser> _passwordHasher;
+        private readonly IPasswordHasher<ApplicationUser> _passwordHasher = passwordHasher;
 
         #endregion
-
         #region [ Public Constructors ]
-
-        public UsersControllerBaseDependencies(IMapper mapper, UserManager<ApplicationUser> userManager,
-            IUserValidator<ApplicationUser> userValidator, RoleManager<ApplicationRole> roleManager, PasswordValidator<ApplicationUser> passwordValidator,
-            PasswordHasher<ApplicationUser> passwordHasher)
-        {
-            _mapper = mapper;
-            _userManager = userManager;
-            _userValidator = userValidator;
-            _roleManager = roleManager;
-            _passwordValidator = passwordValidator;
-            _passwordHasher = passwordHasher;
-        }
 
         #endregion
 
@@ -51,9 +40,9 @@ namespace AppyNox.Services.Sso.WebAPI.ControllerDependencies
 
         public IMapper Mapper => _mapper;
 
-        public PasswordValidator<ApplicationUser> PasswordValidator => _passwordValidator;
+        public IPasswordValidator<ApplicationUser> PasswordValidator => _passwordValidator;
 
-        public PasswordHasher<ApplicationUser> PasswordHasher => _passwordHasher;
+        public IPasswordHasher<ApplicationUser> PasswordHasher => _passwordHasher;
 
         #endregion
     }

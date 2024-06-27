@@ -18,7 +18,7 @@ namespace AppyNox.Services.Sso.Application
         /// </summary>
         /// <param name="services">The IServiceCollection to add services to.</param>
         /// <param name="configuration">The IConfiguration instance to access application settings.</param>
-        public static void AddSsoApplication(
+        public static IServiceCollection AddSsoApplication(
             this IServiceCollection services,
             IConfiguration configuration
         )
@@ -35,6 +35,7 @@ namespace AppyNox.Services.Sso.Application
             });
 
             #endregion
+            return services;
         }
 
         #endregion

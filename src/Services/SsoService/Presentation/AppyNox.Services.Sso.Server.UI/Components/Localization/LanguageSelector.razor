@@ -1,0 +1,57 @@
+﻿@using System.Globalization
+@using Microsoft.Extensions.Options
+
+@inject IOptions<RequestLocalizationOptions> LocalizationOptions
+@inject LayoutService LayoutService
+
+<MudTooltip Text="@CurrentLanguage">
+    <MudMenu AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight" Class="mx-1" Icon="@Icons.Material.Outlined.Translate" Color="Color.Default" Dense="true">
+        @if (SupportedLanguages is not null)
+        {
+            @foreach (var language in SupportedLanguages)
+            {
+                if (language.Name == CurrentLanguage)
+                {
+                    <MudMenuItem style="background:var(--mud-palette-primary); color:white">@language.DisplayName</MudMenuItem>
+                }
+                else
+                {
+                    <MudMenuItem OnClick="() => ChangeLanguageAsync(language.Name)">@language.DisplayName</MudMenuItem>
+                }
+            }
+        }
+    </MudMenu>
+</MudTooltip>
+
+@code
+{
+    public string? CurrentLanguage { get; set; } = "en-US";
+    public List<CultureInfo>? SupportedLanguages { get; set; } = new();
+
+    protected override Task OnInitializedAsync()
+    {
+        SupportedLanguages = LocalizationOptions.Value.SupportedCultures?.ToList();
+        CurrentLanguage = CultureInfo.CurrentCulture.Name;
+        return Task.CompletedTask;
+    }
+
+    private async Task ChangeLanguageAsync(string languageCode)
+    {
+        CurrentLanguage = languageCode;
+
+        var uri = new Uri(Navigation.Uri);
+        var query = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
+        var newQuery = query.ToDictionary(k => k.Key, k => k.Value.ToString());
+        newQuery["culture"] = languageCode;
+
+        var newUri = Microsoft.AspNetCore.WebUtilities.QueryHelpers.AddQueryString(uri.AbsolutePath, newQuery);
+        Navigation.NavigateTo(newUri, forceLoad: true);
+
+        if (new CultureInfo(languageCode).TextInfo.IsRightToLeft)
+            await LayoutService.SetRightToLeft();
+        else
+            await LayoutService.SetLeftToRight();
+
+        await Task.CompletedTask;
+    }
+}

@@ -2,7 +2,7 @@
 using AppyNox.Services.Base.Core.Enums;
 using AppyNox.Services.Sso.Domain;
 
-namespace AppyNox.Services.Sso.Application.Exceptions;
+namespace AppyNox.Services.Sso.Application.Exceptions.Base;
 
 #region [ NoxSsoApplicationException Code ]
 

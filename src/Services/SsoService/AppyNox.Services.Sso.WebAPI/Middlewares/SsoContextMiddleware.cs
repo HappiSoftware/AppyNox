@@ -1,5 +1,5 @@
 ﻿using AppyNox.Services.Base.Application.Interfaces.Loggers;
-using AppyNox.Services.Sso.Infrastructure.AsyncLocals;
+using AppyNox.Services.Sso.Application.AsyncLocals;
 
 namespace AppyNox.Services.Sso.WebAPI.Middlewares;
 

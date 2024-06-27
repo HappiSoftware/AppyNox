@@ -1,6 +1,6 @@
 ﻿using AppyNox.Services.Base.Application.Exceptions;
 using AppyNox.Services.Sso.Application.DTOs.ApplicationUserDTOs.Models;
-using AppyNox.Services.Sso.Application.Exceptions;
+using AppyNox.Services.Sso.Application.Exceptions.Base;
 using AppyNox.Services.Sso.Application.MediatR.Commands;
 using AppyNox.Services.Sso.Application.Validators.ApplicationUserValidators;
 using AppyNox.Services.Sso.Domain.Entities;
@@ -15,8 +15,8 @@ internal sealed class CreateUserCommandHandler(ApplicationUserCreateDtoValidator
                                                    IMapper mapper,
                                                    UserManager<ApplicationUser> userManager,
                                                    IUserValidator<ApplicationUser> userValidator,
-                                                   PasswordValidator<ApplicationUser> passwordValidator,
-                                                   PasswordHasher<ApplicationUser> passwordHasher)
+                                                   IPasswordValidator<ApplicationUser> passwordValidator,
+                                                   IPasswordHasher<ApplicationUser> passwordHasher)
         : IRequestHandler<CreateUserCommand, (Guid id, ApplicationUserDto dto)>
 {
     #region [ Fields ]
@@ -29,9 +29,9 @@ internal sealed class CreateUserCommandHandler(ApplicationUserCreateDtoValidator
 
     private readonly IUserValidator<ApplicationUser> _userValidator = userValidator;
 
-    private readonly PasswordValidator<ApplicationUser> _passwordValidator = passwordValidator;
+    private readonly IPasswordValidator<ApplicationUser> _passwordValidator = passwordValidator;
 
-    private readonly PasswordHasher<ApplicationUser> _passwordHasher = passwordHasher;
+    private readonly IPasswordHasher<ApplicationUser> _passwordHasher = passwordHasher;
 
     #endregion
 

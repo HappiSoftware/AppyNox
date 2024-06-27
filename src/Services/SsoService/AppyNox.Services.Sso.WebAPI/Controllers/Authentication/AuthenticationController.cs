@@ -1,17 +1,17 @@
 ﻿using AppyNox.Services.Base.API.Constants;
 using AppyNox.Services.Base.API.Wrappers;
 using AppyNox.Services.Base.Application.Exceptions;
-using AppyNox.Services.Base.Core.Exceptions.Base;
 using AppyNox.Services.Base.Infrastructure.Exceptions.Interfaces;
 using AppyNox.Services.Sso.Application.DTOs.AccountDtos.Models;
 using AppyNox.Services.Sso.Application.DTOs.RefreshTokenDtos.Models;
 using AppyNox.Services.Sso.Application.Interfaces.Authentication;
+using AppyNox.Services.Sso.Application.MediatR.Commands;
 using AppyNox.Services.Sso.Infrastructure.Exceptions;
-using AppyNox.Services.Sso.WebAPI.Exceptions;
 using AppyNox.Services.Sso.WebAPI.Exceptions.Base;
 using AppyNox.Services.Sso.WebAPI.Localization;
 using Asp.Versioning;
 using FluentValidation;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -22,8 +22,12 @@ namespace AppyNox.Services.Sso.WebAPI.Controllers.Authentication;
 [ApiVersion(NoxVersions.v1_0)]
 [Route("api/v{version:apiVersion}/[controller]")]
 [AllowAnonymous]
-public class AuthenticationController(ICustomUserManager customUserManager,
-        ICustomTokenManager customTokenManager, IValidator<LoginDto> loginDtoValidator, IValidator<RefreshTokenDto> refreshTokenDtoValidator) : Controller
+public class AuthenticationController(
+    ICustomUserManager customUserManager,
+    ICustomTokenManager customTokenManager,
+    IValidator<LoginDto> loginDtoValidator,
+    IValidator<RefreshTokenDto> refreshTokenDtoValidator,
+    IMediator mediator) : Controller
 {
     #region [ Fields ]
 
@@ -34,6 +38,8 @@ public class AuthenticationController(ICustomUserManager customUserManager,
     private readonly IValidator<LoginDto> _loginDtoValidator = loginDtoValidator;
 
     private readonly IValidator<RefreshTokenDto> _refreshTokenDtoValidator = refreshTokenDtoValidator;
+    
+    private readonly IMediator _mediator = mediator;
 
     #endregion
 
@@ -43,24 +49,9 @@ public class AuthenticationController(ICustomUserManager customUserManager,
     [Route("connect/token")]
     public async Task<NoxApiResponse> Authenticate([FromBody] LoginDto userCredential)
     {
-        var validationResult = await _loginDtoValidator.ValidateAsync(userCredential);
-        if (!validationResult.IsValid)
-        {
-            throw new NoxFluentValidationException(typeof(LoginDto), validationResult);
-        }
+        var result = await _mediator.Send(new AuthenticateCommand(userCredential));
 
-        var (jwtToken, refreshToken) = await _customUserManager.Authenticate(userCredential);
-
-        if (string.IsNullOrEmpty(jwtToken) || string.IsNullOrEmpty(refreshToken))
-        {
-            throw new NoxSsoApiException(NoxSsoApiResourceService.SignInError, (int)NoxSsoApiExceptionCode.SignInError, (int)HttpStatusCode.Unauthorized);
-        }
-        if (jwtToken.Equals(NoxSsoApiResourceService.Teapot))
-        {
-            throw new NoxSsoApiException(NoxSsoApiResourceService.Teapot, (int)NoxSsoApiExceptionCode.Teapot, (int)HttpStatusCode.Locked);
-        }
-
-        return new NoxApiResponse(new { Token = jwtToken, RefreshToken = refreshToken }, NoxSsoApiResourceService.SignInSuccessful);
+        return new NoxApiResponse(new { result.Token, result.RefreshToken }, NoxSsoApiResourceService.SignInSuccessful);
     }
 
     [HttpGet]

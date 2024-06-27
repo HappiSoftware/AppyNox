@@ -20,13 +20,18 @@ using AppyNox.Services.Sso.SharedEvents.Events;
 using Consul;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using System.Configuration;
+using System.Reflection;
 
 namespace AppyNox.Services.Sso.Infrastructure;
 
@@ -45,7 +50,8 @@ public static class DependencyInjection
     public static IServiceCollection AddSsoInfrastructure(
         this IServiceCollection services,
         IConfiguration configuration,
-        INoxLogger noxLogger
+        INoxLogger noxLogger,
+        bool isWeb = false
     )
     {
 
@@ -226,24 +232,49 @@ public static class DependencyInjection
 
         #region [ Identity ]
 
-        services.AddIdentity<ApplicationUser, ApplicationRole>().AddSignInManager()
-                .AddEntityFrameworkStores<IdentityDatabaseContext>().AddRoles<ApplicationRole>();
+        if (!isWeb)
+        {
+            services.AddJwtAuthenticationAndAuthorization(configuration, noxLogger);
+        }
+        else
+        {
+            services.AddCookieAuthenticationAndAuthorization();
+        }
+
+        services.AddScoped<SignInManager<ApplicationUser>>();
+        services.AddScoped<UserManager<ApplicationUser>>();
+        services.AddScoped<IPasswordValidator<ApplicationUser>, PasswordValidator<ApplicationUser>>();
+        services.AddScoped<IPasswordHasher<ApplicationUser>, PasswordHasher<ApplicationUser>>();
+        services.AddScoped<IUserStore<ApplicationUser>, UserStore<ApplicationUser, ApplicationRole, IdentityDatabaseContext, Guid>>();
+        services.AddScoped<ICustomTokenManager, JwtTokenManager>();
+        services.AddScoped<ICustomUserManager, CustomUserManager>();
+
+        #endregion
+
+        services.AddScoped<IDatabaseChecks, ValidatorDatabaseChecker>();
+
+        return services;
+    }
+
+    #endregion
+
+    private static void AddJwtAuthenticationAndAuthorization(this IServiceCollection services, IConfiguration configuration, INoxLogger noxLogger)
+    {
+        noxLogger.LogInformation("Registering JWT Configuration.");
+
+        services.AddIdentity<ApplicationUser, ApplicationRole>()
+               .AddSignInManager()
+               .AddEntityFrameworkStores<IdentityDatabaseContext>()
+               .AddDefaultTokenProviders();
 
         services.Configure<IdentityOptions>(options =>
         {
-            // Configure password requirements
             options.Password.RequireDigit = true;
             options.Password.RequiredLength = 6;
             options.Password.RequireNonAlphanumeric = true;
             options.Password.RequireUppercase = true;
             options.Password.RequireLowercase = true;
         });
-
-        #endregion
-
-        #region [ Jwt Settings ]
-
-        noxLogger.LogInformation("Registering JWT Configuration.");
         var jwtConfiguration = new SsoJwtConfiguration();
         configuration.GetSection("JwtSettings:AppyNox").Bind(jwtConfiguration);
 
@@ -265,17 +296,12 @@ public static class DependencyInjection
                 IssuerSigningKey = new SymmetricSecurityKey(jwtConfiguration.GetSecretKeyBytes())
             };
         })
-        .AddScheme<AuthenticationSchemeOptions, NoxSsoJwtAuthenticationHandler>("NoxSsoJwtScheme", options =>
-        {
-        });
-
-        services.AddScoped<ICustomTokenManager, JwtTokenManager>();
-        services.AddScoped<ICustomUserManager, CustomUserManager>();
+        .AddScheme<AuthenticationSchemeOptions, NoxSsoJwtAuthenticationHandler>("NoxSsoJwtScheme", options => { });
 
         // Add Policy-based Authorization
         services.AddAuthorization(options =>
         {
-            List<string> _claims = [.. Permissions.Users.Metrics, .. Permissions.Roles.Metrics];
+            List<string> _claims = new List<string> { /* Your claims here */ };
 
             foreach (var item in _claims)
             {
@@ -288,13 +314,60 @@ public static class DependencyInjection
 
         services.AddScoped<IAuthorizationHandler, NoxSsoAuthorizationHandler>();
         noxLogger.LogInformation("Registering JWT Configuration completed.");
-
-        #endregion
-
-        services.AddScoped<IDatabaseChecks, ValidatorDatabaseChecker>();
-
-        return services;
     }
 
-    #endregion
+    private static void AddCookieAuthenticationAndAuthorization(this IServiceCollection services)
+    {
+        services.AddIdentityCore<ApplicationUser>()
+            .AddRoles<ApplicationRole>()
+            .AddEntityFrameworkStores<IdentityDatabaseContext>()
+            .AddSignInManager()
+            .AddDefaultTokenProviders();
+        services.Configure<IdentityOptions>(options =>
+        {
+            options.Password.RequireDigit = true;
+            options.Password.RequiredLength = 6;
+            options.Password.RequireNonAlphanumeric = true;
+            options.Password.RequireUppercase = true;
+            options.Password.RequireLowercase = true;
+
+            // Lockout settings
+            options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
+            options.Lockout.MaxFailedAccessAttempts = 10;
+            options.Lockout.AllowedForNewUsers = true;
+
+            // Default SignIn settings.
+            //options.SignIn.RequireConfirmedEmail = true;
+            //options.SignIn.RequireConfirmedPhoneNumber = false;
+            //options.SignIn.RequireConfirmedAccount = true;
+
+            //// User settings
+            //options.User.RequireUniqueEmail = true;
+        });
+
+        services
+            .AddAuthorizationCore(options =>
+            {
+                List<string> _claims = new List<string> { /* Your claims here */ };
+
+                foreach (var item in _claims)
+                {
+                    options.AddPolicy(item, builder =>
+                    {
+                        builder.AddRequirements(new PermissionRequirement(item, "API.Permission"));
+                    });
+                }
+            })
+            .AddAuthentication(options =>
+            {
+                options.DefaultScheme = IdentityConstants.ApplicationScheme;
+                options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+            })
+            .AddIdentityCookies(options => { });
+
+
+        services.ConfigureApplicationCookie(options => { options.LoginPath = "/pages/authentication/login"; });
+    }
+
 }
+
