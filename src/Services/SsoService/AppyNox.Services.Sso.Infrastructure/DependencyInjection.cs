@@ -301,7 +301,7 @@ public static class DependencyInjection
         // Add Policy-based Authorization
         services.AddAuthorization(options =>
         {
-            List<string> _claims = new List<string> { /* Your claims here */ };
+            List<string> _claims = [.. Permissions.Users.Metrics, .. Permissions.Roles.Metrics];
 
             foreach (var item in _claims)
             {
@@ -348,7 +348,7 @@ public static class DependencyInjection
         services
             .AddAuthorizationCore(options =>
             {
-                List<string> _claims = new List<string> { /* Your claims here */ };
+                List<string> _claims = [.. Permissions.Users.Metrics, .. Permissions.Roles.Metrics];
 
                 foreach (var item in _claims)
                 {
