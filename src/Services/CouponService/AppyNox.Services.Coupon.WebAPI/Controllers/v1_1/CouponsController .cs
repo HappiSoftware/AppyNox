@@ -2,12 +2,16 @@
 using AppyNox.Services.Base.API.Controllers;
 using AppyNox.Services.Base.API.ViewModels;
 using AppyNox.Services.Base.Application.MediatR.Commands;
+using AppyNox.Services.Base.Core.AsyncLocals;
 using AppyNox.Services.Base.Core.Common;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Extended;
 using AppyNox.Services.Coupon.Application.MediatR.Commands;
 using AppyNox.Services.Coupon.Domain.Coupons;
+using AppyNox.Services.License.Client;
+using AppyNox.Services.License.Contarcts.MassTransit.Messages;
 using Asp.Versioning;
+using MassTransit;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,11 +22,13 @@ namespace AppyNox.Services.Coupon.WebAPI.Controllers.v1_1;
 [ApiController]
 [ApiVersion(NoxVersions.v1_1)]
 [Route("api/v{version:apiVersion}/coupons")]
-public class CouponsController(IMediator mediator) : NoxController
+public class CouponsController(IMediator mediator, IPublishEndpoint publishEndpoint, ILicenseServiceClient licenseServiceClient) : NoxController
 {
     #region [ Fields ]
 
     private readonly IMediator _mediator = mediator;
+    private readonly IPublishEndpoint _publishEndpoint = publishEndpoint;
+    private readonly ILicenseServiceClient _licenseServiceClient = licenseServiceClient;
 
     #endregion
 
@@ -59,6 +65,24 @@ public class CouponsController(IMediator mediator) : NoxController
     [Route("/api/v{version:apiVersion}/coupons/admin-test")]
     public IActionResult TestAdminEndpoint()
     {
+        return Ok("Request successful");
+    }
+
+    [HttpGet]
+    [Authorize("Coupons.View.Admin")]
+    [Route("/api/v{version:apiVersion}/coupons/mt-test")]
+    public IActionResult TestMassTransit()
+    {
+        _publishEndpoint.Publish(new ValidateLicenseMessage(NoxContext.CorrelationId, "test"));
+        return Ok("Request successful");
+    }
+
+    [HttpGet]
+    [Authorize("Coupons.View.Admin")]
+    [Route("/api/v{version:apiVersion}/coupons/mt-test2")]
+    public IActionResult TestMassTransitDataRequest()
+    {
+        _licenseServiceClient.GetLicenseById("");
         return Ok("Request successful");
     }
 

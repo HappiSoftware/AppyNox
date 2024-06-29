@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+	<PackageId>NoxSsoContracts</PackageId>
+	<Version>1.11.0</Version>
+	<Authors>Behlül UYSAL, Yasin DERE</Authors>
+	<Company>HappiSoftware</Company>
+	<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+	<RepositoryUrl>https://github.com/HappiSoftware/AppyNox</RepositoryUrl>
+	<PackageTags>microservice; masstransit; .NET;</PackageTags>
+	<PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+	<Description>
+		The NoxSsoContracts package provides foundational contracts for Sso NoxSharedBus.
+	</Description>
+	<PackageReleaseNotes>https://github.com/HappiSoftware/AppyNox/releases/tag/v1.11.0</PackageReleaseNotes>
+	<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+	<PackageIcon>icon.png</PackageIcon>
+  </PropertyGroup>
+	
+	<ItemGroup>
+		<PackageReference Include="MassTransit.Abstractions" Version="8.2.3" />
+	</ItemGroup>
+	
+</Project>

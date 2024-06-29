@@ -1,8 +1,9 @@
-﻿using AppyNox.Services.Sso.Infrastructure.Localization;
-using AppyNox.Services.Sso.SharedEvents.Events;
-using AppyNox.Services.License.SharedEvents.Events;
-using MassTransit;
+﻿using AppyNox.Services.Base.Core.AsyncLocals;
+using AppyNox.Services.License.Contarcts.MassTransit.Messages;
+using AppyNox.Services.Sso.Contracts.MassTransit.Messages;
 using AppyNox.Services.Sso.Infrastructure.Exceptions.Base;
+using AppyNox.Services.Sso.Infrastructure.Localization;
+using MassTransit;
 
 namespace AppyNox.Services.Sso.Infrastructure.MassTransit.Sagas
 {
@@ -33,6 +34,9 @@ namespace AppyNox.Services.Sso.Infrastructure.MassTransit.Sagas
                         context.Saga.Name = context.Message.Name;
                         context.Saga.Surname = context.Message.Surname;
                         context.Saga.Code = context.Message.Code;
+                        NoxContext.CorrelationId = context.Saga.CorrelationId;
+                        NoxContext.UserId = context.Saga.UserId;
+                        NoxContext.CompanyId = context.Message.CorrelationId;
                     })
                     .Send(new Uri("queue:validate-license"), context => new ValidateLicenseMessage
                     (

@@ -10,7 +10,7 @@ using Quartz;
 namespace AppyNox.Services.Base.Infrastructure.BackgroundJobs;
 
 [DisallowConcurrentExecution]
-public class ProcessOutboxMessagesJob<TContext> : IJob where TContext : NoxDatabaseContext
+public class ProcessOutboxMessagesJob<TContext> : IJob where TContext : DbContext, INoxDatabaseContext
 {
     private readonly TContext _dbContext;
 

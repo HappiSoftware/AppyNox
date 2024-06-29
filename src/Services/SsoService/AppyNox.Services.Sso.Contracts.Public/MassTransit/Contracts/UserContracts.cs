@@ -1,7 +1,6 @@
 ﻿using MassTransit;
 
-namespace AppyNox.Services.Base.Core.MassTransit.CommonEvents;
-
+namespace AppyNox.Services.Sso.Contracts.MassTransit.Contracts;
 
 public record CheckUserAvailabilityMessage(Guid CorrelationId, Guid UserId, Guid CompanyId, string Email) : CorrelatedBy<Guid>;
 public record UserIsAvailableEvent(Guid CorrelationId, Guid UserId) : CorrelatedBy<Guid>;

@@ -3,7 +3,7 @@ using MassTransit;
 
 namespace AppyNox.Services.Sso.Infrastructure.MassTransit.Filters;
 
-public class AddSsoContextToSendContextFilter : IFilter<SendContext>, IFilter<PublishContext>
+public class SsoContextFilter : IFilter<SendContext>, IFilter<PublishContext>
 {
     public async Task Send(SendContext context, IPipe<SendContext> next)
     {

@@ -1,5 +1,5 @@
 ﻿using AppyNox.Services.License.Application.MediatR.Commands;
-using AppyNox.Services.License.SharedEvents.Events;
+using AppyNox.Services.License.Contarcts.MassTransit.Messages;
 using MassTransit;
 using MediatR;
 

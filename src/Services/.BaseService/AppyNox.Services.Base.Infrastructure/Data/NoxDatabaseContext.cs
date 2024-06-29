@@ -8,8 +8,8 @@ using System.Reflection;
 
 namespace AppyNox.Services.Base.Infrastructure.Data;
 
-public abstract class NoxDatabaseContext(DbContextOptions options, IEncryptionService? encryptionService = null) 
-    : DbContext(options)
+public abstract class NoxDatabaseContext(DbContextOptions options, IEncryptionService? encryptionService = null)
+    : DbContext(options), INoxDatabaseContext
 {
     private readonly IEncryptionService? _encryptionService = encryptionService;
 
@@ -18,6 +18,7 @@ public abstract class NoxDatabaseContext(DbContextOptions options, IEncryptionSe
     public DbSet<OutboxMessage> OutboxMessages { get; set; }
 
     #endregion
+
     #region [ Protected Constructors ]
 
     #endregion
@@ -67,7 +68,7 @@ public abstract class NoxDatabaseContext(DbContextOptions options, IEncryptionSe
 
     private void ApplyEncryptionConverters(ModelBuilder modelBuilder)
     {
-        if(_encryptionService == null)
+        if (_encryptionService == null)
         {
             return;
         }

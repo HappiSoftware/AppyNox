@@ -9,6 +9,7 @@ using AppyNox.Services.Base.Infrastructure.Configuration;
 using AppyNox.Services.Base.Infrastructure.Data;
 using AppyNox.Services.Base.Infrastructure.Data.Interceptors;
 using AppyNox.Services.Base.Infrastructure.HostedServices;
+using AppyNox.Services.Base.Infrastructure.MassTransit.Filters;
 using AppyNox.Services.Base.Infrastructure.Services;
 using AppyNox.Services.Base.Infrastructure.Services.CacheServices;
 using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
@@ -16,6 +17,7 @@ using Consul;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,26 +25,30 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Quartz;
 using StackExchange.Redis;
+using System.ComponentModel.DataAnnotations;
+using ValidationResult = System.ComponentModel.DataAnnotations.ValidationResult;
 
 namespace AppyNox.Services.Base.Infrastructure;
 
 public class InfrastructureSetupOptions
 {
-#nullable disable // Be cautious while adding new parameters with required. Need to check these properties in AddInfrastructureServices
-    public string DbContextAssemblyName { get; set; }
+#nullable disable
+    [Required]
+    public string Assembly { get; set; }
+    [Required]
+    public IConfiguration Configuration { get; set; }
     public bool UseOutBoxMessageMechanism { get; set; } = false;
     public int OutBoxMessageJobIntervalSeconds { get; set; } = 30;
-    public bool UseEncryption {  get; set; } = false;
+    public bool UseEncryption { get; set; } = false;
     public bool UseConsul { get; set; } = false;
     public bool UseRedis { get; set; } = false;
-    public bool UseJwtAuthentication { get; set; } = false;
-    /// <summary>
-    /// If UseJwtAuthentication is true and RegisterIAuthorizationHandler is false, DO NOT forget to register IAuthorizationHandler to D.I. as 'scoped'
-    /// </summary>
-    public bool RegisterIAuthorizationHandler { get; set; } = false;
+    public bool UseJwtAuthentication { get; set; } = true;
+    public bool UseDefaultAuthenticationScheme { get; set; } = true;
     public List<string> Claims { get; set; } = [];
     public List<string> AdminClaims { get; set; } = [];
-    public IConfiguration Configuration { get; set; }
+    public bool UseMassTransit { get; set; } = false;
+    public Action<IBusRegistrationConfigurator> MassTransitConfiguration { get; set; }
+    public Action<(IBusRegistrationContext, IRabbitMqBusFactoryConfigurator)> RabbitMqConfiguration { get; set; }
 #nullable enable
 }
 
@@ -52,15 +58,18 @@ public static class InfrastructureServiceBuilder
     public static IServiceCollection AddInfrastructureServices<TContext>(
         this IServiceCollection services,
         INoxLogger logger,
-        Action<InfrastructureSetupOptions> configureOptions) where TContext : NoxDatabaseContext
+        Action<InfrastructureSetupOptions> configureOptions) where TContext : DbContext, INoxDatabaseContext
     {
         var options = new InfrastructureSetupOptions();
         configureOptions(options);
 
-        if (string.IsNullOrEmpty(options.DbContextAssemblyName))
-            throw new InvalidOperationException("DbContextAssemblyName must be provided.");
-        if (options.Configuration == null)
-            throw new InvalidOperationException("Configuration must be provided.");
+        var validationResults = new List<ValidationResult>();
+        var validationContext = new ValidationContext(options);
+        if (!Validator.TryValidateObject(options, validationContext, validationResults, true))
+        {
+            var errors = string.Join(", ", validationResults.Select(vr => vr.ErrorMessage));
+            throw new InvalidOperationException($"Invalid options: {errors}");
+        }
 
         services.AddSingleton<INoxInfrastructureLogger, NoxInfrastructureLogger>();
         services.AddSingleton<INoxApplicationLogger, NoxApplicationLogger>();
@@ -76,7 +85,7 @@ public static class InfrastructureServiceBuilder
         services.ConfigureDatabase<TContext>(options);
         logger.LogInformation("Database connection enabled...");
 
-        if(options.UseEncryption)
+        if (options.UseEncryption)
         {
             services.AddSingleton<IEncryptionService, EncryptionService>();
             logger.LogInformation("Encryption enabled...");
@@ -94,21 +103,26 @@ public static class InfrastructureServiceBuilder
             logger.LogInformation("Redis enabled...");
         }
 
-        if(options.UseJwtAuthentication)
+        if (options.UseJwtAuthentication)
         {
             services.AddJwtAuthentication(options, logger);
-            logger.LogInformation("Redis enabled...");
+            logger.LogInformation("Jwt Authentication enabled...");
+        }
+
+        if (options.UseMassTransit)
+        {
+            services.AddMassTransit(options, logger);
         }
 
         logger.LogInformation("Finished Adding Infrastructure Services, finalizing...");
         return services;
     }
 
-    #region [ Helpers ]
+    #region [ Builders ]
 
     private static IServiceCollection ConfigureConsulServices(this IServiceCollection services, InfrastructureSetupOptions options)
     {
-        string address = options.Configuration["ConsulConfiguration:Address"] 
+        string address = options.Configuration["ConsulConfiguration:Address"]
             ?? throw new InvalidOperationException("ConsulConfiguration:Address is not defined!");
 
         services.AddSingleton<IConsulClient, ConsulClient>(p => new ConsulClient(consulConfig =>
@@ -120,12 +134,12 @@ public static class InfrastructureServiceBuilder
         return services;
     }
 
-    private static IServiceCollection ConfigureDatabase<TContext>(this IServiceCollection services, InfrastructureSetupOptions options) 
-        where TContext : DbContext
+    private static IServiceCollection ConfigureDatabase<TContext>(this IServiceCollection services, InfrastructureSetupOptions options)
+        where TContext : DbContext, INoxDatabaseContext
     {
         string? connectionString = options.Configuration.GetConnectionString("DefaultConnection");
 
-        if(options.UseOutBoxMessageMechanism)
+        if (options.UseOutBoxMessageMechanism)
         {
             services.AddSingleton<ConvertDomainEventsToOutboxMessagesInterceptor>();
         }
@@ -134,7 +148,7 @@ public static class InfrastructureServiceBuilder
         {
             opt.UseNpgsql(connectionString, sqlOptions =>
             {
-                sqlOptions.MigrationsAssembly(options.DbContextAssemblyName);
+                sqlOptions.MigrationsAssembly(options.Assembly);
                 if (options.UseOutBoxMessageMechanism)
                 {
                     ConvertDomainEventsToOutboxMessagesInterceptor outboxMessageInterceptor = sp.GetService<ConvertDomainEventsToOutboxMessagesInterceptor>()
@@ -152,7 +166,7 @@ public static class InfrastructureServiceBuilder
     }
 
     private static IServiceCollection ConfigureOutBoxMessageJob<TContext>(this IServiceCollection services, InfrastructureSetupOptions options)
-        where TContext : NoxDatabaseContext
+        where TContext : DbContext, INoxDatabaseContext
     {
         services.AddQuartz(configure =>
         {
@@ -187,10 +201,13 @@ public static class InfrastructureServiceBuilder
         options.Configuration.GetSection("JwtSettings").Bind(jwtConfiguration);
         services.AddSingleton(jwtConfiguration);
 
-        services.AddAuthentication(options =>
+        services.AddAuthentication(opt =>
         {
-            options.DefaultAuthenticateScheme = "NoxJwtScheme";
-            options.DefaultChallengeScheme = "NoxJwtScheme";
+            if(options.UseDefaultAuthenticationScheme)
+            {
+                opt.DefaultAuthenticateScheme = "NoxJwtScheme";
+                opt.DefaultChallengeScheme = "NoxJwtScheme";
+            }
         }).AddJwtBearer(options =>
         {
             options.TokenValidationParameters = new TokenValidationParameters
@@ -208,7 +225,68 @@ public static class InfrastructureServiceBuilder
         {
         });
 
-        services.AddAuthorization(opt =>
+        services.AddAuthorization(options);
+
+        services.AddScoped<IAuthorizationHandler, NoxJwtAuthorizationHandler>();
+        services.AddScoped<INoxTokenManager, NoxTokenManager>();
+        logger.LogInformation("Registering JWT Configuration completed.");
+
+        return services;
+    }
+
+    private static IServiceCollection AddMassTransit(this IServiceCollection services, InfrastructureSetupOptions options, INoxLogger logger)
+    {
+        string hostUrl = options.Configuration["MessageBroker:Host"]
+                ?? throw new InvalidOperationException("MessageBroker:Host is not defined!");
+
+        string username = options.Configuration["MessageBroker:Username"]
+            ?? throw new InvalidOperationException("MessageBroker:Username is not defined!");
+        string password = options.Configuration["MessageBroker:Password"]
+            ?? throw new InvalidOperationException("MessageBroker:Password is not defined!");
+
+        services.AddMassTransit(busConfigurator =>
+        {
+            options.MassTransitConfiguration?.Invoke(busConfigurator);
+
+            busConfigurator.UsingRabbitMq((context, configurator) =>
+            {
+                configurator.ConfigureSend(sendConfig =>
+                {
+                    sendConfig.UseFilter(new NoxContextFilter());
+                });
+
+                configurator.ConfigurePublish(publishConfig =>
+                {
+                    publishConfig.UseFilter(new NoxContextFilter());
+                });
+
+                configurator.UseConsumeFilter(typeof(NoxContextConsumeFilter<>), context);
+
+                configurator.Host(
+                        new Uri(hostUrl),
+                        h =>
+                        {
+                            h.Username(username);
+                            h.Password(password);
+                        }
+                    );
+
+                options.RabbitMqConfiguration?.Invoke((context, configurator));
+
+                configurator.ConfigureEndpoints(context);
+            });
+        });
+
+        logger.LogInformation("MassTransit configured with RabbitMQ.");
+        return services;
+    }
+    #endregion
+
+    #region [ Helpers ]
+
+    private static IServiceCollection AddAuthorization(this IServiceCollection services, InfrastructureSetupOptions options)
+    {
+        services.AddAuthorizationCore(opt =>
         {
             List<string> _claims = [.. options.Claims];
             List<string> _adminclaims = [.. options.AdminClaims];
@@ -218,7 +296,7 @@ public static class InfrastructureServiceBuilder
             {
                 opt.AddPolicy(item, builder =>
                 {
-                    builder.AddRequirements(new PermissionRequirement(item, "API.Permission"));
+                    builder.RequireAuthenticatedUser().AddRequirements(new PermissionRequirement(item, "API.Permission"));
                 });
             }
 
@@ -227,24 +305,11 @@ public static class InfrastructureServiceBuilder
             {
                 opt.AddPolicy($"{item}.Admin", builder =>
                 {
-                    builder.AddRequirements(new PermissionRequirement(item, "API.Permission"))
+                    builder.RequireAuthenticatedUser().AddRequirements(new PermissionRequirement(item, "API.Permission"))
                     .AddRequirements(new PermissionRequirement("admin", "role"));
                 });
             }
         });
-
-        if(options.RegisterIAuthorizationHandler)
-        {
-            services.AddScoped<IAuthorizationHandler, NoxJwtAuthorizationHandler>();
-        }
-        else
-        {
-            services.AddScoped<NoxJwtAuthorizationHandler>();
-        }
-
-        services.AddScoped<INoxTokenManager, NoxTokenManager>();
-        logger.LogInformation("Registering JWT Configuration completed.");
-
         return services;
     }
 
