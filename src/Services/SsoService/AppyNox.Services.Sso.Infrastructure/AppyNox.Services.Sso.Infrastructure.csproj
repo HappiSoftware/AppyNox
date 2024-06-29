@@ -8,15 +8,16 @@
   </PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="MassTransit.EntityFrameworkCore" Version="8.2.2" />
+		<PackageReference Include="MassTransit.EntityFrameworkCore" Version="8.2.3" />
 		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.4" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <ProjectReference Include="..\..\.BaseService\AppyNox.Services.Base.Infrastructure\AppyNox.Services.Base.Infrastructure.csproj" />
-	  <ProjectReference Include="..\..\LicenseService\AppyNox.Services.License.SharedEvents\AppyNox.Services.License.SharedEvents.csproj" />
+	  <ProjectReference Include="..\..\LicenseService\AppyNox.Services.License.Contarcts\AppyNox.Services.License.Contarcts.csproj" />
 	  <ProjectReference Include="..\AppyNox.Services.Sso.Application\AppyNox.Services.Sso.Application.csproj" />
-	  <ProjectReference Include="..\AppyNox.Services.Sso.SharedEvents\AppyNox.Services.Sso.SharedEvents.csproj" />
+	  <ProjectReference Include="..\AppyNox.Services.Sso.Contracts.Public\AppyNox.Services.Sso.Contracts.Public.csproj" />
+	  <ProjectReference Include="..\AppyNox.Services.Sso.Contracts\AppyNox.Services.Sso.Contracts.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

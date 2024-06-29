@@ -1,12 +1,10 @@
 ﻿using AppyNox.Services.Base.Application.Interfaces.Loggers;
-using AppyNox.Services.Base.Core.Common;
-using AppyNox.Services.Base.Core.MassTransit.Bus;
+using AppyNox.Services.Base.Infrastructure;
 using AppyNox.Services.Base.Infrastructure.Authentication;
-using AppyNox.Services.Base.Infrastructure.HostedServices;
-using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
 using AppyNox.Services.Sso.Application.Interfaces.Authentication;
 using AppyNox.Services.Sso.Application.Permission;
 using AppyNox.Services.Sso.Application.Validators.SharedRules;
+using AppyNox.Services.Sso.Contracts.Public.MassTransit;
 using AppyNox.Services.Sso.Domain.Entities;
 using AppyNox.Services.Sso.Infrastructure.Authentication;
 using AppyNox.Services.Sso.Infrastructure.Configuration;
@@ -16,21 +14,15 @@ using AppyNox.Services.Sso.Infrastructure.MassTransit.Consumers;
 using AppyNox.Services.Sso.Infrastructure.MassTransit.Filters;
 using AppyNox.Services.Sso.Infrastructure.MassTransit.Sagas;
 using AppyNox.Services.Sso.Infrastructure.Services;
-using AppyNox.Services.Sso.SharedEvents.Events;
-using Consul;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
-using System.Configuration;
 using System.Reflection;
 
 namespace AppyNox.Services.Sso.Infrastructure;
@@ -43,9 +35,8 @@ public static class DependencyInjection
     #region [ Public Methods ]
 
     /// <summary>
-    /// Adds sso infrastructure services, including database configuration and Consul Discovery Service.
+    /// Adds sso infrastructure services.
     /// </summary>
-    /// <param name="builder">The IHostApplicationBuilder of the program.</param>
     /// <param name="configuration">The IConfiguration instance to access application settings.</param>
     public static IServiceCollection AddSsoInfrastructure(
         this IServiceCollection services,
@@ -54,129 +45,87 @@ public static class DependencyInjection
         bool isWeb = false
     )
     {
-
-        services.AddSingleton<INoxInfrastructureLogger, NoxInfrastructureLogger>();
-
-        #region [ Database Configuration ]
-
-        string? connectionString = configuration.GetConnectionString("DefaultConnection");
-
-        services.AddDbContext<IdentityDatabaseContext>(
-            options => options.UseNpgsql(connectionString)
-        );
-
-        #endregion
-
-        #region [ Consul Discovery Service ]
-
-        services.AddSingleton<IConsulClient, ConsulClient>(
-            p =>
-                new ConsulClient(consulConfig =>
-                {
-                    var address =
-                        configuration["ConsulConfiguration:Address"] ?? "http://localhost:8500";
-                    consulConfig.Address = new Uri(address);
-                })
-        );
-        services.AddSingleton<IHostedService, ConsulHostedService>();
-        services.Configure<ConsulConfiguration>(configuration.GetSection("consul"));
-
-        #endregion
-
-        #region [ MassTransit ]
-
-        // Add to DI to be able to migrate changes
-        services.AddDbContext<IdentitySagaDatabaseContext>(
-            options => options.UseNpgsql(configuration.GetConnectionString("SagaConnection")),
-            ServiceLifetime.Scoped
-        );
-
-        services.AddMassTransit(busConfigurator =>
+        services.AddInfrastructureServices<IdentityDatabaseContext>(noxLogger, options =>
         {
-            #region [ Consumers ]
+            options.Assembly = Assembly.GetExecutingAssembly().GetName().Name;
+            options.UseOutBoxMessageMechanism = true;
+            options.OutBoxMessageJobIntervalSeconds = 10;
+            options.UseEncryption = false;
+            options.UseConsul = true;
+            options.UseRedis = true;
+            options.UseJwtAuthentication = false;
+            options.Claims = [.. Permissions.Users.Metrics, .. Permissions.Roles.Metrics];
+            options.Configuration = configuration;
+            options.UseMassTransit = true;
+            options.MassTransitConfiguration = busConfigurator =>
+            {
+                #region [ Consumers ]
 
-            busConfigurator.AddConsumer<CreateApplicationUserMessageConsumer>();
-            busConfigurator.AddConsumer<DeleteApplicationUserMessageConsumer>();
+                busConfigurator.AddConsumer<CreateApplicationUserMessageConsumer>();
+                busConfigurator.AddConsumer<DeleteApplicationUserMessageConsumer>();
 
-            #endregion
+                #endregion
 
-            #region [ StateMachine ]
+                #region [ StateMachine ]
 
-            busConfigurator
-                .AddSagaStateMachine<UserCreationSaga, UserCreationSagaState>()
-                .EntityFrameworkRepository(r =>
+                busConfigurator
+                    .AddSagaStateMachine<UserCreationSaga, UserCreationSagaState>()
+                    .EntityFrameworkRepository(r =>
+                    {
+                        r.ConcurrencyMode = ConcurrencyMode.Pessimistic;
+                        r.AddDbContext<DbContext, IdentitySagaDatabaseContext>(
+                            (provider, builder) =>
+                            {
+                                builder.UseNpgsql(
+                                    configuration.GetConnectionString("SagaConnection")
+                                );
+                            }
+                        );
+                        r.UsePostgres();
+                    });
+
+                #endregion
+            };
+            options.RabbitMqConfiguration = rabbitMqConfiguration =>
+            {
+                var (context, configurator) = rabbitMqConfiguration;
+
+                configurator.ConfigureSend(sendConfig =>
                 {
-                    r.ConcurrencyMode = ConcurrencyMode.Pessimistic;
-                    r.AddDbContext<DbContext, IdentitySagaDatabaseContext>(
-                        (provider, builder) =>
-                        {
-                            builder.UseNpgsql(
-                                configuration.GetConnectionString("SagaConnection")
-                            );
-                        }
-                    );
-                    r.UsePostgres();
+                    sendConfig.UseFilter(new SsoContextFilter());
                 });
 
-            #endregion
-
-            #region [ RabbitMQ ]
-
-            busConfigurator.UsingRabbitMq(
-                (context, configurator) =>
+                configurator.ConfigurePublish(publishConfig =>
                 {
-                    configurator.Host(
-                        new Uri(configuration["MessageBroker:Host"]!),
-                        h =>
-                        {
-                            h.Username(configuration["MessageBroker:Username"]!);
-                            h.Password(configuration["MessageBroker:Password"]!);
-                        }
-                    );
+                    publishConfig.UseFilter(new SsoContextFilter());
+                });
 
-                    // Apply filters to the send and publish pipelines
-                    configurator.ConfigureSend(sendConfig =>
+                configurator.UseConsumeFilter(typeof(SsoContextConsumeFilter<>), context);
+
+                #region [ Endpoints ]
+
+                configurator.ReceiveEndpoint(
+                    "create-user",
+                    e =>
                     {
-                        sendConfig.UseFilter(new AddSsoContextToSendContextFilter());
-                    });
-
-                    configurator.ConfigurePublish(publishConfig =>
+                        e.ConfigureConsumer<CreateApplicationUserMessageConsumer>(context);
+                    }
+                );
+                configurator.ReceiveEndpoint(
+                    "delete-user",
+                    e =>
                     {
-                        publishConfig.UseFilter(new AddSsoContextToSendContextFilter());
-                    });
+                        e.ConfigureConsumer<DeleteApplicationUserMessageConsumer>(context);
+                    }
+                );
 
-
-                    #region [ Endpoints ]
-
-                    configurator.ReceiveEndpoint(
-                        "create-user",
-                        e =>
-                        {
-                            e.ConfigureConsumer<CreateApplicationUserMessageConsumer>(context);
-                            e.UseConsumeFilter<SsoContextConsumeFilter<CreateApplicationUserMessageConsumer>>(context);
-                        }
-                    );
-                    configurator.ReceiveEndpoint(
-                        "delete-user",
-                        e =>
-                        {
-                            e.ConfigureConsumer<DeleteApplicationUserMessageConsumer>(context);
-                            e.UseConsumeFilter<SsoContextConsumeFilter<DeleteApplicationUserMessage>>(context);
-                        }
-                    );
-
-                    #endregion
-
-                    configurator.ConfigureEndpoints(context);
-                }
-            );
-
-            #endregion
+                #endregion
+            };
         });
 
-        #region [INoxBus Configuration]
+        #region [ INoxSharedBus Configuration ]
 
-        services.AddMassTransit<INoxBus>(busConfigurator =>
+        services.AddMassTransit<INoxSharedBus>(busConfigurator =>
         {
             #region [ Consumers ]
 
@@ -201,20 +150,21 @@ public static class DependencyInjection
                     // Apply filters to the send and publish pipelines
                     configurator.ConfigureSend(sendConfig =>
                     {
-                        sendConfig.UseFilter(new AddSsoContextToSendContextFilter());
+                        sendConfig.UseFilter(new SsoContextFilter());
                     });
 
                     configurator.ConfigurePublish(publishConfig =>
                     {
-                        publishConfig.UseFilter(new AddSsoContextToSendContextFilter());
+                        publishConfig.UseFilter(new SsoContextFilter());
                     });
+
+                    configurator.UseConsumeFilter(typeof(SsoContextConsumeFilter<>), context);
 
                     #region [ Endpoints ]
 
                     configurator.ReceiveEndpoint("check-user-availability-in-sso", e =>
                     {
                         e.ConfigureConsumer<CheckUserAvailabilityMessageConsumer>(context);
-                        e.UseConsumeFilter<SsoContextConsumeFilter<CheckUserAvailabilityMessageConsumer>>(context);
                     });
 
                     #endregion
@@ -225,8 +175,6 @@ public static class DependencyInjection
 
             #endregion
         });
-
-        #endregion
 
         #endregion
 
@@ -251,6 +199,10 @@ public static class DependencyInjection
 
         #endregion
 
+        services.AddDbContext<IdentitySagaDatabaseContext>(
+            options => options.UseNpgsql(configuration.GetConnectionString("SagaConnection")),
+            ServiceLifetime.Scoped
+        );
         services.AddScoped<IDatabaseChecks, ValidatorDatabaseChecker>();
 
         return services;
@@ -307,7 +259,7 @@ public static class DependencyInjection
             {
                 options.AddPolicy(item, builder =>
                 {
-                    builder.AddRequirements(new PermissionRequirement(item, "API.Permission"));
+                    builder.RequireAuthenticatedUser().AddRequirements(new PermissionRequirement(item, "API.Permission"));
                 });
             }
         });
@@ -368,6 +320,7 @@ public static class DependencyInjection
 
         services.ConfigureApplicationCookie(options => { options.LoginPath = "/pages/authentication/login"; });
     }
-
 }
+
+
 

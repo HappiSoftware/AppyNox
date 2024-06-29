@@ -9,6 +9,7 @@ using AppyNox.Services.License.Infrastructure.Repositories;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System.Reflection;
 
 namespace AppyNox.Services.License.Infrastructure
 {
@@ -20,49 +21,24 @@ namespace AppyNox.Services.License.Infrastructure
         {
             services.AddInfrastructureServices<LicenseDatabaseContext>(logger, options =>
             {
-                options.DbContextAssemblyName = "AppyNox.Services.License.Infrastructure";
+                options.Assembly = Assembly.GetExecutingAssembly().GetName().Name;
                 options.UseOutBoxMessageMechanism = true;
                 options.OutBoxMessageJobIntervalSeconds = 10;
                 options.UseConsul = true;
                 options.UseRedis = true;
                 options.UseJwtAuthentication = true;
-                options.RegisterIAuthorizationHandler = true;
                 options.Claims = [.. Permissions.Licenses.Metrics, .. Permissions.Products.Metrics];
                 options.Configuration = configuration;
-            });
-
-            #region [ MassTransit ]
-
-            string hostUrl = configuration["MessageBroker:Host"]
-                ?? throw new InvalidOperationException("MessageBroker:Host is not defined!");
-
-            string username = configuration["MessageBroker:Username"]
-                ?? throw new InvalidOperationException("MessageBroker:Username is not defined!");
-            string password = configuration["MessageBroker:Password"]
-                ?? throw new InvalidOperationException("MessageBroker:Password is not defined!");
-
-            services.AddMassTransit(busConfigurator =>
-            {
-                #region [ Consumers ]
-
-                busConfigurator.AddConsumer<ValidateLicenseMessageConsumer>();
-                busConfigurator.AddConsumer<AssignLicenseToUserMessageConsumer>();
-
-                #endregion
-
-                #region [ RabbitMQ ]
-
-
-                busConfigurator.UsingRabbitMq((context, configurator) =>
+                options.UseMassTransit = true;
+                options.MassTransitConfiguration = busConfigurator =>
                 {
-                    configurator.Host(
-                        new Uri(hostUrl),
-                        h =>
-                        {
-                            h.Username(username);
-                            h.Password(password);
-                        }
-                    );
+                    busConfigurator.AddConsumer<ValidateLicenseMessageConsumer>();
+                    busConfigurator.AddConsumer<AssignLicenseToUserMessageConsumer>();
+                    busConfigurator.AddConsumer<GetLicenseIdByKeyDataRequestConsumer>();
+                };
+                options.RabbitMqConfiguration = rabbitMqConfiguration =>
+                {
+                    var (context, configurator) = rabbitMqConfiguration;
                     configurator.ReceiveEndpoint("validate-license", e =>
                     {
                         e.ConfigureConsumer<ValidateLicenseMessageConsumer>(context);
@@ -73,13 +49,12 @@ namespace AppyNox.Services.License.Infrastructure
                         e.ConfigureConsumer<AssignLicenseToUserMessageConsumer>(context);
                     });
 
-                    configurator.ConfigureEndpoints(context);
-                });
-
-                #endregion
+                    configurator.ReceiveEndpoint("get-license-by-key", e =>
+                    {
+                        e.ConfigureConsumer<GetLicenseIdByKeyDataRequestConsumer>(context);
+                    });
+                };
             });
-
-            #endregion
 
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddScoped(typeof(INoxRepository<>), typeof(NoxRepository<>));

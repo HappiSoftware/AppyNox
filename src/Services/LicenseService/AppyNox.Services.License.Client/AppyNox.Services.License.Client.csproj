@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Events\" />
+    <PackageReference Include="MassTransit" Version="8.2.3" />
+	<ProjectReference Include="..\AppyNox.Services.License.Contarcts\AppyNox.Services.License.Contarcts.csproj" />
   </ItemGroup>
-
 </Project>

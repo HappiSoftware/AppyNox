@@ -115,7 +115,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://+:7002
-      - WAIT_HOSTS=appynox-coupon-db:5432
+      - WAIT_HOSTS=appynox-coupon-db:5432,appynox-rabbitmq-service:5672
       - WAIT_TIMEOUT=300
       - WAIT_SLEEP_INTERVAL=10
       - WAIT_HOST_CONNECT_TIMEOUT=10
@@ -137,7 +137,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://+:7003
-      - WAIT_HOSTS=appynox-license-db:5432
+      - WAIT_HOSTS=appynox-license-db:5432,appynox-rabbitmq-service:5672
       - WAIT_TIMEOUT=300
       - WAIT_SLEEP_INTERVAL=10
       - WAIT_HOST_CONNECT_TIMEOUT=10

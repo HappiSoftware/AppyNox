@@ -10,7 +10,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\.BaseService\AppyNox.Services.Base.Infrastructure\AppyNox.Services.Base.Infrastructure.csproj" />
     <ProjectReference Include="..\AppyNox.Services.License.Application\AppyNox.Services.License.Application.csproj" />
-    <ProjectReference Include="..\AppyNox.Services.License.SharedEvents\AppyNox.Services.License.SharedEvents.csproj" />
+    <ProjectReference Include="..\AppyNox.Services.License.Contarcts\AppyNox.Services.License.Contarcts.csproj" />
   </ItemGroup>
 
 </Project>

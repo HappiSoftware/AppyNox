@@ -1,19 +1,26 @@
-﻿using AppyNox.Services.Sso.Domain.Entities;
+﻿using AppyNox.Services.Base.Application.Interfaces.Encryption;
+using AppyNox.Services.Base.Domain.Attributes;
+using AppyNox.Services.Base.Domain.Interfaces;
+using AppyNox.Services.Base.Domain.Outbox;
+using AppyNox.Services.Base.Infrastructure.Data;
+using AppyNox.Services.Sso.Application.AsyncLocals;
+using AppyNox.Services.Sso.Domain.Entities;
 using AppyNox.Services.Sso.Infrastructure.Data.Configurations;
-using AppyNox.Services.Base.Core.AsyncLocals;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.Extensions.Configuration;
-using AppyNox.Services.Sso.Application.AsyncLocals;
+using System.Reflection;
+using System.Reflection.Emit;
 
 namespace AppyNox.Services.Sso.Infrastructure.Data
 {
     /// <summary>
     /// Represents the database context for identity-related entities, extending the IdentityDbContext with custom configurations.
     /// </summary>
-    public class IdentityDatabaseContext
+    public class IdentityDatabaseContext(DbContextOptions<IdentityDatabaseContext> options, IEncryptionService? encryptionService = null)
     : IdentityDbContext<
                         ApplicationUser,            // User entity
                         ApplicationRole,            // Role entity
@@ -23,21 +30,16 @@ namespace AppyNox.Services.Sso.Infrastructure.Data
                         IdentityUserLogin<Guid>,    // User logins
                         IdentityRoleClaim<Guid>,    // Role claims
                         IdentityUserToken<Guid>     // User tokens
-                        >
+                        >(options), INoxDatabaseContext
     {
-        #region [ Public Constructors ]
 
-        public IdentityDatabaseContext(DbContextOptions<IdentityDatabaseContext> options)
-            : base(options)
-        {
-        }
-
-        #endregion
-
+        private readonly IEncryptionService? _encryptionService = encryptionService;
         #region [ Properties ]
 
         public DbSet<Company> Companies { get; set; }
         public override DbSet<ApplicationUser> Users { get; set; }
+
+        public DbSet<OutboxMessage> OutboxMessages { get; set; }
 
         #endregion
 
@@ -89,6 +91,14 @@ namespace AppyNox.Services.Sso.Infrastructure.Data
             });
 
             #endregion
+
+            #region [ INoxDatabaseContext ]
+
+            ConfigureAuditableEntities(builder);
+            ConfigureOutboxMessages(builder);
+            ApplyEncryptionConverters(builder);
+
+            #endregion
         }
 
         #endregion
@@ -120,6 +130,66 @@ namespace AppyNox.Services.Sso.Infrastructure.Data
         private bool IsConnectRequest()
         {
             return SsoContext.IsConnectRequest;
+        }
+
+        #endregion
+
+        #region [ Protected Methods ]
+
+        private static void ConfigureAuditableEntities(ModelBuilder modelBuilder)
+        {
+            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+            {
+                if (typeof(IAuditable).IsAssignableFrom(entityType.ClrType))
+                {
+                    var entity = modelBuilder.Entity(entityType.ClrType);
+                    entity.Property<string>("CreatedBy").IsRequired(true);
+                    entity.Property<DateTime>("CreationDate").IsRequired(true);
+                    entity.Property<string?>("UpdatedBy").IsRequired(false);
+                    entity.Property<DateTime?>("UpdateDate").IsRequired(false);
+                    entity.HasIndex("CreationDate");
+                    entity.HasIndex("UpdateDate");
+                }
+            }
+        }
+
+        private static void ConfigureOutboxMessages(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<OutboxMessage>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(om => om.Type).IsRequired();
+                entity.Property(om => om.Content).IsRequired();
+                entity.Property(om => om.OccurredOnUtc).IsRequired();
+                entity.Property(om => om.ProcessedOnUtc).IsRequired(false);
+                entity.Property(om => om.Error).IsRequired(false);
+                entity.Property(om => om.RetryCount).IsRequired();
+            });
+        }
+
+        private void ApplyEncryptionConverters(ModelBuilder modelBuilder)
+        {
+            if (_encryptionService == null)
+            {
+                return;
+            }
+            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+            {
+                foreach (var property in entityType.GetProperties())
+                {
+                    var propertyInfo = property.PropertyInfo;
+                    if (propertyInfo == null) continue;
+
+                    if (propertyInfo.GetCustomAttribute<EncryptAttribute>() != null)
+                    {
+                        var converter = new ValueConverter<string, string>(
+                            v => _encryptionService.EncryptString(v),
+                            v => _encryptionService.DecryptString(v));
+
+                        property.SetValueConverter(converter);
+                    }
+                }
+            }
         }
 
         #endregion

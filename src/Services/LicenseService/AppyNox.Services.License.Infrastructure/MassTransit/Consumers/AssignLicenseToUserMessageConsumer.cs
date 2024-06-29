@@ -1,8 +1,7 @@
-﻿using AppyNox.Services.Base.Application.Interfaces.Exceptions;
-using AppyNox.Services.Base.Core.Exceptions.Base;
+﻿using AppyNox.Services.Base.Core.Exceptions.Base;
 using AppyNox.Services.License.Application.MediatR.Commands;
+using AppyNox.Services.License.Contarcts.MassTransit.Messages;
 using AppyNox.Services.License.Infrastructure.ExceptionExtensions;
-using AppyNox.Services.License.SharedEvents.Events;
 using MassTransit;
 using MediatR;
 

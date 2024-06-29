@@ -4,6 +4,7 @@ using AppyNox.Services.Base.Infrastructure;
 using AppyNox.Services.Coupon.Application.Permission;
 using AppyNox.Services.Coupon.Infrastructure.Data;
 using AppyNox.Services.Coupon.Infrastructure.Repositories;
+using AppyNox.Services.License.Client;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -24,23 +25,24 @@ public static class DependencyInjection
     {
         services.AddInfrastructureServices<CouponDbContext>(logger, options =>
         {
-            options.DbContextAssemblyName = "AppyNox.Services.Coupon.Infrastructure";
+            options.Assembly = "AppyNox.Services.Coupon.Infrastructure";
             options.UseOutBoxMessageMechanism = true;
             options.OutBoxMessageJobIntervalSeconds = 10;
             options.UseEncryption = true;
             options.UseConsul = true;
             options.UseRedis = true;
             options.UseJwtAuthentication = true;
-            options.RegisterIAuthorizationHandler = true;
             options.Claims = [.. Permissions.Coupons.Metrics];
             options.AdminClaims = [.. Permissions.CouponsAdmin.Metrics];
             options.Configuration = configuration;
+            options.UseMassTransit = true;
         });
 
         services.AddScoped(typeof(ICouponRepository), typeof(CouponRepository));
         services.AddScoped(typeof(INoxRepository<>), typeof(NoxRepository<>));
         services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddTransient<ILicenseServiceClient, LicenseServiceClient>();
 
         return services;
     }

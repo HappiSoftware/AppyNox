@@ -1,7 +1,7 @@
 ﻿using AppyNox.Services.Sso.Application.DTOs.ApplicationUserDTOs.Models;
 using AppyNox.Services.Sso.Application.MediatR.Commands;
+using AppyNox.Services.Sso.Contracts.MassTransit.Messages;
 using AppyNox.Services.Sso.Infrastructure.Exceptions.Base;
-using AppyNox.Services.Sso.SharedEvents.Events;
 using MassTransit;
 using MediatR;
 
