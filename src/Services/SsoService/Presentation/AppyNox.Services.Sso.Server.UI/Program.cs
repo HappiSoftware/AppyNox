@@ -13,7 +13,7 @@ using Serilog;
 using AppyNox.Services.Sso.Application;
 using AppyNox.Services.Sso.Infrastructure;
 using AppyNox.Services.Sso.Server.UI;
-using AppyNox.Services.Sso.Application.Localization;
+using AppyNox.Services.Sso.Server.UI.Localization;
 
 var builder = WebApplication.CreateBuilder(args);
 

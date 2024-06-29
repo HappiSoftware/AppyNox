@@ -4,7 +4,7 @@ using AppyNox.Services.Base.Infrastructure.Authentication;
 using AppyNox.Services.Sso.Application.Interfaces.Authentication;
 using AppyNox.Services.Sso.Application.Permission;
 using AppyNox.Services.Sso.Application.Validators.SharedRules;
-using AppyNox.Services.Sso.Contracts.MassTransit;
+using AppyNox.Services.Sso.Contracts.Public.MassTransit;
 using AppyNox.Services.Sso.Domain.Entities;
 using AppyNox.Services.Sso.Infrastructure.Authentication;
 using AppyNox.Services.Sso.Infrastructure.Configuration;

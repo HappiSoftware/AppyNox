@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Localization;
 
-namespace AppyNox.Services.Sso.Application.Localization
+namespace AppyNox.Services.Sso.Server.UI.Localization
 {
     public static class CommonResources
     {
