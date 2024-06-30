@@ -13,9 +13,9 @@ public interface INoxRepository<TEntity> where TEntity : class, IHasStronglyType
 
     Task<PaginatedList<TEntity>> GetAllAsync(IQueryParameters queryParameters, ICacheService cacheService);
 
-    Task<TEntity> GetByIdAsync<TId>(TId id) where TId : NoxId;
+    Task<TEntity> GetByIdAsync<TId>(TId id, bool includeDeleted = false, bool track = false) where TId : NoxId;
 
-    Task RemoveByIdAsync<TId>(TId id) where TId : NoxId;
+    Task RemoveByIdAsync<TId>(TId id, bool forceDelete = false) where TId : NoxId;
 
     void Update(TEntity entity);
 

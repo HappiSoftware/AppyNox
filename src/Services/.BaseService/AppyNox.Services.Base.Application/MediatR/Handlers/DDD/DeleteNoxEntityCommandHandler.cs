@@ -43,7 +43,7 @@ internal sealed class DeleteNoxEntityCommandHandler<TEntity, TId>(
         try
         {
             Logger.LogInformation($"Deleting entity of type '{typeof(TEntity).Name}' with ID: {request.Id.Value}.");
-            await _repository.RemoveByIdAsync(request.Id);
+            await _repository.RemoveByIdAsync(request.Id, request.ForceDelete);
             await _unitOfWork.SaveChangesAsync();
             await UpdateTotalCountOnCache(_cacheService, $"total-count-{typeof(TEntity).Name}", false);
         }

@@ -11,7 +11,7 @@ public record CreateEntityCommand<TEntity>(dynamic Dto, string DetailLevel) : IR
     where TEntity : IEntityWithGuid;
 
 [SuppressMessage("Sonar Code Smell", "S2326:Unused type parameters should be removed", Justification = "TEntity is used to specify the type of entity being created")]
-public record DeleteEntityCommand<TEntity>(Guid Id) : IRequest where TEntity : IEntityWithGuid;
+public record DeleteEntityCommand<TEntity>(Guid Id, bool ForceDelete = false) : IRequest where TEntity : IEntityWithGuid;
 
 [SuppressMessage("Sonar Code Smell", "S2326:Unused type parameters should be removed", Justification = "TEntity is used to specify the type of entity being created")]
 public record UpdateEntityCommand<TEntity>(Guid Id, dynamic Dto, string DetailLevel) : IRequest
@@ -22,5 +22,5 @@ public record GetAllEntitiesQuery<TEntity>(IQueryParameters QueryParameters) : I
     where TEntity : IEntityWithGuid;
 
 [SuppressMessage("Sonar Code Smell", "S2326:Unused type parameters should be removed", Justification = "TEntity is used to specify the type of entity being created")]
-public record GetEntityByIdQuery<TEntity>(Guid Id, IQueryParameters QueryParameters) : IRequest<object>
+public record GetEntityByIdQuery<TEntity>(Guid Id, IQueryParameters QueryParameters, bool Track = false) : IRequest<object>
     where TEntity : IEntityWithGuid;

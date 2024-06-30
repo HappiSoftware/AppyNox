@@ -81,11 +81,11 @@ public abstract class UnitOfWorkBase(DbContext dbContext, INoxInfrastructureLogg
     public async Task<int> SaveChangesAsync(bool isSystem = false)
     {
         string userId = "Unknown";
-        if(NoxContext.UserId != Guid.Empty)
+        if (NoxContext.UserId != Guid.Empty)
         {
             userId = NoxContext.UserId.ToString();
         }
-        if(isSystem)
+        if (isSystem)
         {
             userId = "System";
         }
@@ -103,6 +103,21 @@ public abstract class UnitOfWorkBase(DbContext dbContext, INoxInfrastructureLogg
                 entry.Property("CreationDate").IsModified = false;
                 entry.Property("UpdateDate").CurrentValue = DateTime.UtcNow;
                 entry.Property("UpdatedBy").CurrentValue = userId;
+            }
+        }
+
+        foreach (var entry in _dbContext.ChangeTracker.Entries<ISoftDeletable>())
+        {
+            if (entry.State == EntityState.Added)
+            {
+                entry.Property("IsDeleted").CurrentValue = false;
+                entry.Property("DeletedDate").CurrentValue = null;
+                entry.Property("DeletedBy").CurrentValue = null;
+            }
+            else if (entry.State == EntityState.Modified && entry.Property("IsDeleted").CurrentValue is true)
+            {
+                entry.Property("DeletedDate").CurrentValue = DateTime.UtcNow;
+                entry.Property("DeletedBy").CurrentValue = userId;
             }
         }
 

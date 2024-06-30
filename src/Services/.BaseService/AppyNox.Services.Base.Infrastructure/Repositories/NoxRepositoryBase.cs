@@ -6,8 +6,11 @@ using AppyNox.Services.Base.Core.Common;
 using AppyNox.Services.Base.Core.Exceptions.Base;
 using AppyNox.Services.Base.Domain.DDD;
 using AppyNox.Services.Base.Domain.DDD.Interfaces;
+using AppyNox.Services.Base.Domain.Interfaces;
+using AppyNox.Services.Base.Infrastructure.Data;
 using AppyNox.Services.Base.Infrastructure.Exceptions;
 using AppyNox.Services.Base.Infrastructure.Exceptions.Base;
+using AppyNox.Services.Base.Infrastructure.Repositories.Common;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Dynamic.Core;
 using System.Linq.Dynamic.Core.Exceptions;
@@ -20,7 +23,7 @@ public abstract class NoxRepositoryBase<TEntity> : INoxRepository<TEntity> where
 {
     #region [ Fields ]
 
-    private readonly DbContext _context;
+    private readonly NoxDatabaseContext _context;
 
     private readonly DbSet<TEntity> _dbSet;
 
@@ -32,7 +35,7 @@ public abstract class NoxRepositoryBase<TEntity> : INoxRepository<TEntity> where
 
     #region [ Protected Constructors ]
 
-    protected NoxRepositoryBase(DbContext context, INoxInfrastructureLogger logger)
+    protected NoxRepositoryBase(NoxDatabaseContext context, INoxInfrastructureLogger logger)
     {
         _context = context;
         _dbSet = _context.Set<TEntity>();
@@ -52,13 +55,25 @@ public abstract class NoxRepositoryBase<TEntity> : INoxRepository<TEntity> where
     /// <exception cref="NoxEntityNotFoundException{TEntity}">Thrown when the entity with the specified ID is not found.</exception>
     /// <exception cref="NoxInfrastructureException">Thrown when there is an error retrieving the entity from the database.</exception>
 
-    public async Task<TEntity> GetByIdAsync<TId>(TId id)
+    public async Task<TEntity> GetByIdAsync<TId>(TId id, bool includeDeleted = false, bool track = false)
         where TId : NoxId
     {
         try
         {
             _logger.LogInformation($"Attempting to retrieve entity with ID: '{id}' Type: '{typeof(TEntity).Name}'.");
-            TEntity? entity = await _dbSet.Where("Id == @0", id).AsNoTracking().FirstOrDefaultAsync();
+
+            IQueryable<TEntity> query = _dbSet;
+
+            if (!track)
+            {
+                query = query.AsNoTracking();
+            }
+            if (includeDeleted)
+            {
+                ConfigureContext(new QueryParameters() { IncludeDeleted = includeDeleted });
+            }
+
+            TEntity? entity = await query.Where("Id == @0", id).FirstOrDefaultAsync();
 
             if (entity == null)
             {
@@ -94,13 +109,15 @@ public abstract class NoxRepositoryBase<TEntity> : INoxRepository<TEntity> where
         {
             _logger.LogInformation($"Attempting to retrieve entities. Type: '{typeof(TEntity).Name}'.");
 
+            ConfigureContext(queryParameters);
+
             // Try to get the count from cache
             var cachedCount = await cacheService.GetCachedValueAsync(_countCacheKey);
             if (!int.TryParse(cachedCount, out int totalCount))
             {
                 // Count not in cache or invalid, so retrieve from database and cache it
                 totalCount = await _dbSet.CountAsync();
-                await cacheService.SetCachedValueAsync(_countCacheKey, totalCount.ToString(), TimeSpan.FromMinutes(10));
+                await cacheService.SetCachedValueAsync(_countCacheKey, totalCount.ToString(), TimeSpan.FromSeconds(20));
             }
 
             var query = _dbSet
@@ -204,8 +221,9 @@ public abstract class NoxRepositoryBase<TEntity> : INoxRepository<TEntity> where
     /// Removes an entity of type TEntity from the repository.
     /// </summary>
     /// <param name="id">The id of the entity to remove.</param>
+    /// <param name="forceDelete">Force delete for ISoftDeletable records.</param>
     /// <exception cref="NoxInfrastructureException">Thrown if an unexpected error occurs.</exception>
-    public async Task RemoveByIdAsync<TId>(TId id) where TId
+    public async Task RemoveByIdAsync<TId>(TId id, bool forceDelete = false) where TId
         : NoxId
     {
         try
@@ -217,7 +235,21 @@ public abstract class NoxRepositoryBase<TEntity> : INoxRepository<TEntity> where
                 _logger.LogWarning($"Entity with ID: '{id}' not found.");
                 throw new NoxEntityNotFoundException<TEntity>(id.Value);
             }
-            _dbSet.Remove(entity);
+
+            if (forceDelete || entity is not ISoftDeletable)
+            {
+                // Hard delete
+                _dbSet.Remove(entity);
+                _logger.LogInformation($"Successfully hard deleted entity with ID: '{id}' Type: '{typeof(TEntity).Name}'.");
+            }
+            else
+            {
+                // Soft delete
+                ((ISoftDeletable)entity).MarkAsDeleted();
+                _dbSet.Update(entity);
+                _logger.LogInformation($"Successfully soft deleted entity with ID: '{id}' Type: '{typeof(TEntity).Name}'.");
+            }
+
             _logger.LogInformation($"Successfully deleted entity with ID: '{id.Value}' Type: '{typeof(TEntity).Name}'.");
         }
         catch (Exception ex)
@@ -225,6 +257,16 @@ public abstract class NoxRepositoryBase<TEntity> : INoxRepository<TEntity> where
             _logger.LogError(ex, $"Error deleting entity with ID: '{id.Value}' Type: '{typeof(TEntity).Name}'.");
             throw new NoxInfrastructureException(exceptionCode: (int)NoxInfrastructureExceptionCode.DeletingDataError, innerException: ex);
         }
+    }
+
+    #endregion
+
+    #region [ Private Methods ]
+
+    private void ConfigureContext(IQueryParameters queryParameters)
+    {
+        // Apply include deleted
+        _context.IgnoreSoftDeleteFilter = queryParameters.IncludeDeleted;
     }
 
     #endregion

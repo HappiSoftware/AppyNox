@@ -6,6 +6,7 @@ using AppyNox.Services.Base.Infrastructure.UnitTests.Fixtures;
 using AppyNox.Services.Base.Infrastructure.UnitTests.Stubs;
 using AppyNox.Services.Coupon.Domain.Coupons;
 using AppyNox.Services.Coupon.Domain.Coupons.Builders;
+using AppyNox.Services.Coupon.Domain.Entities;
 using AppyNox.Services.Coupon.Domain.Exceptions.Base;
 using AppyNox.Services.Coupon.Domain.Localization;
 using AppyNox.Services.Coupon.Infrastructure.Data;
@@ -493,6 +494,48 @@ public class CouponRepositoryUnitTest : IClassFixture<RepositoryFixture>
         var exception = await Assert.ThrowsAsync<NoxEntityNotFoundException<CouponAggregate>>(async () =>
         {
             var result = await repository.GetByIdAsync(existingCoupon.Id);
+        });
+
+        Assert.NotNull(exception);
+    }
+
+    [Fact]
+    public async Task DeleteAsync_ShouldSoftDeleteEntity()
+    {
+        CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
+        UnitOfWork unitOfWork = new(context, _noxLoggerStub);
+        var existingCoupon = await context.SeedOneCoupon(unitOfWork);
+        Assert.NotNull(existingCoupon);
+
+        var repository = new CouponRepository(context, _noxLoggerStub, _cacheService);
+
+        await repository.RemoveByIdAsync(existingCoupon.Id);
+        await unitOfWork.SaveChangesAsync();
+
+        CouponAggregate result = await repository.GetByIdAsync(existingCoupon.Id, true);
+
+        Assert.NotNull(result);
+        Assert.True(result.IsDeleted);
+        Assert.NotNull(result.DeletedBy);
+        Assert.NotNull(result.DeletedDate);
+    }
+
+    [Fact]
+    public async Task DeleteAsync_ShouldHardDeleteEntity()
+    {
+        CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
+        UnitOfWork unitOfWork = new(context, _noxLoggerStub);
+        var existingCoupon = await context.SeedOneCoupon(unitOfWork);
+        Assert.NotNull(existingCoupon);
+
+        var repository = new CouponRepository(context, _noxLoggerStub, _cacheService);
+
+        await repository.RemoveByIdAsync(existingCoupon.Id, true);
+        await unitOfWork.SaveChangesAsync();
+
+        var exception = await Assert.ThrowsAsync<NoxEntityNotFoundException<CouponAggregate>>(async () =>
+        {
+            var result = await repository.GetByIdAsync(existingCoupon.Id, true);
         });
 
         Assert.NotNull(exception);

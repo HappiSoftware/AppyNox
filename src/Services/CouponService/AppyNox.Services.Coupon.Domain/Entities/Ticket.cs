@@ -3,7 +3,7 @@ using AppyNox.Services.Base.Domain.Interfaces;
 
 namespace AppyNox.Services.Coupon.Domain.Entities;
 
-public class Ticket : IEntityWithGuid, IAuditable
+public class Ticket : IEntityWithGuid, IAuditable, ISoftDeletable
 {
     #region [ Properties ]
 
@@ -29,6 +29,19 @@ public class Ticket : IEntityWithGuid, IAuditable
     public string? UpdatedBy { get; }
 
     public DateTime? UpdateDate { get; }
+
+    #endregion
+
+    #region [ ISoftDeletable ]
+
+    public bool IsDeleted { get; private set; }
+    public DateTime? DeletedDate { get; }
+    public string? DeletedBy { get; }
+
+    public void MarkAsDeleted()
+    {
+        IsDeleted = true;
+    }
 
     #endregion
 

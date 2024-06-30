@@ -5,13 +5,17 @@ using AppyNox.Services.Base.Application.Interfaces.Repositories;
 using AppyNox.Services.Base.Core.Common;
 using AppyNox.Services.Base.Core.Exceptions.Base;
 using AppyNox.Services.Base.Domain.Interfaces;
+using AppyNox.Services.Base.Infrastructure.Data;
 using AppyNox.Services.Base.Infrastructure.Exceptions;
 using AppyNox.Services.Base.Infrastructure.Exceptions.Base;
+using AppyNox.Services.Base.Infrastructure.Repositories.Common;
+using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Dynamic.Core;
 using System.Linq.Dynamic.Core.Exceptions;
 using System.Net;
 using static AppyNox.Services.Base.Infrastructure.Repositories.RepositoryHelpers;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace AppyNox.Services.Base.Infrastructure.Repositories;
 
@@ -23,7 +27,7 @@ public abstract class GenericRepositoryBase<TEntity> : IGenericRepository<TEntit
 {
     #region [ Fields ]
 
-    private readonly DbContext _context;
+    private readonly NoxDatabaseContext _context;
 
     private readonly DbSet<TEntity> _dbSet;
 
@@ -35,7 +39,7 @@ public abstract class GenericRepositoryBase<TEntity> : IGenericRepository<TEntit
 
     #region [ Protected Constructors ]
 
-    protected GenericRepositoryBase(DbContext context, INoxInfrastructureLogger logger)
+    protected GenericRepositoryBase(NoxDatabaseContext context, INoxInfrastructureLogger logger)
     {
         _context = context;
         _dbSet = _context.Set<TEntity>();
@@ -53,12 +57,24 @@ public abstract class GenericRepositoryBase<TEntity> : IGenericRepository<TEntit
     /// <returns>A task representing the asynchronous operation, returning the retrieved entity.</returns>
     /// <exception cref="NoxEntityNotFoundException{TEntity}">Thrown when the entity with the specified ID is not found.</exception>
     /// <exception cref="NoxInfrastructureException">Thrown when there is an error retrieving the entity from the database.</exception>
-    public async Task<TEntity> GetByIdAsync(Guid id)
+    public async Task<TEntity> GetByIdAsync(Guid id, bool includeDeleted = false, bool track = false)
     {
         try
         {
             _logger.LogInformation($"Attempting to retrieve entity with ID: '{id}' Type: '{typeof(TEntity).Name}'.");
-            TEntity? entity = await _dbSet.Where(x => x.Id == id).AsNoTracking().FirstOrDefaultAsync();
+
+            IQueryable<TEntity> query = _dbSet;
+
+            if (!track)
+            {
+                query = query.AsNoTracking();
+            }
+            if (includeDeleted)
+            {
+                ConfigureContext(new QueryParameters() { IncludeDeleted = includeDeleted });
+            }
+
+            TEntity? entity = await query.FirstOrDefaultAsync(x => x.Id == id);
 
             if (entity == null)
             {
@@ -85,7 +101,6 @@ public abstract class GenericRepositoryBase<TEntity> : IGenericRepository<TEntit
     /// Retrieves a paginated list of entities asynchronously based on the specified query parameters.
     /// </summary>
     /// <param name="queryParameters">The query parameters specifying pagination details.</param>
-    /// <param name="dtoType">The type of DTO (Data Transfer Object) to project the entities into.</param>
     /// <param name="cacheService">The cache service used for caching.</param>
     /// <returns>A task representing the asynchronous operation, returning a PaginatedList of entities.</returns>
     /// <exception cref="NoxInfrastructureException">Thrown when there is an error retrieving entities from the database.</exception>
@@ -95,13 +110,15 @@ public abstract class GenericRepositoryBase<TEntity> : IGenericRepository<TEntit
         {
             _logger.LogInformation($"Attempting to retrieve entities. Type: '{typeof(TEntity).Name}'.");
 
+            ConfigureContext(queryParameters);
+
             // Try to get the count from cache
             var cachedCount = await cacheService.GetCachedValueAsync(_countCacheKey);
             if (!int.TryParse(cachedCount, out int totalCount))
             {
                 // Count not in cache or invalid, so retrieve from database and cache it
                 totalCount = await _dbSet.CountAsync();
-                await cacheService.SetCachedValueAsync(_countCacheKey, totalCount.ToString(), TimeSpan.FromMinutes(10));
+                await cacheService.SetCachedValueAsync(_countCacheKey, totalCount.ToString(), TimeSpan.FromSeconds(20));
             }
 
             var query = _dbSet
@@ -202,7 +219,7 @@ public abstract class GenericRepositoryBase<TEntity> : IGenericRepository<TEntit
     /// </summary>
     /// <param name="id">The id of the entity to remove.</param>
     /// <exception cref="NoxInfrastructureException">Thrown if an unexpected error occurs.</exception>
-    public async Task RemoveByIdAsync(Guid id)
+    public async Task RemoveByIdAsync(Guid id, bool forceDelete = false)
     {
         try
         {
@@ -213,14 +230,36 @@ public abstract class GenericRepositoryBase<TEntity> : IGenericRepository<TEntit
                 _logger.LogWarning($"Entity with ID: '{id}' not found.");
                 throw new NoxEntityNotFoundException<TEntity>(id);
             }
-            _dbSet.Remove(entity);
-            _logger.LogInformation($"Successfully deleted entity with ID: '{id}' Type: '{typeof(TEntity).Name}'.");
+
+            if (forceDelete || entity is not ISoftDeletable)
+            {
+                // Hard delete
+                _dbSet.Remove(entity);
+                _logger.LogInformation($"Successfully hard deleted entity with ID: '{id}' Type: '{typeof(TEntity).Name}'.");
+            }
+            else
+            {
+                // Soft delete
+                ((ISoftDeletable)entity).MarkAsDeleted();
+                _dbSet.Update(entity);
+                _logger.LogInformation($"Successfully soft deleted entity with ID: '{id}' Type: '{typeof(TEntity).Name}'.");
+            }
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, $"Error deleting entity with ID: '{id}' Type: '{typeof(TEntity).Name}'.");
             throw new NoxInfrastructureException(exceptionCode: (int)NoxInfrastructureExceptionCode.DeletingDataError, innerException: ex);
         }
+    }
+
+    #endregion
+
+    #region [ Private Methods ]
+
+    private void ConfigureContext(IQueryParameters queryParameters)
+    {
+        // Apply include deleted
+        _context.IgnoreSoftDeleteFilter = queryParameters.IncludeDeleted;
     }
 
     #endregion

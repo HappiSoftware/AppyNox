@@ -6,7 +6,7 @@ using AppyNox.Services.Coupon.Domain.Exceptions.Base;
 
 namespace AppyNox.Services.Coupon.Domain.Coupons;
 
-public class Coupon : AggregateRoot, IHasStronglyTypedId, IHasCode
+public class Coupon : AggregateRoot, IHasStronglyTypedId, IHasCode, ISoftDeletable
 {
     #region [ Properties ]
 
@@ -65,6 +65,19 @@ public class Coupon : AggregateRoot, IHasStronglyTypedId, IHasCode
     #region [ IHasStronglyTypedId ]
 
     public Guid GetTypedId() => Id.Value;
+
+    #endregion
+
+    #region [ ISoftDeletable ]
+
+    public bool IsDeleted { get; private set; }
+    public DateTime? DeletedDate { get; }
+    public string? DeletedBy { get; }
+
+    public void MarkAsDeleted()
+    {
+        IsDeleted = true;
+    }
 
     #endregion
 

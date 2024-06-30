@@ -61,7 +61,10 @@ internal class CouponConfiguration(CouponId couponId1, CouponId couponId2, Coupo
                 CreatedBy = "System",
                 CreationDate = DateTime.SpecifyKind(new DateTime(2024, 4, 21), DateTimeKind.Utc),
                 UpdatedBy = (string?)null,
-                UpdateDate = (DateTime?)null
+                UpdateDate = (DateTime?)null,
+                IsDeleted = false,
+                DeletedDate = (DateTime?)null,
+                DeletedBy = (string?)null
             });
         builder.OwnsOne(o => o.Amount).HasData(new
         {
@@ -85,7 +88,10 @@ internal class CouponConfiguration(CouponId couponId1, CouponId couponId2, Coupo
                 CreatedBy = "System",
                 CreationDate = DateTime.SpecifyKind(new DateTime(2024, 4, 21), DateTimeKind.Utc),
                 UpdatedBy = (string?)null,
-                UpdateDate = (DateTime?)null
+                UpdateDate = (DateTime?)null,
+                IsDeleted = false,
+                DeletedDate = (DateTime?)null,
+                DeletedBy = (string?)null
             });
         builder.OwnsOne(o => o.Amount).HasData(new
         {

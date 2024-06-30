@@ -85,7 +85,7 @@ namespace AppyNox.Services.License.Application.UnitTest.CQRSTests
             _fixture.MockRepository.Setup(repo => repo.GetAllAsync(It.IsAny<IQueryParameters>(), It.IsAny<ICacheService>()))
                 .ReturnsAsync(new Mock<PaginatedList<LicenseEntity>>().Object);
 
-            _fixture.MockRepository.Setup(repo => repo.GetByIdAsync(It.IsAny<LicenseId>()))
+            _fixture.MockRepository.Setup(repo => repo.GetByIdAsync(It.IsAny<LicenseId>(), false, false))
                 .ReturnsAsync(licenseEntity);
 
             _fixture.MockRepository.Setup(repo => repo.AddAsync(It.IsAny<LicenseEntity>()))
