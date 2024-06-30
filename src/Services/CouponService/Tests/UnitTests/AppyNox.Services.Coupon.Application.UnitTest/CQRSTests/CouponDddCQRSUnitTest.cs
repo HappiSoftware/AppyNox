@@ -184,7 +184,7 @@ public class CouponDddCQRSUnitTest : IClassFixture<NoxCQRSFixture<Domain.Coupons
     {
         // Act
         var result = _fixture.MockMediator.Object
-            .Send(new DeleteNoxEntityCommand<CouponAggregate, CouponId>(new CouponId(Guid.NewGuid())));
+            .Send(new DeleteNoxEntityCommand<CouponAggregate, CouponId>(new CouponId(Guid.NewGuid()), false));
 
         // Assert
         Assert.NotNull(result);

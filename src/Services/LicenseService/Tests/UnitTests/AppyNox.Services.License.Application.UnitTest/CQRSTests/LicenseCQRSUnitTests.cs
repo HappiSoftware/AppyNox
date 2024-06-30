@@ -167,7 +167,7 @@ namespace AppyNox.Services.License.Application.UnitTest.CQRSTests
         {
             // Act
             var result = _fixture.MockMediator.Object
-                .Send(new DeleteNoxEntityCommand<LicenseEntity, LicenseId>(new LicenseId(Guid.NewGuid())));
+                .Send(new DeleteNoxEntityCommand<LicenseEntity, LicenseId>(new LicenseId(Guid.NewGuid()), false));
 
             // Assert
             Assert.NotNull(result);
