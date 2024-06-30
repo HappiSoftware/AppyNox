@@ -64,7 +64,7 @@ namespace AppyNox.Services.License.WebAPI.Controllers.v1_0
         [Authorize(Permissions.Licenses.Delete)]
         public async Task<IActionResult> Delete(Guid id)
         {
-            await _mediator.Send(new DeleteNoxEntityCommand<LicenseEntity, LicenseId>(new LicenseId(id)));
+            await _mediator.Send(new DeleteNoxEntityCommand<LicenseEntity, LicenseId>(new LicenseId(id), false));
             return NoContent();
         }
 

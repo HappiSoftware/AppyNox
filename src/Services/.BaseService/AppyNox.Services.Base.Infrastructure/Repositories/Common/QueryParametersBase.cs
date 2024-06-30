@@ -58,6 +58,7 @@ public abstract class QueryParametersBase : IQueryParameters
     public string SortBy { get; set; } = string.Empty;
 
     public string Filter { get; set; } = string.Empty;
+    public bool IncludeDeleted { get; set; }
 
     #endregion
 }

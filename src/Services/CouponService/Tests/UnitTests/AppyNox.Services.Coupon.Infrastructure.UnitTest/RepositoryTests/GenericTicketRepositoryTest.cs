@@ -5,13 +5,11 @@ using AppyNox.Services.Base.Infrastructure.Repositories.Common;
 using AppyNox.Services.Base.Infrastructure.UnitTests.Fixtures;
 using AppyNox.Services.Base.Infrastructure.UnitTests.Stubs;
 using AppyNox.Services.Coupon.Application.Dtos.TicketDtos.Models.Basic;
-using AppyNox.Services.Coupon.Domain.Coupons;
 using AppyNox.Services.Coupon.Domain.Entities;
 using AppyNox.Services.Coupon.Domain.Localization;
 using AppyNox.Services.Coupon.Infrastructure.Data;
 using AppyNox.Services.Coupon.Infrastructure.Repositories;
 using AppyNox.Services.Coupon.Infrastructure.UnitTest.Seeds;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using Moq;
 
@@ -302,6 +300,48 @@ public class GenericTicketRepositoryTest : IClassFixture<RepositoryFixture>
         var exception = await Assert.ThrowsAsync<NoxEntityNotFoundException<Ticket>>(async () =>
         {
             var result = await repository.GetByIdAsync(existingTicket.Id);
+        });
+
+        Assert.NotNull(exception);
+    }
+
+    [Fact]
+    public async Task DeleteAsync_ShouldSoftDeleteEntity()
+    {
+        CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
+        UnitOfWork unitOfWork = new(context, _noxLoggerStub);
+        var existingTicket = await context.SeedOneTicket(unitOfWork);
+        Assert.NotNull(existingTicket);
+
+        var repository = new GenericRepository<Ticket>(context, _noxLoggerStub);
+
+        await repository.RemoveByIdAsync(existingTicket.Id);
+        await unitOfWork.SaveChangesAsync();
+
+        Ticket result = await repository.GetByIdAsync(existingTicket.Id, true);
+
+        Assert.NotNull(result);
+        Assert.True(result.IsDeleted);
+        Assert.NotNull(result.DeletedBy);
+        Assert.NotNull(result.DeletedDate);
+    }
+
+    [Fact]
+    public async Task DeleteAsync_ShouldHardDeleteEntity()
+    {
+        CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
+        UnitOfWork unitOfWork = new(context, _noxLoggerStub);
+        var existingTicket = await context.SeedOneTicket(unitOfWork);
+        Assert.NotNull(existingTicket);
+
+        var repository = new GenericRepository<Ticket>(context, _noxLoggerStub);
+
+        await repository.RemoveByIdAsync(existingTicket.Id, true);
+        await unitOfWork.SaveChangesAsync();
+
+        var exception = await Assert.ThrowsAsync<NoxEntityNotFoundException<Ticket>>(async () =>
+        {
+            var result = await repository.GetByIdAsync(existingTicket.Id, true);
         });
 
         Assert.NotNull(exception);

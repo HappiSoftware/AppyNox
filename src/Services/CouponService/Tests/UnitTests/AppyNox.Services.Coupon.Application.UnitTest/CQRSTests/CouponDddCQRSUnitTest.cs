@@ -83,7 +83,7 @@ public class CouponDddCQRSUnitTest : IClassFixture<NoxCQRSFixture<Domain.Coupons
         _fixture.MockRepository.Setup(repo => repo.GetAllAsync(It.IsAny<IQueryParameters>(), It.IsAny<ICacheService>()))
             .ReturnsAsync(new Mock<PaginatedList<CouponAggregate>>().Object);
 
-        _fixture.MockRepository.Setup(repo => repo.GetByIdAsync(It.IsAny<CouponId>()))
+        _fixture.MockRepository.Setup(repo => repo.GetByIdAsync(It.IsAny<CouponId>(), false, false))
             .ReturnsAsync(couponEntity);
 
         _fixture.MockRepository.Setup(repo => repo.AddAsync(It.IsAny<CouponAggregate>()))
@@ -184,7 +184,7 @@ public class CouponDddCQRSUnitTest : IClassFixture<NoxCQRSFixture<Domain.Coupons
     {
         // Act
         var result = _fixture.MockMediator.Object
-            .Send(new DeleteNoxEntityCommand<CouponAggregate, CouponId>(new CouponId(Guid.NewGuid())));
+            .Send(new DeleteNoxEntityCommand<CouponAggregate, CouponId>(new CouponId(Guid.NewGuid()), false));
 
         // Assert
         Assert.NotNull(result);

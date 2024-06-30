@@ -89,7 +89,7 @@ public class TicketAnemicCQRSUnitTest : IClassFixture<GenericCQRSFixture<Ticket>
         _fixture.MockRepository.Setup(repo => repo.GetAllAsync(It.IsAny<IQueryParameters>(), It.IsAny<ICacheService>()))
             .ReturnsAsync(new Mock<PaginatedList<Ticket>>().Object);
 
-        _fixture.MockRepository.Setup(repo => repo.GetByIdAsync(It.IsAny<Guid>()))
+        _fixture.MockRepository.Setup(repo => repo.GetByIdAsync(It.IsAny<Guid>(), false, false))
             .ReturnsAsync(mockTicket);
 
         _fixture.MockRepository.Setup(repo => repo.AddAsync(It.IsAny<Ticket>()))

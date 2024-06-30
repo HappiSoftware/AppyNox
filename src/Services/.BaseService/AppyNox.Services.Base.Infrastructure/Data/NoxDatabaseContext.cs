@@ -15,6 +15,7 @@ public abstract class NoxDatabaseContext(DbContextOptions options, IEncryptionSe
 
     #region [ Properties ]
 
+    public bool IgnoreSoftDeleteFilter { get; set; } = false;
     public DbSet<OutboxMessage> OutboxMessages { get; set; }
 
     #endregion
@@ -29,13 +30,13 @@ public abstract class NoxDatabaseContext(DbContextOptions options, IEncryptionSe
     {
         base.OnModelCreating(modelBuilder);
 
-        ConfigureAuditableEntities(modelBuilder);
+        ConfigureEntities(modelBuilder);
         ConfigureOutboxMessages(modelBuilder);
         ApplyEncryptionConverters(modelBuilder);
 
     }
 
-    private static void ConfigureAuditableEntities(ModelBuilder modelBuilder)
+    private void ConfigureEntities(ModelBuilder modelBuilder)
     {
         foreach (var entityType in modelBuilder.Model.GetEntityTypes())
         {
@@ -48,6 +49,30 @@ public abstract class NoxDatabaseContext(DbContextOptions options, IEncryptionSe
                 entity.Property<DateTime?>("UpdateDate").IsRequired(false);
                 entity.HasIndex("CreationDate");
                 entity.HasIndex("UpdateDate");
+            }
+
+            if (typeof(ISoftDeletable).IsAssignableFrom(entityType.ClrType))
+            {
+                var entity = modelBuilder.Entity(entityType.ClrType);
+                entity.Property<bool>("IsDeleted").IsRequired().HasDefaultValue(false);
+                entity.Property<DateTime?>("DeletedDate").IsRequired(false);
+                entity.Property<string?>("DeletedBy").IsRequired(false);
+                entity.HasIndex("IsDeleted");
+                entity.HasIndex("DeletedDate");
+
+                // Set the global filter
+                var method = typeof(NoxDatabaseContext)
+                    .GetMethod(nameof(SetSoftDeleteFilter), BindingFlags.NonPublic | BindingFlags.Static);
+                if (method != null && method.IsGenericMethodDefinition)
+                {
+                    var genericMethod = method.MakeGenericMethod(entityType.ClrType);
+                    genericMethod.Invoke(null, [modelBuilder, this]);
+                }
+                else
+                {
+                    // If method is not found
+                    throw new InvalidOperationException($"Method {nameof(SetSoftDeleteFilter)} not found.");
+                }
             }
         }
     }
@@ -89,6 +114,11 @@ public abstract class NoxDatabaseContext(DbContextOptions options, IEncryptionSe
                 }
             }
         }
+    }
+
+    private static void SetSoftDeleteFilter<T>(ModelBuilder modelBuilder, NoxDatabaseContext context) where T : class, ISoftDeletable
+    {
+        modelBuilder.Entity<T>().HasQueryFilter(e => context.IgnoreSoftDeleteFilter || e.IsDeleted == false);
     }
 
     #endregion

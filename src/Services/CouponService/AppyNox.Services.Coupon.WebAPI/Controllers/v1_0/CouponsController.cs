@@ -58,7 +58,7 @@ public class CouponsController(IMediator mediator) : NoxController
     [Authorize(Coupons.Delete)]
     public async Task<IActionResult> Delete(Guid id)
     {
-        await _mediator.Send(new DeleteNoxEntityCommand<CouponAggreagate, CouponId>(new CouponId(id)));
+        await _mediator.Send(new DeleteNoxEntityCommand<CouponAggreagate, CouponId>(new CouponId(id), false));
         return NoContent();
     }
 

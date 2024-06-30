@@ -34,7 +34,10 @@ internal class TicketConfiguration(Guid ticketId) : IEntityTypeConfiguration<Tic
             CreatedBy = "System",
             CreationDate = DateTime.SpecifyKind(new DateTime(2024, 4, 21), DateTimeKind.Utc),
             UpdatedBy = (string?)null,
-            UpdateDate = (DateTime?)null
+            UpdateDate = (DateTime?)null,
+            IsDeleted = false,
+            DeletedDate = (DateTime?)null,
+            DeletedBy = (string?)null
         });
 
         #endregion

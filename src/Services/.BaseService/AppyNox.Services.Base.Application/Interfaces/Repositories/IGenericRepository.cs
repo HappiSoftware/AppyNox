@@ -25,7 +25,8 @@ public interface IGenericRepository<TEntity> where TEntity : class, IEntityWithG
     /// Removes an entity.
     /// </summary>
     /// <param name="id">The entity id to remove.</param>
-    Task RemoveByIdAsync(Guid id);
+    /// <param name="forceDelete">Force delete for ISoftDeletable records..</param>
+    Task RemoveByIdAsync(Guid id, bool forceDelete = false);
 
     /// <summary>
     /// Retrieves all entities asynchronously based on specified query parameters and selected columns.
@@ -39,8 +40,10 @@ public interface IGenericRepository<TEntity> where TEntity : class, IEntityWithG
     /// Retrieves an entity of type TEntity by its ID, selecting specific columns based on the provided expression.
     /// </summary>
     /// <param name="id">The unique identifier of the entity to retrieve.</param>
+    /// <param name="includeDeleted">Option to retrieve deleted records.</param>
+    /// <param name="track">Option to use AsNoTracking. False means use AsNoTracking.</param>
     /// <returns>The projectized object of TEntity </returns>
-    Task<TEntity> GetByIdAsync(Guid id);
+    Task<TEntity> GetByIdAsync(Guid id, bool includeDeleted = false, bool track = false);
 
     /// <summary>
     /// Updates an existing entity of type TEntity in the repository.

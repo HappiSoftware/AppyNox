@@ -3,6 +3,7 @@ using System;
 using AppyNox.Services.Coupon.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AppyNox.Services.Coupon.Infrastructure.Migrations
 {
     [DbContext(typeof(CouponDbContext))]
-    partial class CouponDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240630212213_AddSoftDeleteTickets")]
+    partial class AddSoftDeleteTickets
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -76,12 +79,6 @@ namespace AppyNox.Services.Coupon.Infrastructure.Migrations
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("DeletedBy")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("DeletedDate")
-                        .HasColumnType("timestamp with time zone");
-
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(60)
@@ -92,11 +89,6 @@ namespace AppyNox.Services.Coupon.Infrastructure.Migrations
                         .HasMaxLength(60)
                         .IsUnicode(true)
                         .HasColumnType("character varying(60)");
-
-                    b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false);
 
                     b.Property<DateTime?>("UpdateDate")
                         .HasColumnType("timestamp with time zone");
@@ -109,10 +101,6 @@ namespace AppyNox.Services.Coupon.Infrastructure.Migrations
                     b.HasIndex("CouponDetailId");
 
                     b.HasIndex("CreationDate");
-
-                    b.HasIndex("DeletedDate");
-
-                    b.HasIndex("IsDeleted");
 
                     b.HasIndex("UpdateDate");
 
@@ -127,8 +115,7 @@ namespace AppyNox.Services.Coupon.Infrastructure.Migrations
                             CreatedBy = "System",
                             CreationDate = new DateTime(2024, 4, 21, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Description",
-                            Detail = "Detail1",
-                            IsDeleted = false
+                            Detail = "Detail1"
                         },
                         new
                         {
@@ -138,8 +125,7 @@ namespace AppyNox.Services.Coupon.Infrastructure.Migrations
                             CreatedBy = "System",
                             CreationDate = new DateTime(2024, 4, 21, 0, 0, 0, 0, DateTimeKind.Utc),
                             Description = "Description2",
-                            Detail = "Detail2",
-                            IsDeleted = false
+                            Detail = "Detail2"
                         });
                 });
 
