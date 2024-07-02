@@ -1,7 +1,14 @@
 # Changelog
 All notable changes to AppyNox will be documented in this file.
 
-## [1.12.0](https://github.com/HappiSoftware/AppyNox/compare/v1.11.0...v1.12.0) - NOT RELEASED
+## [1.13.0](https://github.com/HappiSoftware/AppyNox/compare/v1.12.0...v1.13.0) - NOT RELEASED
+
+
+## [1.12.0](https://github.com/HappiSoftware/AppyNox/compare/v1.11.0...v1.12.0) - 2024.07.02
+### Added 
+- Feature request: Nox Sso UI Project Setup ([#318](https://github.com/HappiSoftware/AppyNox/issues/318))
+- Feature request: AddInfrastructureServices Should Support RabbitMQ/MassTransit ([#321](https://github.com/HappiSoftware/AppyNox/issues/321))
+- Feature request: Soft Delete Mechanism ([#323](https://github.com/HappiSoftware/AppyNox/issues/323))
 
 
 ## [1.11.0](https://github.com/HappiSoftware/AppyNox/compare/v1.10.0...v1.11.0) - 2024.06.17
