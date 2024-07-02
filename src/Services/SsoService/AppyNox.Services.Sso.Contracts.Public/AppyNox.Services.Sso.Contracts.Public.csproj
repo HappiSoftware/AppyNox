@@ -21,7 +21,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="..\..\..\..\icon.png" Link="icon.png" />
+	<None Include="..\..\..\..\icon.png" Link="icon.png" />
 	<None Include="..\..\..\..\LICENSE.md" Link="LICENSE.md" />
   </ItemGroup>
 	
