@@ -27,7 +27,13 @@ namespace AppyNox.Services.License.Infrastructure
                 options.UseConsul = true;
                 options.UseRedis = true;
                 options.UseJwtAuthentication = true;
-                options.Claims = [.. Permissions.Licenses.Metrics, .. Permissions.Products.Metrics];
+                options.AuthorizationSchemes =
+                [
+                    new()
+                    {
+                        Permissions = [.. Permissions.Licenses.Metrics, .. Permissions.Products.Metrics],
+                    }
+                ];
                 options.Configuration = configuration;
                 options.UseMassTransit = true;
                 options.MassTransitConfiguration = busConfigurator =>

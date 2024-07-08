@@ -54,7 +54,13 @@ public static class DependencyInjection
             options.UseConsul = true;
             options.UseRedis = true;
             options.UseJwtAuthentication = false;
-            options.Claims = [.. Permissions.Users.Metrics, .. Permissions.Roles.Metrics];
+            options.AuthorizationSchemes =
+            [
+                new()
+                {
+                    Permissions = [.. Permissions.Users.Metrics, .. Permissions.Roles.Metrics]
+                }
+            ];
             options.Configuration = configuration;
             options.UseMassTransit = true;
             options.MassTransitConfiguration = busConfigurator =>
