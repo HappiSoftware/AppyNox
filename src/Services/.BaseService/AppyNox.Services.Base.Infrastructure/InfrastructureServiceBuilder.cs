@@ -17,7 +17,6 @@ using Consul;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -43,9 +42,9 @@ public class InfrastructureSetupOptions
     public bool UseConsul { get; set; } = false;
     public bool UseRedis { get; set; } = false;
     public bool UseJwtAuthentication { get; set; } = true;
+    public string JwtConfigurationPath { get; set; } = "JwtSettings";
     public bool UseDefaultAuthenticationScheme { get; set; } = true;
-    public List<string> Claims { get; set; } = [];
-    public List<string> AdminClaims { get; set; } = [];
+    public List<AuthorizationSchemeBundle> AuthorizationSchemes { get; set; }
     public bool UseMassTransit { get; set; } = false;
     public Action<IBusRegistrationConfigurator> MassTransitConfiguration { get; set; }
     public Action<(IBusRegistrationContext, IRabbitMqBusFactoryConfigurator)> RabbitMqConfiguration { get; set; }
@@ -198,7 +197,7 @@ public static class InfrastructureServiceBuilder
     {
         logger.LogInformation("Registering JWT Configuration.");
         JwtConfiguration jwtConfiguration = new();
-        options.Configuration.GetSection("JwtSettings").Bind(jwtConfiguration);
+        options.Configuration.GetSection(options.JwtConfigurationPath).Bind(jwtConfiguration);
         services.AddSingleton(jwtConfiguration);
 
         services.AddAuthentication(opt =>
@@ -288,26 +287,22 @@ public static class InfrastructureServiceBuilder
     {
         services.AddAuthorizationCore(opt =>
         {
-            List<string> _claims = [.. options.Claims];
-            List<string> _adminclaims = [.. options.AdminClaims];
-
-            // Normal policies
-            foreach (var item in _claims)
+            foreach (var scheme in options.AuthorizationSchemes)
             {
-                opt.AddPolicy(item, builder =>
+                foreach(var claim in scheme.Permissions)
                 {
-                    builder.RequireAuthenticatedUser().AddRequirements(new PermissionRequirement(item, "API.Permission"));
-                });
-            }
-
-            // Admin only policies
-            foreach (var item in _adminclaims)
-            {
-                opt.AddPolicy($"{item}.Admin", builder =>
-                {
-                    builder.RequireAuthenticatedUser().AddRequirements(new PermissionRequirement(item, "API.Permission"))
-                    .AddRequirements(new PermissionRequirement("admin", "role"));
-                });
+                    opt.AddPolicy(claim, builder =>
+                    {
+                        builder
+                        .AddAuthenticationSchemes(scheme.SchemeToAdd)
+                        .RequireAuthenticatedUser()
+                        .AddRequirements(new PermissionRequirement(claim, "API.Permission"));
+                        if (scheme.IsAdmin)
+                        {
+                            builder.AddRequirements(new PermissionRequirement("admin", "role"));
+                        }
+                    });
+                }
             }
         });
         return services;
@@ -315,3 +310,15 @@ public static class InfrastructureServiceBuilder
 
     #endregion
 }
+
+#region [ Options Classes ]
+
+public class AuthorizationSchemeBundle
+{
+    public bool IsAdmin { get; set; } = false;
+    public List<string> Permissions { get; set; } = [];
+    public string PermissionType { get; set; } = "API.Permission";
+    public string SchemeToAdd { get; set; } = "NoxJwtScheme";
+}
+
+#endregion
