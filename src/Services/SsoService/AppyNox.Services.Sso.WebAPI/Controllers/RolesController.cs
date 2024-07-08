@@ -185,7 +185,7 @@ public class RolesController(IMapper mapper, RoleManager<ApplicationRole> roleMa
 
     [HttpPost]
     [Authorize(Roles.AssignPermission)]
-    [Route("/api/Roles/{rid}/Claims")]
+    [Route("/api/Roles/{rid}/Permissions")]
     public async Task<IActionResult> AssignClaim(Guid rid, [FromBody] ClaimDto claim)
     {
         var role = await _roleManager.FindByIdAsync(rid.ToString())
@@ -222,7 +222,7 @@ public class RolesController(IMapper mapper, RoleManager<ApplicationRole> roleMa
 
     [HttpDelete]
     [Authorize(Roles.WithdrawPermission)]
-    [Route("/api/Roles/{rid}/Claims/{claimValue}")]
+    [Route("/api/Roles/{rid}/Permissions/{claimValue}")]
     public async Task<IActionResult> WithdrawClaim(Guid rid, string claimValue)
     {
         var role = await _roleManager.FindByIdAsync(rid.ToString())

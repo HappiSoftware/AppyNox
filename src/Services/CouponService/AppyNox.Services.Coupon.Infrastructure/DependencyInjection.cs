@@ -32,8 +32,18 @@ public static class DependencyInjection
             options.UseConsul = true;
             options.UseRedis = true;
             options.UseJwtAuthentication = true;
-            options.Claims = [.. Permissions.Coupons.Metrics];
-            options.AdminClaims = [.. Permissions.CouponsAdmin.Metrics];
+            options.AuthorizationSchemes =
+            [
+                new()
+                {
+                    Permissions = [.. Permissions.Coupons.Metrics],
+                },
+                new()
+                {
+                    IsAdmin = true,
+                    Permissions = [.. Permissions.CouponsAdmin.Metrics]
+                }
+            ];
             options.Configuration = configuration;
             options.UseMassTransit = true;
         });
