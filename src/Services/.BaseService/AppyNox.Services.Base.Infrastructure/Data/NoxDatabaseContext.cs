@@ -4,6 +4,7 @@ using AppyNox.Services.Base.Domain.Interfaces;
 using AppyNox.Services.Base.Domain.Outbox;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using System.Linq.Expressions;
 using System.Reflection;
 
 namespace AppyNox.Services.Base.Infrastructure.Data;
@@ -33,8 +34,11 @@ public abstract class NoxDatabaseContext(DbContextOptions options, IEncryptionSe
         ConfigureEntities(modelBuilder);
         ConfigureOutboxMessages(modelBuilder);
         ApplyEncryptionConverters(modelBuilder);
-
     }
+
+    #endregion
+
+    #region [ Private Methods ]
 
     private void ConfigureEntities(ModelBuilder modelBuilder)
     {
