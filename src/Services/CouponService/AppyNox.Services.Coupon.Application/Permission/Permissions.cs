@@ -35,5 +35,17 @@ public static class Permissions
         #endregion
     }
 
+    public static class CouponCustomJwt
+    {
+        #region [ Fields ]
+
+        public const string CustomView = "CouponsJwt.View";
+
+        public static readonly ImmutableArray<string> Metrics =
+               [CustomView];
+
+        #endregion
+    }
+
     #endregion
 }

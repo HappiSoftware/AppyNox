@@ -8,6 +8,7 @@ using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Extended;
 using AppyNox.Services.Coupon.Application.MediatR.Commands;
 using AppyNox.Services.Coupon.Domain.Coupons;
+using AppyNox.Services.Coupon.Infrastructure.Authentication;
 using AppyNox.Services.License.Client;
 using AppyNox.Services.License.Contarcts.MassTransit.Messages;
 using Asp.Versioning;
@@ -22,13 +23,18 @@ namespace AppyNox.Services.Coupon.WebAPI.Controllers.v1_1;
 [ApiController]
 [ApiVersion(NoxVersions.v1_1)]
 [Route("api/v{version:apiVersion}/coupons")]
-public class CouponsController(IMediator mediator, IPublishEndpoint publishEndpoint, ILicenseServiceClient licenseServiceClient) : NoxController
+public class CouponsController(
+    IMediator mediator,
+    IPublishEndpoint publishEndpoint,
+    ILicenseServiceClient licenseServiceClient,
+    ICouponTokenManager couponTokenManager) : NoxController
 {
     #region [ Fields ]
 
     private readonly IMediator _mediator = mediator;
     private readonly IPublishEndpoint _publishEndpoint = publishEndpoint;
     private readonly ILicenseServiceClient _licenseServiceClient = licenseServiceClient;
+    private readonly ICouponTokenManager _couponTokenManager = couponTokenManager;
 
     #endregion
 
@@ -84,6 +90,25 @@ public class CouponsController(IMediator mediator, IPublishEndpoint publishEndpo
     {
         _licenseServiceClient.GetLicenseById("");
         return Ok("Request successful");
+    }
+
+    [HttpGet]
+    [AllowAnonymous]
+    [Route("/api/v{version:apiVersion}/coupons/authenticate")]
+    public IActionResult GetCouponDummyToken()
+    {
+        return Ok(_couponTokenManager.CreateToken());
+    }
+
+    [HttpGet]
+    [Authorize(CouponCustomJwt.CustomView)]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PaginatedList<CouponSimpleDto>))]
+    [Route("/api/v{version:apiVersion}/coupons/getwithcustomjwt")]
+    public async Task<IActionResult> GetAllCustomAsync([FromQuery] QueryParametersViewModelBasic queryParameters)
+    {
+        PaginatedList<object> response = await _mediator.Send(new GetAllNoxEntitiesQuery<Domain.Coupons.Coupon>(queryParameters));
+
+        return Ok(response);
     }
 
     #endregion

@@ -207,18 +207,6 @@ public static class InfrastructureServiceBuilder
                 opt.DefaultAuthenticateScheme = "NoxJwtScheme";
                 opt.DefaultChallengeScheme = "NoxJwtScheme";
             }
-        }).AddJwtBearer(options =>
-        {
-            options.TokenValidationParameters = new TokenValidationParameters
-            {
-                ValidateIssuer = true,
-                ValidateAudience = true,
-                ValidateLifetime = true,
-                ValidateIssuerSigningKey = true,
-                ValidIssuer = jwtConfiguration.Issuer,
-                ValidAudience = jwtConfiguration.Audience,
-                IssuerSigningKey = new SymmetricSecurityKey(jwtConfiguration.GetSecretKeyBytes())
-            };
         })
         .AddScheme<AuthenticationSchemeOptions, NoxJwtAuthenticationHandler>("NoxJwtScheme", options =>
         {

@@ -98,13 +98,8 @@ public class Coupon : AggregateRoot, IHasStronglyTypedId, IHasCode, ISoftDeletab
     #endregion
 }
 
-public record CouponId : NoxId
+public record CouponId(Guid Value) : NoxId(Value)
 {
-    protected CouponId() { }
-    public CouponId(Guid value)
-    {
-        Value = value;
-    }
 }
 
 public record Amount : IValueObject

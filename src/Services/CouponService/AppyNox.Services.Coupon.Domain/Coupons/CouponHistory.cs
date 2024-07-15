@@ -53,13 +53,8 @@ public class CouponHistory : AggregateMember, IHasStronglyTypedId
 
 #region [ Value Objects ]
 
-public record CouponHistoryId : NoxId
+public record CouponHistoryId(Guid Value) : NoxId(Value)
 {
-    protected CouponHistoryId() { }
-    public CouponHistoryId(Guid value)
-    {
-        Value = value;
-    }
 }
 
 #endregion

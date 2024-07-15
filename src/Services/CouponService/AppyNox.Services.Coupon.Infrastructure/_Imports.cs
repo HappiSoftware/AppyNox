@@ -1,0 +1,2 @@
+﻿global using InfrastructureException = AppyNox.Services.Coupon.Infrastructure.Exceptions.Base.NoxCouponInfrastructureException;
+global using ExceptionCode = AppyNox.Services.Coupon.Infrastructure.Exceptions.Base.NoxCouponInfrastructureExceptionCode;

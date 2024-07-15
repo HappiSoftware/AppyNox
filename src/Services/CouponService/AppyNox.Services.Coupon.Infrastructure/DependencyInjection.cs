@@ -1,10 +1,14 @@
 ﻿using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Application.Interfaces.Repositories;
 using AppyNox.Services.Base.Infrastructure;
+using AppyNox.Services.Base.Infrastructure.Authentication;
 using AppyNox.Services.Coupon.Application.Permission;
+using AppyNox.Services.Coupon.Infrastructure.Authentication;
 using AppyNox.Services.Coupon.Infrastructure.Data;
 using AppyNox.Services.Coupon.Infrastructure.Repositories;
 using AppyNox.Services.License.Client;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -32,6 +36,8 @@ public static class DependencyInjection
             options.UseConsul = true;
             options.UseRedis = true;
             options.UseJwtAuthentication = true;
+            options.UseDefaultAuthenticationScheme = false;
+            options.JwtConfigurationPath = "JwtSettings:Sso";
             options.AuthorizationSchemes =
             [
                 new()
@@ -42,6 +48,11 @@ public static class DependencyInjection
                 {
                     IsAdmin = true,
                     Permissions = [.. Permissions.CouponsAdmin.Metrics]
+                },
+                new()
+                {
+                    Permissions = [.. Permissions.CouponCustomJwt.Metrics],
+                    SchemeToAdd = "CouponJwtScheme"
                 }
             ];
             options.Configuration = configuration;
@@ -53,6 +64,17 @@ public static class DependencyInjection
         services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddTransient<ILicenseServiceClient, LicenseServiceClient>();
+
+        // Custom Authentication implementation
+        CouponTokenConfiguration couponJwtConfiguration = new();
+        configuration.GetSection("JwtSettings:Coupon").Bind(couponJwtConfiguration);
+        services.AddSingleton(couponJwtConfiguration);
+
+        services.AddAuthentication()
+            .AddScheme<AuthenticationSchemeOptions, CouponAuthenticationHandler>("CouponJwtScheme", null);
+
+        services.AddScoped<ICouponTokenManager, CouponTokenManager>();
+        logger.LogInformation("Registered Fleet JWT Configuration.");
 
         return services;
     }

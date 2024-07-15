@@ -53,11 +53,6 @@ public class CouponDetail : AggregateMember, IHasStronglyTypedId, IHasCode
     #endregion
 }
 
-public record CouponDetailId : NoxId
+public record CouponDetailId(Guid Value) : NoxId(Value)
 {
-    protected CouponDetailId() { }
-    public CouponDetailId(Guid value)
-    {
-        Value = value;
-    }
 }

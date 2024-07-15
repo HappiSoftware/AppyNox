@@ -53,11 +53,6 @@ public class ProductEntity : AggregateRoot, IHasStronglyTypedId, IHasCode
     #endregion
 }
 
-public record ProductId : NoxId
+public record ProductId(Guid Value) : NoxId(Value)
 {
-    protected ProductId() { }
-    public ProductId(Guid value)
-    {
-        Value = value;
-    }
 }

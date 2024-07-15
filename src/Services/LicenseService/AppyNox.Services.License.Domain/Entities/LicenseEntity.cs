@@ -70,11 +70,6 @@ public class LicenseEntity : AggregateRoot, IHasStronglyTypedId, IHasCode
     #endregion
 }
 
-public record LicenseId : NoxId
+public record LicenseId(Guid Value) : NoxId(Value)
 {
-    protected LicenseId() { }
-    public LicenseId(Guid value)
-    {
-        Value = value;
-    }
 }
