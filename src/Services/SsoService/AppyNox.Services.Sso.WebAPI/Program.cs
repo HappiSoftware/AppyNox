@@ -28,6 +28,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 await builder.AddConsulConfiguration("SsoService");
 var configuration = builder.Configuration;
+Console.WriteLine(configuration);
+Console.WriteLine(builder.Environment.EnvironmentName);
 
 #endregion
 

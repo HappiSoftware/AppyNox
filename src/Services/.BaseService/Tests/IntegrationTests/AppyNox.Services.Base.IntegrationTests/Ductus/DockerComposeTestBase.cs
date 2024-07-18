@@ -125,16 +125,16 @@ public abstract class DockerComposeTestBase : IDisposable
 
         Logger.LogInformation("Initializing Docker Compose Test Base");
 
-        //CompositeService = Build();
+        CompositeService = Build();
         try
         {
-            //CompositeService.Start();
+            CompositeService.Start();
         }
         catch (Exception ex)
         {
             Logger.LogError(ex, "Error starting docker compose");
 
-            //CompositeService.Dispose();
+            CompositeService.Dispose();
             throw;
         }
     }

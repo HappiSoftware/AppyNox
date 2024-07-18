@@ -112,18 +112,9 @@ public abstract class GenericRepositoryBase<TEntity> : IGenericRepository<TEntit
 
             ConfigureContext(queryParameters);
 
-            // Try to get the count from cache
-            var cachedCount = await cacheService.GetCachedValueAsync(_countCacheKey);
-            if (!int.TryParse(cachedCount, out int totalCount))
-            {
-                // Count not in cache or invalid, so retrieve from database and cache it
-                totalCount = await _dbSet.CountAsync();
-                await cacheService.SetCachedValueAsync(_countCacheKey, totalCount.ToString(), TimeSpan.FromSeconds(20));
-            }
-
             var query = _dbSet
             .AsQueryable()
-            .AsNoTracking();
+            .AsNoTracking();                       
 
             // Validate and apply sorting
             if (!string.IsNullOrWhiteSpace(queryParameters.SortBy) && IsValidExpression(queryParameters.SortBy, _logger))
@@ -135,6 +126,15 @@ public abstract class GenericRepositoryBase<TEntity> : IGenericRepository<TEntit
             if (!string.IsNullOrWhiteSpace(queryParameters.Filter) && IsValidExpression(queryParameters.Filter, _logger))
             {
                 query = query.Where(queryParameters.Filter);
+            }
+
+            // Try to get the count from cache
+            var cachedCount = await cacheService.GetCachedValueAsync(_countCacheKey);
+            if (!int.TryParse(cachedCount, out int totalCount))
+            {
+                // Count not in cache or invalid, so retrieve from database and cache it
+                totalCount = await query.CountAsync();
+                await cacheService.SetCachedValueAsync(_countCacheKey, totalCount.ToString(), TimeSpan.FromSeconds(20));
             }
 
             var entities = await query
