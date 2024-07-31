@@ -79,7 +79,7 @@ builder.Services.AddApiVersioning(options =>
 
 noxLogger.LogInformation("Registering DI's for layers.");
 builder.Services
-    .AddLicenseApplication()
+    .AddLicenseApplication(noxLogger)
     .AddLicenseInfrastructure(configuration, noxLogger);
 noxLogger.LogInformation("Registering DI's for layers completed.");
 

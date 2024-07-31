@@ -2,7 +2,7 @@
 	<PropertyGroup>
 		<TargetFramework>net8.0</TargetFramework>
 		<PackageId>NoxApplicationUnitTests</PackageId>
-		<Version>1.13.1</Version>
+		<Version>1.14.0</Version>
 		<Authors>Behlül UYSAL, Yasin DERE</Authors>
 		<Company>HappiSoftware</Company>
 		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
@@ -10,7 +10,7 @@
 		<PackageTags>microservice; application; unittest; .NET;</PackageTags>
 		<PackageLicenseFile>LICENSE.md</PackageLicenseFile>
 		<Description>The NoxApplicationUnitTests package provides foundational services and utilities for Application layer unit tests of Nox Applications.</Description>
-		<PackageReleaseNotes>https://github.com/HappiSoftware/AppyNox/releases/tag/v1.13.1</PackageReleaseNotes>
+		<PackageReleaseNotes>https://github.com/HappiSoftware/AppyNox/releases/tag/v1.14.0</PackageReleaseNotes>
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
 		<PackageIcon>icon.png</PackageIcon>
 	</PropertyGroup>
@@ -24,6 +24,7 @@
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
 		<PackageReference Include="Moq" Version="4.20.70" />
+		<PackageReference Include="Xunit.Extensions.Ordering" Version="1.4.5" />
 	</ItemGroup>
 
 	<ItemGroup>

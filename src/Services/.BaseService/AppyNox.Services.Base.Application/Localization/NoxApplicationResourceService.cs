@@ -73,6 +73,11 @@ namespace AppyNox.Services.Base.Application.Localization
         /// </summary>
         internal static LocalizedString MismatchedIdInUpdate => GetMessage("MismatchedIdInUpdate");
 
+        /// <summary>
+        /// There was an error in the provided action method for the NoxHandler. Please check the inner exception.
+        /// </summary>
+        internal static LocalizedString ProductActionError => GetMessage("ProductActionError");
+
         #endregion
 
         #region [ Private Methods ]

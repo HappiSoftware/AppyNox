@@ -2,6 +2,7 @@
 using AppyNox.Services.Base.API.Constants;
 using AppyNox.Services.Base.API.Controllers;
 using AppyNox.Services.Base.API.ViewModels;
+using AppyNox.Services.Base.Application.MediatR;
 using AppyNox.Services.Base.Application.MediatR.Commands;
 using AppyNox.Services.Base.Core.Enums;
 using AppyNox.Services.Coupon.Domain.Coupons;
@@ -58,8 +59,21 @@ public class CouponsController(IMediator mediator) : NoxController
     [Authorize(Coupons.Delete)]
     public async Task<IActionResult> Delete(Guid id)
     {
-        await _mediator.Send(new DeleteNoxEntityCommand<CouponAggreagate, CouponId>(new CouponId(id), false));
+        var t1 = new NoxCommandAction(TestBeh);
+        var t2 = new NoxCommandAction(TestBeh2);
+        NoxCommandExtensions extensions = new(t1, t2);
+        await _mediator.Send(new DeleteNoxEntityCommand<CouponAggreagate, CouponId>(new CouponId(id), false, extensions));
         return NoContent();
+    }
+
+    private void TestBeh()
+    {
+        Console.WriteLine(1);
+    }
+
+    private void TestBeh2()
+    {
+        Console.WriteLine(2);
     }
 
     #endregion

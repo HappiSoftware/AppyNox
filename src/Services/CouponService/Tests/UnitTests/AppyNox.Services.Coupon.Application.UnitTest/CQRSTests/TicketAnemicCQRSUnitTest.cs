@@ -1,23 +1,19 @@
 ﻿using AppyNox.Services.Base.Application.Constants;
 using AppyNox.Services.Base.Application.Interfaces.Caches;
 using AppyNox.Services.Base.Application.Interfaces.Repositories;
+using AppyNox.Services.Base.Application.MediatR;
 using AppyNox.Services.Base.Application.MediatR.Commands;
 using AppyNox.Services.Base.Application.UnitTests.CQRSFixtures;
+using AppyNox.Services.Base.Application.UnitTests.Stubs;
 using AppyNox.Services.Base.Core.AsyncLocals;
 using AppyNox.Services.Base.Core.Common;
-using AppyNox.Services.Base.Core.Enums;
-using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.DetailLevel;
 using AppyNox.Services.Coupon.Application.Dtos.TicketDtos.Models.Basic;
-using AppyNox.Services.Coupon.Domain.Coupons;
 using AppyNox.Services.Coupon.Domain.Entities;
-using AppyNox.Services.Coupon.Domain.Localization;
-using AutoMapper;
-using FluentValidation;
-using FluentValidation.Results;
-using Microsoft.Extensions.Localization;
+using MediatR;
+using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using System.Reflection;
 using System.Text.Json;
+using NCEHelper = AppyNox.Services.Base.Application.UnitTests.Helpers.NoxCommandExtensionsHelper;
 
 namespace AppyNox.Services.Coupon.Application.UnitTest.CQRSTests;
 
@@ -27,58 +23,28 @@ public class TicketAnemicCQRSUnitTest : IClassFixture<GenericCQRSFixture<Ticket>
 
     private readonly GenericCQRSFixture<Ticket> _fixture;
 
+    private readonly IServiceProvider _serviceProvider;
+
+    private readonly IMediator _mediator;
+
     #endregion
 
     #region [ Public Constructors ]
 
     public TicketAnemicCQRSUnitTest(GenericCQRSFixture<Ticket> fixture)
     {
-        var localizer = new Mock<IStringLocalizer>();
-        localizer.Setup(l => l[It.IsAny<string>()]).Returns(new LocalizedString("key", "mock value"));
-
-        var localizerFactory = new Mock<IStringLocalizerFactory>();
-        localizerFactory.Setup(lf => lf.Create(typeof(CouponDomainResourceService))).Returns(localizer.Object);
-
-        CouponDomainResourceService.Initialize(localizerFactory.Object);
-
         _fixture = fixture;
 
-        #region [ Dto Mapping Registry ]
+        NoxApplicationLoggerStub logger = new();
+        if (!_fixture.DIInitialized)
+        {
+            _fixture.ServiceCollection.AddCouponApplication(logger);
+            _fixture.ServiceCollection.AddScoped(typeof(IGenericRepository<Ticket>), _ => _fixture.MockRepository.Object);
+            _fixture.DIInitialized = true;
+        }
 
-        _fixture.MockDtoMappingRegistry.Setup(registry => registry.GetDtoType(DtoLevelMappingTypes.DataAccess, typeof(Ticket), CommonDetailLevels.Simple))
-            .Returns(typeof(TicketSimpleDto));
-
-        _fixture.MockDtoMappingRegistry.Setup(registry => registry.GetDtoType(DtoLevelMappingTypes.Create, typeof(Ticket), CommonDetailLevels.Simple))
-            .Returns(typeof(TicketSimpleCreateDto));
-
-        _fixture.MockDtoMappingRegistry.Setup(registry => registry.GetDtoType(DtoLevelMappingTypes.Update, typeof(Ticket), CommonDetailLevels.Simple))
-            .Returns(typeof(TicketSimpleUpdateDto));
-
-        #endregion
-
-        #region [ Validator ]
-
-        // Create
-        var validatorMock = new Mock<IValidator<TicketSimpleCreateDto>>();
-
-        validatorMock
-            .Setup(validator => validator.Validate(It.IsAny<ValidationContext<object>>()))
-            .Returns(new ValidationResult());
-
-        _fixture.MockServiceProvider.Setup(service => service.GetService(typeof(IValidator<TicketSimpleCreateDto>)))
-            .Returns(validatorMock.Object);
-
-        // Update
-        var validatorMockUpdate = new Mock<IValidator<TicketSimpleUpdateDto>>();
-
-        validatorMockUpdate
-            .Setup(validator => validator.Validate(It.IsAny<ValidationContext<object>>()))
-            .Returns(new ValidationResult());
-
-        _fixture.MockServiceProvider.Setup(service => service.GetService(typeof(IValidator<TicketSimpleUpdateDto>)))
-            .Returns(validatorMockUpdate.Object);
-
-        #endregion
+        _serviceProvider = _fixture.ServiceCollection.BuildServiceProvider();
+        _mediator = _serviceProvider.GetRequiredService<IMediator>();
 
         #region [ Repository Mocks ]
 
@@ -96,31 +62,6 @@ public class TicketAnemicCQRSUnitTest : IClassFixture<GenericCQRSFixture<Ticket>
             .ReturnsAsync(mockTicket);
 
         #endregion
-
-        #region [ Mapper ]
-
-        Assembly applicationAssembly = Assembly.Load("AppyNox.Services.Coupon.Application");
-        var profiles = applicationAssembly.GetTypes()
-            .Where(t => typeof(Profile).IsAssignableFrom(t))
-            .Select(Activator.CreateInstance)
-            .Cast<Profile>();
-
-        var configuration = new MapperConfiguration(cfg =>
-        {
-            foreach (var profile in profiles)
-            {
-                cfg.AddProfile(profile);
-            }
-        });
-
-        _fixture.MockMapper.Setup(mapper => mapper.Map(It.IsAny<object>(), It.IsAny<Type>(), It.IsAny<Type>()))
-            .Returns((object source, Type sourceType, Type destinationType) =>
-            {
-                var mapper = configuration.CreateMapper();
-                return mapper.Map(source, sourceType, destinationType);
-            });
-
-        #endregion
     }
 
     #endregion
@@ -131,21 +72,53 @@ public class TicketAnemicCQRSUnitTest : IClassFixture<GenericCQRSFixture<Ticket>
     public async Task GetAllEntitiesQuery_ShouldSuccess()
     {
         // Act
-        var result = await _fixture.MockMediator.Object.Send(new GetAllEntitiesQuery<Ticket>(_fixture.MockQueryParameters.Object));
+        var result = await _mediator.Send(new GetAllEntitiesQuery<Ticket>(_fixture.MockQueryParameters.Object));
 
         // Assert
         Assert.NotNull(result);
     }
 
     [Fact]
+    public async Task GetAllEntitiesQuery_ShouldCallActions()
+    {
+        // Prepare
+        NoxCommandExtensions extensions = new([new(NCEHelper.DummyMethod1, RunType.Before), new(NCEHelper.DummyMethod2, RunType.After, suspendOnFailure: false)]);
+
+        // Act
+        var result = await _mediator.Send(new GetAllEntitiesQuery<Ticket>(_fixture.MockQueryParameters.Object, extensions));
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(RunStatus.Finished, extensions.Actions[0].Status);
+        Assert.Equal(RunStatus.ExitedWithError, extensions.Actions[1].Status);
+        Assert.Equal("B0MA0", string.Concat(extensions.RunOrderHistory));
+    }
+
+    [Fact]
     public async Task GetEntityByIdQuery_ShouldSuccess()
     {
         // Act
-        var result = await _fixture.MockMediator.Object.Send(new GetEntityByIdQuery<Ticket>(It.IsAny<Guid>(), _fixture.MockQueryParameters.Object));
+        var result = await _mediator.Send(new GetEntityByIdQuery<Ticket>(It.IsAny<Guid>(), _fixture.MockQueryParameters.Object));
 
         // Assert
         Assert.NotNull(result);
         Assert.True(result is TicketSimpleDto);
+    }
+    [Fact]
+    public async Task GetEntityByIdQuery_ShouldCallActions()
+    {
+        // Prepare
+        NoxCommandExtensions extensions = new([new(NCEHelper.DummyMethod1, RunType.Before), new(NCEHelper.DummyMethod2, RunType.After, suspendOnFailure: false)]);
+
+        // Act
+        var result = await _mediator.Send(new GetEntityByIdQuery<Ticket>(It.IsAny<Guid>(), _fixture.MockQueryParameters.Object, Extensions: extensions));
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.True(result is TicketSimpleDto);
+        Assert.Equal(RunStatus.Finished, extensions.Actions[0].Status);
+        Assert.Equal(RunStatus.ExitedWithError, extensions.Actions[1].Status);
+        Assert.Equal("B0MA0", string.Concat(extensions.RunOrderHistory));
     }
 
     [Fact]
@@ -153,17 +126,46 @@ public class TicketAnemicCQRSUnitTest : IClassFixture<GenericCQRSFixture<Ticket>
     {
         // Prepare
         string jsonData = @"{
-            }";
+            ""title"":""Title nwe2"",
+            ""content"": ""Ticket content new2"",
+            ""reportDate"": ""2024-06-16T11:36:05.3303319Z""
+        }";
         JsonDocument jsonDocument = JsonDocument.Parse(jsonData);
         JsonElement root = jsonDocument.RootElement;
         NoxContext.UserId = Guid.Parse("a8bfc75b-2ac3-47e2-b013-8b8a1efba45d");
 
         // Act
-        var result = await _fixture.MockMediator.Object
+        var result = await _mediator
             .Send<Guid>(new CreateEntityCommand<Ticket>(root, CommonDetailLevels.Simple));
 
         // Assert
         Assert.True(Guid.TryParse(result.ToString(), out _));
+    }
+
+    [Fact]
+    public async Task CreateEntityCommand_ShouldCallActions()
+    {
+        // Prepare
+        NoxCommandExtensions extensions = new([new(NCEHelper.DummyMethod1, RunType.Before), new(NCEHelper.DummyMethod2, RunType.After, suspendOnFailure: false)]);
+
+        string jsonData = @"{
+            ""title"":""Title nwe2"",
+            ""content"": ""Ticket content new2"",
+            ""reportDate"": ""2024-06-16T11:36:05.3303319Z""
+        }";
+        JsonDocument jsonDocument = JsonDocument.Parse(jsonData);
+        JsonElement root = jsonDocument.RootElement;
+        NoxContext.UserId = Guid.Parse("a8bfc75b-2ac3-47e2-b013-8b8a1efba45d");
+
+        // Act
+        var result = await _mediator
+            .Send<Guid>(new CreateEntityCommand<Ticket>(root, CommonDetailLevels.Simple, extensions));
+
+        // Assert
+        Assert.True(Guid.TryParse(result.ToString(), out _));
+        Assert.Equal(RunStatus.Finished, extensions.Actions[0].Status);
+        Assert.Equal(RunStatus.ExitedWithError, extensions.Actions[1].Status);
+        Assert.Equal("B0MA0", string.Concat(extensions.RunOrderHistory));
     }
 
     [Fact]
@@ -173,7 +175,9 @@ public class TicketAnemicCQRSUnitTest : IClassFixture<GenericCQRSFixture<Ticket>
         Guid id = new();
         var updateBody = new
         {
-            Id = id
+            Id = id,
+            Title = "t1",
+            Content = "c1"
         };
 
         string jsonString = JsonSerializer.Serialize(updateBody);
@@ -183,7 +187,7 @@ public class TicketAnemicCQRSUnitTest : IClassFixture<GenericCQRSFixture<Ticket>
         NoxContext.UserId = Guid.Parse("a8bfc75b-2ac3-47e2-b013-8b8a1efba45d");
 
         // Act
-        var result = _fixture.MockMediator.Object
+        var result = _mediator
             .Send(new UpdateEntityCommand<Ticket>(id, root, CommonDetailLevels.Simple));
 
         // Assert
@@ -192,15 +196,65 @@ public class TicketAnemicCQRSUnitTest : IClassFixture<GenericCQRSFixture<Ticket>
     }
 
     [Fact]
+    public void UpdateEntityCommand_ShouldCallActions()
+    {
+        // Prepare
+        NoxCommandExtensions extensions = new([new(NCEHelper.DummyMethod1, RunType.Before), new(NCEHelper.DummyMethod2, RunType.After, suspendOnFailure: false)]);
+
+        Guid id = new();
+        var updateBody = new
+        {
+            Id = id,
+            Title = "t1",
+            Content = "c1"
+        };
+
+        string jsonString = JsonSerializer.Serialize(updateBody);
+        JsonDocument jsonDocument = JsonDocument.Parse(jsonString);
+        JsonElement root = jsonDocument.RootElement;
+
+        NoxContext.UserId = Guid.Parse("a8bfc75b-2ac3-47e2-b013-8b8a1efba45d");
+
+        // Act
+        var result = _mediator
+            .Send(new UpdateEntityCommand<Ticket>(id, root, CommonDetailLevels.Simple, extensions));
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.True(result.IsCompletedSuccessfully);
+        Assert.Equal(RunStatus.Finished, extensions.Actions[0].Status);
+        Assert.Equal(RunStatus.ExitedWithError, extensions.Actions[1].Status);
+        Assert.Equal("B0MA0", string.Concat(extensions.RunOrderHistory));
+    }
+
+    [Fact]
     public void DeleteEntityCommand_ShouldSuccess()
     {
         // Act
-        var result = _fixture.MockMediator.Object
+        var result = _mediator
             .Send(new DeleteEntityCommand<Ticket>(new Guid()));
 
         // Assert
         Assert.NotNull(result);
         Assert.True(result.IsCompletedSuccessfully);
+    }
+
+    [Fact]
+    public void DeleteEntityCommand_ShouldCallActions()
+    {
+        // Prepare
+        NoxCommandExtensions extensions = new([new(NCEHelper.DummyMethod1, RunType.Before), new(NCEHelper.DummyMethod2, RunType.After, suspendOnFailure: false)]);
+
+        // Act
+        var result = _mediator
+            .Send(new DeleteEntityCommand<Ticket>(new Guid(), Extensions: extensions));
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.True(result.IsCompletedSuccessfully);
+        Assert.Equal(RunStatus.Finished, extensions.Actions[0].Status);
+        Assert.Equal(RunStatus.ExitedWithError, extensions.Actions[1].Status);
+        Assert.Equal("B0MA0", string.Concat(extensions.RunOrderHistory));
     }
 
     #endregion

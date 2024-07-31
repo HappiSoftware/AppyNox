@@ -1,4 +1,5 @@
-﻿using AppyNox.Services.Base.Application.DtoUtilities;
+﻿using AppyNox.Services.Base.Application;
+using AppyNox.Services.Base.Application.DtoUtilities;
 using AppyNox.Services.Base.Application.Extensions;
 using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.License.Application.Dtos.DtoUtilities;
@@ -13,25 +14,20 @@ namespace AppyNox.Services.License.Application
     {
         #region [ Public Methods ]
 
-        public static IServiceCollection AddLicenseApplication(this IServiceCollection services)
+        public static IServiceCollection AddLicenseApplication(this IServiceCollection services, INoxLogger logger)
         {
-            Assembly applicationAssembly = Assembly.Load("AppyNox.Services.License.Application");
-            services.AddAutoMapper(applicationAssembly);
-            services.AddValidatorsFromAssembly(applicationAssembly);
-
-            #region [ CQRS ]
-
-            services.AddMediatR(cfg =>
+            services.AddApplicationServices(logger, options =>
             {
-                cfg.RegisterServicesFromAssembly(applicationAssembly);
+                options.Assembly = Assembly.GetExecutingAssembly().GetName().Name;
+                options.UseAutoMapper = true;
+                options.UseFluentValidation = true;
+                options.UseDtoMappingRegistry = true;
+                options.DtoMappingRegistryFactory = provider => new DtoMappingRegistry();
+                options.UseMediatR = true;
             });
 
             services.AddNoxEntityCommands<LicenseEntity, LicenseId>();
             services.AddNoxEntityCommands<ProductEntity, ProductId>();
-
-            #endregion
-
-            services.AddSingleton(typeof(IDtoMappingRegistryBase), typeof(DtoMappingRegistry));
 
             return services;
         }

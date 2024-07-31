@@ -25,7 +25,7 @@ public abstract class AggregateMember : IAuditable
 
     #region [ Properties ]
 
-    public IReadOnlyCollection<IDomainEvent> GetDomainEvents() => _domainEvents.ToList();
+    public IReadOnlyCollection<IDomainEvent> GetDomainEvents() => [.. _domainEvents];
 
     public void ClearDomainEvents() => _domainEvents.Clear();
 
