@@ -138,6 +138,9 @@
   <data name="MismatchedIdInUpdate" xml:space="preserve">
     <value>Ids do not match. Received id in body: '{0}', received id in uri: '{1}'</value>
   </data>
+  <data name="ProductActionError" xml:space="preserve">
+    <value>There was an error in the provided action method for the NoxHandler. Please check the inner exception.</value>
+  </data>
   <data name="UnexpectedError" xml:space="preserve">
     <value>Unexpected Error Occurred.</value>
   </data>

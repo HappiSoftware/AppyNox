@@ -1,12 +1,21 @@
 # Changelog
 All notable changes to AppyNox will be documented in this file.
 
-## [1.14.0](https://github.com/HappiSoftware/AppyNox/compare/v1.13.0...v1.14.0) - NOT RELEASED
+## [1.15.0](https://github.com/HappiSoftware/AppyNox/compare/v1.14.0...v1.15.0) - NOT RELEASED
+
+
+## [1.14.0](https://github.com/HappiSoftware/AppyNox/compare/v1.13.0...v1.14.0) - 2024.08.01
+### Added
+- TotalCount in PaginatedList in the Nox MediatR responses are working with provided query filters now.
+- appsetting.json, appsettings.Development.json files are not ignored now.
+- C.I. pipeline problems resolved.
+- Feature request: Nox MediatR Commands Should Allow Extensions ([#331](https://github.com/HappiSoftware/AppyNox/issues/331))
 
 
 ## [1.13.0](https://github.com/HappiSoftware/AppyNox/compare/v1.12.0...v1.13.0) - 2024.07.16
 ### Added
 - Feature request: InfrastructureServiceBuilder Should Allow Multiple Schemens ([#327]https://github.com/HappiSoftware/AppyNox/issues/327)
+
 
 ## [1.12.0](https://github.com/HappiSoftware/AppyNox/compare/v1.11.0...v1.12.0) - 2024.07.02
 ### Added 

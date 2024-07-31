@@ -138,6 +138,9 @@
   <data name="MismatchedIdInUpdate" xml:space="preserve">
     <value>Kimlikler eşleşmiyor. Gövdede alınan kimlik: '{0}', uri'de alınan kimlik: '{1}'</value>
   </data>
+  <data name="ProductActionError" xml:space="preserve">
+    <value>NoxHandler'a iletilen aksiyon metodunda bir sorun oluştu. Lütfen iç hata mesajını inceleyiniz.</value>
+  </data>
   <data name="UnexpectedError" xml:space="preserve">
     <value>Beklenmedik hata oluştu.</value>
   </data>

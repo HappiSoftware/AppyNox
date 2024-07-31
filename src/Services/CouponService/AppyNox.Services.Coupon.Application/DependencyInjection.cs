@@ -1,9 +1,9 @@
-﻿using AppyNox.Services.Base.Application.DtoUtilities;
+﻿using AppyNox.Services.Base.Application;
 using AppyNox.Services.Base.Application.Extensions;
+using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Coupon.Application.DtoUtilities;
 using AppyNox.Services.Coupon.Domain.Coupons;
 using AppyNox.Services.Coupon.Domain.Entities;
-using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
@@ -13,25 +13,20 @@ public static class DependencyInjection
 {
     #region [ Public Methods ]
 
-    public static IServiceCollection AddCouponApplication(this IServiceCollection services)
+    public static IServiceCollection AddCouponApplication(this IServiceCollection services, INoxLogger logger)
     {
-        Assembly applicationAssembly = Assembly.Load("AppyNox.Services.Coupon.Application");
-        services.AddAutoMapper(applicationAssembly);
-        services.AddValidatorsFromAssembly(applicationAssembly);
-
-        #region [ CQRS ]
-
-        services.AddMediatR(cfg =>
+        services.AddApplicationServices(logger, options =>
         {
-            cfg.RegisterServicesFromAssembly(applicationAssembly);
+            options.Assembly = Assembly.GetExecutingAssembly().GetName().Name;
+            options.UseAutoMapper = true;
+            options.UseFluentValidation = true;
+            options.UseDtoMappingRegistry = true;
+            options.DtoMappingRegistryFactory = provider => new DtoMappingRegistry();
+            options.UseMediatR = true;
         });
 
         services.AddNoxEntityCommands<Domain.Coupons.Coupon, CouponId>();
         services.AddAnemicEntityCommands<Ticket>();
-
-        #endregion
-
-        services.AddSingleton(typeof(IDtoMappingRegistryBase), typeof(DtoMappingRegistry));
 
         return services;
     }

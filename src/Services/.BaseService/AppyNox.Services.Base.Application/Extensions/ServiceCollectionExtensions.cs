@@ -62,7 +62,7 @@ public static class ServiceCollectionExtensions
     /// <param name="services"></param>
     /// <returns>The updated <see cref="IServiceCollection"/> after registration.</returns>
     public static IServiceCollection AddNoxEntityCommands<TEntity, TId>(this IServiceCollection services)
-    where TEntity : class, IHasStronglyTypedId
+        where TEntity : class, IHasStronglyTypedId
         where TId : NoxId
     {
         // Register GetAllNoxEntitiesQueryHandler

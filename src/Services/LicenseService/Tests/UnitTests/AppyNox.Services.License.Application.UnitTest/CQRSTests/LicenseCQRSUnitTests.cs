@@ -1,21 +1,18 @@
-﻿using AppyNox.Services.Base.Application.Constants;
-using AppyNox.Services.Base.Application.Interfaces.Caches;
+﻿using AppyNox.Services.Base.Application.Interfaces.Caches;
 using AppyNox.Services.Base.Application.Interfaces.Repositories;
 using AppyNox.Services.Base.Application.MediatR.Commands;
 using AppyNox.Services.Base.Application.UnitTests.CQRSFixtures;
+using AppyNox.Services.Base.Application.UnitTests.Stubs;
 using AppyNox.Services.Base.Core.AsyncLocals;
 using AppyNox.Services.Base.Core.Common;
-using AppyNox.Services.Base.Core.Enums;
 using AppyNox.Services.Base.Core.Extensions;
 using AppyNox.Services.License.Application.Dtos.LicenseDtos.DetailLevel;
 using AppyNox.Services.License.Application.Dtos.LicenseDtos.Models.Base;
 using AppyNox.Services.License.Application.Dtos.ProductDtos.Models.Base;
 using AppyNox.Services.License.Domain.Entities;
-using AutoMapper;
-using FluentValidation;
-using FluentValidation.Results;
+using MediatR;
+using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using System.Reflection;
 using System.Text.Json;
 
 namespace AppyNox.Services.License.Application.UnitTest.CQRSTests
@@ -26,6 +23,10 @@ namespace AppyNox.Services.License.Application.UnitTest.CQRSTests
 
         private readonly NoxCQRSFixture<LicenseEntity, LicenseId> _fixture;
 
+        private readonly IServiceProvider _serviceProvider;
+
+        private readonly IMediator _mediator;
+
         #endregion
 
         #region [ Public Constructors ]
@@ -33,29 +34,17 @@ namespace AppyNox.Services.License.Application.UnitTest.CQRSTests
         public LicenseCQRSUnitTests(NoxCQRSFixture<LicenseEntity, LicenseId> fixture)
         {
             _fixture = fixture;
-            _fixture.MockDtoMappingRegistry.Setup(registry => registry.GetDtoType(DtoLevelMappingTypes.DataAccess, typeof(LicenseEntity), CommonDetailLevels.Simple))
-                .Returns(typeof(LicenseSimpleDto));
 
-            _fixture.MockDtoMappingRegistry.Setup(registry => registry.GetDtoType(DtoLevelMappingTypes.Create, typeof(LicenseEntity), LicenseCreateDetailLevel.Simple.GetDisplayName()))
-                .Returns(typeof(LicenseSimpleCreateDto));
+            NoxApplicationLoggerStub logger = new();
+            if (!_fixture.DIInitialized)
+            {
+                _fixture.ServiceCollection.AddLicenseApplication(logger);
+                _fixture.ServiceCollection.AddScoped(typeof(INoxRepository<LicenseEntity>), _ => _fixture.MockRepository.Object);
+                _fixture.DIInitialized = true;
+            }
 
-            _fixture.MockDtoMappingRegistry.Setup(registry => registry.GetDtoType(DtoLevelMappingTypes.Update, typeof(LicenseEntity), LicenseUpdateDetailLevel.Simple.GetDisplayName()))
-                .Returns(typeof(LicenseSimpleUpdateDto));
-
-            var validatorMock = new Mock<IValidator<LicenseSimpleCreateDto>>();
-            validatorMock
-                .Setup(validator => validator.Validate(It.IsAny<ValidationContext<object>>()))
-                .Returns(new ValidationResult());
-            _fixture.MockServiceProvider.Setup(service => service.GetService(typeof(IValidator<LicenseSimpleCreateDto>)))
-                .Returns(validatorMock.Object);
-
-            var validatorMockUpdate = new Mock<IValidator<LicenseSimpleUpdateDto>>();
-            validatorMockUpdate
-                .Setup(validator => validator.Validate(It.IsAny<ValidationContext<object>>()))
-                .Returns(new ValidationResult());
-
-            _fixture.MockServiceProvider.Setup(service => service.GetService(typeof(IValidator<LicenseSimpleUpdateDto>)))
-                .Returns(validatorMockUpdate.Object);
+            _serviceProvider = _fixture.ServiceCollection.BuildServiceProvider();
+            _mediator = _serviceProvider.GetRequiredService<IMediator>();
 
             #region [ Repository Mocks ]
 
@@ -92,31 +81,6 @@ namespace AppyNox.Services.License.Application.UnitTest.CQRSTests
                 .ReturnsAsync(licenseEntity);
 
             #endregion
-
-            #region [ Mapper ]
-
-            Assembly applicationAssembly = Assembly.Load("AppyNox.Services.License.Application");
-            var profiles = applicationAssembly.GetTypes()
-                .Where(t => typeof(Profile).IsAssignableFrom(t))
-                .Select(Activator.CreateInstance)
-                .Cast<Profile>();
-
-            var configuration = new MapperConfiguration(cfg =>
-            {
-                foreach (var profile in profiles)
-                {
-                    cfg.AddProfile(profile);
-                }
-            });
-
-            _fixture.MockMapper.Setup(mapper => mapper.Map(It.IsAny<object>(), It.IsAny<Type>(), It.IsAny<Type>()))
-                .Returns((object source, Type sourceType, Type destinationType) =>
-                {
-                    var mapper = configuration.CreateMapper();
-                    return mapper.Map(source, sourceType, destinationType);
-                });
-
-            #endregion
         }
 
         #endregion
@@ -127,7 +91,7 @@ namespace AppyNox.Services.License.Application.UnitTest.CQRSTests
         public async Task GetAllEntitiesQuery_ShouldSuccess()
         {
             // Act
-            var result = await _fixture.MockMediator.Object.Send(new GetAllNoxEntitiesQuery<LicenseEntity>(_fixture.MockQueryParameters.Object));
+            var result = await _mediator.Send(new GetAllNoxEntitiesQuery<LicenseEntity>(_fixture.MockQueryParameters.Object));
 
             // Assert
             Assert.NotNull(result);
@@ -137,7 +101,7 @@ namespace AppyNox.Services.License.Application.UnitTest.CQRSTests
         public async Task GetEntityByIdQuery_ShouldSuccess()
         {
             // Act
-            var result = await _fixture.MockMediator.Object.Send(new GetNoxEntityByIdQuery<LicenseEntity, LicenseId>(It.IsAny<LicenseId>(), _fixture.MockQueryParameters.Object));
+            var result = await _mediator.Send(new GetNoxEntityByIdQuery<LicenseEntity, LicenseId>(It.IsAny<LicenseId>(), _fixture.MockQueryParameters.Object));
 
             // Assert
             Assert.NotNull(result);
@@ -149,13 +113,22 @@ namespace AppyNox.Services.License.Application.UnitTest.CQRSTests
         {
             // Prepare
             string jsonData = @"{
+              ""code"": ""LK002"",
+              ""expirationDate"": ""2025-01-03T20:30:02.928Z"",
+              ""licenseKey"": ""00b7fb79-9a1c-4786-abb9-1ea9bd7f379esssssssssssssss"",
+              ""description"": ""new description"",
+              ""maxUsers"" : 4,
+              ""maxMacAddresses"" : 3,
+              ""productId"" : {
+                ""value"" : ""9991492a-118c-4f20-ac8c-76410d57957c""
+              }
             }";
             JsonDocument jsonDocument = JsonDocument.Parse(jsonData);
             JsonElement root = jsonDocument.RootElement;
             NoxContext.UserId = Guid.Parse("a8bfc75b-2ac3-47e2-b013-8b8a1efba45d");
 
             // Act
-            var result = await _fixture.MockMediator.Object
+            var result = await _mediator
                 .Send(new CreateNoxEntityCommand<LicenseEntity>(root, LicenseCreateDetailLevel.Simple.GetDisplayName()));
 
             // Assert
@@ -166,7 +139,7 @@ namespace AppyNox.Services.License.Application.UnitTest.CQRSTests
         public void DeleteEntityCommand_ShouldSuccess()
         {
             // Act
-            var result = _fixture.MockMediator.Object
+            var result = _mediator
                 .Send(new DeleteNoxEntityCommand<LicenseEntity, LicenseId>(new LicenseId(Guid.NewGuid()), false));
 
             // Assert

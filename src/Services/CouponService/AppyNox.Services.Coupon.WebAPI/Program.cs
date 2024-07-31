@@ -76,7 +76,7 @@ builder.Services.AddApiVersioning(options =>
 
 noxLogger.LogInformation("Registering DI's for layers.");
 builder.Services
-    .AddCouponApplication()
+    .AddCouponApplication(noxLogger)
     .AddCouponInfrastructure(configuration, noxLogger);
 noxLogger.LogInformation("Registering DI's for layers completed.");
 
