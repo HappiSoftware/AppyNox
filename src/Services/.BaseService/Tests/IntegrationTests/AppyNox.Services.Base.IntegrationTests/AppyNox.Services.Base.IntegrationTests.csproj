@@ -25,6 +25,7 @@
   <ItemGroup>
       <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
       <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="8.0.0" />
+      <PackageReference Include="Moq" Version="4.20.70" />
       <PackageReference Include="xunit.assert" Version="2.8.1" />
 	  <PackageReference Include="Ductus.FluentDocker" Version="2.10.59" />
 	  <PackageReference Include="Ductus.FluentDocker.XUnit" Version="2.10.59" />

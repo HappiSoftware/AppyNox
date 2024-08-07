@@ -4,7 +4,6 @@ using AppyNox.Services.Base.Application.Interfaces.Caches;
 using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Application.Interfaces.Repositories;
 using AppyNox.Services.Base.Application.MediatR.Commands;
-using AppyNox.Services.Base.Core.Common;
 using AppyNox.Services.Base.Core.Exceptions.Base;
 using AppyNox.Services.Base.Domain.Interfaces;
 using AutoMapper;
@@ -17,10 +16,10 @@ internal sealed class DeleteEntityCommandHandler<TEntity>(
         IMapper mapper,
         IDtoMappingRegistryBase dtoMappingRegistry,
         IServiceProvider serviceProvider,
-        INoxApplicationLogger logger,
+        INoxApplicationLogger<DeleteEntityCommandHandler<TEntity>> logger,
         IUnitOfWork unitOfWork,
         ICacheService cacheService)
-        : BaseHandler<TEntity>(mapper, dtoMappingRegistry, serviceProvider, logger),
+        : BaseHandler<TEntity>(mapper, dtoMappingRegistry, serviceProvider),
         IRequestHandler<DeleteEntityCommand<TEntity>>
         where TEntity : class, IEntityWithGuid
 {
@@ -40,7 +39,7 @@ internal sealed class DeleteEntityCommandHandler<TEntity>(
     {
         try
         {
-            Logger.LogInformation($"Deleting entity of type '{typeof(TEntity).Name}' with ID: {request.Id}.");
+            logger.LogInformation($"Deleting entity of type '{typeof(TEntity).Name}' with ID: {request.Id}.");
             await _repository.RemoveByIdAsync(request.Id, request.ForceDelete);
             await _unitOfWork.SaveChangesAsync();
             await UpdateTotalCountOnCache(_cacheService, $"total-count-{typeof(TEntity).Name}", false);
@@ -51,7 +50,7 @@ internal sealed class DeleteEntityCommandHandler<TEntity>(
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, $"Error deleting entity of type '{typeof(TEntity).Name}' with ID: {request.Id}.");
+            logger.LogError(ex, $"Error deleting entity of type '{typeof(TEntity).Name}' with ID: {request.Id}.");
             throw new NoxApplicationException(exceptionCode: (int)NoxApplicationExceptionCode.GenericDeleteCommandError, innerException: ex);
         }
     }

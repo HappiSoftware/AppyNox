@@ -2,6 +2,7 @@
 using AppyNox.Services.Base.API.Exceptions.Base;
 using AppyNox.Services.Base.API.Wrappers;
 using AppyNox.Services.Base.Application.DtoUtilities;
+using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Core.Common;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
@@ -13,7 +14,7 @@ using System.Text.Json.Serialization;
 
 namespace AppyNox.Services.Base.API.Filters;
 
-public class DynamicRequestBodyOperationFilter(IDtoMappingRegistryBase mappingService) : IOperationFilter
+public class DynamicRequestBodyOperationFilter(IDtoMappingRegistryBase mappingService, INoxApiLogger<DynamicRequestBodyOperationFilter> logger) : IOperationFilter
 {
     private readonly IDtoMappingRegistryBase _mappingService = mappingService;
 
@@ -29,18 +30,32 @@ public class DynamicRequestBodyOperationFilter(IDtoMappingRegistryBase mappingSe
 
     public void Apply(OpenApiOperation operation, OperationFilterContext context)
     {
-        if(context.ApiDescription.HttpMethod == null)
+        try
         {
-            return;
-        }
+            if (context.ApiDescription.HttpMethod == null)
+            {
+                return;
+            }
 
-        if (context.ApiDescription.HttpMethod.Equals("GET", StringComparison.OrdinalIgnoreCase))
-        {
-            HandleGetOperation(operation, context);
+            if (context.ApiDescription.HttpMethod.Equals("GET", StringComparison.OrdinalIgnoreCase))
+            {
+                HandleGetOperation(operation, context);
+            }
+            else if (context.ApiDescription.HttpMethod.Equals("POST", StringComparison.OrdinalIgnoreCase))
+            {
+                HandlePostOperation(operation, context);
+            }
         }
-        else if (context.ApiDescription.HttpMethod.Equals("POST", StringComparison.OrdinalIgnoreCase))
+        catch (Exception ex)
         {
-            HandlePostOperation(operation, context);
+            var attribute = context.MethodInfo
+            .GetCustomAttributes(true)
+            .OfType<SwaggerDynamicRequestBodyAttribute>()
+            .FirstOrDefault();
+
+            logger.LogCritical(ex, $"DynamicRequestBodyOperationFilter ERROR for '{attribute!.EntityType}' '{attribute!.MappingType}' on " +
+                $"Controller '{context.MethodInfo.Name}'.");
+            throw;
         }
     }
 
@@ -313,6 +328,16 @@ public class DynamicRequestBodyOperationFilter(IDtoMappingRegistryBase mappingSe
                     listInstance.Add(elementInstance);
                 }
                 property.SetValue(instance, listInstance);
+            }
+            else if (property.PropertyType.IsEnum || (Nullable.GetUnderlyingType(property.PropertyType) != null && Nullable.GetUnderlyingType(property.PropertyType)!.IsEnum))
+            {
+                // Handle both enums and nullable enums
+                var enumType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
+                var enumValues = Enum.GetValues(enumType);
+                if (enumValues.Length > 0)
+                {
+                    property.SetValue(instance, enumValues.GetValue(0), null);
+                }
             }
             else if (!property.PropertyType.IsPrimitive && !property.PropertyType.IsEnum && property.PropertyType != typeof(string))
             {

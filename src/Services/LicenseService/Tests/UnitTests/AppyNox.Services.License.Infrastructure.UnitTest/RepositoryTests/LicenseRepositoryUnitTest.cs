@@ -1,5 +1,6 @@
 ﻿using AppyNox.Services.Base.Application.Interfaces.Caches;
 using AppyNox.Services.Base.Infrastructure.Exceptions;
+using AppyNox.Services.Base.Infrastructure.Repositories;
 using AppyNox.Services.Base.Infrastructure.Repositories.Common;
 using AppyNox.Services.Base.Infrastructure.UnitTests.Fixtures;
 using AppyNox.Services.Base.Infrastructure.UnitTests.Stubs;
@@ -16,7 +17,8 @@ public class LicenseRepositoryUnitTest(RepositoryFixture fixture) : IClassFixtur
 
     private readonly RepositoryFixture _fixture = fixture;
 
-    private readonly NoxInfrastructureLoggerStub _noxLoggerStub = fixture.NoxLoggerStub;
+    private readonly NoxInfrastructureLoggerStub<UnitOfWorkBase> _noxLoggerStub = new();
+    private readonly NoxInfrastructureLoggerStub<NoxRepositoryBase<LicenseEntity>> _noxRepositoryLogger = new();
 
     private readonly ICacheService _cacheService = fixture.RedisCacheService.Object;
 
@@ -32,7 +34,7 @@ public class LicenseRepositoryUnitTest(RepositoryFixture fixture) : IClassFixtur
         LicenseDatabaseContext context = RepositoryFixture.CreateDatabaseContext<LicenseDatabaseContext>();
         UnitOfWork unitOfWork = new(context, _noxLoggerStub);
         await context.SeedOneLicense(unitOfWork);
-        LicenseRepository repository = new(context, _noxLoggerStub, unitOfWork);
+        LicenseRepository repository = new(context, _noxRepositoryLogger, unitOfWork);
         QueryParameters queryParameters = new()
         {
             Access = string.Empty,
@@ -53,7 +55,7 @@ public class LicenseRepositoryUnitTest(RepositoryFixture fixture) : IClassFixtur
         LicenseDatabaseContext context = RepositoryFixture.CreateDatabaseContext<LicenseDatabaseContext>();
         UnitOfWork unitOfWork = new(context, _noxLoggerStub);
         await context.SeedMultipleLicenses(unitOfWork, 2);
-        LicenseRepository repository = new(context, _noxLoggerStub, unitOfWork);
+        LicenseRepository repository = new(context, _noxRepositoryLogger, unitOfWork);
         QueryParameters queryParameters = new()
         {
             Access = string.Empty,
@@ -76,7 +78,7 @@ public class LicenseRepositoryUnitTest(RepositoryFixture fixture) : IClassFixtur
         var licenses = await context.SeedMultipleLicenses(unitOfWork, 2);
         Assert.NotNull(licenses);
 
-        LicenseRepository repository = new(context, _noxLoggerStub, unitOfWork);
+        LicenseRepository repository = new(context, _noxRepositoryLogger, unitOfWork);
         QueryParameters queryParameters = new()
         {
             Access = string.Empty,
@@ -100,7 +102,7 @@ public class LicenseRepositoryUnitTest(RepositoryFixture fixture) : IClassFixtur
         LicenseDatabaseContext context = RepositoryFixture.CreateDatabaseContext<LicenseDatabaseContext>();
         UnitOfWork unitOfWork = new(context, _noxLoggerStub);
         await context.SeedMultipleLicenses(unitOfWork, 50);
-        LicenseRepository repository = new(context, _noxLoggerStub, unitOfWork);
+        LicenseRepository repository = new(context, _noxRepositoryLogger, unitOfWork);
         QueryParameters queryParameters = new()
         {
             Access = string.Empty,
@@ -122,7 +124,7 @@ public class LicenseRepositoryUnitTest(RepositoryFixture fixture) : IClassFixtur
         UnitOfWork unitOfWork = new(context, _noxLoggerStub);
         IEnumerable<LicenseEntity> licenses = await context.SeedMultipleLicenses(unitOfWork, 50);
         Assert.NotNull(licenses);
-        LicenseRepository repository = new(context, _noxLoggerStub, unitOfWork);
+        LicenseRepository repository = new(context, _noxRepositoryLogger, unitOfWork);
         QueryParameters queryParameters = new()
         {
             Access = string.Empty,
@@ -153,7 +155,7 @@ public class LicenseRepositoryUnitTest(RepositoryFixture fixture) : IClassFixtur
         LicenseEntity existingLicense = await context.SeedOneLicense(unitOfWork);
         Assert.NotNull(existingLicense);
 
-        LicenseRepository repository = new(context, _noxLoggerStub, unitOfWork);
+        LicenseRepository repository = new(context, _noxRepositoryLogger, unitOfWork);
 
         var result = await repository.GetByIdAsync(existingLicense.Id);
 
@@ -168,7 +170,7 @@ public class LicenseRepositoryUnitTest(RepositoryFixture fixture) : IClassFixtur
         LicenseEntity existingLicense = await context.SeedOneLicense(unitOfWork);
         Assert.NotNull(existingLicense);
 
-        LicenseRepository repository = new(context, _noxLoggerStub, unitOfWork);
+        LicenseRepository repository = new(context, _noxRepositoryLogger, unitOfWork);
         LicenseEntity result = await repository.GetByIdAsync(existingLicense.Id);
 
         Assert.NotNull(result);
@@ -188,7 +190,7 @@ public class LicenseRepositoryUnitTest(RepositoryFixture fixture) : IClassFixtur
     {
         LicenseDatabaseContext context = RepositoryFixture.CreateDatabaseContext<LicenseDatabaseContext>();
         UnitOfWork unitOfWork = new(context, _noxLoggerStub);
-        LicenseRepository repository = new(context, _noxLoggerStub, unitOfWork);
+        LicenseRepository repository = new(context, _noxRepositoryLogger, unitOfWork);
 
         LicenseEntity license = LicenseEntity.Create
         (
@@ -228,7 +230,7 @@ public class LicenseRepositoryUnitTest(RepositoryFixture fixture) : IClassFixtur
         var existingLicense = await context.SeedOneLicense(unitOfWork);
         Assert.NotNull(existingLicense);
 
-        LicenseRepository repository = new(context, _noxLoggerStub, unitOfWork);
+        LicenseRepository repository = new(context, _noxRepositoryLogger, unitOfWork);
 
         existingLicense.Code = "LK000";
         existingLicense.Description = "DescriptionLicenseUpdated";
@@ -261,7 +263,7 @@ public class LicenseRepositoryUnitTest(RepositoryFixture fixture) : IClassFixtur
         var existingLicense = await context.SeedOneLicense(unitOfWork);
         Assert.NotNull(existingLicense);
 
-        LicenseRepository repository = new(context, _noxLoggerStub, unitOfWork);
+        LicenseRepository repository = new(context, _noxRepositoryLogger, unitOfWork);
 
         await repository.RemoveByIdAsync(existingLicense.Id);
         await unitOfWork.SaveChangesAsync();
@@ -286,7 +288,7 @@ public class LicenseRepositoryUnitTest(RepositoryFixture fixture) : IClassFixtur
         LicenseDatabaseContext context = RepositoryFixture.CreateDatabaseContext<LicenseDatabaseContext>();
         UnitOfWork unitOfWork = new(context, _noxLoggerStub);
         await context.SeedOneLicense(unitOfWork);
-        LicenseRepository repository = new(context, _noxLoggerStub, unitOfWork);
+        LicenseRepository repository = new(context, _noxRepositoryLogger, unitOfWork);
 
         LicenseEntity? entity = context.Licenses.FirstOrDefault();
         Assert.NotNull(entity);
@@ -303,7 +305,7 @@ public class LicenseRepositoryUnitTest(RepositoryFixture fixture) : IClassFixtur
         LicenseDatabaseContext context = RepositoryFixture.CreateDatabaseContext<LicenseDatabaseContext>();
         UnitOfWork unitOfWork = new(context, _noxLoggerStub);
         await context.SeedOneLicense(unitOfWork);
-        LicenseRepository repository = new(context, _noxLoggerStub, unitOfWork);
+        LicenseRepository repository = new(context, _noxRepositoryLogger, unitOfWork);
 
         LicenseEntity? entity = context.Licenses.FirstOrDefault();
         Assert.NotNull(entity);
@@ -324,7 +326,7 @@ public class LicenseRepositoryUnitTest(RepositoryFixture fixture) : IClassFixtur
         LicenseDatabaseContext context = RepositoryFixture.CreateDatabaseContext<LicenseDatabaseContext>();
         UnitOfWork unitOfWork = new(context, _noxLoggerStub);
         await context.SeedOneLicense(unitOfWork);
-        LicenseRepository repository = new(context, _noxLoggerStub, unitOfWork);
+        LicenseRepository repository = new(context, _noxRepositoryLogger, unitOfWork);
 
         LicenseEntity? entity = context.Licenses.FirstOrDefault();
         Assert.NotNull(entity);

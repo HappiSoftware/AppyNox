@@ -16,9 +16,9 @@ public class ProcessOutboxMessagesJob<TContext> : IJob where TContext : DbContex
 
     private readonly IPublisher _publisher;
 
-    private readonly INoxInfrastructureLogger _logger;
+    private readonly INoxInfrastructureLogger<ProcessOutboxMessagesJob<TContext>> _logger;
 
-    public ProcessOutboxMessagesJob(TContext dbContext, IPublisher publisher, INoxInfrastructureLogger logger)
+    public ProcessOutboxMessagesJob(TContext dbContext, IPublisher publisher, INoxInfrastructureLogger<ProcessOutboxMessagesJob<TContext>> logger)
     {
         _dbContext = dbContext;
         _publisher = publisher;

@@ -5,6 +5,7 @@ using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.License.Application.Dtos.DtoUtilities;
 using AppyNox.Services.License.Domain.Entities;
 using FluentValidation;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
@@ -14,11 +15,12 @@ namespace AppyNox.Services.License.Application
     {
         #region [ Public Methods ]
 
-        public static IServiceCollection AddLicenseApplication(this IServiceCollection services, INoxLogger logger)
+        public static IServiceCollection AddLicenseApplication(this IServiceCollection services, IConfiguration configuration, INoxLogger logger)
         {
             services.AddApplicationServices(logger, options =>
             {
                 options.Assembly = Assembly.GetExecutingAssembly().GetName().Name;
+                options.Configuration = configuration;
                 options.UseAutoMapper = true;
                 options.UseFluentValidation = true;
                 options.UseDtoMappingRegistry = true;

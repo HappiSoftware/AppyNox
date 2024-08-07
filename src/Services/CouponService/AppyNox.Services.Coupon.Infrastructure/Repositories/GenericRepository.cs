@@ -5,7 +5,9 @@ using AppyNox.Services.Coupon.Infrastructure.Data;
 
 namespace AppyNox.Services.Coupon.Infrastructure.Repositories;
 
-internal class GenericRepository<TEntity>(CouponDbContext dbContext, INoxInfrastructureLogger logger)
-    : GenericRepositoryBase<TEntity>(dbContext, logger) where TEntity : class, IEntityWithGuid
+internal class GenericRepository<TEntity>(
+    CouponDbContext dbContext,
+    INoxInfrastructureLogger<GenericRepositoryBase<TEntity>> baseLogger)
+    : GenericRepositoryBase<TEntity>(dbContext, baseLogger) where TEntity : class, IEntityWithGuid
 {
 }

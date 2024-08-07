@@ -17,9 +17,9 @@ internal class GetAllNoxEntitiesQueryHandler<TEntity>(
         IMapper mapper,
         IDtoMappingRegistryBase dtoMappingRegistry,
         IServiceProvider serviceProvider,
-        INoxApplicationLogger logger,
+        INoxApplicationLogger<GetAllNoxEntitiesQueryHandler<TEntity>> logger,
         ICacheService cacheService)
-        : BaseHandler<TEntity>(mapper, dtoMappingRegistry, serviceProvider, logger),
+        : BaseHandler<TEntity>(mapper, dtoMappingRegistry, serviceProvider),
         IRequestHandler<GetAllNoxEntitiesQuery<TEntity>, PaginatedList<object>>
         where TEntity : class, IHasStronglyTypedId
 {
@@ -39,7 +39,7 @@ internal class GetAllNoxEntitiesQueryHandler<TEntity>(
     {
         try
         {
-            Logger.LogInformation($"Fetching entities of type '{typeof(TEntity).Name}'");
+            logger.LogInformation($"Fetching entities of type '{typeof(TEntity).Name}'");
             var dtoType = GetDtoType(request.QueryParameters);
             var paginatedEntityList = await _repository.GetAllAsync(request.QueryParameters, _cacheService);
             var mappedItems = _mapper.Map(paginatedEntityList.Items, paginatedEntityList.Items.GetType(), typeof(IEnumerable<>).MakeGenericType(dtoType))
@@ -59,7 +59,7 @@ internal class GetAllNoxEntitiesQueryHandler<TEntity>(
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, $"Error occurred while fetching entities of type '{typeof(TEntity).Name}'");
+            logger.LogError(ex, $"Error occurred while fetching entities of type '{typeof(TEntity).Name}'");
             throw new NoxApplicationException(exceptionCode: (int)NoxApplicationExceptionCode.GenericGetAllQueryError, innerException: ex);
         }
     }

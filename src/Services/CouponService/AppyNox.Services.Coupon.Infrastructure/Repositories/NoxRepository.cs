@@ -5,7 +5,9 @@ using AppyNox.Services.Coupon.Infrastructure.Data;
 
 namespace AppyNox.Services.Coupon.Infrastructure.Repositories;
 
-public class NoxRepository<TEntity>(CouponDbContext context, INoxInfrastructureLogger noxInfrastructureLogger)
+public class NoxRepository<TEntity>(
+    CouponDbContext context,
+    INoxInfrastructureLogger<NoxRepositoryBase<TEntity>> noxInfrastructureLogger)
         : NoxRepositoryBase<TEntity>(context, noxInfrastructureLogger) where TEntity : class, IHasStronglyTypedId
 {
 }

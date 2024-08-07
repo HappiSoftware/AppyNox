@@ -11,17 +11,18 @@ using AppyNox.Services.License.Application.Dtos.LicenseDtos.Models.Base;
 using AppyNox.Services.License.Application.Dtos.ProductDtos.Models.Base;
 using AppyNox.Services.License.Domain.Entities;
 using MediatR;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using System.Text.Json;
 
 namespace AppyNox.Services.License.Application.UnitTest.CQRSTests
 {
-    public class LicenseCQRSUnitTests : IClassFixture<NoxCQRSFixture<LicenseEntity, LicenseId>>
+    public class LicenseCQRSUnitTests : IClassFixture<NoxApplicationTestFixture>
     {
         #region [ Fields ]
 
-        private readonly NoxCQRSFixture<LicenseEntity, LicenseId> _fixture;
+        private readonly NoxApplicationTestFixture _fixture;
 
         private readonly IServiceProvider _serviceProvider;
 
@@ -31,15 +32,24 @@ namespace AppyNox.Services.License.Application.UnitTest.CQRSTests
 
         #region [ Public Constructors ]
 
-        public LicenseCQRSUnitTests(NoxCQRSFixture<LicenseEntity, LicenseId> fixture)
+        public LicenseCQRSUnitTests(NoxApplicationTestFixture fixture)
         {
             _fixture = fixture;
 
-            NoxApplicationLoggerStub logger = new();
+            NoxApplicationLoggerStub<LicenseCQRSUnitTests> logger = new();
+            Mock<INoxRepository<LicenseEntity>> mockRepository = new();
             if (!_fixture.DIInitialized)
             {
-                _fixture.ServiceCollection.AddLicenseApplication(logger);
-                _fixture.ServiceCollection.AddScoped(typeof(INoxRepository<LicenseEntity>), _ => _fixture.MockRepository.Object);
+                var inMemorySettings = new Dictionary<string, string>
+                {
+                    {"Consul:ServiceName", "TestService"},
+                };
+
+                IConfiguration configuration = new ConfigurationBuilder()
+                    .AddInMemoryCollection(inMemorySettings!)
+                    .Build();
+                _fixture.ServiceCollection.AddLicenseApplication(configuration, logger);
+                _fixture.ServiceCollection.AddScoped(typeof(INoxRepository<LicenseEntity>), _ => mockRepository.Object);
                 _fixture.DIInitialized = true;
             }
 
@@ -71,13 +81,13 @@ namespace AppyNox.Services.License.Application.UnitTest.CQRSTests
                 ProductId = new ProductIdDto() { Value = Guid.NewGuid() }
             };
 
-            _fixture.MockRepository.Setup(repo => repo.GetAllAsync(It.IsAny<IQueryParameters>(), It.IsAny<ICacheService>()))
+            mockRepository.Setup(repo => repo.GetAllAsync(It.IsAny<IQueryParameters>(), It.IsAny<ICacheService>()))
                 .ReturnsAsync(new Mock<PaginatedList<LicenseEntity>>().Object);
 
-            _fixture.MockRepository.Setup(repo => repo.GetByIdAsync(It.IsAny<LicenseId>(), false, false))
+            mockRepository.Setup(repo => repo.GetByIdAsync(It.IsAny<LicenseId>(), false, false))
                 .ReturnsAsync(licenseEntity);
 
-            _fixture.MockRepository.Setup(repo => repo.AddAsync(It.IsAny<LicenseEntity>()))
+            mockRepository.Setup(repo => repo.AddAsync(It.IsAny<LicenseEntity>()))
                 .ReturnsAsync(licenseEntity);
 
             #endregion

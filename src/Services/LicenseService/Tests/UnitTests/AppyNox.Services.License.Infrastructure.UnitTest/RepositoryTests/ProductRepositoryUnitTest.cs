@@ -1,6 +1,7 @@
 ﻿using AppyNox.Services.Base.Application.Dtos;
 using AppyNox.Services.Base.Application.Interfaces.Caches;
 using AppyNox.Services.Base.Infrastructure.Exceptions;
+using AppyNox.Services.Base.Infrastructure.Repositories;
 using AppyNox.Services.Base.Infrastructure.Repositories.Common;
 using AppyNox.Services.Base.Infrastructure.UnitTests.Fixtures;
 using AppyNox.Services.Base.Infrastructure.UnitTests.Stubs;
@@ -16,9 +17,8 @@ public class ProductRepositoryUnitTest(RepositoryFixture fixture) : IClassFixtur
 {
     #region [ Fields ]
 
-    private readonly RepositoryFixture _fixture = fixture;
-
-    private readonly NoxInfrastructureLoggerStub _noxLoggerStub = fixture.NoxLoggerStub;
+    private readonly NoxInfrastructureLoggerStub<UnitOfWorkBase> _noxLoggerStub = new();
+    private readonly NoxInfrastructureLoggerStub<NoxRepositoryBase<ProductEntity>> _noxRepositoryLoggerStub = new();
 
     private readonly ICacheService _cacheService = fixture.RedisCacheService.Object;
 
@@ -34,7 +34,7 @@ public class ProductRepositoryUnitTest(RepositoryFixture fixture) : IClassFixtur
         LicenseDatabaseContext context = RepositoryFixture.CreateDatabaseContext<LicenseDatabaseContext>();
         UnitOfWork unitOfWork = new(context, _noxLoggerStub);
         await context.SeedOneProduct(unitOfWork);
-        ProductRepository repository = new(context, _noxLoggerStub);
+        ProductRepository repository = new(context, _noxRepositoryLoggerStub);
         QueryParameters queryParameters = new()
         {
             Access = string.Empty,
@@ -54,7 +54,7 @@ public class ProductRepositoryUnitTest(RepositoryFixture fixture) : IClassFixtur
         LicenseDatabaseContext context = RepositoryFixture.CreateDatabaseContext<LicenseDatabaseContext>();
         UnitOfWork unitOfWork = new(context, _noxLoggerStub);
         await context.SeedMultipleProducts(unitOfWork, 2);
-        ProductRepository repository = new(context, _noxLoggerStub);
+        ProductRepository repository = new(context, _noxRepositoryLoggerStub);
         QueryParameters queryParameters = new()
         {
             Access = string.Empty,
@@ -77,7 +77,7 @@ public class ProductRepositoryUnitTest(RepositoryFixture fixture) : IClassFixtur
         var products = await context.SeedMultipleProducts(unitOfWork, 2);
         Assert.NotNull(products);
 
-        ProductRepository repository = new(context, _noxLoggerStub);
+        ProductRepository repository = new(context, _noxRepositoryLoggerStub);
         QueryParameters queryParameters = new()
         {
             Access = string.Empty,
@@ -99,7 +99,7 @@ public class ProductRepositoryUnitTest(RepositoryFixture fixture) : IClassFixtur
         LicenseDatabaseContext context = RepositoryFixture.CreateDatabaseContext<LicenseDatabaseContext>();
         UnitOfWork unitOfWork = new(context, _noxLoggerStub);
         await context.SeedMultipleProducts(unitOfWork, 50);
-        ProductRepository repository = new(context, _noxLoggerStub);
+        ProductRepository repository = new(context, _noxRepositoryLoggerStub);
         QueryParameters queryParameters = new()
         {
             Access = string.Empty,
@@ -120,7 +120,7 @@ public class ProductRepositoryUnitTest(RepositoryFixture fixture) : IClassFixtur
         UnitOfWork unitOfWork = new(context, _noxLoggerStub);
         IEnumerable<ProductEntity> products = await context.SeedMultipleProducts(unitOfWork, 50);
         Assert.NotNull(products);
-        ProductRepository repository = new(context, _noxLoggerStub);
+        ProductRepository repository = new(context, _noxRepositoryLoggerStub);
         QueryParameters queryParameters = new()
         {
             Access = string.Empty,
@@ -150,7 +150,7 @@ public class ProductRepositoryUnitTest(RepositoryFixture fixture) : IClassFixtur
         ProductEntity existingProducts = await context.SeedOneProduct(unitOfWork);
         Assert.NotNull(existingProducts);
 
-        ProductRepository repository = new(context, _noxLoggerStub);
+        ProductRepository repository = new(context, _noxRepositoryLoggerStub);
         var result = await repository.GetByIdAsync(existingProducts.Id);
 
         Assert.NotNull(result);
@@ -164,7 +164,7 @@ public class ProductRepositoryUnitTest(RepositoryFixture fixture) : IClassFixtur
         ProductEntity existingProducts = await context.SeedOneProduct(unitOfWork);
         Assert.NotNull(existingProducts);
 
-        ProductRepository repository = new(context, _noxLoggerStub);
+        ProductRepository repository = new(context, _noxRepositoryLoggerStub);
         var result = await repository.GetByIdAsync(existingProducts.Id);
 
         Assert.NotNull(result);
@@ -181,7 +181,7 @@ public class ProductRepositoryUnitTest(RepositoryFixture fixture) : IClassFixtur
     {
         LicenseDatabaseContext context = RepositoryFixture.CreateDatabaseContext<LicenseDatabaseContext>();
         UnitOfWork unitOfWork = new(context, _noxLoggerStub);
-        ProductRepository repository = new(context, _noxLoggerStub);
+        ProductRepository repository = new(context, _noxRepositoryLoggerStub);
 
         ProductEntity product = ProductEntity.Create("NewProduct");
 
@@ -209,7 +209,7 @@ public class ProductRepositoryUnitTest(RepositoryFixture fixture) : IClassFixtur
         var existingProduct = await context.SeedOneProduct(unitOfWork);
         Assert.NotNull(existingProduct);
 
-        ProductRepository repository = new(context, _noxLoggerStub);
+        ProductRepository repository = new(context, _noxRepositoryLoggerStub);
 
         existingProduct.Name = "NewProductUp";
         existingProduct.Code = "ORP01";
@@ -237,7 +237,7 @@ public class ProductRepositoryUnitTest(RepositoryFixture fixture) : IClassFixtur
         var existingProduct = await context.SeedOneProduct(unitOfWork);
         Assert.NotNull(existingProduct);
 
-        ProductRepository repository = new(context, _noxLoggerStub);
+        ProductRepository repository = new(context, _noxRepositoryLoggerStub);
 
         await repository.RemoveByIdAsync(existingProduct.Id);
         await unitOfWork.SaveChangesAsync();

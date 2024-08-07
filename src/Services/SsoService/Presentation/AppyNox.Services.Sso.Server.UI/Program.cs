@@ -32,7 +32,6 @@ builder.Host.UseSerilog((context, services, config) =>
           .ReadFrom.Services(services)
           .Enrich.FromLogContext()
 );
-builder.Services.AddSingleton<INoxApiLogger, NoxApiLogger>();
 
 #region [ Logger for Before DI Initialization ]
 
@@ -44,8 +43,8 @@ var loggerFactory = LoggerFactory.Create(builder =>
 {
     builder.AddSerilog();
 });
-var logger = loggerFactory.CreateLogger<INoxLogger>();
-NoxLogger noxLogger = new(logger, "SsoServerUiHost");
+var logger = loggerFactory.CreateLogger<WebApplicationBuilder>();
+NoxLogger<WebApplicationBuilder> noxLogger = new(logger, "SsoServerUiHost");
 
 #endregion
 
@@ -54,7 +53,7 @@ NoxLogger noxLogger = new(logger, "SsoServerUiHost");
 #region [ Dependency Injection For Layers ]
 
 noxLogger.LogInformation("Registering DI's for layers.");
-builder.Services.AddSsoApplication(configuration)
+builder.Services.AddSsoApplication(configuration, noxLogger)
     .AddSsoInfrastructure(configuration, noxLogger, true)
     .AddServerUI(builder.Configuration);
 noxLogger.LogInformation("Registering DI's for layers completed.");

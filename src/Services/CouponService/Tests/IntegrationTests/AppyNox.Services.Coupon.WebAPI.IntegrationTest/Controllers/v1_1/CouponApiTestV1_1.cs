@@ -1,4 +1,6 @@
 using AppyNox.Services.Base.API.Constants;
+using AppyNox.Services.Base.Infrastructure.Repositories;
+using AppyNox.Services.Base.IntegrationTests.Stubs;
 using AppyNox.Services.Base.IntegrationTests.URIs;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDetailDtos.Models.Basic;
 using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
@@ -39,8 +41,8 @@ public class CouponApiTestV1_1(CouponServiceFixture couponApiTestFixture)
     public async Task Update_ShouldUpdateCoupon()
     {
         #region [ Create and Get Coupon ]
-
-        UnitOfWork unitOfWork = new(_couponApiTestFixture.DbContext, _couponApiTestFixture.NoxLoggerStub);
+        NoxInfrastructureLoggerStub<UnitOfWorkBase> logger = new();
+        UnitOfWork unitOfWork = new(_couponApiTestFixture.DbContext, logger);
         CouponDetail newDetail = new CouponDetailBuilder().WithDetails("test01", "testdetail").Build();
         CouponAggregate newCoupon = new CouponBuilder().WithDetails("code", "description", "detail")
                                                        .WithAmount(10, 15)

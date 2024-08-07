@@ -24,9 +24,9 @@ internal class UpdateEntityCommandHandler<TEntity>(
         IMapper mapper,
         IDtoMappingRegistryBase dtoMappingRegistry,
         IServiceProvider serviceProvider,
-        INoxApplicationLogger logger,
+        INoxApplicationLogger<UpdateEntityCommandHandler<TEntity>> logger,
         IUnitOfWork unitOfWork)
-        : BaseHandler<TEntity>(mapper, dtoMappingRegistry, serviceProvider, logger),
+        : BaseHandler<TEntity>(mapper, dtoMappingRegistry, serviceProvider),
         IRequestHandler<UpdateEntityCommand<TEntity>>
         where TEntity : class, IEntityWithGuid
 {
@@ -73,7 +73,7 @@ internal class UpdateEntityCommandHandler<TEntity>(
 
             #endregion
 
-            Logger.LogInformation($"Updating entity ID: '{request.Id}' type '{typeof(TEntity).Name}'");
+            logger.LogInformation($"Updating entity ID: '{request.Id}' type '{typeof(TEntity).Name}'");
 
             #region [ FluentValidation ]
 
@@ -90,7 +90,7 @@ internal class UpdateEntityCommandHandler<TEntity>(
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, $"Error updating entity of type '{typeof(TEntity).Name}' with ID: {request.Id}.");
+            logger.LogError(ex, $"Error updating entity of type '{typeof(TEntity).Name}' with ID: {request.Id}.");
             throw new NoxApplicationException(exceptionCode: (int)NoxApplicationExceptionCode.GenericUpdateCommandError, innerException: ex);
         }
     }

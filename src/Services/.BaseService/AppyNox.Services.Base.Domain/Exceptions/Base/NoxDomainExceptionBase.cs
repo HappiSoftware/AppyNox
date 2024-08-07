@@ -31,7 +31,7 @@ public abstract class NoxDomainExceptionBase(
         ExceptionThrownLayer.Domain,
         message,
         exceptionCode,
-        (int)HttpStatusCode.UnprocessableContent), INoxDomainException
+        (int)HttpStatusCode.Conflict), INoxDomainException
 {
     #region [ Fields ]
 

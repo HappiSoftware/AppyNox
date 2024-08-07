@@ -4,8 +4,6 @@ using AppyNox.Services.Base.Application.Interfaces.Caches;
 using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Application.Interfaces.Repositories;
 using AppyNox.Services.Base.Application.MediatR.Commands;
-using AppyNox.Services.Base.Core.AsyncLocals;
-using AppyNox.Services.Base.Core.Common;
 using AppyNox.Services.Base.Core.Enums;
 using AppyNox.Services.Base.Core.Exceptions.Base;
 using AppyNox.Services.Base.Domain.DDD.Interfaces;
@@ -20,10 +18,10 @@ internal sealed class CreateNoxEntityCommandHandler<TEntity>(
         IMapper mapper,
         IDtoMappingRegistryBase dtoMappingRegistry,
         IServiceProvider serviceProvider,
-        INoxApplicationLogger logger,
+        INoxApplicationLogger<CreateNoxEntityCommandHandler<TEntity>> logger,
         IUnitOfWork unitOfWork,
         ICacheService cacheService)
-        : BaseHandler<TEntity>(mapper, dtoMappingRegistry, serviceProvider, logger),
+        : BaseHandler<TEntity>(mapper, dtoMappingRegistry, serviceProvider),
         IRequestHandler<CreateNoxEntityCommand<TEntity>, Guid>
         where TEntity : class, IHasStronglyTypedId
 {
@@ -43,7 +41,7 @@ internal sealed class CreateNoxEntityCommandHandler<TEntity>(
     {
         try
         {
-            Logger.LogInformation($"Adding new entity of type '{typeof(TEntity).Name}'");
+            logger.LogInformation($"Adding new entity of type '{typeof(TEntity).Name}'");
             Type entityType = typeof(TEntity);
 
             #region [ Dynamic Dto Convertion ]

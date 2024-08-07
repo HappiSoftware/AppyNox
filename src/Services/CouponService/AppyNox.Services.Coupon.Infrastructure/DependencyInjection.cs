@@ -74,7 +74,7 @@ public static class DependencyInjection
             .AddScheme<AuthenticationSchemeOptions, CouponAuthenticationHandler>("CouponJwtScheme", null);
 
         services.AddScoped<ICouponTokenManager, CouponTokenManager>();
-        logger.LogInformation("Registered Fleet JWT Configuration.");
+        logger.LogInformation("Registered Fleet JWT Configuration.", false);
 
         return services;
     }

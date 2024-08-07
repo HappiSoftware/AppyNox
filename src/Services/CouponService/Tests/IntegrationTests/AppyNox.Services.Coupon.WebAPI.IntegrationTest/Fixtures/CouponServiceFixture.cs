@@ -18,8 +18,6 @@ public class CouponServiceFixture : DockerComposeTestBase
 
     public CouponDbContext DbContext { get; private set; }
 
-    public readonly NoxInfrastructureLogger NoxLoggerStub = new();
-
     #endregion
 
     #region [ Public Constructors ]

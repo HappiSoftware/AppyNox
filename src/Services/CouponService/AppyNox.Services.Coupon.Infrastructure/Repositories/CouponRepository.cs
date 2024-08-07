@@ -12,12 +12,16 @@ using CouponRoot = AppyNox.Services.Coupon.Domain.Coupons.Coupon;
 
 namespace AppyNox.Services.Coupon.Infrastructure.Repositories;
 
-public class CouponRepository(CouponDbContext context, INoxInfrastructureLogger noxInfrastructureLogger, ICacheService cacheService)
-        : NoxRepositoryBase<CouponRoot>(context, noxInfrastructureLogger), ICouponRepository
+public class CouponRepository(
+    CouponDbContext context,
+    INoxInfrastructureLogger<CouponRepository> noxInfrastructureLogger,
+    INoxInfrastructureLogger<NoxRepositoryBase<CouponRoot>> baseLogger,
+    ICacheService cacheService)
+        : NoxRepositoryBase<CouponRoot>(context, baseLogger), ICouponRepository
 {
     private readonly CouponDbContext _context = context;
 
-    private readonly INoxInfrastructureLogger _logger = noxInfrastructureLogger;
+    private readonly INoxInfrastructureLogger<CouponRepository> _logger = noxInfrastructureLogger;
 
     private readonly ICacheService _cacheService = cacheService;
 

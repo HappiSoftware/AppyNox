@@ -5,7 +5,9 @@ using AppyNox.Services.License.Infrastructure.Data;
 
 namespace AppyNox.Services.License.Infrastructure.Repositories;
 
-public class NoxRepository<TEntity>(LicenseDatabaseContext context, INoxInfrastructureLogger noxInfrastructureLogger)
+public class NoxRepository<TEntity>(
+    LicenseDatabaseContext context,
+    INoxInfrastructureLogger<NoxRepositoryBase<TEntity>> noxInfrastructureLogger)
         : NoxRepositoryBase<TEntity>(context, noxInfrastructureLogger) where TEntity : class, IHasStronglyTypedId
 {
 }

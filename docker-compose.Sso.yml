@@ -150,12 +150,6 @@ services:
 
   appynox-services-sso-webapi:
     image: ${DOCKER_REGISTRY-}appynoxservicesssowebapi
-    depends_on:
-      - appynox-rabbitmq-service
-      - appynox-consul
-      - appynox-sso-db
-      - appynox-sso-saga-db
-      - appynox-redis
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://+:7001

@@ -1,6 +1,5 @@
 ﻿using AppyNox.Services.Base.Infrastructure.Localization;
 using AppyNox.Services.Base.Infrastructure.Services.CacheServices;
-using AppyNox.Services.Base.Infrastructure.UnitTests.Stubs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using Moq;
@@ -11,8 +10,6 @@ namespace AppyNox.Services.Base.Infrastructure.UnitTests.Fixtures
     public class RepositoryFixture : IDisposable
     {
         #region [ Fields ]
-
-        public readonly NoxInfrastructureLoggerStub NoxLoggerStub = new();
 
         public readonly Mock<RedisCacheService> RedisCacheService;
 
