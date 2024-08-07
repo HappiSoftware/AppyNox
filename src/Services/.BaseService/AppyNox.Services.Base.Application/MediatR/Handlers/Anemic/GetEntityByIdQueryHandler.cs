@@ -16,8 +16,8 @@ internal class GetEntityByIdQueryHandler<TEntity>(
         IMapper mapper,
         IDtoMappingRegistryBase dtoMappingRegistry,
         IServiceProvider serviceProvider,
-        INoxApplicationLogger logger)
-        : BaseHandler<TEntity>(mapper, dtoMappingRegistry, serviceProvider, logger),
+        INoxApplicationLogger<GetEntityByIdQueryHandler<TEntity>> logger)
+        : BaseHandler<TEntity>(mapper, dtoMappingRegistry, serviceProvider),
         IRequestHandler<GetEntityByIdQuery<TEntity>, object>
         where TEntity : class, IEntityWithGuid
 {
@@ -35,7 +35,7 @@ internal class GetEntityByIdQueryHandler<TEntity>(
     {
         try
         {
-            Logger.LogInformation($"Fetching entity of type {typeof(TEntity).Name} with ID: {request.Id}.");
+            logger.LogInformation($"Fetching entity of type {typeof(TEntity).Name} with ID: {request.Id}.");
             var dtoType = GetDtoType(request.QueryParameters);
             var entity = await _repository.GetByIdAsync(request.Id, request.QueryParameters.IncludeDeleted, request.Track);
             return _mapper.Map(entity, typeof(TEntity), dtoType);
@@ -46,7 +46,7 @@ internal class GetEntityByIdQueryHandler<TEntity>(
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, $"Error fetching entity with ID: {request.Id}.");
+            logger.LogError(ex, $"Error fetching entity with ID: {request.Id}.");
             throw new NoxApplicationException(exceptionCode: (int)NoxApplicationExceptionCode.GenericGetByIdQueryError, innerException: ex);
         }
     }

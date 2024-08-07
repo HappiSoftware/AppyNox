@@ -1,6 +1,7 @@
 ﻿using AppyNox.Services.Base.Application.Interfaces.Caches;
 using AppyNox.Services.Base.Infrastructure.Exceptions;
 using AppyNox.Services.Base.Infrastructure.Exceptions.Base;
+using AppyNox.Services.Base.Infrastructure.Repositories;
 using AppyNox.Services.Base.Infrastructure.Repositories.Common;
 using AppyNox.Services.Base.Infrastructure.UnitTests.Fixtures;
 using AppyNox.Services.Base.Infrastructure.UnitTests.Stubs;
@@ -25,7 +26,9 @@ public class CouponRepositoryUnitTest : IClassFixture<RepositoryFixture>
 
     private readonly RepositoryFixture _fixture;
 
-    private readonly NoxInfrastructureLoggerStub _noxLoggerStub;
+    private readonly NoxInfrastructureLoggerStub<UnitOfWorkBase> _unitOfWorkBaseLogger;
+    private readonly NoxInfrastructureLoggerStub<CouponRepository> _couponRepositoryLogger;
+    private readonly NoxInfrastructureLoggerStub<NoxRepositoryBase<CouponAggregate>> _noxRepositoryBaseLogger;
 
     private readonly ICacheService _cacheService;
 
@@ -36,7 +39,10 @@ public class CouponRepositoryUnitTest : IClassFixture<RepositoryFixture>
     public CouponRepositoryUnitTest(RepositoryFixture fixture)
     {
         _fixture = fixture;
-        _noxLoggerStub = fixture.NoxLoggerStub;
+        _unitOfWorkBaseLogger = new NoxInfrastructureLoggerStub<UnitOfWorkBase>();
+        _couponRepositoryLogger = new NoxInfrastructureLoggerStub<CouponRepository>();
+        _noxRepositoryBaseLogger = new NoxInfrastructureLoggerStub<NoxRepositoryBase<CouponAggregate>>();
+
         _cacheService = fixture.RedisCacheService.Object;
         var localizer = new Mock<IStringLocalizer>();
         localizer.Setup(l => l[It.IsAny<string>()]).Returns(new LocalizedString("key", "mock value"));
@@ -57,9 +63,9 @@ public class CouponRepositoryUnitTest : IClassFixture<RepositoryFixture>
     public async Task GetAllAsync_ShouldReturnEntity()
     {
         CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
-        UnitOfWork unitOfWork = new(context, _noxLoggerStub);
+        UnitOfWork unitOfWork = new(context, _unitOfWorkBaseLogger);
         await context.SeedOneCoupon(unitOfWork);
-        var repository = new CouponRepository(context, _noxLoggerStub, _cacheService);
+        var repository = new CouponRepository(context, _couponRepositoryLogger, _noxRepositoryBaseLogger, _cacheService);
         QueryParameters queryParameters = new()
         {
             Access = string.Empty,
@@ -78,9 +84,9 @@ public class CouponRepositoryUnitTest : IClassFixture<RepositoryFixture>
     public async Task GetAllAsync_ShouldApplySorting()
     {
         CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
-        UnitOfWork unitOfWork = new(context, _noxLoggerStub);
+        UnitOfWork unitOfWork = new(context, _unitOfWorkBaseLogger);
         await context.SeedMultipleCoupons(unitOfWork, 2, 1);
-        var repository = new CouponRepository(context, _noxLoggerStub, _cacheService);
+        var repository = new CouponRepository(context, _couponRepositoryLogger, _noxRepositoryBaseLogger, _cacheService);
         QueryParameters queryParameters = new()
         {
             Access = string.Empty,
@@ -104,9 +110,9 @@ public class CouponRepositoryUnitTest : IClassFixture<RepositoryFixture>
     public async Task GetAllAsync_ShouldRefuseWrongSortBy(string sortBy)
     {
         CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
-        UnitOfWork unitOfWork = new(context, _noxLoggerStub);
+        UnitOfWork unitOfWork = new(context, _unitOfWorkBaseLogger);
         await context.SeedMultipleCoupons(unitOfWork, 2, 1);
-        var repository = new CouponRepository(context, _noxLoggerStub, _cacheService);
+        var repository = new CouponRepository(context, _couponRepositoryLogger, _noxRepositoryBaseLogger, _cacheService);
         QueryParameters queryParameters = new()
         {
             Access = string.Empty,
@@ -127,9 +133,9 @@ public class CouponRepositoryUnitTest : IClassFixture<RepositoryFixture>
     public async Task GetAllAsync_ShouldSortCorrectly(string sortBy, bool ascending)
     {
         CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
-        UnitOfWork unitOfWork = new(context, _noxLoggerStub);
+        UnitOfWork unitOfWork = new(context, _unitOfWorkBaseLogger);
         await context.SeedMultipleCoupons(unitOfWork, 2, 1);
-        var repository = new CouponRepository(context, _noxLoggerStub, _cacheService);
+        var repository = new CouponRepository(context, _couponRepositoryLogger, _noxRepositoryBaseLogger, _cacheService);
         QueryParameters queryParameters = new()
         {
             Access = string.Empty,
@@ -160,9 +166,9 @@ public class CouponRepositoryUnitTest : IClassFixture<RepositoryFixture>
     public async Task GetAllAsync_ShouldRefuseMaliciousSort(string sort)
     {
         CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
-        UnitOfWork unitOfWork = new(context, _noxLoggerStub);
+        UnitOfWork unitOfWork = new(context, _unitOfWorkBaseLogger);
         await context.SeedMultipleCoupons(unitOfWork, 2, 1);
-        var repository = new CouponRepository(context, _noxLoggerStub, _cacheService);
+        var repository = new CouponRepository(context, _couponRepositoryLogger, _noxRepositoryBaseLogger, _cacheService);
         QueryParameters queryParameters = new()
         {
             Access = string.Empty,
@@ -190,9 +196,9 @@ public class CouponRepositoryUnitTest : IClassFixture<RepositoryFixture>
     public async Task GetAllAsync_ShouldApplyFiltering(string filter, int size)
     {
         CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
-        UnitOfWork unitOfWork = new(context, _noxLoggerStub);
+        UnitOfWork unitOfWork = new(context, _unitOfWorkBaseLogger);
         await context.SeedMultipleCoupons(unitOfWork, 3, 1);
-        var repository = new CouponRepository(context, _noxLoggerStub, _cacheService);
+        var repository = new CouponRepository(context, _couponRepositoryLogger, _noxRepositoryBaseLogger, _cacheService);
         QueryParameters queryParameters = new()
         {
             Access = string.Empty,
@@ -214,9 +220,9 @@ public class CouponRepositoryUnitTest : IClassFixture<RepositoryFixture>
     public async Task GetAllAsync_ShouldRefuseWrongFilter(string filter)
     {
         CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
-        UnitOfWork unitOfWork = new(context, _noxLoggerStub);
+        UnitOfWork unitOfWork = new(context, _unitOfWorkBaseLogger);
         await context.SeedMultipleCoupons(unitOfWork, 2, 1);
-        var repository = new CouponRepository(context, _noxLoggerStub, _cacheService);
+        var repository = new CouponRepository(context, _couponRepositoryLogger, _noxRepositoryBaseLogger, _cacheService);
         QueryParameters queryParameters = new()
         {
             Access = string.Empty,
@@ -239,9 +245,9 @@ public class CouponRepositoryUnitTest : IClassFixture<RepositoryFixture>
     public async Task GetAllAsync_ShouldRefuseMaliciousFilter(string filter)
     {
         CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
-        UnitOfWork unitOfWork = new(context, _noxLoggerStub);
+        UnitOfWork unitOfWork = new(context, _unitOfWorkBaseLogger);
         await context.SeedMultipleCoupons(unitOfWork, 2, 1);
-        var repository = new CouponRepository(context, _noxLoggerStub, _cacheService);
+        var repository = new CouponRepository(context, _couponRepositoryLogger, _noxRepositoryBaseLogger, _cacheService);
         QueryParameters queryParameters = new()
         {
             Access = string.Empty,
@@ -262,9 +268,9 @@ public class CouponRepositoryUnitTest : IClassFixture<RepositoryFixture>
     public async Task GetAllAsync_ShouldPaginationReturnTwo()
     {
         CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
-        UnitOfWork unitOfWork = new(context, _noxLoggerStub);
+        UnitOfWork unitOfWork = new(context, _unitOfWorkBaseLogger);
         await context.SeedMultipleCoupons(unitOfWork, 2, 1);
-        var repository = new CouponRepository(context, _noxLoggerStub, _cacheService);
+        var repository = new CouponRepository(context, _couponRepositoryLogger, _noxRepositoryBaseLogger, _cacheService);
         QueryParameters queryParameters = new()
         {
             Access = string.Empty,
@@ -283,11 +289,11 @@ public class CouponRepositoryUnitTest : IClassFixture<RepositoryFixture>
     public async Task GetAllAsync_ShouldPaginationReturnCorrectEntity()
     {
         CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
-        UnitOfWork unitOfWork = new(context, _noxLoggerStub);
+        UnitOfWork unitOfWork = new(context, _unitOfWorkBaseLogger);
         var coupons = await context.SeedMultipleCoupons(unitOfWork, 2, 1);
         Assert.NotNull(coupons);
 
-        var repository = new CouponRepository(context, _noxLoggerStub, _cacheService);
+        var repository = new CouponRepository(context, _couponRepositoryLogger, _noxRepositoryBaseLogger, _cacheService);
         QueryParameters queryParameters = new()
         {
             Access = string.Empty,
@@ -309,9 +315,9 @@ public class CouponRepositoryUnitTest : IClassFixture<RepositoryFixture>
     public async Task GetAllAsync_ShouldPaginationReturnFifty()
     {
         CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
-        UnitOfWork unitOfWork = new(context, _noxLoggerStub);
+        UnitOfWork unitOfWork = new(context, _unitOfWorkBaseLogger);
         await context.SeedMultipleCoupons(unitOfWork, 50, 5);
-        var repository = new CouponRepository(context, _noxLoggerStub, _cacheService);
+        var repository = new CouponRepository(context, _couponRepositoryLogger, _noxRepositoryBaseLogger, _cacheService);
         QueryParameters queryParameters = new()
         {
             Access = string.Empty,
@@ -330,11 +336,11 @@ public class CouponRepositoryUnitTest : IClassFixture<RepositoryFixture>
     public async Task GetAllAsync_ShouldPaginationReturnFiftyAndCorrectEntities()
     {
         CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
-        UnitOfWork unitOfWork = new(context, _noxLoggerStub);
+        UnitOfWork unitOfWork = new(context, _unitOfWorkBaseLogger);
         var coupons = await context.SeedMultipleCoupons(unitOfWork, 50, 5);
         Assert.NotNull(coupons);
 
-        var repository = new CouponRepository(context, _noxLoggerStub, _cacheService);
+        var repository = new CouponRepository(context, _couponRepositoryLogger, _noxRepositoryBaseLogger, _cacheService);
         QueryParameters queryParameters = new()
         {
             Access = string.Empty,
@@ -362,11 +368,11 @@ public class CouponRepositoryUnitTest : IClassFixture<RepositoryFixture>
     public async Task GetByIdAsync_ShouldReturnEntity()
     {
         CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
-        UnitOfWork unitOfWork = new(context, _noxLoggerStub);
+        UnitOfWork unitOfWork = new(context, _unitOfWorkBaseLogger);
         var existingCoupon = await context.SeedOneCoupon(unitOfWork);
         Assert.NotNull(existingCoupon);
 
-        var repository = new CouponRepository(context, _noxLoggerStub, _cacheService);
+        var repository = new CouponRepository(context, _couponRepositoryLogger, _noxRepositoryBaseLogger, _cacheService);
         var result = await repository.GetByIdAsync(existingCoupon.Id);
 
         Assert.NotNull(result);
@@ -376,11 +382,11 @@ public class CouponRepositoryUnitTest : IClassFixture<RepositoryFixture>
     public async Task GetByIdAsync_ShouldValuesBeCorrect()
     {
         CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
-        UnitOfWork unitOfWork = new(context, _noxLoggerStub);
+        UnitOfWork unitOfWork = new(context, _unitOfWorkBaseLogger);
         var existingCoupon = await context.SeedOneCoupon(unitOfWork);
         Assert.NotNull(existingCoupon);
 
-        var repository = new CouponRepository(context, _noxLoggerStub, _cacheService);
+        var repository = new CouponRepository(context, _couponRepositoryLogger, _noxRepositoryBaseLogger, _cacheService);
 
         var result = await repository.GetByIdAsync(existingCoupon.Id);
 
@@ -401,8 +407,8 @@ public class CouponRepositoryUnitTest : IClassFixture<RepositoryFixture>
     public async Task AddAsync_ShouldAddEntity()
     {
         CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
-        UnitOfWork unitOfWork = new(context, _noxLoggerStub);
-        var repository = new CouponRepository(context, _noxLoggerStub, _cacheService);
+        UnitOfWork unitOfWork = new(context, _unitOfWorkBaseLogger);
+        var repository = new CouponRepository(context, _couponRepositoryLogger, _noxRepositoryBaseLogger, _cacheService);
 
         var existingCoupon = await context.SeedOneCoupon(unitOfWork); // To Seed CouponDetail
         Assert.NotNull(existingCoupon);
@@ -436,11 +442,11 @@ public class CouponRepositoryUnitTest : IClassFixture<RepositoryFixture>
     public async Task UpdateAsync_ShouldUpdateMinimumAmount()
     {
         CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
-        UnitOfWork unitOfWork = new(context, _noxLoggerStub);
+        UnitOfWork unitOfWork = new(context, _unitOfWorkBaseLogger);
         var existingCoupon = await context.SeedOneCoupon(unitOfWork);
         Assert.NotNull(existingCoupon);
 
-        var repository = new CouponRepository(context, _noxLoggerStub, _cacheService);
+        var repository = new CouponRepository(context, _couponRepositoryLogger, _noxRepositoryBaseLogger, _cacheService);
 
         existingCoupon.UpdateMinimumAmount(10);
 
@@ -463,14 +469,14 @@ public class CouponRepositoryUnitTest : IClassFixture<RepositoryFixture>
     public async Task UpdateAsync_ShouldReturnExceptionUpdatingMinimumAmount()
     {
         CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
-        UnitOfWork unitOfWork = new(context, _noxLoggerStub);
+        UnitOfWork unitOfWork = new(context, _unitOfWorkBaseLogger);
         var existingCoupon = await context.SeedOneCoupon(unitOfWork);
         Assert.NotNull(existingCoupon);
 
-        var repository = new CouponRepository(context, _noxLoggerStub, _cacheService);
+        var repository = new CouponRepository(context, _couponRepositoryLogger, _noxRepositoryBaseLogger, _cacheService);
 
         var exception = Assert.Throws<NoxCouponDomainException>(() => existingCoupon.UpdateMinimumAmount(0));
-        Assert.Equal((int)HttpStatusCode.UnprocessableContent, exception.StatusCode);
+        Assert.Equal((int)HttpStatusCode.Conflict, exception.StatusCode);
         Assert.Equal((int)NoxCouponDomainExceptionCode.AmountValidation, exception.ExceptionCode);
     }
 
@@ -482,11 +488,11 @@ public class CouponRepositoryUnitTest : IClassFixture<RepositoryFixture>
     public async Task DeleteAsync_ShouldDeleteEntity()
     {
         CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
-        UnitOfWork unitOfWork = new(context, _noxLoggerStub);
+        UnitOfWork unitOfWork = new(context, _unitOfWorkBaseLogger);
         var existingCoupon = await context.SeedOneCoupon(unitOfWork);
         Assert.NotNull(existingCoupon);
 
-        var repository = new CouponRepository(context, _noxLoggerStub, _cacheService);
+        var repository = new CouponRepository(context, _couponRepositoryLogger, _noxRepositoryBaseLogger, _cacheService);
 
         await repository.RemoveByIdAsync(existingCoupon.Id);
         await unitOfWork.SaveChangesAsync();
@@ -503,11 +509,11 @@ public class CouponRepositoryUnitTest : IClassFixture<RepositoryFixture>
     public async Task DeleteAsync_ShouldSoftDeleteEntity()
     {
         CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
-        UnitOfWork unitOfWork = new(context, _noxLoggerStub);
+        UnitOfWork unitOfWork = new(context, _unitOfWorkBaseLogger);
         var existingCoupon = await context.SeedOneCoupon(unitOfWork);
         Assert.NotNull(existingCoupon);
 
-        var repository = new CouponRepository(context, _noxLoggerStub, _cacheService);
+        var repository = new CouponRepository(context, _couponRepositoryLogger, _noxRepositoryBaseLogger, _cacheService);
 
         await repository.RemoveByIdAsync(existingCoupon.Id);
         await unitOfWork.SaveChangesAsync();
@@ -524,11 +530,11 @@ public class CouponRepositoryUnitTest : IClassFixture<RepositoryFixture>
     public async Task DeleteAsync_ShouldHardDeleteEntity()
     {
         CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
-        UnitOfWork unitOfWork = new(context, _noxLoggerStub);
+        UnitOfWork unitOfWork = new(context, _unitOfWorkBaseLogger);
         var existingCoupon = await context.SeedOneCoupon(unitOfWork);
         Assert.NotNull(existingCoupon);
 
-        var repository = new CouponRepository(context, _noxLoggerStub, _cacheService);
+        var repository = new CouponRepository(context, _couponRepositoryLogger, _noxRepositoryBaseLogger, _cacheService);
 
         await repository.RemoveByIdAsync(existingCoupon.Id, true);
         await unitOfWork.SaveChangesAsync();
@@ -549,9 +555,9 @@ public class CouponRepositoryUnitTest : IClassFixture<RepositoryFixture>
     public async Task GetAllAsync_ShouldReturnEntityEfCore()
     {
         CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
-        UnitOfWork unitOfWork = new(context, _noxLoggerStub);
+        UnitOfWork unitOfWork = new(context, _unitOfWorkBaseLogger);
         await context.SeedOneCoupon(unitOfWork);
-        var repository = new CouponRepository(context, _noxLoggerStub, _cacheService);
+        var repository = new CouponRepository(context, _couponRepositoryLogger, _noxRepositoryBaseLogger, _cacheService);
         QueryParameters queryParameters = new()
         {
             SortBy = "Id desc, CouponDetail.detail desc",

@@ -2,6 +2,9 @@ using AppyNox.Services.Base.API.Constants;
 using AppyNox.Services.Base.API.Wrappers;
 using AppyNox.Services.Base.Application.Exceptions.Base;
 using AppyNox.Services.Base.Core.Common;
+using AppyNox.Services.Base.Infrastructure.Repositories;
+using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
+using AppyNox.Services.Base.IntegrationTests.Stubs;
 using AppyNox.Services.Base.IntegrationTests.URIs;
 using AppyNox.Services.Base.IntegrationTests.Wrapper;
 using AppyNox.Services.Base.IntegrationTests.Wrapper.Helpers;
@@ -11,7 +14,10 @@ using AppyNox.Services.Coupon.Application.Dtos.TicketDtos.Models.Extended;
 using AppyNox.Services.Coupon.Domain.Entities;
 using AppyNox.Services.Coupon.Infrastructure.Repositories;
 using AppyNox.Services.Coupon.WebAPI.IntegrationTest.Fixtures;
+using Castle.Core.Logging;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Moq;
 using System.Linq.Dynamic.Core;
 using System.Net;
 using System.Text;
@@ -169,8 +175,8 @@ public class TicketApiTest(CouponServiceFixture couponApiTestFixture)
     public async Task Update_ShouldUpdateTicket()
     {
         #region [ Create and Get Ticket ]
-
-        UnitOfWork unitOfWork = new(_couponApiTestFixture.DbContext, _couponApiTestFixture.NoxLoggerStub);
+        NoxInfrastructureLoggerStub<UnitOfWorkBase> logger = new();
+        UnitOfWork unitOfWork = new(_couponApiTestFixture.DbContext, logger);
         Ticket ticket = new()
         {
             Title = "title",

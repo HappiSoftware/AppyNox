@@ -55,5 +55,3 @@ public class NoxCommandActionBehavior<TRequest, TResponse> : IPipelineBehavior<T
         }
     }
 }
-
-

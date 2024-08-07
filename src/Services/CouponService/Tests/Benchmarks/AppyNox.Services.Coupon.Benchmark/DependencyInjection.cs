@@ -10,6 +10,7 @@ using AppyNox.Services.Base.Application.Interfaces.Caches;
 using AppyNox.Services.Base.Infrastructure.Services.CacheServices;
 using StackExchange.Redis;
 using AppyNox.Services.Base.Infrastructure.Configuration;
+using Microsoft.AspNetCore.Builder;
 
 namespace AppyNox.Services.Coupon.Benchmark;
 
@@ -32,8 +33,8 @@ internal static class DependencyInjection
         {
             builder.AddSerilog();
         });
-        var logger = loggerFactory.CreateLogger<INoxLogger>();
-        NoxLogger noxLogger = new(logger, "CouponBenchmark");
+        var logger = loggerFactory.CreateLogger<ApplicationBuilder>();
+        NoxLogger<ApplicationBuilder> noxLogger = new(logger, "CouponBenchmark");
 
         serviceCollection.AddLogging(builder =>
             builder.AddConsole()

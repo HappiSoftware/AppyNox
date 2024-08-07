@@ -1,35 +1,26 @@
-﻿using AppyNox.Services.Base.Application.Extensions;
-using AppyNox.Services.Base.Application.Interfaces.Caches;
+﻿using AppyNox.Services.Base.Application.Interfaces.Caches;
 using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Application.Interfaces.Repositories;
 using AppyNox.Services.Base.Application.Localization;
 using AppyNox.Services.Base.Application.UnitTests.Stubs;
 using AppyNox.Services.Base.Core.Enums;
-using AppyNox.Services.Base.Domain.DDD;
-using AppyNox.Services.Base.Domain.DDD.Interfaces;
-using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
-using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace AppyNox.Services.Base.Application.UnitTests.CQRSFixtures;
 
-public class NoxCQRSFixture<TEntity, TId> : IDisposable
-        where TEntity : class, IHasStronglyTypedId
-        where TId : NoxId
+public class NoxApplicationTestFixture : IDisposable
 {
     #region [ Fields ]
 
-    public readonly IServiceCollection ServiceCollection;
-
-    public readonly Mock<INoxRepository<TEntity>> MockRepository;
-
-    public readonly Mock<IQueryParameters> MockQueryParameters;
-
-    public readonly Mock<ICacheService> _cacheService;
+    private readonly Mock<ICacheService> _cacheService;
 
     private readonly Mock<IUnitOfWork> _unitOfWork;
+
+    public readonly IServiceCollection ServiceCollection;
+
+    public readonly Mock<IQueryParameters> MockQueryParameters;
 
     public bool DIInitialized { get; set; } = false;
 
@@ -37,12 +28,11 @@ public class NoxCQRSFixture<TEntity, TId> : IDisposable
 
     #region [ Public Constructors ]
 
-    public NoxCQRSFixture()
+    public NoxApplicationTestFixture()
     {
         ServiceCollection = new ServiceCollection();
-        ServiceCollection.AddScoped(typeof(INoxApplicationLogger), _ => new NoxApplicationLoggerStub());
-
-        MockRepository = new Mock<INoxRepository<TEntity>>();
+        ServiceCollection.AddScoped(typeof(INoxApplicationLogger<>), typeof(NoxApplicationLoggerStub<>));
+        
         _unitOfWork = new();
 
         #region [ QueryParameter Mocks ]

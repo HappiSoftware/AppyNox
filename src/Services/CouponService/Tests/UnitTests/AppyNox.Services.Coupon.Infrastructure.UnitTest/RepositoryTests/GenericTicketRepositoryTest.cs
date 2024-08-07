@@ -1,6 +1,7 @@
 ﻿using AppyNox.Services.Base.Application.Constants;
 using AppyNox.Services.Base.Application.Interfaces.Caches;
 using AppyNox.Services.Base.Infrastructure.Exceptions;
+using AppyNox.Services.Base.Infrastructure.Repositories;
 using AppyNox.Services.Base.Infrastructure.Repositories.Common;
 using AppyNox.Services.Base.Infrastructure.UnitTests.Fixtures;
 using AppyNox.Services.Base.Infrastructure.UnitTests.Stubs;
@@ -19,9 +20,11 @@ public class GenericTicketRepositoryTest : IClassFixture<RepositoryFixture>
 {
     #region [ Fields ]
 
-    private readonly NoxInfrastructureLoggerStub _noxLoggerStub;
-
     private readonly ICacheService _cacheService;
+
+    private readonly NoxInfrastructureLoggerStub<UnitOfWorkBase> _unitOfWorkBaseLogger;
+
+    private readonly NoxInfrastructureLoggerStub<GenericRepositoryBase<Ticket>> _genericRepositoryLogger;
 
     #endregion
 
@@ -29,7 +32,9 @@ public class GenericTicketRepositoryTest : IClassFixture<RepositoryFixture>
 
     public GenericTicketRepositoryTest(RepositoryFixture fixture)
     {
-        _noxLoggerStub = fixture.NoxLoggerStub;
+        _unitOfWorkBaseLogger = new NoxInfrastructureLoggerStub<UnitOfWorkBase>();
+        _genericRepositoryLogger = new NoxInfrastructureLoggerStub<GenericRepositoryBase<Ticket>>();
+
         _cacheService = fixture.RedisCacheService.Object;
         var localizer = new Mock<IStringLocalizer>();
         localizer.Setup(l => l[It.IsAny<string>()]).Returns(new LocalizedString("key", "mock value"));
@@ -50,9 +55,9 @@ public class GenericTicketRepositoryTest : IClassFixture<RepositoryFixture>
     public async Task GetAllAsync_ShouldReturnEntity()
     {
         CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
-        UnitOfWork unitOfWork = new(context, _noxLoggerStub);
+        UnitOfWork unitOfWork = new(context, _unitOfWorkBaseLogger);
         await context.SeedOneTicket(unitOfWork);
-        var repository = new GenericRepository<Ticket>(context, _noxLoggerStub);
+        var repository = new GenericRepository<Ticket>(context, _genericRepositoryLogger);
         QueryParameters queryParameters = new()
         {
             Access = string.Empty,
@@ -71,9 +76,9 @@ public class GenericTicketRepositoryTest : IClassFixture<RepositoryFixture>
     public async Task GetAllAsync_ShouldPaginationReturnTwo()
     {
         CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
-        UnitOfWork unitOfWork = new(context, _noxLoggerStub);
+        UnitOfWork unitOfWork = new(context, _unitOfWorkBaseLogger);
         await context.SeedMultipleTickets(unitOfWork, 2, 1);
-        var repository = new GenericRepository<Ticket>(context, _noxLoggerStub);
+        var repository = new GenericRepository<Ticket>(context, _genericRepositoryLogger);
         QueryParameters queryParameters = new()
         {
             Access = string.Empty,
@@ -92,11 +97,11 @@ public class GenericTicketRepositoryTest : IClassFixture<RepositoryFixture>
     public async Task GetAllAsync_ShouldPaginationReturnCorrectEntity()
     {
         CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
-        UnitOfWork unitOfWork = new(context, _noxLoggerStub);
+        UnitOfWork unitOfWork = new(context, _unitOfWorkBaseLogger);
         var tickets = await context.SeedMultipleTickets(unitOfWork, 2, 1);
         Assert.NotNull(tickets);
 
-        var repository = new GenericRepository<Ticket>(context, _noxLoggerStub);
+        var repository = new GenericRepository<Ticket>(context, _genericRepositoryLogger);
         QueryParameters queryParameters = new()
         {
             Access = string.Empty,
@@ -119,9 +124,9 @@ public class GenericTicketRepositoryTest : IClassFixture<RepositoryFixture>
     public async Task GetAllAsync_ShouldPaginationReturnFifty()
     {
         CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
-        UnitOfWork unitOfWork = new(context, _noxLoggerStub);
+        UnitOfWork unitOfWork = new(context, _unitOfWorkBaseLogger);
         await context.SeedMultipleTickets(unitOfWork, 50, 5);
-        var repository = new GenericRepository<Ticket>(context, _noxLoggerStub);
+        var repository = new GenericRepository<Ticket>(context, _genericRepositoryLogger);
         QueryParameters queryParameters = new()
         {
             Access = string.Empty,
@@ -140,11 +145,11 @@ public class GenericTicketRepositoryTest : IClassFixture<RepositoryFixture>
     public async Task GetAllAsync_ShouldPaginationReturnFiftyAndCorrectEntities()
     {
         CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
-        UnitOfWork unitOfWork = new(context, _noxLoggerStub);
+        UnitOfWork unitOfWork = new(context, _unitOfWorkBaseLogger);
         var tickets = await context.SeedMultipleTickets(unitOfWork, 50, 5);
         Assert.NotNull(tickets);
 
-        var repository = new GenericRepository<Ticket>(context, _noxLoggerStub);
+        var repository = new GenericRepository<Ticket>(context, _genericRepositoryLogger);
         QueryParameters queryParameters = new()
         {
             Access = string.Empty,
@@ -173,11 +178,11 @@ public class GenericTicketRepositoryTest : IClassFixture<RepositoryFixture>
     public async Task GetByIdAsync_ShouldReturnEntity()
     {
         CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
-        UnitOfWork unitOfWork = new(context, _noxLoggerStub);
+        UnitOfWork unitOfWork = new(context, _unitOfWorkBaseLogger);
         var existingTicket = await context.SeedOneTicket(unitOfWork);
         Assert.NotNull(existingTicket);
 
-        var repository = new GenericRepository<Ticket>(context, _noxLoggerStub);
+        var repository = new GenericRepository<Ticket>(context, _genericRepositoryLogger);
         var result = await repository.GetByIdAsync(existingTicket.Id);
 
         Assert.NotNull(result);
@@ -187,11 +192,11 @@ public class GenericTicketRepositoryTest : IClassFixture<RepositoryFixture>
     public async Task GetByIdAsync_ShouldValuesBeCorrect()
     {
         CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
-        UnitOfWork unitOfWork = new(context, _noxLoggerStub);
+        UnitOfWork unitOfWork = new(context, _unitOfWorkBaseLogger);
         var existingTicket = await context.SeedOneTicket(unitOfWork);
         Assert.NotNull(existingTicket);
 
-        var repository = new GenericRepository<Ticket>(context, _noxLoggerStub);
+        var repository = new GenericRepository<Ticket>(context, _genericRepositoryLogger);
 
         var result = await repository.GetByIdAsync(existingTicket.Id);
 
@@ -213,8 +218,8 @@ public class GenericTicketRepositoryTest : IClassFixture<RepositoryFixture>
     public async Task AddAsync_ShouldAddEntity()
     {
         CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
-        UnitOfWork unitOfWork = new(context, _noxLoggerStub);
-        var repository = new GenericRepository<Ticket>(context, _noxLoggerStub);
+        UnitOfWork unitOfWork = new(context, _unitOfWorkBaseLogger);
+        var repository = new GenericRepository<Ticket>(context, _genericRepositoryLogger);
 
         TicketTag tagToAdd = new()
         {
@@ -252,11 +257,11 @@ public class GenericTicketRepositoryTest : IClassFixture<RepositoryFixture>
     public async Task UpdateAsync_ShouldUpdateTicket()
     {
         CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
-        UnitOfWork unitOfWork = new(context, _noxLoggerStub);
+        UnitOfWork unitOfWork = new(context, _unitOfWorkBaseLogger);
         var existingTicket = await context.SeedOneTicket(unitOfWork);
         Assert.NotNull(existingTicket);
 
-        var repository = new GenericRepository<Ticket>(context, _noxLoggerStub);
+        var repository = new GenericRepository<Ticket>(context, _genericRepositoryLogger);
 
         // Hold ticket old data
         Guid id = existingTicket.Id;
@@ -288,11 +293,11 @@ public class GenericTicketRepositoryTest : IClassFixture<RepositoryFixture>
     public async Task DeleteAsync_ShouldDeleteEntity()
     {
         CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
-        UnitOfWork unitOfWork = new(context, _noxLoggerStub);
+        UnitOfWork unitOfWork = new(context, _unitOfWorkBaseLogger);
         var existingTicket = await context.SeedOneTicket(unitOfWork);
         Assert.NotNull(existingTicket);
 
-        var repository = new GenericRepository<Ticket>(context, _noxLoggerStub);
+        var repository = new GenericRepository<Ticket>(context, _genericRepositoryLogger);
 
         await repository.RemoveByIdAsync(existingTicket.Id);
         await unitOfWork.SaveChangesAsync();
@@ -309,11 +314,11 @@ public class GenericTicketRepositoryTest : IClassFixture<RepositoryFixture>
     public async Task DeleteAsync_ShouldSoftDeleteEntity()
     {
         CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
-        UnitOfWork unitOfWork = new(context, _noxLoggerStub);
+        UnitOfWork unitOfWork = new(context, _unitOfWorkBaseLogger);
         var existingTicket = await context.SeedOneTicket(unitOfWork);
         Assert.NotNull(existingTicket);
 
-        var repository = new GenericRepository<Ticket>(context, _noxLoggerStub);
+        var repository = new GenericRepository<Ticket>(context, _genericRepositoryLogger);
 
         await repository.RemoveByIdAsync(existingTicket.Id);
         await unitOfWork.SaveChangesAsync();
@@ -330,11 +335,11 @@ public class GenericTicketRepositoryTest : IClassFixture<RepositoryFixture>
     public async Task DeleteAsync_ShouldHardDeleteEntity()
     {
         CouponDbContext context = RepositoryFixture.CreateDatabaseContext<CouponDbContext>();
-        UnitOfWork unitOfWork = new(context, _noxLoggerStub);
+        UnitOfWork unitOfWork = new(context, _unitOfWorkBaseLogger);
         var existingTicket = await context.SeedOneTicket(unitOfWork);
         Assert.NotNull(existingTicket);
 
-        var repository = new GenericRepository<Ticket>(context, _noxLoggerStub);
+        var repository = new GenericRepository<Ticket>(context, _genericRepositoryLogger);
 
         await repository.RemoveByIdAsync(existingTicket.Id, true);
         await unitOfWork.SaveChangesAsync();

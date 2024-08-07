@@ -23,7 +23,7 @@ builder.Host.UseSerilog((context, services, config) =>
     config.ReadFrom.Configuration(context.Configuration)
           .ReadFrom.Services(services)
 );
-builder.Services.AddSingleton<INoxApiLogger, NoxApiLogger>();
+builder.Services.AddSingleton(typeof(INoxApiLogger<>), typeof(NoxApiLogger<>));
 
 #region [ Logger for Before DI Initialization ]
 
@@ -35,8 +35,8 @@ var loggerFactory = LoggerFactory.Create(builder =>
 {
     builder.AddSerilog();
 });
-var logger = loggerFactory.CreateLogger<INoxLogger>();
-NoxLogger noxLogger = new(logger, "GatewayHost");
+var logger = loggerFactory.CreateLogger<WebApplicationBuilder>();
+NoxLogger<WebApplicationBuilder> noxLogger = new(logger, "GatewayHost");
 
 #endregion
 

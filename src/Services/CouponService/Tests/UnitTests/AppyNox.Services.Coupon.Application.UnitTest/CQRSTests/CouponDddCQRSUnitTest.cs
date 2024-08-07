@@ -14,6 +14,7 @@ using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
 using AppyNox.Services.Coupon.Domain.Coupons;
 using AppyNox.Services.Coupon.Domain.Coupons.Builders;
 using MediatR;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using System;
@@ -23,11 +24,11 @@ using NCEHelper = AppyNox.Services.Base.Application.UnitTests.Helpers.NoxCommand
 
 namespace AppyNox.Services.Coupon.Application.UnitTest.CQRSTests;
 
-public class CouponDddCQRSUnitTest : IClassFixture<NoxCQRSFixture<CouponAggregate, CouponId>>
+public class CouponDddCQRSUnitTest : IClassFixture<NoxApplicationTestFixture>
 {
     #region [ Fields ]
 
-    private readonly NoxCQRSFixture<CouponAggregate, CouponId> _fixture;
+    private readonly NoxApplicationTestFixture _fixture;
 
     private readonly IServiceProvider _serviceProvider;
 
@@ -37,15 +38,25 @@ public class CouponDddCQRSUnitTest : IClassFixture<NoxCQRSFixture<CouponAggregat
 
     #region [ Public Constructors ]
 
-    public CouponDddCQRSUnitTest(NoxCQRSFixture<CouponAggregate, CouponId> fixture)
+    public CouponDddCQRSUnitTest(NoxApplicationTestFixture fixture)
     {
         _fixture = fixture;
 
-        NoxApplicationLoggerStub logger = new();
-        if(!_fixture.DIInitialized)
+        NoxApplicationLoggerStub<CouponDddCQRSUnitTest> logger = new();
+        Mock<INoxRepository<CouponAggregate>> mockRepository = new();
+        if (!_fixture.DIInitialized)
         {
-            _fixture.ServiceCollection.AddCouponApplication(logger);
-            _fixture.ServiceCollection.AddScoped(typeof(INoxRepository<CouponAggregate>), _ => _fixture.MockRepository.Object);
+            var inMemorySettings = new Dictionary<string, string>
+            {
+                {"Consul:ServiceName", "TestService"},
+            };
+
+            IConfiguration configuration = new ConfigurationBuilder()
+                .AddInMemoryCollection(inMemorySettings!)
+                .Build();
+
+            _fixture.ServiceCollection.AddCouponApplication(configuration, logger);
+            _fixture.ServiceCollection.AddScoped(typeof(INoxRepository<CouponAggregate>), _ => mockRepository.Object);
             _fixture.DIInitialized = true;
         }
 
@@ -63,13 +74,13 @@ public class CouponDddCQRSUnitTest : IClassFixture<NoxCQRSFixture<CouponAggregat
             Amount = new AmountDto() { DiscountAmount = 10, MinAmount = 20 },
             CouponDetailId = new CouponDetailIdDto() { Value = Guid.NewGuid() }
         };
-        _fixture.MockRepository.Setup(repo => repo.GetAllAsync(It.IsAny<IQueryParameters>(), It.IsAny<ICacheService>()))
+        mockRepository.Setup(repo => repo.GetAllAsync(It.IsAny<IQueryParameters>(), It.IsAny<ICacheService>()))
             .ReturnsAsync(new Mock<PaginatedList<CouponAggregate>>().Object);
 
-        _fixture.MockRepository.Setup(repo => repo.GetByIdAsync(It.IsAny<CouponId>(), false, false))
+        mockRepository.Setup(repo => repo.GetByIdAsync(It.IsAny<CouponId>(), false, false))
             .ReturnsAsync(couponEntity);
 
-        _fixture.MockRepository.Setup(repo => repo.AddAsync(It.IsAny<CouponAggregate>()))
+        mockRepository.Setup(repo => repo.AddAsync(It.IsAny<CouponAggregate>()))
             .ReturnsAsync(couponEntity);
 
         #endregion

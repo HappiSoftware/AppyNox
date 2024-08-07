@@ -2,6 +2,7 @@
 using AppyNox.Services.Base.API.Constants;
 using AppyNox.Services.Base.API.Controllers;
 using AppyNox.Services.Base.API.ViewModels;
+using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Application.MediatR;
 using AppyNox.Services.Base.Application.MediatR.Commands;
 using AppyNox.Services.Base.Core.Enums;
@@ -19,7 +20,7 @@ namespace AppyNox.Services.Coupon.WebAPI.Controllers.v1_0;
 [ApiController]
 [ApiVersion(NoxVersions.v1_0)]
 [Route("api/v{version:apiVersion}/coupons")]
-public class CouponsController(IMediator mediator) : NoxController
+public class CouponsController(IMediator mediator, INoxApiLogger<CouponsController> logger) : NoxController
 {
     #region [ Fields ]
 
@@ -34,6 +35,7 @@ public class CouponsController(IMediator mediator) : NoxController
     [SwaggerDynamicRequestBody(typeof(CouponAggreagate), DtoLevelMappingTypes.DataAccess, true)]
     public async Task<IActionResult> GetAll([FromQuery] QueryParametersViewModel queryParameters)
     {
+        logger.LogInformation("sa");
         return base.Ok(await _mediator.Send(new GetAllNoxEntitiesQuery<CouponAggreagate>(queryParameters)));
     }
 

@@ -1,16 +1,16 @@
 version: '3.8'
 
 volumes:
-  rabbitmq_data: 
-  common_rabbitmq_data: 
-  consul_data: 
-  redis_data: 
-  redisinsight_data: 
-  sso_db_data: 
-  sso_saga_db_data: 
-  coupon_db_data: 
-  license_db_data: 
-
+  rabbitmq_data:
+  common_rabbitmq_data:
+  consul_data:
+  redis_data:
+  redisinsight_data:
+  sso_db_data:
+  sso_saga_db_data:
+  coupon_db_data:
+  license_db_data:
+  seq_data:
 
 services:
   appynox-rabbitmq-service:
@@ -144,3 +144,14 @@ services:
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+
+  appynox-seq:
+    image: datalust/seq:latest
+    environment:
+      ACCEPT_EULA: "Y"
+    ports:
+      - "5341:5341"
+      - "8081:80"
+    volumes:
+      - seq_data:/data
+    restart: always

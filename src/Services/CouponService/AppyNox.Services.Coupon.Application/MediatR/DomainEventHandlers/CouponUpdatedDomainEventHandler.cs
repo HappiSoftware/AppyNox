@@ -9,14 +9,14 @@ namespace AppyNox.Services.Coupon.Application.MediatR.DomainEventHandlers;
 
 internal class CouponUpdatedDomainEventHandler(
     INoxRepository<CouponHistory> repository,
-    INoxApplicationLogger logger,
+    INoxApplicationLogger<CouponUpdatedDomainEventHandler> logger,
     IUnitOfWork unitOfWork) : INotificationHandler<CouponUpdatedDomainEvent>
 {
     private readonly INoxRepository<CouponHistory> _repository = repository;
 
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
-    private readonly INoxApplicationLogger _logger = logger;
+    private readonly INoxApplicationLogger<CouponUpdatedDomainEventHandler> _logger = logger;
 
     public async Task Handle(CouponUpdatedDomainEvent domainEvent, CancellationToken cancellationToken)
     {

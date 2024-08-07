@@ -11,13 +11,13 @@ namespace AppyNox.Services.Base.API.Middleware;
 /// <summary>
 /// Middleware parsing correlation id and user id of the incoming request and storing them to NoxContext.
 /// </summary>
-public class NoxContextMiddleware(RequestDelegate next, INoxApiLogger logger)
+public class NoxContextMiddleware(RequestDelegate next, INoxApiLogger<NoxContextMiddleware> logger)
 {
     #region [ Fields ]
 
     private readonly RequestDelegate _next = next;
 
-    private readonly INoxApiLogger _logger = logger;
+    private readonly INoxApiLogger<NoxContextMiddleware> _logger = logger;
 
     #endregion
 

@@ -37,7 +37,7 @@ public abstract class DockerComposeTestBase : IDisposable
 
     public ServiceURIs ServiceURIs { get; private set; }
 
-    protected NoxLogger Logger { get; private set; }
+    protected NoxLogger<DockerComposeTestBase> Logger { get; private set; }
 
     #endregion
 
@@ -52,8 +52,8 @@ public abstract class DockerComposeTestBase : IDisposable
         {
             builder.AddSerilog();
         });
-        var logger = loggerFactory.CreateLogger<INoxLogger>();
-        Logger = new NoxLogger(logger, "DockerComposeTestBase");
+        var logger = loggerFactory.CreateLogger<DockerComposeTestBase>();
+        Logger = new(logger, "DockerComposeTestBase");
 
         ServiceURIs =
             IntegrationTestHelpers
@@ -118,8 +118,8 @@ public abstract class DockerComposeTestBase : IDisposable
         {
             builder.AddSerilog();
         });
-        var logger = loggerFactory.CreateLogger<INoxLogger>();
-        Logger = new NoxLogger(logger, layerName);
+        var logger = loggerFactory.CreateLogger<DockerComposeTestBase>();
+        Logger = new(logger, layerName);
 
         #endregion
 

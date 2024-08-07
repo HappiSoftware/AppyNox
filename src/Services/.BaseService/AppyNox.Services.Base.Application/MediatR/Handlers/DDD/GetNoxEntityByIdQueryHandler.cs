@@ -3,7 +3,6 @@ using AppyNox.Services.Base.Application.Exceptions.Base;
 using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Application.Interfaces.Repositories;
 using AppyNox.Services.Base.Application.MediatR.Commands;
-using AppyNox.Services.Base.Core.Common;
 using AppyNox.Services.Base.Core.Exceptions.Base;
 using AppyNox.Services.Base.Domain.DDD;
 using AppyNox.Services.Base.Domain.DDD.Interfaces;
@@ -17,8 +16,8 @@ internal class GetNoxEntityByIdQueryHandler<TEntity, TId>(
         IMapper mapper,
         IDtoMappingRegistryBase dtoMappingRegistry,
         IServiceProvider serviceProvider,
-        INoxApplicationLogger logger)
-        : BaseHandler<TEntity>(mapper, dtoMappingRegistry, serviceProvider, logger),
+        INoxApplicationLogger<GetNoxEntityByIdQueryHandler<TEntity, TId>> logger)
+        : BaseHandler<TEntity>(mapper, dtoMappingRegistry, serviceProvider),
         IRequestHandler<GetNoxEntityByIdQuery<TEntity, TId>, object>
         where TEntity : class, IHasStronglyTypedId
         where TId : NoxId
@@ -37,7 +36,7 @@ internal class GetNoxEntityByIdQueryHandler<TEntity, TId>(
     {
         try
         {
-            Logger.LogInformation($"Fetching entity of type {typeof(TEntity).Name} with ID: {request.Id}.");
+            logger.LogInformation($"Fetching entity of type {typeof(TEntity).Name} with ID: {request.Id}.");
             var dtoType = GetDtoType(request.QueryParameters);
             var entity = await _repository.GetByIdAsync(request.Id, request.QueryParameters.IncludeDeleted, request.Track);
             return _mapper.Map(entity, typeof(TEntity), dtoType);
@@ -48,7 +47,7 @@ internal class GetNoxEntityByIdQueryHandler<TEntity, TId>(
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, $"Error fetching entity with ID: {request.Id}.");
+            logger.LogError(ex, $"Error fetching entity with ID: {request.Id}.");
             throw new NoxApplicationException(exceptionCode: (int)NoxApplicationExceptionCode.GenericGetByIdQueryError, innerException: ex);
         }
     }

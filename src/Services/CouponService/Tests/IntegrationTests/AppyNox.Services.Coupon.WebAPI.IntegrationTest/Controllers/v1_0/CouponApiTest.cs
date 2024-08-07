@@ -270,7 +270,7 @@ public class CouponApiTest(CouponServiceFixture couponApiTestFixture)
 
         // Assert
         Assert.True(unwrappedResponse.HasError);
-        Assert.Equal(HttpStatusCode.UnprocessableContent, response.StatusCode);
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
         if (unwrappedResponse.Result.Error is NoxApiExceptionWrapObjectPOCO errorBody)
         {
             Assert.Equal((int)NoxCouponDomainExceptionCode.AmountValidation, errorBody.ExceptionCode);

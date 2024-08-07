@@ -1,21 +1,20 @@
-﻿namespace AppyNox.Services.Base.Application.Interfaces.Loggers
+﻿namespace AppyNox.Services.Base.Application.Interfaces.Loggers;
+
+public interface INoxLogger
 {
-    public interface INoxLogger
-    {
-        #region Public Methods
+    #region Public Methods
 
-        void LogCritical(Exception exception, string message);
+    void LogCritical(Exception exception, string message, bool includeContext = true);
 
-        void LogDebug(string message);
+    void LogDebug(string message, bool includeContext = true);
 
-        void LogError(Exception exception, string message);
+    void LogError(Exception exception, string message, bool includeContext = true);
 
-        void LogInformation(string message);
+    void LogInformation(string message, bool includeContext = true);
 
-        void LogTrace(string message);
+    void LogTrace(string message, bool includeContext = true);
 
-        void LogWarning(string message);
+    void LogWarning(string message, bool includeContext = true);
 
-        #endregion
-    }
+    #endregion
 }

@@ -3,7 +3,6 @@ using AppyNox.Services.Base.Application.Exceptions.Base;
 using AppyNox.Services.Base.Application.Interfaces.Caches;
 using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Application.Interfaces.Repositories;
-using AppyNox.Services.Base.Application.Localization;
 using AppyNox.Services.Base.Application.MediatR.Commands;
 using AppyNox.Services.Base.Core.Exceptions.Base;
 using AppyNox.Services.Base.Domain.DDD;
@@ -18,10 +17,10 @@ internal sealed class DeleteNoxEntityCommandHandler<TEntity, TId>(
         IMapper mapper,
         IDtoMappingRegistryBase dtoMappingRegistry,
         IServiceProvider serviceProvider,
-        INoxApplicationLogger logger,
+        INoxApplicationLogger<DeleteNoxEntityCommandHandler<TEntity, TId>> logger,
         IUnitOfWork unitOfWork,
         ICacheService cacheService)
-        : BaseHandler<TEntity>(mapper, dtoMappingRegistry, serviceProvider, logger),
+        : BaseHandler<TEntity>(mapper, dtoMappingRegistry, serviceProvider),
         IRequestHandler<DeleteNoxEntityCommand<TEntity, TId>>
         where TEntity : class, IHasStronglyTypedId
         where TId : NoxId
@@ -42,7 +41,7 @@ internal sealed class DeleteNoxEntityCommandHandler<TEntity, TId>(
     {
         try
         {
-            Logger.LogInformation($"Deleting entity of type '{typeof(TEntity).Name}' with ID: {request.Id.Value}.");
+            logger.LogInformation($"Deleting entity of type '{typeof(TEntity).Name}' with ID: {request.Id.Value}.");
             await _repository.RemoveByIdAsync(request.Id, request.ForceDelete);
             await _unitOfWork.SaveChangesAsync();
             await UpdateTotalCountOnCache(_cacheService, $"total-count-{typeof(TEntity).Name}", false);
@@ -53,7 +52,7 @@ internal sealed class DeleteNoxEntityCommandHandler<TEntity, TId>(
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, $"Error deleting entity of type '{typeof(TEntity).Name}' with ID: {request.Id.Value}.");
+            logger.LogError(ex, $"Error deleting entity of type '{typeof(TEntity).Name}' with ID: {request.Id.Value}.");
             throw new NoxApplicationException(exceptionCode: (int)NoxApplicationExceptionCode.GenericDeleteCommandError, innerException: ex);
         }
     }

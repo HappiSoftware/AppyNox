@@ -3,17 +3,11 @@ using AppyNox.Services.Base.Application.Exceptions.Base;
 using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Application.MediatR.Behaviors;
 using FluentValidation;
-using MassTransit;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using ValidationResult = System.ComponentModel.DataAnnotations.ValidationResult;
 
 namespace AppyNox.Services.Base.Application;
@@ -24,6 +18,8 @@ public class ApplicationSetupOptions
 #nullable disable
     [Required]
     public string Assembly { get; set; }
+    [Required]
+    public IConfiguration Configuration { get; set; }
     public bool UseAutoMapper { get; set; } = true;
     public bool UseFluentValidation { get; set; } = true;
     public bool UseDtoMappingRegistry { get; set; } = true;
@@ -42,6 +38,8 @@ public static class ApplicationServiceBuilder
     {
         var options = new ApplicationSetupOptions();
         configureOptions(options);
+        string serviceName = options.Configuration["Consul:ServiceName"]
+            ?? throw new InvalidOperationException("Consul:ServiceName is not defined!");
 
         var validationResults = new List<ValidationResult>();
         var validationContext = new ValidationContext(options);
@@ -56,13 +54,13 @@ public static class ApplicationServiceBuilder
         if (options.UseAutoMapper)
         {
             services.AddAutoMapper(applicationAssembly);
-            logger.LogInformation("AutoMapper enabled...");
+            logger.LogInformation($"-{serviceName}- AutoMapper enabled...", false);
         }
 
         if (options.UseFluentValidation)
         {
             services.AddValidatorsFromAssembly(applicationAssembly);
-            logger.LogInformation("FluentValidation enabled...");
+            logger.LogInformation($"-{serviceName}- FluentValidation enabled...", false);
         }
 
         if (options.UseDtoMappingRegistry)
@@ -72,7 +70,7 @@ public static class ApplicationServiceBuilder
                 throw new NoxApplicationException("DtoMappingRegistryFactory was null!");
             }
             services.AddSingleton(typeof(IDtoMappingRegistryBase), options.DtoMappingRegistryFactory);
-            logger.LogInformation("DtoMappingRegistry enabled...");
+            logger.LogInformation($"-{serviceName}- DtoMappingRegistry enabled...", false);
         }
 
         if(options.UseMediatR)
@@ -82,7 +80,7 @@ public static class ApplicationServiceBuilder
                 cfg.RegisterServicesFromAssembly(applicationAssembly);
             });
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(NoxCommandActionBehavior<,>));
-            logger.LogInformation("MediatR enabled...");
+            logger.LogInformation($"-{serviceName}- MediatR enabled...", false);
         }
 
         return services;

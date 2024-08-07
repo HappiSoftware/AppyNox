@@ -13,8 +13,7 @@ namespace AppyNox.Services.Base.Application.MediatR;
 public abstract class BaseHandler<TEntity>(
         IMapper mapper,
         IDtoMappingRegistryBase dtoMappingRegistry,
-        IServiceProvider serviceProvider,
-        INoxApplicationLogger logger)
+        IServiceProvider serviceProvider)
 {
     #region [ Fields ]
 
@@ -23,8 +22,6 @@ public abstract class BaseHandler<TEntity>(
     protected readonly IDtoMappingRegistryBase DtoMappingRegistry = dtoMappingRegistry;
 
     protected readonly IServiceProvider ServiceProvider = serviceProvider;
-
-    protected readonly INoxApplicationLogger Logger = logger;
 
     protected readonly Type EntityType = typeof(TEntity);
 

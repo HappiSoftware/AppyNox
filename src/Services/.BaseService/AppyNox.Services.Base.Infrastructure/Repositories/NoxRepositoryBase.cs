@@ -27,7 +27,7 @@ public abstract class NoxRepositoryBase<TEntity> : INoxRepository<TEntity> where
 
     private readonly DbSet<TEntity> _dbSet;
 
-    private readonly INoxInfrastructureLogger _logger;
+    private readonly INoxInfrastructureLogger<NoxRepositoryBase<TEntity>> _logger;
 
     private readonly string _countCacheKey = $"total-count-{typeof(TEntity).Name}";
 
@@ -35,7 +35,7 @@ public abstract class NoxRepositoryBase<TEntity> : INoxRepository<TEntity> where
 
     #region [ Protected Constructors ]
 
-    protected NoxRepositoryBase(NoxDatabaseContext context, INoxInfrastructureLogger logger)
+    protected NoxRepositoryBase(NoxDatabaseContext context, INoxInfrastructureLogger<NoxRepositoryBase<TEntity>> logger)
     {
         _context = context;
         _dbSet = _context.Set<TEntity>();

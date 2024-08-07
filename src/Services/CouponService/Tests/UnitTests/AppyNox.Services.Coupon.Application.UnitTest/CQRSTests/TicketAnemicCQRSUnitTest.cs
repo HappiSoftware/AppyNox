@@ -10,6 +10,7 @@ using AppyNox.Services.Base.Core.Common;
 using AppyNox.Services.Coupon.Application.Dtos.TicketDtos.Models.Basic;
 using AppyNox.Services.Coupon.Domain.Entities;
 using MediatR;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using System.Text.Json;
@@ -17,11 +18,11 @@ using NCEHelper = AppyNox.Services.Base.Application.UnitTests.Helpers.NoxCommand
 
 namespace AppyNox.Services.Coupon.Application.UnitTest.CQRSTests;
 
-public class TicketAnemicCQRSUnitTest : IClassFixture<GenericCQRSFixture<Ticket>>
+public class TicketAnemicCQRSUnitTest : IClassFixture<NoxApplicationTestFixture>
 {
     #region [ Fields ]
 
-    private readonly GenericCQRSFixture<Ticket> _fixture;
+    private readonly NoxApplicationTestFixture _fixture;
 
     private readonly IServiceProvider _serviceProvider;
 
@@ -31,15 +32,25 @@ public class TicketAnemicCQRSUnitTest : IClassFixture<GenericCQRSFixture<Ticket>
 
     #region [ Public Constructors ]
 
-    public TicketAnemicCQRSUnitTest(GenericCQRSFixture<Ticket> fixture)
+    public TicketAnemicCQRSUnitTest(NoxApplicationTestFixture fixture)
     {
         _fixture = fixture;
 
-        NoxApplicationLoggerStub logger = new();
+        NoxApplicationLoggerStub<TicketAnemicCQRSUnitTest> logger = new();
+        Mock<IGenericRepository<Ticket>> mockRepository = new();
         if (!_fixture.DIInitialized)
         {
-            _fixture.ServiceCollection.AddCouponApplication(logger);
-            _fixture.ServiceCollection.AddScoped(typeof(IGenericRepository<Ticket>), _ => _fixture.MockRepository.Object);
+            var inMemorySettings = new Dictionary<string, string>
+            {
+                {"Consul:ServiceName", "TestService"},
+            };
+
+            IConfiguration configuration = new ConfigurationBuilder()
+                .AddInMemoryCollection(inMemorySettings!)
+                .Build();
+
+            _fixture.ServiceCollection.AddCouponApplication(configuration, logger);
+            _fixture.ServiceCollection.AddScoped(typeof(IGenericRepository<Ticket>), _ => mockRepository.Object);
             _fixture.DIInitialized = true;
         }
 
@@ -52,13 +63,13 @@ public class TicketAnemicCQRSUnitTest : IClassFixture<GenericCQRSFixture<Ticket>
         Ticket mockTicket = new();
         TicketSimpleDto mockTicketSimpleDto = new();
 
-        _fixture.MockRepository.Setup(repo => repo.GetAllAsync(It.IsAny<IQueryParameters>(), It.IsAny<ICacheService>()))
+        mockRepository.Setup(repo => repo.GetAllAsync(It.IsAny<IQueryParameters>(), It.IsAny<ICacheService>()))
             .ReturnsAsync(new Mock<PaginatedList<Ticket>>().Object);
 
-        _fixture.MockRepository.Setup(repo => repo.GetByIdAsync(It.IsAny<Guid>(), false, false))
+        mockRepository.Setup(repo => repo.GetByIdAsync(It.IsAny<Guid>(), false, false))
             .ReturnsAsync(mockTicket);
 
-        _fixture.MockRepository.Setup(repo => repo.AddAsync(It.IsAny<Ticket>()))
+        mockRepository.Setup(repo => repo.AddAsync(It.IsAny<Ticket>()))
             .ReturnsAsync(mockTicket);
 
         #endregion
