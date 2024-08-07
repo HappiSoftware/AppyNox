@@ -20,7 +20,7 @@ public class UpdateCouponCommandHandler(
         INoxRepository<CouponRoot> repository,
         IMapper mapper,
         IValidator<CouponExtendedUpdateDto> validator,
-        INoxApplicationLogger logger,
+        INoxApplicationLogger<UpdateCouponCommandHandler> logger,
         IUnitOfWork unitOfWork)
 
     : IRequestHandler<UpdateCouponCommand>
@@ -33,7 +33,7 @@ public class UpdateCouponCommandHandler(
 
     private readonly IMapper _mapper = mapper;
 
-    private readonly INoxApplicationLogger _logger = logger;
+    private readonly INoxApplicationLogger<UpdateCouponCommandHandler> _logger = logger;
 
     private readonly IValidator<CouponExtendedUpdateDto> _validator = validator;
 

@@ -190,7 +190,7 @@ public static class RepositoryHelpers
         "pg_read_file", "pg_ls_dir", // Functions that can read server files or list directory contents
     };
 
-    public static bool IsValidExpression(string expression, INoxInfrastructureLogger logger)
+    public static bool IsValidExpression<T>(string expression, INoxInfrastructureLogger<T> logger)
     {
         // Find all blacklisted terms that match the expression
         var maliciousKeywords = Blacklist.Where(blacklisted =>

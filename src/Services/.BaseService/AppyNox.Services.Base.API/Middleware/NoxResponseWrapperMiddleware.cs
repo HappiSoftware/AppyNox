@@ -13,14 +13,14 @@ using System.Text.Json;
 namespace AppyNox.Services.Base.API.Middleware;
 
 public class NoxResponseWrapperMiddleware(RequestDelegate next,
-        INoxApiLogger logger,
+        INoxApiLogger<NoxResponseWrapperMiddleware> logger,
         NoxResponseWrapperOptions options)
 {
     #region [ Fields ]
 
     private readonly RequestDelegate _next = next;
 
-    private readonly INoxApiLogger _logger = logger;
+    private readonly INoxApiLogger<NoxResponseWrapperMiddleware> _logger = logger;
 
     private readonly JsonSerializerOptions _jsonSerializeOptions = new()
     {

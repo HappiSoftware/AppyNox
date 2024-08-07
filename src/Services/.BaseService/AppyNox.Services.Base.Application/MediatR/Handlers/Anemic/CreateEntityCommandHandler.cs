@@ -18,10 +18,10 @@ internal sealed class CreateEntityCommandHandler<TEntity>(
         IMapper mapper,
         IDtoMappingRegistryBase dtoMappingRegistry,
         IServiceProvider serviceProvider,
-        INoxApplicationLogger logger,
+        INoxApplicationLogger<CreateEntityCommandHandler<TEntity>> logger,
         IUnitOfWork unitOfWork,
         ICacheService cacheService)
-        : BaseHandler<TEntity>(mapper, dtoMappingRegistry, serviceProvider, logger),
+        : BaseHandler<TEntity>(mapper, dtoMappingRegistry, serviceProvider),
         IRequestHandler<CreateEntityCommand<TEntity>, Guid>
         where TEntity : class, IEntityWithGuid
 {
@@ -41,7 +41,7 @@ internal sealed class CreateEntityCommandHandler<TEntity>(
     {
         try
         {
-            Logger.LogInformation($"Adding new entity of type '{typeof(TEntity).Name}'");
+            logger.LogInformation($"Adding new entity of type '{typeof(TEntity).Name}'");
             Type entityType = typeof(TEntity);
 
             #region [ Dynamic Dto Convertion ]

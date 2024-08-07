@@ -1,15 +1,16 @@
 ﻿using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Sso.Application.AsyncLocals;
+using AppyNox.Services.Sso.WebAPI.Exceptions.Base;
 
 namespace AppyNox.Services.Sso.WebAPI.Middlewares;
 
-public class SsoContextMiddleware(RequestDelegate next, INoxApiLogger logger)
+public class SsoContextMiddleware(RequestDelegate next, INoxApiLogger<SsoContextMiddleware> logger)
 {
     #region [ Fields ]
 
     private readonly RequestDelegate _next = next;
 
-    private readonly INoxApiLogger _logger = logger;
+    private readonly INoxApiLogger<SsoContextMiddleware> _logger = logger;
 
     #endregion
 
@@ -23,6 +24,24 @@ public class SsoContextMiddleware(RequestDelegate next, INoxApiLogger logger)
     {
         try
         {
+            #region [ IsConnectRequest ]
+
+            string path = context.Request.Path.ToString();
+
+            // IsConnectRequest will allow database to bypass company global filter.
+            bool isConnectRequest =
+                path.EndsWith("/authentication/connect/token")
+                || path.EndsWith("/authentication/refresh");
+            SsoContext.IsConnectRequest = isConnectRequest;
+
+            if(isConnectRequest)
+            {
+                await _next(context);
+                return;
+            }
+
+            #endregion
+
             #region [ CompanyId ]
 
             string? companyId = context.User.FindFirst("company")?.Value;
@@ -32,7 +51,8 @@ public class SsoContextMiddleware(RequestDelegate next, INoxApiLogger logger)
             }
             else
             {
-                _logger.LogWarning("CompanyId is empty. Could not set to CompanyIdContext");
+                NoxSsoApiException exception = new("CompanyId was null");
+                _logger.LogCritical(exception, "CompanyId is empty. Could not set to CompanyIdContext", false);
             }
 
             #endregion
@@ -48,18 +68,6 @@ public class SsoContextMiddleware(RequestDelegate next, INoxApiLogger logger)
 
             bool isSuperAdmin = context.User.HasClaim(c => c.Type == "role" && c.Value == "superadmin");
             SsoContext.IsSuperAdmin = isSuperAdmin;
-
-            #endregion
-
-            #region [ IsConnectRequest ]
-
-            string path = context.Request.Path.ToString();
-
-            // IsConnectRequest will allow database to bypass company global filter.
-            bool isConnectRequest =
-                path.EndsWith("/authentication/connect/token")
-                || path.EndsWith("/authentication/refresh");
-            SsoContext.IsConnectRequest = isConnectRequest;
 
             #endregion
 

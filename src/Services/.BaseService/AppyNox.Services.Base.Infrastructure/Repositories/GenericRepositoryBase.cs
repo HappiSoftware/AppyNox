@@ -31,7 +31,7 @@ public abstract class GenericRepositoryBase<TEntity> : IGenericRepository<TEntit
 
     private readonly DbSet<TEntity> _dbSet;
 
-    private readonly INoxInfrastructureLogger _logger;
+    private readonly INoxInfrastructureLogger<GenericRepositoryBase<TEntity>> _logger;
 
     private readonly string _countCacheKey = $"total-count-{typeof(TEntity).Name}";
 
@@ -39,7 +39,7 @@ public abstract class GenericRepositoryBase<TEntity> : IGenericRepository<TEntit
 
     #region [ Protected Constructors ]
 
-    protected GenericRepositoryBase(NoxDatabaseContext context, INoxInfrastructureLogger logger)
+    protected GenericRepositoryBase(NoxDatabaseContext context, INoxInfrastructureLogger<GenericRepositoryBase<TEntity>> logger)
     {
         _context = context;
         _dbSet = _context.Set<TEntity>();

@@ -17,12 +17,14 @@ using Consul;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Quartz;
+using Serilog;
 using StackExchange.Redis;
 using System.ComponentModel.DataAnnotations;
 using ValidationResult = System.ComponentModel.DataAnnotations.ValidationResult;
@@ -61,6 +63,8 @@ public static class InfrastructureServiceBuilder
     {
         var options = new InfrastructureSetupOptions();
         configureOptions(options);
+        string serviceName = options.Configuration["Consul:ServiceName"]
+            ?? throw new InvalidOperationException("Consul:ServiceName is not defined!");
 
         var validationResults = new List<ValidationResult>();
         var validationContext = new ValidationContext(options);
@@ -70,50 +74,50 @@ public static class InfrastructureServiceBuilder
             throw new InvalidOperationException($"Invalid options: {errors}");
         }
 
-        services.AddSingleton<INoxInfrastructureLogger, NoxInfrastructureLogger>();
-        services.AddSingleton<INoxApplicationLogger, NoxApplicationLogger>();
-        services.AddSingleton<INoxApiLogger, NoxApiLogger>();
-        logger.LogInformation("Loggers enabled...");
+        services.AddSingleton(typeof(INoxApplicationLogger<>), typeof(NoxApplicationLogger<>));
+        services.AddSingleton(typeof(INoxInfrastructureLogger<>), typeof(NoxInfrastructureLogger<>));
+        services.AddSingleton(typeof(INoxApiLogger<>), typeof(NoxApiLogger<>));
+        logger.LogInformation($"-{serviceName}- Loggers enabled...", false);
 
         if (options.UseConsul)
         {
             services.ConfigureConsulServices(options);
-            logger.LogInformation("Consul enabled...");
+            logger.LogInformation($"-{serviceName}- Consul enabled...", false);
         }
 
         services.ConfigureDatabase<TContext>(options);
-        logger.LogInformation("Database connection enabled...");
+        logger.LogInformation($"-{serviceName}- Database connection enabled...", false);
 
         if (options.UseEncryption)
         {
             services.AddSingleton<IEncryptionService, EncryptionService>();
-            logger.LogInformation("Encryption enabled...");
+            logger.LogInformation($"-{serviceName}- Encryption enabled...", false);
         }
 
         if (options.UseOutBoxMessageMechanism)
         {
             services.ConfigureOutBoxMessageJob<TContext>(options);
-            logger.LogInformation("OutBoxMessageJob enabled...");
+            logger.LogInformation($"-{serviceName}- OutBoxMessageJob enabled...", false);
         }
 
         if (options.UseRedis)
         {
             services.ConfigureRedis(options.Configuration);
-            logger.LogInformation("Redis enabled...");
+            logger.LogInformation($"-{serviceName}- Redis enabled...", false);
         }
 
         if (options.UseJwtAuthentication)
         {
-            services.AddJwtAuthentication(options, logger);
-            logger.LogInformation("Jwt Authentication enabled...");
+            services.AddJwtAuthentication(serviceName, options, logger);
+            logger.LogInformation($"-{serviceName}- Jwt Authentication enabled...", false);
         }
 
         if (options.UseMassTransit)
         {
-            services.AddMassTransit(options, logger);
+            services.AddMassTransit(serviceName, options, logger);
         }
 
-        logger.LogInformation("Finished Adding Infrastructure Services, finalizing...");
+        logger.LogInformation($"-{serviceName}- Finished Adding Infrastructure Services, finalizing...", false);
         return services;
     }
 
@@ -193,9 +197,9 @@ public static class InfrastructureServiceBuilder
         return services;
     }
 
-    private static IServiceCollection AddJwtAuthentication(this IServiceCollection services, InfrastructureSetupOptions options, INoxLogger logger)
+    private static IServiceCollection AddJwtAuthentication(this IServiceCollection services, string serviceName, InfrastructureSetupOptions options, INoxLogger logger)
     {
-        logger.LogInformation("Registering JWT Configuration.");
+        logger.LogInformation($"-{serviceName}- Registering JWT Configuration.", false);
         JwtConfiguration jwtConfiguration = new();
         options.Configuration.GetSection(options.JwtConfigurationPath).Bind(jwtConfiguration);
         services.AddSingleton(jwtConfiguration);
@@ -216,12 +220,12 @@ public static class InfrastructureServiceBuilder
 
         services.AddScoped<IAuthorizationHandler, NoxJwtAuthorizationHandler>();
         services.AddScoped<INoxTokenManager, NoxTokenManager>();
-        logger.LogInformation("Registering JWT Configuration completed.");
+        logger.LogInformation($"-{serviceName}- Registering JWT Configuration completed.", false);
 
         return services;
     }
 
-    private static IServiceCollection AddMassTransit(this IServiceCollection services, InfrastructureSetupOptions options, INoxLogger logger)
+    private static IServiceCollection AddMassTransit(this IServiceCollection services, string serviceName, InfrastructureSetupOptions options, INoxLogger logger)
     {
         string hostUrl = options.Configuration["MessageBroker:Host"]
                 ?? throw new InvalidOperationException("MessageBroker:Host is not defined!");
@@ -264,7 +268,7 @@ public static class InfrastructureServiceBuilder
             });
         });
 
-        logger.LogInformation("MassTransit configured with RabbitMQ.");
+        logger.LogInformation($"-{serviceName}- MassTransit configured with RabbitMQ.", false);
         return services;
     }
     #endregion

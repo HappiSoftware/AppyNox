@@ -1,7 +1,10 @@
-﻿using AppyNox.Services.Base.Application.DtoUtilities;
+﻿using AppyNox.Services.Base.Application;
+using AppyNox.Services.Base.Application.DtoUtilities;
+using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using FluentValidation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System.Reflection;
 
 namespace AppyNox.Services.Sso.Application
@@ -20,21 +23,20 @@ namespace AppyNox.Services.Sso.Application
         /// <param name="configuration">The IConfiguration instance to access application settings.</param>
         public static IServiceCollection AddSsoApplication(
             this IServiceCollection services,
-            IConfiguration configuration
+            IConfiguration configuration,
+            INoxLogger logger
         )
         {
-            Assembly applicationAssembly = Assembly.Load("AppyNox.Services.Sso.Application");
-            services.AddAutoMapper(applicationAssembly);
-            services.AddValidatorsFromAssembly(applicationAssembly);
-
-            #region [ CQRS ]
-
-            services.AddMediatR(cfg =>
+            services.AddApplicationServices(logger, options =>
             {
-                cfg.RegisterServicesFromAssembly(applicationAssembly);
+                options.Assembly = Assembly.GetExecutingAssembly().GetName().Name;
+                options.Configuration = configuration;
+                options.UseAutoMapper = true;
+                options.UseFluentValidation = true;
+                options.UseDtoMappingRegistry = false;
+                options.UseMediatR = true;
             });
 
-            #endregion
             return services;
         }
 

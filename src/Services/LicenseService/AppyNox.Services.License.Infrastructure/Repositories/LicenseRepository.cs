@@ -10,7 +10,10 @@ using System.Linq.Dynamic.Core;
 
 namespace AppyNox.Services.License.Infrastructure.Repositories;
 
-public class LicenseRepository(LicenseDatabaseContext context, INoxInfrastructureLogger noxInfrastructureLogger, IUnitOfWork unitOfWork)
+public class LicenseRepository(
+    LicenseDatabaseContext context,
+    INoxInfrastructureLogger<NoxRepositoryBase<LicenseEntity>> noxInfrastructureLogger,
+    IUnitOfWork unitOfWork)
         : NoxRepositoryBase<LicenseEntity>(context, noxInfrastructureLogger), ILicenseRepository
 {
     #region [ Fields ]

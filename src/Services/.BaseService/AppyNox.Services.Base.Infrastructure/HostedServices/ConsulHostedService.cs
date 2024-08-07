@@ -8,7 +8,7 @@ using System.Net;
 
 namespace AppyNox.Services.Base.Infrastructure.HostedServices;
 
-public class ConsulHostedService(IConsulClient consulClient, IConfiguration configuration, INoxInfrastructureLogger logger) : IHostedService
+public class ConsulHostedService(IConsulClient consulClient, IConfiguration configuration, INoxInfrastructureLogger<ConsulHostedService> logger) : IHostedService
 {
     #region [ Fields ]
 
@@ -17,7 +17,7 @@ public class ConsulHostedService(IConsulClient consulClient, IConfiguration conf
     private readonly ConsulConfiguration _consulConfig = configuration.GetSection("consul").Get<ConsulConfiguration>() ??
             throw new NoxInfrastructureException("Consul configuration is not defined. Service will not be discovered.", (int)NoxInfrastructureExceptionCode.DevelopmentError, (int)HttpStatusCode.ServiceUnavailable);
 
-    private readonly INoxInfrastructureLogger _logger = logger;
+    private readonly INoxInfrastructureLogger<ConsulHostedService> _logger = logger;
 
     #endregion
 
@@ -37,7 +37,7 @@ public class ConsulHostedService(IConsulClient consulClient, IConfiguration conf
     {
         try
         {
-            _logger.LogInformation("Starting Consul Hosted Service.");
+            _logger.LogInformation("Starting Consul Hosted Service.", false);
             var registration = new AgentServiceRegistration
             {
                 ID = _consulConfig.ServiceId,
@@ -54,16 +54,16 @@ public class ConsulHostedService(IConsulClient consulClient, IConfiguration conf
                 }
             };
 
-            _logger.LogInformation($"Registering service with Consul: {registration.Name}");
+            _logger.LogInformation($"Registering service with Consul: {registration.Name}", false);
 
             await _consulClient.Agent.ServiceDeregister(registration.ID, cancellationToken);
             await _consulClient.Agent.ServiceRegister(registration, cancellationToken);
 
-            _logger.LogInformation($"Registering service with Consul is successful: {registration.Name}");
+            _logger.LogInformation($"Registering service with Consul is successful: {registration.Name}", false);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "An error occurred while attempting to register to Consul service.");
+            _logger.LogError(ex, "An error occurred while attempting to register to Consul service.", false);
             OnConsulConnectionFailed?.Invoke(ex);
         }
     }
@@ -76,16 +76,16 @@ public class ConsulHostedService(IConsulClient consulClient, IConfiguration conf
     {
         var registration = new AgentServiceRegistration { ID = _consulConfig.ServiceId };
 
-        _logger.LogInformation($"Deregistering service from Consul: {registration.ID}");
+        _logger.LogInformation($"Deregistering service from Consul: {registration.ID}", false);
 
         try
         {
             await _consulClient.Agent.ServiceDeregister(registration.ID, cancellationToken);
-            _logger.LogInformation($"Deregistering service from Consul is successful: {registration.ID}");
+            _logger.LogInformation($"Deregistering service from Consul is successful: {registration.ID}", false);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to deregister service from Consul.");
+            _logger.LogError(ex, "Failed to deregister service from Consul.", false);
             throw;
         }
     }

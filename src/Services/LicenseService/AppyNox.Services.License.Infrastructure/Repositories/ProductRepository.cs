@@ -6,7 +6,9 @@ using AppyNox.Services.License.Infrastructure.Data;
 
 namespace AppyNox.Services.License.Infrastructure.Repositories;
 
-public class ProductRepository(LicenseDatabaseContext context, INoxInfrastructureLogger noxInfrastructureLogger)
+public class ProductRepository(
+    LicenseDatabaseContext context,
+    INoxInfrastructureLogger<NoxRepositoryBase<ProductEntity>> noxInfrastructureLogger)
         : NoxRepositoryBase<ProductEntity>(context, noxInfrastructureLogger), IProductInterface
 {
 }
