@@ -232,8 +232,10 @@ public abstract class DockerComposeTestBase : IDisposable
     private void StartDockerCompose(string[] services)
     {
         string serviceList = string.Join(" ", services);
+        Logger.LogInformation($"Starting Docker Compose services: {serviceList}");
         ExecuteShellCommand("docker", $"compose -f docker-compose.yml -f docker-compose.Staging.yml up -d {serviceList}");
     }
+
 
     private void StopDockerCompose()
     {
@@ -255,19 +257,30 @@ public abstract class DockerComposeTestBase : IDisposable
             }
         };
 
+        var output = new StringBuilder();
+        var error = new StringBuilder();
+
+        process.OutputDataReceived += (sender, args) => output.AppendLine(args.Data);
+        process.ErrorDataReceived += (sender, args) => error.AppendLine(args.Data);
+
         process.Start();
+
+        process.BeginOutputReadLine();
+        process.BeginErrorReadLine();
+
         process.WaitForExit();
 
-        string output = process.StandardOutput.ReadToEnd();
-        string error = process.StandardError.ReadToEnd();
+        // Ensure asynchronous read operations are complete
+        process.WaitForExit();
 
         if (process.ExitCode != 0)
         {
             throw new Exception($"Command '{command} {arguments}' failed with error: {error}");
         }
 
-        Logger.LogInformation(output);
+        Logger.LogInformation(output.ToString());
     }
+
 
     #endregion
 }
