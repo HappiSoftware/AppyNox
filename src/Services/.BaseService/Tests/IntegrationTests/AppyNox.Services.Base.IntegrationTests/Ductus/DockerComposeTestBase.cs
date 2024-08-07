@@ -1,11 +1,10 @@
-﻿using AppyNox.Services.Base.Application.Interfaces.Loggers;
-using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
+﻿using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
 using AppyNox.Services.Base.IntegrationTests.Helpers;
 using AppyNox.Services.Base.IntegrationTests.URIs;
-using Ductus.FluentDocker.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Serilog;
+using System.Diagnostics;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
@@ -20,11 +19,6 @@ public abstract class DockerComposeTestBase : IDisposable
     #region [ Fields ]
 
     public readonly JsonSerializerOptions JsonSerializerOptions;
-
-    protected ICompositeService? CompositeService;
-
-    protected IHostService? DockerHost;
-
     private bool _disposed;
 
     #endregion
@@ -32,11 +26,8 @@ public abstract class DockerComposeTestBase : IDisposable
     #region [ Properties ]
 
     public HttpClient Client { get; private set; }
-
     public string BearerToken { get; private set; } = string.Empty;
-
     public ServiceURIs ServiceURIs { get; private set; }
-
     protected NoxLogger<DockerComposeTestBase> Logger { get; private set; }
 
     #endregion
@@ -70,8 +61,6 @@ public abstract class DockerComposeTestBase : IDisposable
         {
             PropertyNameCaseInsensitive = true
         };
-
-        EnsureDockerHost();
     }
 
     #endregion
@@ -92,21 +81,9 @@ public abstract class DockerComposeTestBase : IDisposable
     #region [ Protected Methods ]
 
     /// <summary>
-    /// Builds the composite service required for the test.
-    /// </summary>
-    /// <returns>The built composite service.</returns>
-    protected abstract ICompositeService Build();
-
-    /// <summary>
-    /// Performs additional container teardown operations when disposing.
-    /// </summary>
-    protected virtual void OnContainerTearDown()
-    { }
-
-    /// <summary>
     /// Initializes the Docker Compose environment for testing.
     /// </summary>
-    protected void Initialize(IConfigurationRoot configurationRoot, string layerName)
+    protected void Initialize(IConfigurationRoot configurationRoot, string layerName, string[] services)
     {
         #region [ Logger ]
 
@@ -125,16 +102,13 @@ public abstract class DockerComposeTestBase : IDisposable
 
         Logger.LogInformation("Initializing Docker Compose Test Base");
 
-        CompositeService = Build();
         try
         {
-            CompositeService.Start();
+            StartDockerCompose(services);
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, "Error starting docker compose");
-
-            CompositeService.Dispose();
+            Logger.LogError(ex, "Error starting Docker Compose");
             throw;
         }
     }
@@ -152,9 +126,8 @@ public abstract class DockerComposeTestBase : IDisposable
 
         if (disposing)
         {
-            OnContainerTearDown();
-            CompositeService?.Dispose();
-            DockerHost?.Dispose();
+            StopDockerCompose();
+            Client?.Dispose();
         }
         _disposed = true;
     }
@@ -251,31 +224,49 @@ public abstract class DockerComposeTestBase : IDisposable
 
     #region [ Private Methods ]
 
-    private void EnsureDockerHost()
+    private void BuildDockerCompose()
     {
-        if (DockerHost?.State == ServiceRunningState.Running)
-            return;
+        ExecuteShellCommand("docker", "compose -f docker-compose.yml -f docker-compose.Staging.yml build");
+    }
 
-        var hosts = new Hosts().Discover();
-        DockerHost =
-            hosts.FirstOrDefault(x => x.IsNative)
-            ?? hosts.FirstOrDefault(x => x.Name == "default");
+    private void StartDockerCompose(string[] services)
+    {
+        string serviceList = string.Join(" ", services);
+        ExecuteShellCommand("docker", $"compose -f docker-compose.yml -f docker-compose.Staging.yml up -d {serviceList}");
+    }
 
-        if (DockerHost != null)
+    private void StopDockerCompose()
+    {
+        ExecuteShellCommand("docker", "compose down");
+    }
+
+    private void ExecuteShellCommand(string command, string arguments)
+    {
+        var process = new Process
         {
-            if (DockerHost.State != ServiceRunningState.Running)
-                DockerHost.Start();
+            StartInfo = new ProcessStartInfo
+            {
+                FileName = command,
+                Arguments = arguments,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            }
+        };
 
-            return;
+        process.Start();
+        process.WaitForExit();
+
+        string output = process.StandardOutput.ReadToEnd();
+        string error = process.StandardError.ReadToEnd();
+
+        if (process.ExitCode != 0)
+        {
+            throw new Exception($"Command '{command} {arguments}' failed with error: {error}");
         }
 
-        if (hosts.Count == 0)
-            DockerHost = hosts[0];
-
-        if (DockerHost != null)
-            return;
-
-        EnsureDockerHost();
+        Logger.LogInformation(output);
     }
 
     #endregion

@@ -2,9 +2,6 @@
 using AppyNox.Services.Base.IntegrationTests.Helpers;
 using AppyNox.Services.Base.IntegrationTests.URIs;
 using AppyNox.Services.License.Infrastructure.Data;
-using Ductus.FluentDocker.Model.Common;
-using Ductus.FluentDocker.Services;
-using Ductus.FluentDocker.Services.Impl;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
@@ -24,7 +21,21 @@ namespace AppyNox.Services.License.WebAPI.IntegrationTest.Fixtures
         {
             IConfigurationRoot appsettings = IntegrationTestHelpers.GetConfiguration("appsettings.Staging");
 
-            Initialize(appsettings, "LicenseIntegrationTestHost");
+            string[] services =
+                [
+                    "appynox-rabbitmq-service",
+                    "appynox-common-rabbitmq-service",
+                    "appynox-consul",
+                    "appynox-gateway-ocelotgateway",
+                    "appynox-license-db",
+                    "appynox-redis",
+                    "appynox-services-license-webapi",
+                    "appynox-sso-db",
+                    "appynox-sso-saga-db",
+                    "appynox-services-sso-webapi"
+                ];
+
+            Initialize(appsettings, "LicenseIntegrationTestHost", services);
 
             Task.WhenAll(
                 WaitForServicesHealth(ServiceURIs.SsoServiceHealthURI),
@@ -55,34 +66,6 @@ namespace AppyNox.Services.License.WebAPI.IntegrationTest.Fixtures
 
             // Call the base class's Dispose method
             base.Dispose(disposing);
-        }
-
-        protected override ICompositeService Build()
-        {
-            var file = Path.Combine(Directory.GetCurrentDirectory(), (TemplateString)"docker-compose.yml");
-            var fileStaging = Path.Combine(Directory.GetCurrentDirectory(), (TemplateString)"docker-compose.Staging.yml");
-
-            return new DockerComposeCompositeService(DockerHost,
-                new Ductus.FluentDocker.Model.Compose.DockerComposeConfig
-                {
-                    ComposeFilePath = [file, fileStaging],
-                    ForceRecreate = true,
-                    RemoveOrphans = true,
-                    StopOnDispose = true,
-                    Services =
-                    [
-                        "appynox-rabbitmq-service",
-                        "appynox-common-rabbitmq-service",
-                        "appynox-consul",
-                        "appynox-gateway-ocelotgateway",
-                        "appynox-license-db",
-                        "appynox-redis",
-                        "appynox-services-license-webapi",
-                        "appynox-sso-db",
-                        "appynox-sso-saga-db",
-                        "appynox-services-sso-webapi"
-                    ],
-                });
         }
 
         #endregion

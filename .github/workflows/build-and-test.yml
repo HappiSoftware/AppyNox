@@ -118,11 +118,6 @@ jobs:
       - name: Build Docker Images
         run: docker compose -f docker-compose.yml -f docker-compose.Development.yml build
 
-      - name: Install Docker Compose v1
-        run: |
-          sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-          sudo chmod +x /usr/local/bin/docker-compose
-
       - name: Run Integration Tests (SsoService)
         run: dotnet test ./src/Services/SsoService/Tests/IntegrationTests/AppyNox.Services.Sso.WebAPI.IntegrationTest --no-restore
 

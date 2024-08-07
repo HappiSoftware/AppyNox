@@ -1,12 +1,8 @@
 ﻿using AppyNox.Services.Base.Infrastructure.Services;
 using AppyNox.Services.Base.IntegrationTests.Ductus;
 using AppyNox.Services.Base.IntegrationTests.Helpers;
-using AppyNox.Services.Base.IntegrationTests.Stubs;
 using AppyNox.Services.Base.IntegrationTests.URIs;
 using AppyNox.Services.Coupon.Infrastructure.Data;
-using Ductus.FluentDocker.Model.Common;
-using Ductus.FluentDocker.Services;
-using Ductus.FluentDocker.Services.Impl;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
@@ -26,7 +22,21 @@ public class CouponServiceFixture : DockerComposeTestBase
     {
         IConfigurationRoot appsettings = IntegrationTestHelpers.GetConfiguration("appsettings.Staging");
 
-        Initialize(appsettings, "CouponIntegrationTestHost");
+        string[] services =
+            [
+                "appynox-rabbitmq-service",
+                "appynox-common-rabbitmq-service",
+                "appynox-consul",
+                "appynox-gateway-ocelotgateway",
+                "appynox-coupon-db",
+                "appynox-redis",
+                "appynox-services-coupon-webapi",
+                "appynox-sso-db",
+                "appynox-sso-saga-db",
+                "appynox-services-sso-webapi"
+            ];
+
+        Initialize(appsettings, "CouponIntegrationTestHost", services);
 
         Task.WhenAll(
             WaitForServicesHealth(ServiceURIs.CouponServiceHealthURI),
@@ -58,35 +68,6 @@ public class CouponServiceFixture : DockerComposeTestBase
 
         // Call the base class's Dispose method
         base.Dispose(disposing);
-    }
-
-    protected override ICompositeService Build()
-    {
-        var file = Path.Combine(Directory.GetCurrentDirectory(), (TemplateString)"docker-compose.yml");
-        var fileStaging = Path.Combine(Directory.GetCurrentDirectory(), (TemplateString)"docker-compose.Staging.yml");
-
-        return new DockerComposeCompositeService(DockerHost,
-            new Ductus.FluentDocker.Model.Compose.DockerComposeConfig
-            {
-                ComposeFilePath = [file, fileStaging],
-                ForceRecreate = true,
-                RemoveOrphans = true,
-                StopOnDispose = true,
-                Services =
-                [
-                    "appynox-rabbitmq-service",
-                    "appynox-common-rabbitmq-service",
-                    "appynox-consul",
-                    "appynox-gateway-ocelotgateway",
-                    "appynox-coupon-db",
-                    "appynox-redis",
-                    "appynox-services-coupon-webapi",
-                    "appynox-sso-db",
-                    "appynox-sso-saga-db",
-                    "appynox-services-sso-webapi",
-                    "appynox-redis"
-                ]
-            });
     }
 
     #endregion
