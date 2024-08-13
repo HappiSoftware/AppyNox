@@ -47,6 +47,13 @@ jobs:
       - name: Build .NET Solution
         run: dotnet build ./AppyNox.sln --configuration Release --no-restore
 
+      - name: Build Docker Images
+        run: docker compose build
+
+      - name: Run Integration Tests (SsoService)
+        run: dotnet test ./src/Services/SsoService/Tests/IntegrationTests/AppyNox.Services.Sso.WebAPI.IntegrationTest --no-restore
+
+
       - name: Run Unit Tests (BaseService - Infrastructure)
         run: dotnet test ./src/Services/.BaseService/Tests/UnitTests/AppyNox.Services.Base.Infrastructure.UnitTest/ --no-restore
 
@@ -81,7 +88,7 @@ jobs:
         run: echo '${{ secrets.REDIS_ACL }}' > ./redis.acl
 
       - name: Build Docker Images
-        run: docker compose -f docker-compose.yml -f docker-compose.Development.yml build
+        run: docker compose build
 
       - name: Run Integration Tests (SsoService)
         run: dotnet test ./src/Services/SsoService/Tests/IntegrationTests/AppyNox.Services.Sso.WebAPI.IntegrationTest --no-restore
