@@ -73,9 +73,12 @@ jobs:
       - name: Wait for the Sso to Start
         run: sleep 120 
 
-      - name: Get Container ID
-        id: get_container_id
-        run: echo "::set-output name=cid::$(docker ps -q -f name=appynox-gateway-ocelotgateway)"
+      - name: Log Containers in nox_network
+        run: docker network inspect nox_network -f '{{json .Containers}}' | jq '.[].Name'
+
+      - name: List All Containers
+        run: docker ps
+
 
       - name: Get Container ID2
         id: get_container_id2
