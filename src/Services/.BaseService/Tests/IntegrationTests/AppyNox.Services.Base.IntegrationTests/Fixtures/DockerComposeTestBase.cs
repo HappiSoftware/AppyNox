@@ -256,9 +256,10 @@ public abstract class DockerComposeTestBase : IDisposable
         ExecuteShellCommand("docker", "compose down", RootDirectory);
     }
 
-    private void ExecuteShellCommand(string command, string arguments, string workingDirectory = "")
+    private void ExecuteShellCommand(string command, string arguments, string workingDirectory = "", int timeoutInSeconds = 60)
     {
-        Logger.LogInformation($"Executing command: {command} {arguments} in directory: {workingDirectory}", false);
+        Logger.LogInformation($"Executing command: {command} {arguments} in directory: {workingDirectory}");
+
         var process = new Process
         {
             StartInfo = new ProcessStartInfo
@@ -273,25 +274,58 @@ public abstract class DockerComposeTestBase : IDisposable
             }
         };
 
+        var outputBuilder = new StringBuilder();
+        var errorBuilder = new StringBuilder();
+
+        process.OutputDataReceived += (sender, e) =>
+        {
+            if (!string.IsNullOrEmpty(e.Data))
+            {
+                outputBuilder.AppendLine(e.Data);
+                Logger.LogInformation(e.Data); // Log the output in real-time
+            }
+        };
+
+        process.ErrorDataReceived += (sender, e) =>
+        {
+            if (!string.IsNullOrEmpty(e.Data))
+            {
+                errorBuilder.AppendLine(e.Data);
+                Logger.LogWarning(e.Data); // Log the error in real-time
+            }
+        };
+
         process.Start();
-        bool exited = process.WaitForExit(60 * 1000);
+        process.BeginOutputReadLine();
+        process.BeginErrorReadLine();
+
+        // Wait for the process to exit or timeout
+        bool exited = process.WaitForExit(timeoutInSeconds * 1000);
 
         if (!exited)
         {
+            TimeoutException exception = new($"The command '{command} {arguments}' timed out after {timeoutInSeconds} seconds.");
             // Kill the process if it did not exit in time
             process.Kill();
-            throw new TimeoutException($"The command '{command} {arguments}' timed out after {60} seconds.");
+            Logger.LogError(exception, $"The command '{command} {arguments}' timed out after {timeoutInSeconds} seconds.");
+            Logger.LogError(exception, "Captured Output:");
+            Logger.LogError(exception, outputBuilder.ToString()); // Log the captured output
+            Logger.LogError(exception, "Captured Errors:");
+            Logger.LogError(exception, errorBuilder.ToString()); // Log the captured errors
+            throw exception;
         }
 
-        string output = process.StandardOutput.ReadToEnd();
-        string error = process.StandardError.ReadToEnd();
+        // Log remaining output and error after process exits
+        Logger.LogInformation(outputBuilder.ToString());
+        if (errorBuilder.Length > 0)
+        {
+            Logger.LogWarning(errorBuilder.ToString());
+        }
 
         if (process.ExitCode != 0)
         {
-            throw new Exception($"Command '{command} {arguments}' failed with error: {error}");
+            throw new Exception($"Command '{command} {arguments}' failed with error: {errorBuilder.ToString()}");
         }
-
-        Logger.LogInformation(output);
     }
 
     #endregion
