@@ -56,7 +56,7 @@ jobs:
         run: echo '${{ secrets.REDIS_ACL }}' > ./redis.acl
 
       - name: Build Docker Images
-        run: docker compose build appynox-gateway-ocelotgateway
+        run: docker compose build
 
       - name: Run Integration Tests (SsoService)
         run: dotnet test ./src/Services/SsoService/Tests/IntegrationTests/AppyNox.Services.Sso.WebAPI.IntegrationTest --no-restore
