@@ -43,7 +43,10 @@ public class SsoServiceFixture : DockerComposeTestBase, IDisposable
 
             Initialize(appsettings, "SsoIntegrationTestHost", services);
 
-            WaitForServicesHealth(ServiceURIs.SsoServiceHealthURI).GetAwaiter().GetResult();
+            Task.WhenAll(
+                    WaitForServicesHealth(ServiceURIs.GatewayHealthURI),
+                    WaitForServicesHealth(ServiceURIs.SsoServiceHealthURI)
+                ).GetAwaiter().GetResult();
             AuthenticateAndGetToken().GetAwaiter().GetResult();
 
             DbContextOptions<IdentityDatabaseContext> options = new DbContextOptionsBuilder<IdentityDatabaseContext>()
