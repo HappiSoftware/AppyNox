@@ -58,7 +58,15 @@ public abstract class DockerComposeTestBase : IDisposable
                 "Service URIs configuration section is missing or invalid."
             );
 
-        Client = new HttpClient { BaseAddress = new(ServiceURIs.GatewayURI) };
+        var handler = new HttpClientHandler
+        {
+            ServerCertificateCustomValidationCallback = (message, cert, chain, sslPolicyErrors) => true
+        };
+
+        Client = new HttpClient(handler)
+        {
+            BaseAddress = new Uri(ServiceURIs.GatewayURI)
+        };
 
         JsonSerializerOptions = new JsonSerializerOptions
         {
