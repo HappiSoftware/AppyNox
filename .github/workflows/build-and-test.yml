@@ -60,7 +60,7 @@ jobs:
         run: docker compose build appynox-gateway-ocelotgateway
 
       - name: test
-        run: docker compose up appynox-gateway-ocelotgateway
+        run: docker compose up -d appynox-gateway-ocelotgateway
 
       - name: Test SSL Setup
         run: |
