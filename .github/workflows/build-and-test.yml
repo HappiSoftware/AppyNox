@@ -63,4 +63,50 @@ jobs:
         run: docker compose build
 
       - name: Run Integration Tests (SsoService)
-        run: docker compose up appynox-gateway-ocelotgateway
+        run: dotnet test ./src/Services/SsoService/Tests/IntegrationTests/AppyNox.Services.Sso.WebAPI.IntegrationTest --no-restore
+
+
+      - name: Run Unit Tests (BaseService - Infrastructure)
+        run: dotnet test ./src/Services/.BaseService/Tests/UnitTests/AppyNox.Services.Base.Infrastructure.UnitTest/ --no-restore
+
+      - name: Run Unit Tests (CouponService - Infrastructure)
+        run: dotnet test ./src/Services/CouponService/Tests/UnitTests/AppyNox.Services.Coupon.Infrastructure.UnitTest/ --no-restore
+
+      - name: Run Unit Tests (CouponService - Application)
+        run: dotnet test ./src/Services/CouponService/Tests/UnitTests/AppyNox.Services.Coupon.Application.UnitTest/ --no-restore
+
+      - name: Run Unit Tests (LicenseService - Infrastructure)
+        run: dotnet test ./src/Services/LicenseService/Tests/UnitTests/AppyNox.Services.License.Infrastructure.UnitTest/ --no-restore
+
+      - name: Run Unit Tests (LicenseService - Application)
+        run: dotnet test ./src/Services/LicenseService/Tests/UnitTests/AppyNox.Services.License.Application.UnitTest/ --no-restore
+
+      - name: Run Unit Tests (SsoService - Application)
+        run: dotnet test ./src/Services/SsoService/Tests/UnitTests/AppyNox.Services.Sso.Application.UnitTest/ --no-restore
+
+      - name: Run Unit Tests (SsoService - WebAPI)
+        run: dotnet test ./src/Services/SsoService/Tests/UnitTests/AppyNox.Services.Sso.WebAPI.UnitTest/ --no-restore 
+
+      - name: Trust self-signed certificate
+        run: |
+          echo "${{ secrets.PFX_CERTIFICATE }}" | base64 --decode > appynox_staging.pfx
+          # Extract the certificate from the .pfx file
+          openssl pkcs12 -in appynox_staging.pfx -clcerts -nokeys -out appynox_staging.crt -password pass:${{ secrets.PFX_PASSWORD }}
+          # Trust the certificate
+          sudo cp appynox_staging.crt /usr/local/share/ca-certificates/
+          sudo update-ca-certificates
+
+      - name: Create Redis ACL file
+        run: echo '${{ secrets.REDIS_ACL }}' > ./redis.acl
+
+      - name: Build Docker Images
+        run: docker compose build
+
+      - name: Run Integration Tests (SsoService)
+        run: dotnet test ./src/Services/SsoService/Tests/IntegrationTests/AppyNox.Services.Sso.WebAPI.IntegrationTest --no-restore
+
+      - name: Run Integration Tests (CouponService)
+        run: dotnet test ./src/Services/CouponService/Tests/IntegrationTests/AppyNox.Services.Coupon.WebAPI.IntegrationTest --no-restore
+
+      - name: Run Integration Tests (LicenseService)
+        run: dotnet test ./src/Services/LicenseService/Tests/IntegrationTests/AppyNox.Services.License.WebAPI.IntegrationTest --no-restore  

@@ -14,7 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 await builder.AddConsulConfiguration("OcelotService");
 await builder.AddConsulConfiguration("OcelotService", "ocelot");
-Console.WriteLine(builder.Environment.EnvironmentName);
+
 #endregion
 
 #region [ Logger Setup ]
