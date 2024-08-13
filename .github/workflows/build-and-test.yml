@@ -43,6 +43,9 @@ jobs:
           sudo chmod 644 ./src/Gateways/AppyNox.Gateway.OcelotGateway/ssl/appynox.pfx
           sudo chmod 644 ./src/Gateways/AppyNox.Gateway.OcelotGateway/ssl/appynox.crt
 
+      - name: Restore dependencies
+        run: dotnet restore ./AppyNox.sln
+
       - name: Build .NET Solution
         run: dotnet build ./AppyNox.sln --configuration Release --no-restore
 
