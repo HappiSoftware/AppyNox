@@ -43,6 +43,8 @@ jobs:
           sudo chmod 644 ./src/Gateways/AppyNox.Gateway.OcelotGateway/ssl/appynox.pfx
           sudo chmod 644 ./src/Gateways/AppyNox.Gateway.OcelotGateway/ssl/appynox.crt
 
+      - name: Build .NET Solution
+        run: dotnet build ./AppyNox.sln --configuration Release --no-restore
 
       - name: Trust self-signed certificate
         run: |
@@ -56,18 +58,8 @@ jobs:
       - name: Build Docker Images
         run: docker compose build appynox-gateway-ocelotgateway
 
-      - name: test
-        run: docker compose up -d appynox-gateway-ocelotgateway
-
-      - name: Test SSL Setup
-        run: |
-          echo "Testing SSL setup..."
-          curl -v https://localhost:7000 --cacert appynox_staging.crt
-
-      - name: Test SSL Setup2
-        run: |
-          echo "Testing SSL setup..."
-          curl -v https://localhost:7000/health
+      - name: Run Integration Tests (SsoService)
+        run: dotnet test ./src/Services/SsoService/Tests/IntegrationTests/AppyNox.Services.Sso.WebAPI.IntegrationTest --no-restore
 
       - name: Restore dependencies
         run: dotnet restore ./AppyNox.sln
