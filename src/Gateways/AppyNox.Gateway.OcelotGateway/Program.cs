@@ -31,21 +31,16 @@ builder.Host.UseSerilog(Log.Logger);
 
 builder.WebHost.ConfigureKestrel(serverOptions =>
 {
-    string fileName = string.Empty;
+    string fileName = Path.Combine(Directory.GetCurrentDirectory(), "ssl", "appynox.pfx");
 
-    if (builder.Environment.IsDevelopment())
+    if (!File.Exists(fileName))
     {
-        fileName = Directory.GetCurrentDirectory() + "/ssl/appynox.pfx";
+        throw new FileNotFoundException($"The SSL certificate file was not found at path: {fileName}");
     }
-    else if (builder.Environment.IsStaging() || builder.Environment.IsProduction())
-    {
-        fileName = "/ssl/appynox.pfx";
-    }
-
 
     serverOptions.ConfigureEndpointDefaults(listenOptions =>
     {
-        listenOptions.UseHttps(fileName ?? throw new InvalidOperationException("SSL certificate file path could not be determined."), "happi2023");
+        listenOptions.UseHttps(fileName, "happi2023");
     });
 });
 
