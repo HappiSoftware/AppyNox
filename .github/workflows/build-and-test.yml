@@ -71,14 +71,23 @@ jobs:
         run: docker compose up -d appynox-services-sso-webapi
 
       - name: Wait for the Sso to Start
-        run: sleep 20 
+        run: sleep 50 
 
       - name: Get Container ID
         id: get_container_id
         run: echo "::set-output name=cid::$(docker ps -q -f name=appynox-gateway-ocelotgateway)"
 
+      - name: Get Container ID2
+        id: get_container_id2
+        run: echo "::set-output name=cid::$(docker ps -q -f name=appynox-services-sso-webapi)"
+
+
+      - name: Print Container Logs
+        run: docker logs ${{ steps.get_container_id2.outputs.cid }}
+
+
       - name: Test SSL Connection
-        run: docker exec ${{ steps.get_container_id.outputs.cid }} curl -v http://appynox-services-sso-webapi:7001/api/health
+        run: docker exec ${{ steps.get_container_id2.outputs.cid }} curl -v http://appynox-services-sso-webapi:7001/api/health
 
       - name: Test SSL Connection from Runner
         run: curl -v https://localhost:7000/sso-service/health
