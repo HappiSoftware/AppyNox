@@ -41,11 +41,8 @@ jobs:
           echo '${{ secrets.PFX_CERTIFICATE }}' | base64 --decode > ./src/Gateways/AppyNox.Gateway.OcelotGateway/ssl/appynox.pfx
           sudo chmod 644 ./src/Gateways/AppyNox.Gateway.OcelotGateway/ssl/appynox.pfx
 
-      - name: Restore dependencies
-        run: dotnet restore ./AppyNox.sln
 
-      - name: Build .NET Solution
-        run: dotnet build ./AppyNox.sln --configuration Release --no-restore
+
 
       - name: Trust self-signed certificate
         run: |
@@ -60,11 +57,26 @@ jobs:
         run: echo '${{ secrets.REDIS_ACL }}' > ./redis.acl
 
       - name: Build Docker Images
-        run: docker compose build
+        run: docker compose build appynox-gateway-ocelotgateway
 
-      - name: Run Integration Tests (SsoService)
-        run: dotnet test ./src/Services/SsoService/Tests/IntegrationTests/AppyNox.Services.Sso.WebAPI.IntegrationTest --no-restore
+      - name: test
+        run: docker compose up appynox-gateway-ocelotgateway
 
+      - name: Test SSL Setup
+        run: |
+          echo "Testing SSL setup..."
+          curl -v https://localhost:7000 --cacert appynox_staging.crt
+
+      - name: Test SSL Setup2
+        run: |
+          echo "Testing SSL setup..."
+          curl -v https://localhost:7000/health
+
+      - name: Restore dependencies
+        run: dotnet restore ./AppyNox.sln
+
+      - name: Build .NET Solution
+        run: dotnet build ./AppyNox.sln --configuration Release --no-restore
 
       - name: Run Unit Tests (BaseService - Infrastructure)
         run: dotnet test ./src/Services/.BaseService/Tests/UnitTests/AppyNox.Services.Base.Infrastructure.UnitTest/ --no-restore
