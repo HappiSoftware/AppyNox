@@ -39,7 +39,7 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
     }
     else if (builder.Environment.IsStaging() || builder.Environment.IsProduction())
     {
-        fileName = "/src/Gateways/AppyNox.Gateway.OcelotGateway/ssl/appynox.pfx";
+        fileName = "/ssl/appynox.pfx";
     }
 
     if (!File.Exists(fileName))
