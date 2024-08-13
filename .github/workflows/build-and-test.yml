@@ -55,6 +55,12 @@ jobs:
           sudo cp appynox.crt /usr/local/share/ca-certificates/
           sudo update-ca-certificates
 
+      - name: Verify Trusted Certificates
+        run: |
+          echo "Listing trusted certificates:"
+          sudo ls -l /etc/ssl/certs/ | grep appynox
+          sudo openssl x509 -in /usr/local/share/ca-certificates/appynox.crt -text -noout
+
       - name: Create Redis ACL file
         run: echo '${{ secrets.REDIS_ACL }}' > ./redis.acl
 
