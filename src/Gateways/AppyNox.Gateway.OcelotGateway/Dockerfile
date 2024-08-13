@@ -8,7 +8,8 @@ EXPOSE 443
 # Install necessary tools
 USER root
 RUN apt-get update && apt-get install -y \
-    ca-certificates
+    ca-certificates \
+    curl
 
 # Copy the crt file into the container and trust it
 COPY ["/src/Gateways/AppyNox.Gateway.OcelotGateway/ssl/appynox.crt", "/usr/local/share/ca-certificates/appynox.crt"]
