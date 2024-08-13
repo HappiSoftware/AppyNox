@@ -71,7 +71,7 @@ jobs:
         run: docker compose up -d appynox-services-sso-webapi
 
       - name: Wait for the Sso to Start
-        run: sleep 50 
+        run: sleep 120 
 
       - name: Get Container ID
         id: get_container_id
@@ -87,7 +87,13 @@ jobs:
 
 
       - name: Test SSL Connection
-        run: docker exec ${{ steps.get_container_id2.outputs.cid }} curl -v http://appynox-services-sso-webapi:7001/api/health
+        run: |
+          retries=5
+          until curl -v http://appynox-services-sso-webapi:7001/api/health || [ $retries -eq 0 ]; do
+            echo "Waiting for the SSO service to be ready..."
+            retries=$((retries-1))
+            sleep 10
+          done
 
       - name: Test SSL Connection from Runner
         run: curl -v https://localhost:7000/sso-service/health
