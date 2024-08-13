@@ -18,7 +18,7 @@ public class LicenseServiceFixture : DockerComposeTestBase, IDisposable
     #region [ Public Constructors ]
 
     public LicenseServiceFixture()
-        : base(6)
+        : base()
     {
         try
         {

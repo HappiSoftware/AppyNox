@@ -21,7 +21,7 @@ public class SsoServiceFixture : DockerComposeTestBase, IDisposable
     #region [ Public Constructors ]
 
     public SsoServiceFixture() 
-        : base(6)
+        : base()
     {
         try
         {

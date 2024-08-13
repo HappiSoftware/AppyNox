@@ -19,7 +19,7 @@ public class CouponServiceFixture : DockerComposeTestBase
     #region [ Public Constructors ]
 
     public CouponServiceFixture() 
-        : base(6)
+        : base()
     {
         try
         {
