@@ -39,7 +39,9 @@ jobs:
         run: |
           mkdir -p ./src/Gateways/AppyNox.Gateway.OcelotGateway/ssl
           echo '${{ secrets.PFX_CERTIFICATE }}' | base64 --decode > ./src/Gateways/AppyNox.Gateway.OcelotGateway/ssl/appynox.pfx
+          echo '${{ secrets.CRT_CERTIFICATE }}' | base64 --decode > ./src/Gateways/AppyNox.Gateway.OcelotGateway/ssl/appynox.crt
           sudo chmod 644 ./src/Gateways/AppyNox.Gateway.OcelotGateway/ssl/appynox.pfx
+          sudo chmod 644 ./src/Gateways/AppyNox.Gateway.OcelotGateway/ssl/appynox.crt
 
 
       - name: Trust self-signed certificate
