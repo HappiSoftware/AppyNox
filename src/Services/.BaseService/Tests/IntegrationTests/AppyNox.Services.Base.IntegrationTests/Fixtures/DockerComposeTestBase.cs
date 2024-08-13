@@ -147,7 +147,7 @@ public abstract class DockerComposeTestBase : IDisposable
             }
             catch (Exception ex)
             {
-                Logger.LogError(ex.InnerException, "Error while checking service health");
+                Logger.LogError(ex, "Error while checking service health");
             }
 
             await Task.Delay(TimeSpan.FromSeconds(10));
