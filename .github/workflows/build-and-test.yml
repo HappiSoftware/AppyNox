@@ -17,13 +17,13 @@ jobs:
 
     steps:
       - name: Check out code
-        uses: actions/checkout@latest
+        uses: actions/checkout@v4
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@latest
+        uses: docker/setup-buildx-action@v3
 
       - name: Cache Docker layers
-        uses: actions/cache@latest
+        uses: actions/cache@v4
         with:
           path: /tmp/.buildx-cache
           key: ${{ runner.os }}-buildx-${{ github.sha }}
@@ -31,7 +31,7 @@ jobs:
             ${{ runner.os }}-buildx-
 
       - name: Set up .NET Core
-        uses: actions/setup-dotnet@latest
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
