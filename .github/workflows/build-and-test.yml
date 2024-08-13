@@ -67,6 +67,9 @@ jobs:
       - name: Build Docker Images
         run: docker compose build
 
+      - name: Create Docker Network
+        run: docker network create nox_network
+
       - name: Start the Sso Container
         run: docker compose up -d
 

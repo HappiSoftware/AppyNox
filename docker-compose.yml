@@ -1,5 +1,3 @@
-version: '3.8'
-
 volumes:
   rabbitmq_data:
   common_rabbitmq_data:
