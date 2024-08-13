@@ -55,7 +55,8 @@ public static class HostApplicationBuilderExtensions
     {
         IConfiguration configuration = builder.Configuration;
         string environmentName = builder.Environment.EnvironmentName;
-        Uri consulUri = new(configuration["ConsulConfiguration:Address"] ?? "http://localhost:8500");
+        Uri consulUri = new(configuration["ConsulConfiguration:Address"] ?? 
+            throw new NoxInfrastructureException("ConsulConfiguration:Address was null"));
         await IsConsulAvailable(consulUri);
 
         IConsulClient consulClient = new ConsulClient(config =>

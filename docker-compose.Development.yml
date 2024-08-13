@@ -1,4 +1,10 @@
-version: '3.8'
+volumes:
+  rabbitmq_data:
+  common_rabbitmq_data:
+  consul_data:
+  redis_data:
+  redisinsight_data:
+  seq_data:
 
 networks:
   nox_network:
@@ -6,170 +12,78 @@ networks:
 
 services:
   appynox-rabbitmq-service:
-    networks:
-      - nox_network
-    healthcheck:
-      test: [ "CMD", "rabbitmqctl", "status" ]
-      interval: 5s
-      timeout: 5s
-      retries: 20
-    restart: always
+    image: rabbitmq:management
+    environment:
+      RABBITMQ_DEFAULT_USER: HappiCorp
+      RABBITMQ_DEFAULT_PASS: HappiCorp
+    command: >
+      bash -c "chmod 400 /var/lib/rabbitmq/.erlang.cookie && rabbitmq-server"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
     ports:
       - "5672:5672"
       - "15672:15672"
+    networks:
+      - nox_network
+    restart: on-failure
+
 
   appynox-common-rabbitmq-service:
-    networks:
-      - nox_network
-    healthcheck:
-      test: [ "CMD", "rabbitmqctl", "status" ]
-      interval: 5s
-      timeout: 5s
-      retries: 20
-    restart: always
+    image: rabbitmq:management
+    environment:
+      RABBITMQ_DEFAULT_USER: NoxFleetComm
+      RABBITMQ_DEFAULT_PASS: NoxFleetComm
+    command: >
+      bash -c "chmod 400 /var/lib/rabbitmq/.erlang.cookie && rabbitmq-server"
+    volumes:
+      - common_rabbitmq_data:/var/lib/rabbitmq
     ports:
       - "5673:5672"
-      - "15673:15672"
-
-  appynox-redis:
+      - "15673:15672" 
     networks:
-      - nox_network
-    healthcheck:
-      test: [ "CMD", "redis-cli", "ping" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    restart: always
-    ports:
-      - "6379:6379"
+      - nox_network 
+    restart: on-failure
 
-  appynox-redisinsight:
-    networks:
-      - nox_network
-    restart: always
-    ports:
-      - "8001:8001"
 
   appynox-consul:
-    networks:
-      - nox_network
-    healthcheck:
-      test: [ "CMD", "consul", "info" ]
-      interval: 5s
-      timeout: 5s
-      retries: 20
-    restart: always
+    image: "hashicorp/consul:latest"
     ports:
       - "8500:8500"
       - "8600:8600/udp"
+    networks:
+      - nox_network
+    restart: on-failure
 
-  appynox-gateway-ocelotgateway:
-    build:
-      context: .
-      dockerfile: src/Gateways/AppyNox.Gateway.OcelotGateway/Dockerfile
+
+  appynox-redis:
+    image: redis:latest
+    command: ["redis-server", "--aclfile", "/etc/redis/redis.acl"] 
+    volumes:
+      - redis_data:/data
+      - ./redis.acl:/etc/redis/redis.acl
     ports:
-      - "7000:443"
+      - "6379:6379"
     networks:
       - nox_network
-    healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "curl --fail https://appynox-gateway-ocelotgateway:7000/health || exit 1"
-        ]
-      interval: 5s
-      timeout: 5s
-      retries: 20
-    restart: always
+    restart: on-failure
 
-  appynox-sso-db:
-    restart: always
-    networks:
-      - nox_network
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
-      interval: 5s
-      timeout: 5s
-      retries: 20
 
-  appynox-sso-saga-db:
-    restart: always
-    networks:
-      - nox_network
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
-      interval: 5s
-      timeout: 5s
-      retries: 20
-
-  appynox-services-sso-webapi:
-    build:
-      context: .
-      dockerfile: src/Services/SsoService/AppyNox.Services.Sso.WebAPI/Dockerfile
-    networks:
-      - nox_network
-    healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "curl --fail http://appynox-services-sso-webapi:7001/api/health || exit 1"
-        ]
-      interval: 5s
-      timeout: 5s
-      retries: 20
-
-  appynox-coupon-db:
-    restart: always
-    networks:
-      - nox_network
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
-      interval: 5s
-      timeout: 5s
-      retries: 20
-
-  appynox-services-coupon-webapi:
-    build:
-      context: .
-      dockerfile: src/Services/CouponService/AppyNox.Services.Coupon.WebAPI/Dockerfile
-    networks:
-      - nox_network
-    healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "curl --fail http://appynox-services-coupon-webapi:7002/api/health || exit 1"
-        ]
-      interval: 5s
-      timeout: 5s
-      retries: 20
-
-  appynox-license-db:
-    restart: always
-    networks:
-      - nox_network
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
-      interval: 5s
-      timeout: 5s
-      retries: 20
-
-  appynox-services-license-webapi:
-    build:
-      context: .
-      dockerfile: src/Services/LicenseService/AppyNox.Services.License.WebAPI/Dockerfile
-    networks:
-      - nox_network
-    healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "curl --fail http://appynox-services-license-webapi:7003/api/health || exit 1"
-        ]
-      interval: 5s
-      timeout: 5s
-      retries: 20
+  appynox-redisinsight:
+    image: redis/redisinsight:latest
+    volumes:
+      - redisinsight_data:/db
+    ports:
+      - "6999:8001"
 
   appynox-seq:
+    image: datalust/seq:latest
+    environment:
+      ACCEPT_EULA: "Y"
+    volumes:
+      - seq_data:/data
+    ports:
+      - "5341:5341"
+      - "8081:80"
     networks:
       - nox_network
+    restart: on-failure 

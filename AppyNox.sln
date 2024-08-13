@@ -114,11 +114,59 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppyNox.Services.Sso.Server
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppyNox.Services.Sso.Contracts", "src\Services\SsoService\AppyNox.Services.Sso.Contracts\AppyNox.Services.Sso.Contracts.csproj", "{8EA810B2-F47D-4E10-9E8A-DC9EA663DB69}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppyNox.Services.License.Contarcts", "src\Services\LicenseService\AppyNox.Services.License.Contarcts\AppyNox.Services.License.Contarcts.csproj", "{EA268B37-4163-4490-9CD8-D32FA5494DED}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppyNox.Services.License.Contarcts", "src\Services\LicenseService\AppyNox.Services.License.Contarcts\AppyNox.Services.License.Contarcts.csproj", "{EA268B37-4163-4490-9CD8-D32FA5494DED}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppyNox.Services.License.Client", "src\Services\LicenseService\AppyNox.Services.License.Client\AppyNox.Services.License.Client.csproj", "{CDEDDA23-0972-4D48-9EE3-02296F4A9F53}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppyNox.Services.License.Client", "src\Services\LicenseService\AppyNox.Services.License.Client\AppyNox.Services.License.Client.csproj", "{CDEDDA23-0972-4D48-9EE3-02296F4A9F53}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppyNox.Services.Sso.Contracts.Public", "src\Services\SsoService\AppyNox.Services.Sso.Contracts.Public\AppyNox.Services.Sso.Contracts.Public.csproj", "{0B11E729-D546-487A-A5C6-9614AC5D6CF3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppyNox.Services.Sso.Contracts.Public", "src\Services\SsoService\AppyNox.Services.Sso.Contracts.Public\AppyNox.Services.Sso.Contracts.Public.csproj", "{0B11E729-D546-487A-A5C6-9614AC5D6CF3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{EE924FAE-1536-4E54-A2E0-6698107A548C}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		icon.png = icon.png
+		LICENSE.md = LICENSE.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{E7ADAF55-B10D-4563-BE56-192554966CA0}"
+	ProjectSection(SolutionItems) = preProject
+		docs\.nojekyll = docs\.nojekyll
+		docs\addingnewservice.md = docs\addingnewservice.md
+		docs\appsettings.md = docs\appsettings.md
+		docs\auditabledata.md = docs\auditabledata.md
+		docs\certificate.md = docs\certificate.md
+		docs\dockerswarm.md = docs\dockerswarm.md
+		docs\exception.md = docs\exception.md
+		docs\github.md = docs\github.md
+		docs\index.html = docs\index.html
+		docs\installation.md = docs\installation.md
+		docs\README.md = docs\README.md
+		docs\redis.md = docs\redis.md
+		docs\sonar.md = docs\sonar.md
+		docs\started.md = docs\started.md
+		docs\usersecrets.md = docs\usersecrets.md
+		docs\_coverpage.md = docs\_coverpage.md
+		docs\_sidebar.md = docs\_sidebar.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{FC84AF5D-DCC5-46C4-A93C-6047FDDACF26}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ISSUE_TEMPLATE", "ISSUE_TEMPLATE", "{A649C5A6-11AB-4716-A7A4-54FFD327179D}"
+	ProjectSection(SolutionItems) = preProject
+		.github\ISSUE_TEMPLATE\bug_report.md = .github\ISSUE_TEMPLATE\bug_report.md
+		.github\ISSUE_TEMPLATE\documentation-request.md = .github\ISSUE_TEMPLATE\documentation-request.md
+		.github\ISSUE_TEMPLATE\feature_request.md = .github\ISSUE_TEMPLATE\feature_request.md
+		.github\ISSUE_TEMPLATE\patch-request.md = .github\ISSUE_TEMPLATE\patch-request.md
+		.github\ISSUE_TEMPLATE\refactoring-request.md = .github\ISSUE_TEMPLATE\refactoring-request.md
+		.github\ISSUE_TEMPLATE\test-coverage-request.md = .github\ISSUE_TEMPLATE\test-coverage-request.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{B54046FA-AC1E-4644-9985-4C233E986F33}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\build-and-test-multi-step.yml = .github\workflows\build-and-test-multi-step.yml
+		.github\workflows\build-and-test.yml = .github\workflows\build-and-test.yml
+		.github\workflows\codeql.yml = .github\workflows\codeql.yml
+		.github\workflows\publish-nuget.yml = .github\workflows\publish-nuget.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -343,6 +391,10 @@ Global
 		{EA268B37-4163-4490-9CD8-D32FA5494DED} = {351EC289-7778-4519-8478-D7DDBD3F5377}
 		{CDEDDA23-0972-4D48-9EE3-02296F4A9F53} = {351EC289-7778-4519-8478-D7DDBD3F5377}
 		{0B11E729-D546-487A-A5C6-9614AC5D6CF3} = {AD2F15A2-813D-422E-A37D-BED8810752C6}
+		{E7ADAF55-B10D-4563-BE56-192554966CA0} = {EE924FAE-1536-4E54-A2E0-6698107A548C}
+		{FC84AF5D-DCC5-46C4-A93C-6047FDDACF26} = {EE924FAE-1536-4E54-A2E0-6698107A548C}
+		{A649C5A6-11AB-4716-A7A4-54FFD327179D} = {FC84AF5D-DCC5-46C4-A93C-6047FDDACF26}
+		{B54046FA-AC1E-4644-9985-4C233E986F33} = {FC84AF5D-DCC5-46C4-A93C-6047FDDACF26}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EA4F2302-DC43-4149-814A-609940BEC847}

@@ -17,7 +17,7 @@
         "OCELOT_POST_SERVICE_HOST": "localhost"
       },
       "dotnetRunMessages": true,
-      "applicationUrl": "https://localhost:7000"
+      "applicationUrl": "https://localhost:443"
     },
     "OcelotGateway-Production": {
       "commandName": "Project",
@@ -26,7 +26,7 @@
         "ASPNETCORE_ENVIRONMENT": "Production"
       },
       "dotnetRunMessages": true,
-      "applicationUrl": "https://localhost:7000"
+      "applicationUrl": "https://localhost:443"
     },
     "Docker": {
       "commandName": "Docker",
