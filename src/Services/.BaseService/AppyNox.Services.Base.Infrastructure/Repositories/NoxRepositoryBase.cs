@@ -2,6 +2,7 @@
 using AppyNox.Services.Base.Application.Interfaces.Exceptions;
 using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Application.Interfaces.Repositories;
+using AppyNox.Services.Base.Core.AsyncLocals;
 using AppyNox.Services.Base.Core.Common;
 using AppyNox.Services.Base.Core.Exceptions.Base;
 using AppyNox.Services.Base.Domain.DDD;
@@ -29,7 +30,7 @@ public abstract class NoxRepositoryBase<TEntity> : INoxRepository<TEntity> where
 
     private readonly INoxInfrastructureLogger<NoxRepositoryBase<TEntity>> _logger;
 
-    private readonly string _countCacheKey = $"total-count-{typeof(TEntity).Name}";
+    private readonly string _countCacheKey = $"{NoxContext.CompanyId}-total-count-{typeof(TEntity).Name}";
 
     #endregion
 

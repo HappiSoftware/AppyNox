@@ -64,4 +64,4 @@ app.Services.ApplyMigrations<IdentitySagaDatabaseContext>();
 
 #endregion
 
-app.Run();
+await app.RunAsync();
