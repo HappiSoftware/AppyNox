@@ -40,7 +40,7 @@ public abstract class DockerComposeTestBase : IDisposable
     /// <summary>
     /// Initializes a new instance of the <see cref="DockerComposeTestBase"/> class.
     /// </summary>
-    protected DockerComposeTestBase(int howFarToRoot)
+    protected DockerComposeTestBase()
     {
         var loggerFactory = LoggerFactory.Create(builder =>
         {
@@ -66,16 +66,23 @@ public abstract class DockerComposeTestBase : IDisposable
         };
 
         string currentDirectory = Directory.GetCurrentDirectory();
-        Logger.LogInformation($"Starting Directory: {currentDirectory}");
-        if (howFarToRoot == 0)
+        string targetDirectoryName = "AppyNox";
+
+        while (true)
         {
-            throw new ArgumentException("HowFarToRoot is not set. 0 is not accepted.");
-        }
-        for (int i = 0; i < howFarToRoot; i++)
-        {
-            var parentDirectory = Directory.GetParent(currentDirectory) 
-                ?? throw new InvalidOperationException($"Cannot navigate up to the root from {currentDirectory}");
-            currentDirectory = parentDirectory.FullName;
+            var directoryInfo = new DirectoryInfo(currentDirectory);
+
+            if (directoryInfo.Name.Equals(targetDirectoryName, StringComparison.OrdinalIgnoreCase))
+            {
+                break; // We've reached the target directory
+            }
+
+            if (directoryInfo.Parent == null)
+            {
+                throw new InvalidOperationException($"Target directory '{targetDirectoryName}' not found in the path '{Directory.GetCurrentDirectory()}'");
+            }
+
+            currentDirectory = directoryInfo.Parent.FullName;
         }
         RootDirectory = Path.GetFullPath(currentDirectory);
         Logger.LogInformation($"Resolved RootDirectory: {RootDirectory}");
@@ -237,11 +244,6 @@ public abstract class DockerComposeTestBase : IDisposable
     #endregion
 
     #region [ Private Methods ]
-
-    private void BuildDockerCompose()
-    {
-        ExecuteShellCommand("docker", "compose -f docker-compose.yml -f docker-compose.Staging.yml build");
-    }
 
     private void StartDockerCompose(string[] services)
     {
