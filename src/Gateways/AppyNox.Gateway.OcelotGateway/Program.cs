@@ -31,7 +31,16 @@ builder.Host.UseSerilog(Log.Logger);
 
 builder.WebHost.ConfigureKestrel(serverOptions =>
 {
-    string fileName = Path.Combine(Directory.GetCurrentDirectory(), "ssl", "appynox.pfx");
+    string fileName = string.Empty;
+
+    if (builder.Environment.IsDevelopment())
+    {
+        fileName = Directory.GetCurrentDirectory() + "/ssl/appynox.pfx";
+    }
+    else if (builder.Environment.IsStaging() || builder.Environment.IsProduction())
+    {
+        fileName = "/src/Gateways/AppyNox.Gateway.OcelotGateway/ssl/appynox.pfx";
+    }
 
     if (!File.Exists(fileName))
     {
