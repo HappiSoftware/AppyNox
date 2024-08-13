@@ -31,7 +31,7 @@ public abstract class DockerComposeTestBase : IDisposable
     public ServiceURIs ServiceURIs { get; private set; }
     protected NoxLogger<DockerComposeTestBase> Logger { get; private set; }
 
-    private readonly string RootDirectory;
+    private string RootDirectory { get; set; } = string.Empty;
 
     #endregion
 
@@ -64,28 +64,6 @@ public abstract class DockerComposeTestBase : IDisposable
         {
             PropertyNameCaseInsensitive = true
         };
-
-        string currentDirectory = Directory.GetCurrentDirectory();
-        string targetDirectoryName = "AppyNox";
-
-        while (true)
-        {
-            var directoryInfo = new DirectoryInfo(currentDirectory);
-
-            if (directoryInfo.Name.Equals(targetDirectoryName, StringComparison.OrdinalIgnoreCase))
-            {
-                break; // We've reached the target directory
-            }
-
-            if (directoryInfo.Parent == null)
-            {
-                throw new InvalidOperationException($"Target directory '{targetDirectoryName}' not found in the path '{Directory.GetCurrentDirectory()}'");
-            }
-
-            currentDirectory = directoryInfo.Parent.FullName;
-        }
-        RootDirectory = Path.GetFullPath(currentDirectory);
-        Logger.LogInformation($"Resolved RootDirectory: {RootDirectory}");
     }
 
     #endregion
@@ -113,7 +91,29 @@ public abstract class DockerComposeTestBase : IDisposable
 
         #endregion
 
-        Logger.LogInformation("Initializing Docker Compose Test Base");
+        Logger.LogInformation("Initializing Docker Compose Test Base", false);
+
+        string currentDirectory = Directory.GetCurrentDirectory();
+        string targetDirectoryName = "AppyNox";
+
+        while (true)
+        {
+            var directoryInfo = new DirectoryInfo(currentDirectory);
+
+            if (directoryInfo.Name.Equals(targetDirectoryName, StringComparison.OrdinalIgnoreCase))
+            {
+                break; // We've reached the target directory
+            }
+
+            if (directoryInfo.Parent == null)
+            {
+                throw new InvalidOperationException($"Target directory '{targetDirectoryName}' not found in the path '{Directory.GetCurrentDirectory()}'");
+            }
+
+            currentDirectory = directoryInfo.Parent.FullName;
+        }
+        RootDirectory = Path.GetFullPath(currentDirectory);
+        Logger.LogInformation($"Resolved RootDirectory: {RootDirectory}");
 
         try
         {
@@ -258,7 +258,7 @@ public abstract class DockerComposeTestBase : IDisposable
 
     private void ExecuteShellCommand(string command, string arguments, string workingDirectory = "")
     {
-        Logger.LogInformation($"Executing command: {command} {arguments} in directory: {workingDirectory}");
+        Logger.LogInformation($"Executing command: {command} {arguments} in directory: {workingDirectory}", false);
         var process = new Process
         {
             StartInfo = new ProcessStartInfo
@@ -274,7 +274,14 @@ public abstract class DockerComposeTestBase : IDisposable
         };
 
         process.Start();
-        process.WaitForExit();
+        bool exited = process.WaitForExit(60 * 1000);
+
+        if (!exited)
+        {
+            // Kill the process if it did not exit in time
+            process.Kill();
+            throw new TimeoutException($"The command '{command} {arguments}' timed out after {60} seconds.");
+        }
 
         string output = process.StandardOutput.ReadToEnd();
         string error = process.StandardError.ReadToEnd();
