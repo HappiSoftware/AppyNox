@@ -68,7 +68,7 @@ jobs:
         run: docker compose build
 
       - name: Start the Sso Container
-        run: docker compose up -d appynox-services-sso-webapi
+        run: docker compose up -d
 
       - name: Wait for the Sso to Start
         run: sleep 120 
