@@ -80,6 +80,8 @@ jobs:
       - name: Test SSL Connection
         run: docker exec ${{ steps.get_container_id.outputs.cid }} curl -v https://localhost:443/health
 
+      - name: Test SSL Connection from Runner
+        run: curl -v https://localhost:7000/health
 
       - name: Run Integration Tests (SsoService)
         run: dotnet test ./src/Services/SsoService/Tests/IntegrationTests/AppyNox.Services.Sso.WebAPI.IntegrationTest --no-restore
