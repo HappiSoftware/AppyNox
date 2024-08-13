@@ -252,6 +252,7 @@ public abstract class DockerComposeTestBase : IDisposable
 
     private void ExecuteShellCommand(string command, string arguments, string workingDirectory = "")
     {
+        Logger.LogInformation($"Working directory: {workingDirectory}");
         var process = new Process
         {
             StartInfo = new ProcessStartInfo
