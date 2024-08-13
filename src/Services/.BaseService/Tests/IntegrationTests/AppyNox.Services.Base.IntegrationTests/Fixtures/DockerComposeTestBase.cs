@@ -66,15 +66,19 @@ public abstract class DockerComposeTestBase : IDisposable
         };
 
         string currentDirectory = Directory.GetCurrentDirectory();
+        Logger.LogInformation($"Starting Directory: {currentDirectory}");
         if (howFarToRoot == 0)
         {
             throw new ArgumentException("HowFarToRoot is not set. 0 is not accepted.");
         }
         for (int i = 0; i < howFarToRoot; i++)
         {
-            currentDirectory = Path.Combine(currentDirectory, "..");
+            var parentDirectory = Directory.GetParent(currentDirectory) 
+                ?? throw new InvalidOperationException($"Cannot navigate up to the root from {currentDirectory}");
+            currentDirectory = parentDirectory.FullName;
         }
         RootDirectory = Path.GetFullPath(currentDirectory);
+        Logger.LogInformation($"Resolved RootDirectory: {RootDirectory}");
     }
 
     #endregion
@@ -252,7 +256,7 @@ public abstract class DockerComposeTestBase : IDisposable
 
     private void ExecuteShellCommand(string command, string arguments, string workingDirectory = "")
     {
-        Logger.LogInformation($"Working directory: {workingDirectory}");
+        Logger.LogInformation($"Executing command: {command} {arguments} in directory: {workingDirectory}");
         var process = new Process
         {
             StartInfo = new ProcessStartInfo
