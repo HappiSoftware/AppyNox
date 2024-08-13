@@ -70,15 +70,6 @@ jobs:
       - name: Start the Sso Container
         run: docker compose up -d appynox-services-sso-webapi
 
-      - name: Get Container ID
-        id: get_container_id3
-        run: echo "::set-output name=cid::$(docker ps -q -f name=appynox-redis)"
-
-
-      - name: Test Redis Connection
-        run: docker exec -it ${{ steps.get_container_id3.outputs.cid }} redis-cli ping
-
-
       - name: Wait for the Sso to Start
         run: sleep 120 
 
