@@ -10,6 +10,11 @@ USER root
 ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.12.1/wait /app/wait
 RUN chmod +x /app/wait
 
+# Install necessary tools
+USER root
+RUN apt-get update && apt-get install -y \
+    curl
+
 USER app
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Production

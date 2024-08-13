@@ -20,7 +20,6 @@ public abstract class DockerComposeTestBase : IDisposable
     #region [ Fields ]
 
     public readonly JsonSerializerOptions JsonSerializerOptions;
-    private bool _disposed;
 
     #endregion
 
