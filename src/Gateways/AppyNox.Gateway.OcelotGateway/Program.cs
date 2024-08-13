@@ -49,7 +49,7 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
 
     serverOptions.ConfigureEndpointDefaults(listenOptions =>
     {
-        listenOptions.UseHttps(fileName, "happi2023");
+        listenOptions.UseHttps(fileName, "happi2024");
     });
 });
 
