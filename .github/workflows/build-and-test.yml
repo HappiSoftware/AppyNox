@@ -78,7 +78,7 @@ jobs:
         run: echo "::set-output name=cid::$(docker ps -q -f name=appynox-gateway-ocelotgateway)"
 
       - name: Test SSL Connection
-        run: docker exec ${{ steps.get_container_id.outputs.cid }} curl -v https://localhost:7000/health
+        run: docker exec ${{ steps.get_container_id.outputs.cid }} curl -v https://localhost:443/health
 
 
       - name: Run Integration Tests (SsoService)
