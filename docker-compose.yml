@@ -60,7 +60,7 @@ services:
 
 
   appynox-redis:
-    image: redis:latest
+    image: redis:alpine
     command: ["redis-server", "--aclfile", "/etc/redis/redis.acl"] 
     volumes:
       - redis_data:/data
