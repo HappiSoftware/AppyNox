@@ -105,9 +105,9 @@ jobs:
         id: find_sso_id
         run: echo "::set-output name=container_id::$(docker ps -qf name=appynox-services-sso-webapi)"
 
-      - name: Find Container ID of appynox-redis
-        id: find_redis_id
-        run: echo "::set-output name=container_id::$(docker ps -qf name=appynox-redis)"
+      - name: Find Container ID of appynox-rabbitmq
+        id: fin_rabbitmq_id
+        run: echo "::set-output name=container_id::$(docker ps -qf name=appynox-rabbitmq)"
 
       - name: Wait 5 Minutes Before Printing Logs
         run: sleep 300
@@ -118,9 +118,9 @@ jobs:
           echo "Container ID: $container_id"           
           docker logs $container_id
 
-      - name: Print Logs of appynox-redis
+      - name: Print Logs of appynox-rabbitmq
         run: |
-          container_id=${{ steps.find_redis_id.outputs.container_id }}
+          container_id=${{ steps.fin_rabbitmq_id.outputs.container_id }}
           echo "Container ID: $container_id"           
           docker logs $container_id
 
