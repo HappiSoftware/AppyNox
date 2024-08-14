@@ -116,7 +116,10 @@ jobs:
         run: echo '${{ secrets.REDIS_ACL }}' > ./redis.acl
 
       - name: Build Docker Images
-        run: docker compose -f docker-compose.yml -f docker-compose.Development.yml build
+        run: docker compose build
+
+      - name: Start Docker Containers
+        run: docker compose up -d
 
       - name: Find Container ID of appynox-services-sso-webapi
         id: find_sso_id
