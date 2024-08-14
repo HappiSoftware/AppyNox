@@ -1,6 +1,7 @@
 {
   "ServiceUris": {
     "GatewayURI": "https://localhost:7000/",
+    "GatewayHealthURI": "https://localhost:7000/health",
     "CouponServiceURI": "coupon-service",
     "CouponServiceHealthURI": "coupon-service/health",
     "SsoServiceURI": "sso-service",
