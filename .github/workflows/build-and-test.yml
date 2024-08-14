@@ -116,7 +116,7 @@ jobs:
         run: echo '${{ secrets.REDIS_ACL }}' > ./redis.acl
 
       - name: Build Docker Images
-        run: docker compose build -f docker-compose.yml -f docker-compose.Development.yml
+        run: docker compose -f docker-compose.yml -f docker-compose.Development.yml build
 
       - name: Start Docker Containers
         run: docker compose up -d
