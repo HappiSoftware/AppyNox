@@ -16,7 +16,7 @@ networks:
 
 services:
   appynox-rabbitmq-service:
-    image: rabbitmq:management
+    image: rabbitmq:3.13-management-alpine
     environment:
       RABBITMQ_DEFAULT_USER: HappiCorp
       RABBITMQ_DEFAULT_PASS: HappiCorp
@@ -31,12 +31,10 @@ services:
 
 
   appynox-common-rabbitmq-service:
-    image: rabbitmq:management
+    image: rabbitmq:3.13-management-alpine
     environment:
       RABBITMQ_DEFAULT_USER: NoxFleetComm
       RABBITMQ_DEFAULT_PASS: NoxFleetComm
-    command: >
-      bash -c "chmod 400 /var/lib/rabbitmq/.erlang.cookie && rabbitmq-server"
     volumes:
       - common_rabbitmq_data:/var/lib/rabbitmq
     ports:
