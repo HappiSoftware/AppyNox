@@ -105,6 +105,10 @@ jobs:
         id: find_sso_id
         run: echo "::set-output name=container_id::$(docker ps -qf name=appynox-services-sso-webapi)"
 
+      - name: Find Container ID of appynox-redis
+        id: find_sso_id2
+        run: echo "::set-output name=container_id2::$(docker ps -qf name=appynox-redis)"
+
       - name: Wait 5 Minutes Before Printing Logs
         run: sleep 300
 
@@ -114,6 +118,11 @@ jobs:
           echo "Container ID: $container_id"           
           docker logs $container_id
 
+      - name: Print Logs of appynox-redis
+        run: |
+          container_id2=${{ steps.find_sso_id2.outputs.container_id }}
+          echo "Container ID: $container_id2"           
+          docker logs $container_id2
 
       - name: Run Integration Tests (SsoService)
         run: dotnet test ./src/Services/SsoService/Tests/IntegrationTests/AppyNox.Services.Sso.WebAPI.IntegrationTest --no-restore
