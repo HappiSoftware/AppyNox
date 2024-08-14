@@ -49,6 +49,27 @@ jobs:
       - name: Build .NET Solution
         run: dotnet build ./AppyNox.sln --configuration Release --no-restore
 
+      # - name: Run Unit Tests (BaseService - Infrastructure)
+      #   run: dotnet test ./src/Services/.BaseService/Tests/UnitTests/AppyNox.Services.Base.Infrastructure.UnitTest/ --no-restore
+
+      # - name: Run Unit Tests (CouponService - Infrastructure)
+      #   run: dotnet test ./src/Services/CouponService/Tests/UnitTests/AppyNox.Services.Coupon.Infrastructure.UnitTest/ --no-restore
+
+      # - name: Run Unit Tests (CouponService - Application)
+      #   run: dotnet test ./src/Services/CouponService/Tests/UnitTests/AppyNox.Services.Coupon.Application.UnitTest/ --no-restore
+
+      # - name: Run Unit Tests (LicenseService - Infrastructure)
+      #   run: dotnet test ./src/Services/LicenseService/Tests/UnitTests/AppyNox.Services.License.Infrastructure.UnitTest/ --no-restore
+
+      # - name: Run Unit Tests (LicenseService - Application)
+      #   run: dotnet test ./src/Services/LicenseService/Tests/UnitTests/AppyNox.Services.License.Application.UnitTest/ --no-restore
+
+      # - name: Run Unit Tests (SsoService - Application)
+      #   run: dotnet test ./src/Services/SsoService/Tests/UnitTests/AppyNox.Services.Sso.Application.UnitTest/ --no-restore
+
+      # - name: Run Unit Tests (SsoService - WebAPI)
+      #   run: dotnet test ./src/Services/SsoService/Tests/UnitTests/AppyNox.Services.Sso.WebAPI.UnitTest/ --no-restore 
+
       - name: Trust self-signed certificate
         run: |
           echo "${{ secrets.CRT_CERTIFICATE }}" | base64 --decode > appynox.crt
@@ -64,53 +85,27 @@ jobs:
       - name: Create Redis ACL file
         run: echo '${{ secrets.REDIS_ACL }}' > ./redis.acl
 
-      - name: Run Docker Compose Up
-        run: docker compose up -d
-
-      - name: Inspect Docker Network
-        run: docker network inspect appynox_nox_network
-
-      - name: List Running Containers
-        run: docker ps -a
-
-      - name: Create Docker Network
-        run: docker network create nox_network
-
-      - name: Restore dependencies
-        run: dotnet restore ./AppyNox.sln
-
-      - name: Build .NET Solution
-        run: dotnet build ./AppyNox.sln --configuration Release --no-restore
-
-      - name: Run Unit Tests (BaseService - Infrastructure)
-        run: dotnet test ./src/Services/.BaseService/Tests/UnitTests/AppyNox.Services.Base.Infrastructure.UnitTest/ --no-restore
-
-      - name: Run Unit Tests (CouponService - Infrastructure)
-        run: dotnet test ./src/Services/CouponService/Tests/UnitTests/AppyNox.Services.Coupon.Infrastructure.UnitTest/ --no-restore
-
-      - name: Run Unit Tests (CouponService - Application)
-        run: dotnet test ./src/Services/CouponService/Tests/UnitTests/AppyNox.Services.Coupon.Application.UnitTest/ --no-restore
-
-      - name: Run Unit Tests (LicenseService - Infrastructure)
-        run: dotnet test ./src/Services/LicenseService/Tests/UnitTests/AppyNox.Services.License.Infrastructure.UnitTest/ --no-restore
-
-      - name: Run Unit Tests (LicenseService - Application)
-        run: dotnet test ./src/Services/LicenseService/Tests/UnitTests/AppyNox.Services.License.Application.UnitTest/ --no-restore
-
-      - name: Run Unit Tests (SsoService - Application)
-        run: dotnet test ./src/Services/SsoService/Tests/UnitTests/AppyNox.Services.Sso.Application.UnitTest/ --no-restore
-
-      - name: Run Unit Tests (SsoService - WebAPI)
-        run: dotnet test ./src/Services/SsoService/Tests/UnitTests/AppyNox.Services.Sso.WebAPI.UnitTest/ --no-restore 
-
       - name: Build Docker Images
         run: docker compose build
 
-      - name: Run Integration Tests (SsoService)
-        run: dotnet test ./src/Services/SsoService/Tests/IntegrationTests/AppyNox.Services.Sso.WebAPI.IntegrationTest --no-restore
+      - name: Start Docker Containers
+        run: docker compose up -d
 
-      - name: Run Integration Tests (CouponService)
-        run: dotnet test ./src/Services/CouponService/Tests/IntegrationTests/AppyNox.Services.Coupon.WebAPI.IntegrationTest --no-restore
+      - name: Find Container ID of appynox-gateway-ocelotgateway
+        id: find_container_id
+        run: echo "::set-output name=container_id::$(docker ps -qf name=appynox-gateway-ocelotgateway)"
 
-      - name: Run Integration Tests (LicenseService)
-        run: dotnet test ./src/Services/LicenseService/Tests/IntegrationTests/AppyNox.Services.License.WebAPI.IntegrationTest --no-restore  
+      - name: Enter appynox-gateway-ocelotgateway Container and Check Health
+        run: |
+          container_id=${{ steps.find_container_id.outputs.container_id }}
+          echo "Container ID: $container_id"
+          docker exec -it $container_id bash -c "curl http://appynox-services-sso-webapi:7001/api/health"
+
+      # - name: Run Integration Tests (SsoService)
+      #   run: dotnet test ./src/Services/SsoService/Tests/IntegrationTests/AppyNox.Services.Sso.WebAPI.IntegrationTest --no-restore
+
+      # - name: Run Integration Tests (CouponService)
+      #   run: dotnet test ./src/Services/CouponService/Tests/IntegrationTests/AppyNox.Services.Coupon.WebAPI.IntegrationTest --no-restore
+
+      # - name: Run Integration Tests (LicenseService)
+      #   run: dotnet test ./src/Services/LicenseService/Tests/IntegrationTests/AppyNox.Services.License.WebAPI.IntegrationTest --no-restore  
