@@ -42,10 +42,14 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
         fileName = "/ssl/appynox.pfx";
     }
 
+    if (!File.Exists(fileName))
+    {
+        throw new FileNotFoundException($"The SSL certificate file was not found at path: {fileName}");
+    }
 
     serverOptions.ConfigureEndpointDefaults(listenOptions =>
     {
-        listenOptions.UseHttps(fileName ?? throw new InvalidOperationException("SSL certificate file path could not be determined."), "happi2023");
+        listenOptions.UseHttps(fileName, "happi2024");
     });
 });
 

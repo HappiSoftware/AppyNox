@@ -12,10 +12,6 @@
 		
 	</PropertyGroup>
 
-	<ItemGroup>
-	  <Content Include="..\..\..\AppyNox.Services.License.WebAPI\appsettings.Staging.json" Link="appsettings.Staging.json" />
-	</ItemGroup>
-
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.10.0" />
