@@ -91,15 +91,27 @@ jobs:
       - name: Start Docker Containers
         run: docker compose up -d
 
-      - name: Find Container ID of appynox-gateway-ocelotgateway
-        id: find_container_id
-        run: echo "::set-output name=container_id::$(docker ps -qf name=appynox-gateway-ocelotgateway)"
+      # - name: Find Container ID of appynox-gateway-ocelotgateway
+      #   id: find_container_id
+      #   run: echo "::set-output name=container_id::$(docker ps -qf name=appynox-gateway-ocelotgateway)"
 
-      - name: Enter appynox-gateway-ocelotgateway Container and Check Health
+      # - name: Enter appynox-gateway-ocelotgateway Container and Check Health
+      #   run: |
+      #       container_id=${{ steps.find_container_id.outputs.container_id }}
+      #       echo "Container ID: $container_id"
+      #       docker exec -i $container_id bash -c "curl http://appynox-services-sso-webapi:7001/api/health"
+
+      - name: Find Container ID of appynox-services-sso-webapi
+        id: find_sso_id
+        run: echo "::set-output name=container_id::$(docker ps -qf name=appynox-services-sso-webapi)"
+
+      - name: Wait 5 Minutes Before Printing Logs
+        run: sleep 300
+
+      - name: Print Logs of appynox-services-sso-webapi
         run: |
-            container_id=${{ steps.find_container_id.outputs.container_id }}
-            echo "Container ID: $container_id"
-            docker exec -i $container_id bash -c "curl http://appynox-services-sso-webapi:7001/api/health"
+          container_id=${{ steps.find_sso_id.outputs.container_id }}
+          echo "Container ID: $container_id"           docker logs $container_id
 
 
       # - name: Run Integration Tests (SsoService)
