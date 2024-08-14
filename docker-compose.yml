@@ -61,7 +61,7 @@ services:
 
   appynox-redis:
     image: redis:alpine
-    command: ["redis-server", "--aclfile", "/etc/redis/redis.acl"] 
+    # command: ["redis-server", "--aclfile", "/etc/redis/redis.acl"] 
     volumes:
       - redis_data:/data
       # - ./redis.acl:/etc/redis/redis.acl
