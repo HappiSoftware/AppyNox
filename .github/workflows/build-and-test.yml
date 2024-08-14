@@ -82,8 +82,8 @@ jobs:
           sudo ls -l /etc/ssl/certs/ | grep appynox
           sudo openssl x509 -in /usr/local/share/ca-certificates/appynox.crt -text -noout
 
-      - name: Create Redis ACL file
-        run: echo '${{ secrets.REDIS_ACL }}' > ./redis.acl
+      # - name: Create Redis ACL file
+      #   run: echo '${{ secrets.REDIS_ACL }}' > ./redis.acl
 
       - name: Build Docker Images
         run: docker compose build
