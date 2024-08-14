@@ -20,8 +20,6 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: HappiCorp
       RABBITMQ_DEFAULT_PASS: HappiCorp
-    command: >
-      bash -c "chmod 400 /var/lib/rabbitmq/.erlang.cookie && rabbitmq-server"
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     ports:
@@ -154,7 +152,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Staging
       - ASPNETCORE_URLS=http://+:7001 
-      - WAIT_HOSTS=appynox-redis:6379,appynox-gateway-ocelotgateway:443,appynox-sso-db:5432,appynox-sso-saga-db:5432,appynox-rabbitmq-service:5672,appynox-common-rabbitmq-service:5672
+      - WAIT_HOSTS=appynox-redis:6379,appynox-rabbitmq-service:5672,appynox-common-rabbitmq-service:5672,appynox-gateway-ocelotgateway:443,appynox-sso-db:5432,appynox-sso-saga-db:5432
       - WAIT_TIMEOUT=300
       - WAIT_SLEEP_INTERVAL=10
       - WAIT_HOST_CONNECT_TIMEOUT=10
@@ -163,11 +161,11 @@ services:
     restart: on-failure
     depends_on:
       - appynox-redis
+      - appynox-rabbitmq-service 
+      - appynox-common-rabbitmq-service 
       - appynox-gateway-ocelotgateway
       - appynox-sso-db
       - appynox-sso-saga-db
-      - appynox-rabbitmq-service
-      - appynox-common-rabbitmq-service
 
 
   appynox-coupon-db:
