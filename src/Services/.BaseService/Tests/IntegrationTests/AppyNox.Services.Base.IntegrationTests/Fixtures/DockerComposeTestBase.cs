@@ -31,7 +31,7 @@ public abstract class DockerComposeTestBase : IDisposable
     public ServiceURIs ServiceURIs { get; private set; }
     protected NoxLogger<DockerComposeTestBase> Logger { get; private set; }
 
-    private readonly string RootDirectory;
+    private string RootDirectory { get; set; } = string.Empty;
 
     #endregion
 
@@ -58,34 +58,15 @@ public abstract class DockerComposeTestBase : IDisposable
                 "Service URIs configuration section is missing or invalid."
             );
 
-        Client = new HttpClient { BaseAddress = new(ServiceURIs.GatewayURI) };
+        Client = new HttpClient()
+        {
+            BaseAddress = new Uri(ServiceURIs.GatewayURI)
+        };
 
         JsonSerializerOptions = new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true
         };
-
-        string currentDirectory = Directory.GetCurrentDirectory();
-        string targetDirectoryName = "AppyNox";
-
-        while (true)
-        {
-            var directoryInfo = new DirectoryInfo(currentDirectory);
-
-            if (directoryInfo.Name.Equals(targetDirectoryName, StringComparison.OrdinalIgnoreCase))
-            {
-                break; // We've reached the target directory
-            }
-
-            if (directoryInfo.Parent == null)
-            {
-                throw new InvalidOperationException($"Target directory '{targetDirectoryName}' not found in the path '{Directory.GetCurrentDirectory()}'");
-            }
-
-            currentDirectory = directoryInfo.Parent.FullName;
-        }
-        RootDirectory = Path.GetFullPath(currentDirectory);
-        Logger.LogInformation($"Resolved RootDirectory: {RootDirectory}");
     }
 
     #endregion
@@ -113,7 +94,29 @@ public abstract class DockerComposeTestBase : IDisposable
 
         #endregion
 
-        Logger.LogInformation("Initializing Docker Compose Test Base");
+        Logger.LogInformation("Initializing Docker Compose Test Base", false);
+
+        string currentDirectory = Directory.GetCurrentDirectory();
+        string targetDirectoryName = "AppyNox";
+
+        while (true)
+        {
+            var directoryInfo = new DirectoryInfo(currentDirectory);
+
+            if (directoryInfo.Name.Equals(targetDirectoryName, StringComparison.OrdinalIgnoreCase))
+            {
+                break; // We've reached the target directory
+            }
+
+            if (directoryInfo.Parent == null)
+            {
+                throw new InvalidOperationException($"Target directory '{targetDirectoryName}' not found in the path '{Directory.GetCurrentDirectory()}'");
+            }
+
+            currentDirectory = directoryInfo.Parent.FullName;
+        }
+        RootDirectory = Path.GetFullPath(currentDirectory);
+        Logger.LogInformation($"Resolved RootDirectory: {RootDirectory}");
 
         try
         {
@@ -256,9 +259,10 @@ public abstract class DockerComposeTestBase : IDisposable
         ExecuteShellCommand("docker", "compose down", RootDirectory);
     }
 
-    private void ExecuteShellCommand(string command, string arguments, string workingDirectory = "")
+    private void ExecuteShellCommand(string command, string arguments, string workingDirectory = "", int timeoutInSeconds = 60)
     {
         Logger.LogInformation($"Executing command: {command} {arguments} in directory: {workingDirectory}");
+
         var process = new Process
         {
             StartInfo = new ProcessStartInfo
@@ -273,18 +277,58 @@ public abstract class DockerComposeTestBase : IDisposable
             }
         };
 
-        process.Start();
-        process.WaitForExit();
+        var outputBuilder = new StringBuilder();
+        var errorBuilder = new StringBuilder();
 
-        string output = process.StandardOutput.ReadToEnd();
-        string error = process.StandardError.ReadToEnd();
+        process.OutputDataReceived += (sender, e) =>
+        {
+            if (!string.IsNullOrEmpty(e.Data))
+            {
+                outputBuilder.AppendLine(e.Data);
+                Logger.LogInformation(e.Data); // Log the output in real-time
+            }
+        };
+
+        process.ErrorDataReceived += (sender, e) =>
+        {
+            if (!string.IsNullOrEmpty(e.Data))
+            {
+                errorBuilder.AppendLine(e.Data);
+                Logger.LogWarning(e.Data); // Log the error in real-time
+            }
+        };
+
+        process.Start();
+        process.BeginOutputReadLine();
+        process.BeginErrorReadLine();
+
+        // Wait for the process to exit or timeout
+        bool exited = process.WaitForExit(timeoutInSeconds * 1000);
+
+        if (!exited)
+        {
+            TimeoutException exception = new($"The command '{command} {arguments}' timed out after {timeoutInSeconds} seconds.");
+            // Kill the process if it did not exit in time
+            process.Kill();
+            Logger.LogError(exception, $"The command '{command} {arguments}' timed out after {timeoutInSeconds} seconds.");
+            Logger.LogError(exception, "Captured Output:");
+            Logger.LogError(exception, outputBuilder.ToString()); // Log the captured output
+            Logger.LogError(exception, "Captured Errors:");
+            Logger.LogError(exception, errorBuilder.ToString()); // Log the captured errors
+            throw exception;
+        }
+
+        // Log remaining output and error after process exits
+        Logger.LogInformation(outputBuilder.ToString());
+        if (errorBuilder.Length > 0)
+        {
+            Logger.LogWarning(errorBuilder.ToString());
+        }
 
         if (process.ExitCode != 0)
         {
-            throw new Exception($"Command '{command} {arguments}' failed with error: {error}");
+            throw new Exception($"Command '{command} {arguments}' failed with error: {errorBuilder.ToString()}");
         }
-
-        Logger.LogInformation(output);
     }
 
     #endregion
