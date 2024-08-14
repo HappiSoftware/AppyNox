@@ -16,12 +16,10 @@ networks:
 
 services:
   appynox-rabbitmq-service:
-    image: rabbitmq:management
+    image: rabbitmq:3.13-management-alpine
     environment:
       RABBITMQ_DEFAULT_USER: HappiCorp
       RABBITMQ_DEFAULT_PASS: HappiCorp
-    command: >
-      bash -c "chmod 400 /var/lib/rabbitmq/.erlang.cookie && rabbitmq-server"
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     ports:
@@ -33,12 +31,10 @@ services:
 
 
   appynox-common-rabbitmq-service:
-    image: rabbitmq:management
+    image: rabbitmq:3.13-management-alpine
     environment:
       RABBITMQ_DEFAULT_USER: NoxFleetComm
       RABBITMQ_DEFAULT_PASS: NoxFleetComm
-    command: >
-      bash -c "chmod 400 /var/lib/rabbitmq/.erlang.cookie && rabbitmq-server"
     volumes:
       - common_rabbitmq_data:/var/lib/rabbitmq
     ports:
@@ -60,11 +56,11 @@ services:
 
 
   appynox-redis:
-    image: redis:latest
-    command: ["redis-server", "--aclfile", "/etc/redis/redis.acl"] 
+    image: redis:alpine
+    # command: ["redis-server", "--aclfile", "/etc/redis/redis.acl"] 
     volumes:
       - redis_data:/data
-      - ./redis.acl:/etc/redis/redis.acl
+      # - ./redis.acl:/etc/redis/redis.acl
     ports:
       - "6379:6379"
     networks:
@@ -154,23 +150,20 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Staging
       - ASPNETCORE_URLS=http://+:7001 
-      - WAIT_HOSTS=appynox-redis:6379,appynox-gateway-ocelotgateway:443,appynox-sso-db:5432,appynox-sso-saga-db:5432,appynox-rabbitmq-service:5672,appynox-common-rabbitmq-service:5672
+      - WAIT_HOSTS=appynox-redis:6379,appynox-rabbitmq-service:5672,appynox-common-rabbitmq-service:5672,appynox-gateway-ocelotgateway:443,appynox-sso-db:5432,appynox-sso-saga-db:5432
       - WAIT_TIMEOUT=300
       - WAIT_SLEEP_INTERVAL=10
       - WAIT_HOST_CONNECT_TIMEOUT=10
-    volumes:
-      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
-      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
     networks:
       - nox_network  
     restart: on-failure
     depends_on:
       - appynox-redis
+      - appynox-rabbitmq-service 
+      - appynox-common-rabbitmq-service 
       - appynox-gateway-ocelotgateway
       - appynox-sso-db
       - appynox-sso-saga-db
-      - appynox-rabbitmq-service
-      - appynox-common-rabbitmq-service
 
 
   appynox-coupon-db:
@@ -200,9 +193,6 @@ services:
       - WAIT_TIMEOUT=300
       - WAIT_SLEEP_INTERVAL=10
       - WAIT_HOST_CONNECT_TIMEOUT=10
-    volumes:
-      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
-      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
     networks:
       - nox_network 
     depends_on:
@@ -240,9 +230,6 @@ services:
       - WAIT_TIMEOUT=300
       - WAIT_SLEEP_INTERVAL=10
       - WAIT_HOST_CONNECT_TIMEOUT=10
-    volumes:
-      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
-      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
     networks:
       - nox_network
     restart: on-failure    

@@ -17,13 +17,13 @@ jobs:
 
     steps:
       - name: Check out code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v3
 
       - name: Cache Docker layers
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: /tmp/.buildx-cache
           key: ${{ runner.os }}-buildx-${{ github.sha }}
@@ -31,7 +31,7 @@ jobs:
             ${{ runner.os }}-buildx-
 
       - name: Set up .NET Core
-        uses: actions/setup-dotnet@v1
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
@@ -39,7 +39,9 @@ jobs:
         run: |
           mkdir -p ./src/Gateways/AppyNox.Gateway.OcelotGateway/ssl
           echo '${{ secrets.PFX_CERTIFICATE }}' | base64 --decode > ./src/Gateways/AppyNox.Gateway.OcelotGateway/ssl/appynox.pfx
+          echo '${{ secrets.CRT_CERTIFICATE }}' | base64 --decode > ./src/Gateways/AppyNox.Gateway.OcelotGateway/ssl/appynox.crt
           sudo chmod 644 ./src/Gateways/AppyNox.Gateway.OcelotGateway/ssl/appynox.pfx
+          sudo chmod 644 ./src/Gateways/AppyNox.Gateway.OcelotGateway/ssl/appynox.crt
 
       - name: Restore dependencies
         run: dotnet restore ./AppyNox.sln
@@ -70,18 +72,57 @@ jobs:
 
       - name: Trust self-signed certificate
         run: |
-          echo "${{ secrets.PFX_CERTIFICATE }}" | base64 --decode > appynox_staging.pfx
-          # Extract the certificate from the .pfx file
-          openssl pkcs12 -in appynox_staging.pfx -clcerts -nokeys -out appynox_staging.crt -password pass:${{ secrets.PFX_PASSWORD }}
-          # Trust the certificate
-          sudo cp appynox_staging.crt /usr/local/share/ca-certificates/
+          echo "${{ secrets.CRT_CERTIFICATE }}" | base64 --decode > appynox.crt
+          sudo cp appynox.crt /usr/local/share/ca-certificates/
           sudo update-ca-certificates
 
-      - name: Create Redis ACL file
-        run: echo '${{ secrets.REDIS_ACL }}' > ./redis.acl
+      - name: Verify Trusted Certificates
+        run: |
+          echo "Listing trusted certificates:"
+          sudo ls -l /etc/ssl/certs/ | grep appynox
+          sudo openssl x509 -in /usr/local/share/ca-certificates/appynox.crt -text -noout
+
+      # - name: Create Redis ACL file
+      #   run: echo '${{ secrets.REDIS_ACL }}' > ./redis.acl
 
       - name: Build Docker Images
-        run: docker compose -f docker-compose.yml -f docker-compose.Development.yml build
+        run: docker compose build
+
+      # - name: Start Docker Containers
+      #   run: docker compose up -d
+
+      # - name: Find Container ID of appynox-gateway-ocelotgateway
+      #   id: find_container_id
+      #   run: echo "::set-output name=container_id::$(docker ps -qf name=appynox-gateway-ocelotgateway)"
+
+      # - name: Enter appynox-gateway-ocelotgateway Container and Check Health
+      #   run: |
+      #       container_id=${{ steps.find_container_id.outputs.container_id }}
+      #       echo "Container ID: $container_id"
+      #       docker exec -i $container_id bash -c "curl http://appynox-services-sso-webapi:7001/api/health"
+
+      # - name: Find Container ID of appynox-services-sso-webapi
+      #   id: find_sso_id
+      #   run: echo "::set-output name=container_id::$(docker ps -qf name=appynox-services-sso-webapi)"
+
+      # - name: Find Container ID of appynox-rabbitmq
+      #   id: fin_rabbitmq_id
+      #   run: echo "::set-output name=container_id::$(docker ps -qf name=appynox-rabbitmq)"
+
+      # - name: Wait 5 Minutes Before Printing Logs
+      #   run: sleep 300
+
+      # - name: Print Logs of appynox-services-sso-webapi
+      #   run: |
+      #     container_id=${{ steps.find_sso_id.outputs.container_id }}
+      #     echo "Container ID: $container_id"           
+      #     docker logs $container_id
+
+      # - name: Print Logs of appynox-rabbitmq
+      #   run: |
+      #     container_id=${{ steps.fin_rabbitmq_id.outputs.container_id }}
+      #     echo "Container ID: $container_id"           
+      #     docker logs $container_id
 
       - name: Run Integration Tests (SsoService)
         run: dotnet test ./src/Services/SsoService/Tests/IntegrationTests/AppyNox.Services.Sso.WebAPI.IntegrationTest --no-restore
