@@ -128,6 +128,11 @@ services:
       - "5435:5432"    
     networks:
       - nox_network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 20 
     restart: on-failure
 
 
