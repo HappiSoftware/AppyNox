@@ -64,11 +64,14 @@ jobs:
       - name: Create Redis ACL file
         run: echo '${{ secrets.REDIS_ACL }}' > ./redis.acl
 
-      - name: Check Docker Compose Version
-        run: docker compose version || docker-compose --version
+      - name: Run Docker Compose Up
+        run: docker compose up -d
 
-      - name: Build Docker Images
-        run: docker compose build
+      - name: Inspect Docker Network
+        run: docker network inspect appynox_nox_network
+
+      - name: List Running Containers
+        run: docker ps -a
 
       - name: Create Docker Network
         run: docker network create nox_network
@@ -99,18 +102,6 @@ jobs:
 
       - name: Run Unit Tests (SsoService - WebAPI)
         run: dotnet test ./src/Services/SsoService/Tests/UnitTests/AppyNox.Services.Sso.WebAPI.UnitTest/ --no-restore 
-
-      - name: Trust self-signed certificate
-        run: |
-          echo "${{ secrets.PFX_CERTIFICATE }}" | base64 --decode > appynox_staging.pfx
-          # Extract the certificate from the .pfx file
-          openssl pkcs12 -in appynox_staging.pfx -clcerts -nokeys -out appynox_staging.crt -password pass:${{ secrets.PFX_PASSWORD }}
-          # Trust the certificate
-          sudo cp appynox_staging.crt /usr/local/share/ca-certificates/
-          sudo update-ca-certificates
-
-      - name: Create Redis ACL file
-        run: echo '${{ secrets.REDIS_ACL }}' > ./redis.acl
 
       - name: Build Docker Images
         run: docker compose build
