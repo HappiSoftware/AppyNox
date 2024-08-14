@@ -29,15 +29,8 @@ public class SsoServiceFixture : DockerComposeTestBase, IDisposable
             Configuration = appsettings;
             string[] services =
                 [
-                    "appynox-rabbitmq-service",
-                    "appynox-common-rabbitmq-service",
-                    "appynox-consul",
-                    "appynox-gateway-ocelotgateway",
-                    "appynox-license-db",
                     "appynox-redis",
                     "appynox-services-license-webapi",
-                    "appynox-sso-db",
-                    "appynox-sso-saga-db",
                     "appynox-services-sso-webapi"
                 ];
 

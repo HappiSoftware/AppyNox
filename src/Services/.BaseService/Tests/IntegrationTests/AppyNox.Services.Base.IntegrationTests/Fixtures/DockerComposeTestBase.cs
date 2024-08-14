@@ -81,9 +81,9 @@ public abstract class DockerComposeTestBase : IDisposable
     {
         #region [ Logger ]
 
-        Log.Logger = new LoggerConfiguration().ReadFrom
-            .Configuration(configurationRoot)
-            .CreateLogger();
+        Log.Logger = new LoggerConfiguration()
+        .ReadFrom.Configuration(configurationRoot)
+        .CreateLogger();
 
         var loggerFactory = LoggerFactory.Create(builder =>
         {
