@@ -257,10 +257,18 @@ public abstract class DockerComposeTestBase : IDisposable
 
     private void StopDockerCompose()
     {
+        var containerId = ExecuteShellCommand("docker", "ps -qf name=appynox-services-sso-webapi", RootDirectory);
+        Logger.LogInformation($"Container ID for appynox-services-sso-webapi: {containerId}");
+
+        // Log the container logs before stopping
+        if (!string.IsNullOrEmpty(containerId))
+        {
+            ExecuteShellCommand("docker", $"logs {containerId.Trim()}", RootDirectory);
+        }
         ExecuteShellCommand("docker", "compose down", RootDirectory);
     }
 
-    private void ExecuteShellCommand(string command, string arguments, string workingDirectory = "", int timeoutInSeconds = 60)
+    private string ExecuteShellCommand(string command, string arguments, string workingDirectory = "", int timeoutInSeconds = 60)
     {
         Logger.LogInformation($"Executing command: {command} {arguments} in directory: {workingDirectory}");
 
@@ -330,6 +338,7 @@ public abstract class DockerComposeTestBase : IDisposable
         {
             throw new Exception($"Command '{command} {arguments}' failed with error: {errorBuilder.ToString()}");
         }
+        return outputBuilder.ToString();
     }
 
     #endregion
