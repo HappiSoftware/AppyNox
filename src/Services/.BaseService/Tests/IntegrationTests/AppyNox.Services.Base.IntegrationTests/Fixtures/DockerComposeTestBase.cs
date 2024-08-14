@@ -129,8 +129,9 @@ public abstract class DockerComposeTestBase : IDisposable
         }
     }
 
-    protected async Task WaitForServicesHealth(string healthUri, int maxAttempts = 10)
+    protected async Task WaitForServicesHealth(string healthUri)
     {
+        int maxAttempts = 42;
         int attempts = 0;
         while (attempts < maxAttempts)
         {
