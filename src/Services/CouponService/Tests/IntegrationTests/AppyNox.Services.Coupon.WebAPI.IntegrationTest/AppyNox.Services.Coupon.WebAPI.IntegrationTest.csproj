@@ -13,28 +13,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="..\..\..\..\.BaseService\Tests\IntegrationTests\AppyNox.Services.Base.IntegrationTests\serviceuris.json" Link="serviceuris.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\..\..\AppyNox.Services.Coupon.WebAPI\appsettings.Staging.json" Link="appsettings.Staging.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-	  <None Include="..\..\..\..\..\..\docker-compose.Staging.yml" Link="docker-compose.Staging.yml">
-		  <DependentUpon>docker-compose.yml</DependentUpon>
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-    <None Include="..\..\..\..\..\..\docker-compose.yml" Link="docker-compose.yml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="..\..\..\..\..\Gateways\AppyNox.Gateway.OcelotGateway\ssl\appynox.pfx" Link="ssl\appynox.pfx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.6" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.10.0" />
     <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
@@ -43,25 +21,12 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="coverlet.collector" Version="6.0.2">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
+    
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\.BaseService\Tests\IntegrationTests\AppyNox.Services.Base.IntegrationTests\AppyNox.Services.Base.IntegrationTests.csproj" />
     <ProjectReference Include="..\..\..\AppyNox.Services.Coupon.WebAPI\AppyNox.Services.Coupon.WebAPI.csproj" />
   </ItemGroup>
-
-	<ItemGroup>
-	  <None Update="ssl\appynox.pfx">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="ssl\" />
-	</ItemGroup>
 	
 </Project>

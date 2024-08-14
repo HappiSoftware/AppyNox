@@ -1,5 +1,3 @@
-version: '3.8'
-
 volumes:
   rabbitmq_data:
   common_rabbitmq_data:
@@ -12,63 +10,107 @@ volumes:
   license_db_data:
   seq_data:
 
+networks:
+  nox_network:
+    driver: bridge
+
 services:
   appynox-rabbitmq-service:
-    image: rabbitmq:management
+    image: rabbitmq:3.13-management-alpine
     environment:
       RABBITMQ_DEFAULT_USER: HappiCorp
       RABBITMQ_DEFAULT_PASS: HappiCorp
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
-    command:
-      [
-        "bash",
-        "-c",
-        "chmod 400 /var/lib/rabbitmq/.erlang.cookie; rabbitmq-server"
-      ]
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - nox_network
     restart: on-failure
 
+
   appynox-common-rabbitmq-service:
-    image: rabbitmq:management
+    image: rabbitmq:3.13-management-alpine
     environment:
       RABBITMQ_DEFAULT_USER: NoxFleetComm
       RABBITMQ_DEFAULT_PASS: NoxFleetComm
     volumes:
       - common_rabbitmq_data:/var/lib/rabbitmq
-    command:
-      [
-        "bash",
-        "-c",
-        "chmod 400 /var/lib/rabbitmq/.erlang.cookie; rabbitmq-server"
-      ]
+    ports:
+      - "5673:5672"
+      - "15673:15672" 
+    networks:
+      - nox_network 
     restart: on-failure
+
 
   appynox-consul:
     image: "hashicorp/consul:latest"
+    ports:
+      - "8500:8500"
+      - "8600:8600/udp"
+    networks:
+      - nox_network
+    restart: on-failure
+
 
   appynox-redis:
-    image: redis:latest
+    image: redis:alpine
+    # command: ["redis-server", "--aclfile", "/etc/redis/redis.acl"] 
     volumes:
       - redis_data:/data
-      - ./redis.acl:/etc/redis/redis.acl
-    command: ["redis-server", "--aclfile", "/etc/redis/redis.acl"] 
+      # - ./redis.acl:/etc/redis/redis.acl
+    ports:
+      - "6379:6379"
+    networks:
+      - nox_network
+    restart: on-failure
+
 
   appynox-redisinsight:
     image: redis/redisinsight:latest
     volumes:
       - redisinsight_data:/db
+    ports:
+      - "6999:8001"
+
+  appynox-seq:
+    image: datalust/seq:latest
+    environment:
+      ACCEPT_EULA: "Y"
+    volumes:
+      - seq_data:/data
+    ports:
+      - "5341:5341"
+      - "8081:80"
+    networks:
+      - nox_network
+    restart: on-failure   
+
 
   appynox-gateway-ocelotgateway:
     image: ${DOCKER_REGISTRY-}appynoxgatewayocelotgateway
+    build:
+      context: .
+      dockerfile: src/Gateways/AppyNox.Gateway.OcelotGateway/Dockerfile
     environment:
-      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_ENVIRONMENT=Staging
       - ASPNETCORE_URLS=https://+:443
-    depends_on:
-      - appynox-consul
+      - WAIT_HOSTS=appynox-consul:8500
+      - WAIT_TIMEOUT=300
+      - WAIT_SLEEP_INTERVAL=10
+      - WAIT_HOST_CONNECT_TIMEOUT=10 
     volumes:
-      - ./src/Gateways/AppyNox.Gateway.OcelotGateway/ssl:/https2:ro
+      - ./src/Gateways/AppyNox.Gateway.OcelotGateway/ssl:/ssl:ro
     ports:
       - "7000:443"
+    networks:
+      - nox_network 
+    restart: on-failure
+    depends_on:
+      - appynox-consul
+
 
   appynox-sso-db:
     image: postgres:latest
@@ -78,6 +120,12 @@ services:
       POSTGRES_PASSWORD: auth_password
     volumes:
       - sso_db_data:/var/lib/ssodb/data
+    ports:
+      - "5435:5432"    
+    networks:
+      - nox_network
+    restart: on-failure
+
 
   appynox-sso-saga-db:
     image: postgres:latest
@@ -87,19 +135,36 @@ services:
       POSTGRES_PASSWORD: auth_saga_password
     volumes:
       - sso_saga_db_data:/var/lib/ssodb/data
+    ports:
+      - "5430:5432"
+    networks:
+      - nox_network 
+    restart: on-failure
+
 
   appynox-services-sso-webapi:
     image: ${DOCKER_REGISTRY-}appynoxservicesssowebapi
+    build:
+      context: .
+      dockerfile: src/Services/SsoService/AppyNox.Services.Sso.WebAPI/Dockerfile
     environment:
-      - ASPNETCORE_ENVIRONMENT=Production
-      - ASPNETCORE_URLS=http://+:7001
-      - WAIT_HOSTS=appynox-sso-db:5432,appynox-sso-saga-db:5432,appynox-rabbitmq-service:5672,appynox-common-rabbitmq-service:5672
+      - ASPNETCORE_ENVIRONMENT=Staging
+      - ASPNETCORE_URLS=http://+:7001 
+      - WAIT_HOSTS=appynox-redis:6379,appynox-rabbitmq-service:5672,appynox-common-rabbitmq-service:5672,appynox-gateway-ocelotgateway:443,appynox-sso-db:5432,appynox-sso-saga-db:5432
       - WAIT_TIMEOUT=300
       - WAIT_SLEEP_INTERVAL=10
       - WAIT_HOST_CONNECT_TIMEOUT=10
-    volumes:
-      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
-      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+    networks:
+      - nox_network  
+    restart: on-failure
+    depends_on:
+      - appynox-redis
+      - appynox-rabbitmq-service 
+      - appynox-common-rabbitmq-service 
+      - appynox-gateway-ocelotgateway
+      - appynox-sso-db
+      - appynox-sso-saga-db
+
 
   appynox-coupon-db:
     image: postgres:latest
@@ -109,19 +174,34 @@ services:
       POSTGRES_PASSWORD: coupon_password
     volumes:
       - coupon_db_data:/var/lib/coupondb/data
+    ports:
+      - "5434:5432"
+    networks:
+      - nox_network
+    restart: on-failure
+    
 
   appynox-services-coupon-webapi:
     image: ${DOCKER_REGISTRY-}appynoxservicescouponwebapi
+    build:
+      context: .
+      dockerfile: src/Services/CouponService/AppyNox.Services.Coupon.WebAPI/Dockerfile
     environment:
-      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_ENVIRONMENT=Staging
       - ASPNETCORE_URLS=http://+:7002
-      - WAIT_HOSTS=appynox-coupon-db:5432,appynox-rabbitmq-service:5672
+      - WAIT_HOSTS=appynox-redis:6379,appynox-gateway-ocelotgateway:443,appynox-coupon-db:5432,appynox-rabbitmq-service:5672
       - WAIT_TIMEOUT=300
       - WAIT_SLEEP_INTERVAL=10
       - WAIT_HOST_CONNECT_TIMEOUT=10
-    volumes:
-      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
-      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+    networks:
+      - nox_network 
+    depends_on:
+      - appynox-redis
+      - appynox-gateway-ocelotgateway
+      - appynox-coupon-db
+      - appynox-rabbitmq-service
+    restart: on-failure
+
 
   appynox-license-db:
     image: postgres:latest
@@ -131,27 +211,30 @@ services:
       POSTGRES_PASSWORD: license_password
     volumes:
       - license_db_data:/var/lib/licensedb/data
+    ports:
+      - "5436:5432"
+    networks:
+      - nox_network  
+    restart: on-failure
+
 
   appynox-services-license-webapi:
     image: ${DOCKER_REGISTRY-}appynoxserviceslicensewebapi
+    build:
+      context: .
+      dockerfile: src/Services/LicenseService/AppyNox.Services.License.WebAPI/Dockerfile
     environment:
-      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_ENVIRONMENT=Staging
       - ASPNETCORE_URLS=http://+:7003
-      - WAIT_HOSTS=appynox-license-db:5432,appynox-rabbitmq-service:5672
+      - WAIT_HOSTS=appynox-redis:6379,appynox-gateway-ocelotgateway:443,appynox-license-db:5432,appynox-rabbitmq-service:5672
       - WAIT_TIMEOUT=300
       - WAIT_SLEEP_INTERVAL=10
       - WAIT_HOST_CONNECT_TIMEOUT=10
-    volumes:
-      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
-      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
-
-  appynox-seq:
-    image: datalust/seq:latest
-    environment:
-      ACCEPT_EULA: "Y"
-    ports:
-      - "5341:5341"
-      - "8081:80"
-    volumes:
-      - seq_data:/data
-    restart: always
+    networks:
+      - nox_network
+    restart: on-failure    
+    depends_on:
+      - appynox-redis
+      - appynox-gateway-ocelotgateway
+      - appynox-license-db
+      - appynox-rabbitmq-service

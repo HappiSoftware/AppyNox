@@ -1,6 +1,7 @@
 ﻿using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
 using AppyNox.Services.Base.IntegrationTests.Helpers;
 using AppyNox.Services.Base.IntegrationTests.URIs;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Serilog;
@@ -9,7 +10,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 
-namespace AppyNox.Services.Base.IntegrationTests.Ductus;
+namespace AppyNox.Services.Base.IntegrationTests.Fixtures;
 
 /// <summary>
 /// Provides a base class for integration tests using Docker Compose.
@@ -29,6 +30,8 @@ public abstract class DockerComposeTestBase : IDisposable
     public string BearerToken { get; private set; } = string.Empty;
     public ServiceURIs ServiceURIs { get; private set; }
     protected NoxLogger<DockerComposeTestBase> Logger { get; private set; }
+
+    private string RootDirectory { get; set; } = string.Empty;
 
     #endregion
 
@@ -55,7 +58,10 @@ public abstract class DockerComposeTestBase : IDisposable
                 "Service URIs configuration section is missing or invalid."
             );
 
-        Client = new HttpClient { BaseAddress = new(ServiceURIs.GatewayURI) };
+        Client = new HttpClient()
+        {
+            BaseAddress = new Uri(ServiceURIs.GatewayURI)
+        };
 
         JsonSerializerOptions = new JsonSerializerOptions
         {
@@ -65,18 +71,6 @@ public abstract class DockerComposeTestBase : IDisposable
 
     #endregion
 
-    #region [ Public Methods ]
-
-    /// <summary>
-    /// Disposes resources used by the test, handling container teardown.
-    /// </summary>
-    public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
-
-    #endregion
 
     #region [ Protected Methods ]
 
@@ -100,7 +94,29 @@ public abstract class DockerComposeTestBase : IDisposable
 
         #endregion
 
-        Logger.LogInformation("Initializing Docker Compose Test Base");
+        Logger.LogInformation("Initializing Docker Compose Test Base", false);
+
+        string currentDirectory = Directory.GetCurrentDirectory();
+        string targetDirectoryName = "AppyNox";
+
+        while (true)
+        {
+            var directoryInfo = new DirectoryInfo(currentDirectory);
+
+            if (directoryInfo.Name.Equals(targetDirectoryName, StringComparison.OrdinalIgnoreCase))
+            {
+                break; // We've reached the target directory
+            }
+
+            if (directoryInfo.Parent == null)
+            {
+                throw new InvalidOperationException($"Target directory '{targetDirectoryName}' not found in the path '{Directory.GetCurrentDirectory()}'");
+            }
+
+            currentDirectory = directoryInfo.Parent.FullName;
+        }
+        RootDirectory = Path.GetFullPath(currentDirectory);
+        Logger.LogInformation($"Resolved RootDirectory: {RootDirectory}");
 
         try
         {
@@ -111,25 +127,6 @@ public abstract class DockerComposeTestBase : IDisposable
             Logger.LogError(ex, "Error starting Docker Compose");
             throw;
         }
-    }
-
-    /// <summary>
-    /// Disposes of the resources used by the DockerComposeTestBase instance.
-    /// </summary>
-    /// <param name="disposing">Indicates whether the method is being called from the Dispose method (true) or from the finalizer (false).</param>
-    protected virtual void Dispose(bool disposing)
-    {
-        if (_disposed)
-        {
-            return;
-        }
-
-        if (disposing)
-        {
-            StopDockerCompose();
-            Client?.Dispose();
-        }
-        _disposed = true;
     }
 
     protected async Task WaitForServicesHealth(string healthUri, int maxAttempts = 10)
@@ -208,42 +205,64 @@ public abstract class DockerComposeTestBase : IDisposable
         );
     }
 
+    protected static async Task IsDatabaseHealthy(DbContext context, int maxAttempts = 10, int delayInSeconds = 5)
+    {
+        int attempts = 0;
+        while (attempts < maxAttempts)
+        {
+            try
+            {
+                var canConnect = await context.Database.CanConnectAsync();
+                if (canConnect) return;
+            }
+            catch (Exception)
+            {
+            }
+
+            await Task.Delay(TimeSpan.FromSeconds(delayInSeconds));
+            attempts++;
+        }
+
+        throw new Exception("Database did not get healthy.");
+    }
+
     #endregion
 
     #region [ Destructor ]
 
     /// <summary>
-    /// Finalizes the DockerComposeTestBase instance, ensuring proper resource cleanup.
+    /// Disposes of the resources used by the DockerComposeTestBase instance.
     /// </summary>
-    ~DockerComposeTestBase()
+    public virtual void Dispose()
     {
-        Dispose(false);
+        if (!_disposed)
+        {
+            StopDockerCompose();
+            Client?.Dispose(); // Assuming Client is a managed resource
+            _disposed = true;
+            GC.SuppressFinalize(this);
+        }
     }
 
     #endregion
 
     #region [ Private Methods ]
 
-    private void BuildDockerCompose()
-    {
-        ExecuteShellCommand("docker", "compose -f docker-compose.yml -f docker-compose.Staging.yml build");
-    }
-
     private void StartDockerCompose(string[] services)
     {
         string serviceList = string.Join(" ", services);
-        Logger.LogInformation($"Starting Docker Compose services: {serviceList}");
-        ExecuteShellCommand("docker", $"compose -f docker-compose.yml -f docker-compose.Staging.yml up -d {serviceList}");
+        ExecuteShellCommand("docker", $"compose up -d {serviceList}", RootDirectory);
     }
-
 
     private void StopDockerCompose()
     {
-        ExecuteShellCommand("docker", "compose down");
+        ExecuteShellCommand("docker", "compose down", RootDirectory);
     }
 
-    private void ExecuteShellCommand(string command, string arguments)
+    private void ExecuteShellCommand(string command, string arguments, string workingDirectory = "", int timeoutInSeconds = 60)
     {
+        Logger.LogInformation($"Executing command: {command} {arguments} in directory: {workingDirectory}");
+
         var process = new Process
         {
             StartInfo = new ProcessStartInfo
@@ -253,34 +272,64 @@ public abstract class DockerComposeTestBase : IDisposable
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 UseShellExecute = false,
-                CreateNoWindow = true
+                CreateNoWindow = true,
+                WorkingDirectory = workingDirectory
             }
         };
 
-        var output = new StringBuilder();
-        var error = new StringBuilder();
+        var outputBuilder = new StringBuilder();
+        var errorBuilder = new StringBuilder();
 
-        process.OutputDataReceived += (sender, args) => output.AppendLine(args.Data);
-        process.ErrorDataReceived += (sender, args) => error.AppendLine(args.Data);
+        process.OutputDataReceived += (sender, e) =>
+        {
+            if (!string.IsNullOrEmpty(e.Data))
+            {
+                outputBuilder.AppendLine(e.Data);
+                Logger.LogInformation(e.Data); // Log the output in real-time
+            }
+        };
+
+        process.ErrorDataReceived += (sender, e) =>
+        {
+            if (!string.IsNullOrEmpty(e.Data))
+            {
+                errorBuilder.AppendLine(e.Data);
+                Logger.LogWarning(e.Data); // Log the error in real-time
+            }
+        };
 
         process.Start();
-
         process.BeginOutputReadLine();
         process.BeginErrorReadLine();
 
-        process.WaitForExit();
+        // Wait for the process to exit or timeout
+        bool exited = process.WaitForExit(timeoutInSeconds * 1000);
 
-        // Ensure asynchronous read operations are complete
-        process.WaitForExit();
+        if (!exited)
+        {
+            TimeoutException exception = new($"The command '{command} {arguments}' timed out after {timeoutInSeconds} seconds.");
+            // Kill the process if it did not exit in time
+            process.Kill();
+            Logger.LogError(exception, $"The command '{command} {arguments}' timed out after {timeoutInSeconds} seconds.");
+            Logger.LogError(exception, "Captured Output:");
+            Logger.LogError(exception, outputBuilder.ToString()); // Log the captured output
+            Logger.LogError(exception, "Captured Errors:");
+            Logger.LogError(exception, errorBuilder.ToString()); // Log the captured errors
+            throw exception;
+        }
+
+        // Log remaining output and error after process exits
+        Logger.LogInformation(outputBuilder.ToString());
+        if (errorBuilder.Length > 0)
+        {
+            Logger.LogWarning(errorBuilder.ToString());
+        }
 
         if (process.ExitCode != 0)
         {
-            throw new Exception($"Command '{command} {arguments}' failed with error: {error}");
+            throw new Exception($"Command '{command} {arguments}' failed with error: {errorBuilder.ToString()}");
         }
-
-        Logger.LogInformation(output.ToString());
     }
-
 
     #endregion
 }
