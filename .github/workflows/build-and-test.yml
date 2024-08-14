@@ -111,7 +111,8 @@ jobs:
       - name: Print Logs of appynox-services-sso-webapi
         run: |
           container_id=${{ steps.find_sso_id.outputs.container_id }}
-          echo "Container ID: $container_id"           docker logs $container_id
+          echo "Container ID: $container_id"           
+          docker logs $container_id
 
 
       # - name: Run Integration Tests (SsoService)
