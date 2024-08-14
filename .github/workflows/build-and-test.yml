@@ -88,8 +88,8 @@ jobs:
       - name: Build Docker Images
         run: docker compose build
 
-      - name: Start Docker Containers
-        run: docker compose up -d
+      # - name: Start Docker Containers
+      #   run: docker compose up -d
 
       # - name: Find Container ID of appynox-gateway-ocelotgateway
       #   id: find_container_id
@@ -101,34 +101,34 @@ jobs:
       #       echo "Container ID: $container_id"
       #       docker exec -i $container_id bash -c "curl http://appynox-services-sso-webapi:7001/api/health"
 
-      - name: Find Container ID of appynox-services-sso-webapi
-        id: find_sso_id
-        run: echo "::set-output name=container_id::$(docker ps -qf name=appynox-services-sso-webapi)"
+      # - name: Find Container ID of appynox-services-sso-webapi
+      #   id: find_sso_id
+      #   run: echo "::set-output name=container_id::$(docker ps -qf name=appynox-services-sso-webapi)"
 
-      - name: Find Container ID of appynox-rabbitmq
-        id: fin_rabbitmq_id
-        run: echo "::set-output name=container_id::$(docker ps -qf name=appynox-rabbitmq)"
+      # - name: Find Container ID of appynox-rabbitmq
+      #   id: fin_rabbitmq_id
+      #   run: echo "::set-output name=container_id::$(docker ps -qf name=appynox-rabbitmq)"
 
-      - name: Wait 5 Minutes Before Printing Logs
-        run: sleep 300
+      # - name: Wait 5 Minutes Before Printing Logs
+      #   run: sleep 300
 
-      - name: Print Logs of appynox-services-sso-webapi
-        run: |
-          container_id=${{ steps.find_sso_id.outputs.container_id }}
-          echo "Container ID: $container_id"           
-          docker logs $container_id
+      # - name: Print Logs of appynox-services-sso-webapi
+      #   run: |
+      #     container_id=${{ steps.find_sso_id.outputs.container_id }}
+      #     echo "Container ID: $container_id"           
+      #     docker logs $container_id
 
-      - name: Print Logs of appynox-rabbitmq
-        run: |
-          container_id=${{ steps.fin_rabbitmq_id.outputs.container_id }}
-          echo "Container ID: $container_id"           
-          docker logs $container_id
+      # - name: Print Logs of appynox-rabbitmq
+      #   run: |
+      #     container_id=${{ steps.fin_rabbitmq_id.outputs.container_id }}
+      #     echo "Container ID: $container_id"           
+      #     docker logs $container_id
 
       - name: Run Integration Tests (SsoService)
         run: dotnet test ./src/Services/SsoService/Tests/IntegrationTests/AppyNox.Services.Sso.WebAPI.IntegrationTest --no-restore
 
-      # - name: Run Integration Tests (CouponService)
-      #   run: dotnet test ./src/Services/CouponService/Tests/IntegrationTests/AppyNox.Services.Coupon.WebAPI.IntegrationTest --no-restore
+      - name: Run Integration Tests (CouponService)
+        run: dotnet test ./src/Services/CouponService/Tests/IntegrationTests/AppyNox.Services.Coupon.WebAPI.IntegrationTest --no-restore
 
-      # - name: Run Integration Tests (LicenseService)
-      #   run: dotnet test ./src/Services/LicenseService/Tests/IntegrationTests/AppyNox.Services.License.WebAPI.IntegrationTest --no-restore  
+      - name: Run Integration Tests (LicenseService)
+        run: dotnet test ./src/Services/LicenseService/Tests/IntegrationTests/AppyNox.Services.License.WebAPI.IntegrationTest --no-restore  
