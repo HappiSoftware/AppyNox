@@ -1,0 +1,23 @@
+name: Cleanup Old Workflows
+
+on:
+  schedule:
+    - cron: '0 0 * * 0' # Runs weekly at midnight on Sunday
+  workflow_dispatch: # Adds manual trigger
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install GitHub CLI
+        run: sudo apt-get install -y gh
+
+      - name: Authenticate GitHub CLI
+        run: gh auth login --with-token < ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Delete old workflow runs
+        run: |
+          gh run list --limit 100 --json databaseId,status | jq -r '.[] | select(.status == "completed" or .status == "failed" or .status == "cancelled") | .databaseId' | while read run_id; do
+            gh run delete $run_id -y
+          done
