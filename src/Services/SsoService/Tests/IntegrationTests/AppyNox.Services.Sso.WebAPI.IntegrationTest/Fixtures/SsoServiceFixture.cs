@@ -1,4 +1,4 @@
-﻿using AppyNox.Services.Base.IntegrationTests.Ductus;
+﻿using AppyNox.Services.Base.IntegrationTests.Fixtures;
 using AppyNox.Services.Base.IntegrationTests.Helpers;
 using AppyNox.Services.Sso.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -6,7 +6,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace AppyNox.Services.Sso.WebAPI.IntegrationTest.Fixtures;
 
-public class SsoServiceFixture : DockerComposeTestBase
+public class SsoServiceFixture : DockerComposeTestBase, IDisposable
 {
     #region [ Properties ]
 
@@ -20,13 +20,16 @@ public class SsoServiceFixture : DockerComposeTestBase
 
     #region [ Public Constructors ]
 
-    public SsoServiceFixture()
+    public SsoServiceFixture() 
+        : base()
     {
-        IConfigurationRoot appsettings = IntegrationTestHelpers.GetConfiguration("appsettings.Staging");
-        Configuration = appsettings;
-        string[] services =
-            [
-                "appynox-rabbitmq-service",
+        try
+        {
+            IConfigurationRoot appsettings = IntegrationTestHelpers.GetConfiguration("appsettings.Staging");
+            Configuration = appsettings;
+            string[] services =
+                [
+                    "appynox-rabbitmq-service",
                     "appynox-common-rabbitmq-service",
                     "appynox-consul",
                     "appynox-gateway-ocelotgateway",
@@ -36,71 +39,54 @@ public class SsoServiceFixture : DockerComposeTestBase
                     "appynox-sso-db",
                     "appynox-sso-saga-db",
                     "appynox-services-sso-webapi"
-            ];
+                ];
 
-        Initialize(appsettings, "SsoIntegrationTestHost", services);
+            Initialize(appsettings, "SsoIntegrationTestHost", services);
 
-        WaitForServicesHealth(ServiceURIs.SsoServiceHealthURI).GetAwaiter().GetResult();
-        AuthenticateAndGetToken().GetAwaiter().GetResult();
+            Task.WhenAll(
+                    WaitForServicesHealth(ServiceURIs.GatewayHealthURI),
+                    WaitForServicesHealth(ServiceURIs.SsoServiceHealthURI)
+                ).GetAwaiter().GetResult();
+            AuthenticateAndGetToken().GetAwaiter().GetResult();
 
-        DbContextOptions<IdentityDatabaseContext> options = new DbContextOptionsBuilder<IdentityDatabaseContext>()
-            .UseNpgsql(appsettings.GetConnectionString("TestConnection"))
-            .Options;
+            DbContextOptions<IdentityDatabaseContext> options = new DbContextOptionsBuilder<IdentityDatabaseContext>()
+                .UseNpgsql(appsettings.GetConnectionString("TestConnection"))
+                .Options;
 
-        DbContextOptions<IdentitySagaDatabaseContext> sagaOptions = new DbContextOptionsBuilder<IdentitySagaDatabaseContext>()
-            .UseNpgsql(appsettings.GetConnectionString("TestConnection"))
-            .Options;
+            DbContextOptions<IdentitySagaDatabaseContext> sagaOptions = new DbContextOptionsBuilder<IdentitySagaDatabaseContext>()
+                .UseNpgsql(appsettings.GetConnectionString("TestConnection"))
+                .Options;
 
-        DbContext = new IdentityDatabaseContext(options);
-        SagaDbContext = new IdentitySagaDatabaseContext(sagaOptions);
+            DbContext = new IdentityDatabaseContext(options);
+            SagaDbContext = new IdentitySagaDatabaseContext(sagaOptions);
 
-        Task.WhenAll(
-                IsDatabaseHealthy(DbContext),
-                IsDatabaseHealthy(SagaDbContext)
-            ).GetAwaiter().GetResult();
+            Task.WhenAll(
+                    IsDatabaseHealthy(DbContext),
+                    IsDatabaseHealthy(SagaDbContext)
+                ).GetAwaiter().GetResult();
+        }
+        catch (Exception)
+        {
+            Dispose();
+            throw;
+        }
     }
 
     #endregion
 
-    #region [ Protected Methods ]
+    #region [ IDisposable ]
 
-    protected override void Dispose(bool disposing)
+    public override void Dispose()
     {
-        if (disposing)
-        {
-            // Dispose managed resources specific to this class
-            Client?.Dispose();
-            DbContext?.Dispose();
-        }
+        // Dispose managed resources specific to this class
+        Client?.Dispose();
+        DbContext?.Dispose();
 
         // Call the base class's Dispose method
-        base.Dispose(disposing);
+        GC.SuppressFinalize(this);
+        base.Dispose();
     }
 
     #endregion
 
-    #region [ Private Methods ]
-
-    private static async Task IsDatabaseHealthy(DbContext context, int maxAttempts = 10, int delayInSeconds = 5)
-    {
-        int attempts = 0;
-        while (attempts < maxAttempts)
-        {
-            try
-            {
-                var canConnect = await context.Database.CanConnectAsync();
-                if (canConnect) return;
-            }
-            catch (Exception)
-            {
-            }
-
-            await Task.Delay(TimeSpan.FromSeconds(delayInSeconds));
-            attempts++;
-        }
-
-        throw new Exception("Database did not get healthy.");
-    }
-
-    #endregion
 }

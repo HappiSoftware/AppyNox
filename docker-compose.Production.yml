@@ -1,5 +1,3 @@
-version: '3.8'
-
 networks:
   nox_network:
     driver: overlay
@@ -8,54 +6,54 @@ networks:
 
 services:
   appynox-rabbitmq-service:
-    environment:
-      RABBITMQ_DEFAULT_USER: HappiCorp
-      RABBITMQ_DEFAULT_PASS: HappiCorp
-    networks:
-      - nox_network
+      environment:
+        RABBITMQ_DEFAULT_USER: HappiCorp
+        RABBITMQ_DEFAULT_PASS: HappiCorp
+      ports:
+        - "15672:15672"
+      networks:
+        - nox_network
+      restart: always
+
 
   appynox-common-rabbitmq-service:
-    environment:
-      RABBITMQ_DEFAULT_USER: NoxFleetComm
-      RABBITMQ_DEFAULT_PASS: NoxFleetComm
-    networks:
-      - nox_common_network
+      environment:
+        RABBITMQ_DEFAULT_USER: NoxFleetComm
+        RABBITMQ_DEFAULT_PASS: NoxFleetComm
+      ports:
+        - "15673:15672"
+      networks:
+        - nox_common_network
+      restart: always
+
 
   appynox-consul:
-    deploy:
-      replicas: 1
-      update_config:
-        parallelism: 1
-        delay: 10s
-      restart_policy:
-        condition: on-failure
-    networks:
-      - nox_network
-
-  appynox-redis:
-    deploy:
-      replicas: 1
-      update_config:
-        parallelism: 1
-        delay: 10s
-      restart_policy:
-        condition: on-failure
-    networks:
-      - nox_network
-
-  appynox-redisinsight:
-    image: redislabs/redisinsight
     networks:
       - nox_network
     ports:
-      - "8001:8001"
-    deploy:
-      replicas: 1
-      update_config:
-        parallelism: 1
-        delay: 10s
-      restart_policy:
-        condition: on-failure
+      - "8500:8500" 
+    restart: always
+
+
+  appynox-redis:
+    networks:
+      - nox_network
+    restart: always
+
+
+  appynox-redisinsight:
+    networks:
+      - nox_network
+    ports:
+      - "6999:8001"
+    restart: always
+
+
+  appynox-seq:
+    networks:
+      - nox_network
+    restart: always
+
 
   appynox-gateway-ocelotgateway:
     deploy:
@@ -65,16 +63,25 @@ services:
         delay: 10s
       restart_policy:
         condition: on-failure
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
     networks:
       - nox_network
+
 
   appynox-sso-db:
+    ports:
+      []
     networks:
       - nox_network
 
+
   appynox-sso-saga-db:
+    ports:
+      []
     networks:
       - nox_network
+
 
   appynox-services-sso-webapi:
     deploy:
@@ -84,12 +91,20 @@ services:
         delay: 10s
       restart_policy:
         condition: on-failure
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+    ports:
+      [] 
     networks:
       - nox_network
 
+
   appynox-coupon-db:
+    ports:
+      []
     networks:
       - nox_network
+
 
   appynox-services-coupon-webapi:
     deploy:
@@ -99,12 +114,20 @@ services:
         delay: 10s
       restart_policy:
         condition: on-failure
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+    ports:
+      [] 
     networks:
       - nox_network
 
+
   appynox-license-db:
+    ports:
+      []
     networks:
       - nox_network
+
 
   appynox-services-license-webapi:
     deploy:
@@ -114,5 +137,9 @@ services:
         delay: 10s
       restart_policy:
         condition: on-failure
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+    ports:
+      [] 
     networks:
       - nox_network

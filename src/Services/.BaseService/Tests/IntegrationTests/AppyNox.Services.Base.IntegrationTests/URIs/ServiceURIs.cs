@@ -8,6 +8,7 @@
         #region [ Properties ]
 
         public string GatewayURI { get; set; } = string.Empty;
+        public string GatewayHealthURI { get; set; } = string.Empty;
 
         public string CouponServiceURI { get; set; } = string.Empty;
 

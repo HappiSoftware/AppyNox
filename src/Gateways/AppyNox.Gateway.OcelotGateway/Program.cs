@@ -19,26 +19,11 @@ await builder.AddConsulConfiguration("OcelotService", "ocelot");
 
 #region [ Logger Setup ]
 
-builder.Host.UseSerilog((context, services, config) =>
-    config.ReadFrom.Configuration(context.Configuration)
-          .ReadFrom.Services(services)
-);
-builder.Services.AddSingleton(typeof(INoxApiLogger<>), typeof(NoxApiLogger<>));
-
-#region [ Logger for Before DI Initialization ]
-
 Log.Logger = new LoggerConfiguration()
-    .ReadFrom.Configuration(builder.Configuration)
-    .CreateLogger();
+        .ReadFrom.Configuration(builder.Configuration)
+        .CreateLogger();
 
-var loggerFactory = LoggerFactory.Create(builder =>
-{
-    builder.AddSerilog();
-});
-var logger = loggerFactory.CreateLogger<WebApplicationBuilder>();
-NoxLogger<WebApplicationBuilder> noxLogger = new(logger, "GatewayHost");
-
-#endregion
+builder.Host.UseSerilog(Log.Logger);
 
 #endregion
 
@@ -54,26 +39,23 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
     }
     else if (builder.Environment.IsStaging() || builder.Environment.IsProduction())
     {
-        fileName = "/https2/appynox.pfx";
+        fileName = "/ssl/appynox.pfx";
     }
 
-    // Check if the file exists and log the result
-    if (File.Exists(fileName))
+    if (!File.Exists(fileName))
     {
-        noxLogger.LogInformation($"SSL Certificate file found at {fileName}.");
-    }
-    else
-    {
-        noxLogger.LogWarning($"SSL Certificate file not found at {fileName}.");
+        throw new FileNotFoundException($"The SSL certificate file was not found at path: {fileName}");
     }
 
     serverOptions.ConfigureEndpointDefaults(listenOptions =>
     {
-        listenOptions.UseHttps(fileName ?? throw new InvalidOperationException("SSL certificate file path could not be determined."), "happi2023");
+        listenOptions.UseHttps(fileName, "happi2024");
     });
 });
 
 #endregion
+
+builder.Services.AddSingleton(typeof(INoxApiLogger<>), typeof(NoxApiLogger<>));
 
 #region [ CORS ]
 
@@ -111,10 +93,10 @@ app.UseMiddleware<LoggingMiddleware>();
 
 app.UseMiddleware<OcelotCorrelationIdMiddleware>();
 
-app.MapHealthChecks("/health");
+app.UseHealthChecks("/health");
 
 await app.UseOcelot();
 
 #endregion
 
-app.Run();
+await app.RunAsync();

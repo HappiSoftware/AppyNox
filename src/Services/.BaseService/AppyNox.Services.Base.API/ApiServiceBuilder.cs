@@ -54,7 +54,7 @@ public static class ApiServiceBuilder
         var configuration = builder.Configuration;
         NoxLogger<WebApplicationBuilder> logger = builder.SetUpLogger();
 
-        if(options.UseConsulKV)
+        if (options.UseConsulKV)
         {
             await builder.AddConsulConfiguration(configuration["Consul:ServiceName"] 
                 ?? throw new InvalidOperationException("Consul:ServiceName was empty!"));

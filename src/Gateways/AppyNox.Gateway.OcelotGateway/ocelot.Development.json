@@ -15,19 +15,6 @@
     },
     "Routes": [
       {
-        "DownstreamPathTemplate": "/health",
-        "UpstreamPathTemplate": "/health",
-        "UpstreamHttpMethod": [ "Get", "Options" ],
-        "DownstreamScheme": "https",
-        "DownstreamHostAndPorts": [
-          {
-            "Host": "localhost",
-            "Port": 7000
-          }
-        ],
-        "Priority": 1
-      },
-      {
         "UseServiceDiscovery": true,
         "ServiceName": "SsoService",
 
