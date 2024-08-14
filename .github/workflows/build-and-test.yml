@@ -115,8 +115,8 @@ jobs:
           docker logs $container_id
 
 
-      # - name: Run Integration Tests (SsoService)
-      #   run: dotnet test ./src/Services/SsoService/Tests/IntegrationTests/AppyNox.Services.Sso.WebAPI.IntegrationTest --no-restore
+      - name: Run Integration Tests (SsoService)
+        run: dotnet test ./src/Services/SsoService/Tests/IntegrationTests/AppyNox.Services.Sso.WebAPI.IntegrationTest --no-restore
 
       # - name: Run Integration Tests (CouponService)
       #   run: dotnet test ./src/Services/CouponService/Tests/IntegrationTests/AppyNox.Services.Coupon.WebAPI.IntegrationTest --no-restore
