@@ -1,19 +1,44 @@
-# Docker Swarm Management for AppyNox
+# Docker Management for AppyNox
 
 ## Building Docker Images
 
 To build all necessary Docker images with Docker Compose, use the following command:
 
 ```bash
-docker-compose -f docker-compose.yml -f docker-compose.Development.yml build
+docker compose build
 ```
 
 **Troubleshooting:** 
 If you encounter errors such as `failed to receive status: rpc error: code = Unavailable desc = error reading from server: EOF`, try building the images individually. For example:
 
 ```bash
-docker-compose -f docker-compose.yml -f docker-compose.Development.yml build appynox-services-sso-webapi
+docker compose build appynox-services-sso-webapi
 ```
+
+To run the project locally you can use docker compose.
+
+```bash
+docker compose up
+```
+
+<br>
+<br>
+
+**Running specified Services Only** <br>
+To run the specific services only such as Sso or Coupon you can use the `docker-compose.Development.yml`. This yml will only launch the essantial containers such as rabbitmq and consul etc.
+After running these containers you can run the desired services on Visual Studio.
+
+```bash
+docker compose -f docker-compose.Development.yml up
+```
+
+**Important** <br>
+When running services in Visual Studio, they operate on your local machine, while Consul is hosted within a Docker network. To enable Consul to effectively communicate with 
+these services for health monitoring, a simple `localhost` reference is insufficient. Therefore, the service URL should be modified to utilize `host.docker.internal`, 
+which allows seamless connectivity between the Docker network and the locally running services. You can find the mentioned reference in `appsettings.Development.json:Consul:HealthCheckServiceHost`.
+
+<br>
+<br>
 
 ## Initializing Docker Swarm
 
@@ -25,23 +50,19 @@ docker swarm init
 
 This will turn your Docker Engine into a Swarm manager node.
 
+<br>
+<br>
+
 ## Deploying Services
 
 Deploy your services using the following command:
 
 ```bash
-docker stack deploy -c docker-compose.yml -c docker-compose.Production.yml AppyNox
+docker stack deploy AppyNox
 ```
 
-**Note:** 
-If API services do not initialize correctly in the swarm, you may need to troubleshoot by first running the containers with Docker Compose:
-
-```bash
-docker-compose -f docker-compose.yml -f docker-compose.Development.yml up
-docker-compose -f docker-compose.yml -f docker-compose.Development.yml down
-```
-
-Afterward, try redeploying the stack again.
+<br>
+<br>
 
 ## Additional Commands and Tips
 
@@ -61,14 +82,6 @@ To scale a service to a specific number of replicas:
 docker service scale <service_name>=<replica_count>
 ```
 
-### Sso Only Startup
-
-If the project you are working on is using Nox Sso, you can simply run the necessary services via:
-
-```bash
-docker stack deploy -c docker-compose.Sso.yml AppyNox_Sso
-```
-
 ### Inspecting Swarm Nodes
 
 List services, check service status, view logs, and inspect nodes:
@@ -79,6 +92,3 @@ docker service ps [NodeId]
 docker service logs [ContainerId]
 docker service inspect --pretty [NodeId]
 ```
-
-
-This format should ensure all text is contained within the code block for easy copying.
