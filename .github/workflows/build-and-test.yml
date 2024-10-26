@@ -49,26 +49,26 @@ jobs:
       - name: Build .NET Solution
         run: dotnet build ./AppyNox.sln --configuration Release --no-restore
 
-      # - name: Run Unit Tests (BaseService - Infrastructure)
-      #   run: dotnet test ./src/Services/.BaseService/Tests/UnitTests/AppyNox.Services.Base.Infrastructure.UnitTest/ --no-restore
+      - name: Run Unit Tests (BaseService - Infrastructure)
+        run: dotnet test ./src/Services/.BaseService/Tests/UnitTests/AppyNox.Services.Base.Infrastructure.UnitTest/ --no-restore
 
-      # - name: Run Unit Tests (CouponService - Infrastructure)
-      #   run: dotnet test ./src/Services/CouponService/Tests/UnitTests/AppyNox.Services.Coupon.Infrastructure.UnitTest/ --no-restore
+      - name: Run Unit Tests (CouponService - Infrastructure)
+        run: dotnet test ./src/Services/CouponService/Tests/UnitTests/AppyNox.Services.Coupon.Infrastructure.UnitTest/ --no-restore
 
-      # - name: Run Unit Tests (CouponService - Application)
-      #   run: dotnet test ./src/Services/CouponService/Tests/UnitTests/AppyNox.Services.Coupon.Application.UnitTest/ --no-restore
+      - name: Run Unit Tests (CouponService - Application)
+        run: dotnet test ./src/Services/CouponService/Tests/UnitTests/AppyNox.Services.Coupon.Application.UnitTest/ --no-restore
 
-      # - name: Run Unit Tests (LicenseService - Infrastructure)
-      #   run: dotnet test ./src/Services/LicenseService/Tests/UnitTests/AppyNox.Services.License.Infrastructure.UnitTest/ --no-restore
+      - name: Run Unit Tests (LicenseService - Infrastructure)
+        run: dotnet test ./src/Services/LicenseService/Tests/UnitTests/AppyNox.Services.License.Infrastructure.UnitTest/ --no-restore
 
-      # - name: Run Unit Tests (LicenseService - Application)
-      #   run: dotnet test ./src/Services/LicenseService/Tests/UnitTests/AppyNox.Services.License.Application.UnitTest/ --no-restore
+      - name: Run Unit Tests (LicenseService - Application)
+        run: dotnet test ./src/Services/LicenseService/Tests/UnitTests/AppyNox.Services.License.Application.UnitTest/ --no-restore
 
-      # - name: Run Unit Tests (SsoService - Application)
-      #   run: dotnet test ./src/Services/SsoService/Tests/UnitTests/AppyNox.Services.Sso.Application.UnitTest/ --no-restore
+      - name: Run Unit Tests (SsoService - Application)
+        run: dotnet test ./src/Services/SsoService/Tests/UnitTests/AppyNox.Services.Sso.Application.UnitTest/ --no-restore
 
-      # - name: Run Unit Tests (SsoService - WebAPI)
-      #   run: dotnet test ./src/Services/SsoService/Tests/UnitTests/AppyNox.Services.Sso.WebAPI.UnitTest/ --no-restore 
+      - name: Run Unit Tests (SsoService - WebAPI)
+        run: dotnet test ./src/Services/SsoService/Tests/UnitTests/AppyNox.Services.Sso.WebAPI.UnitTest/ --no-restore 
 
       - name: Trust self-signed certificate
         run: |
@@ -87,42 +87,6 @@ jobs:
 
       - name: Build Docker Images
         run: docker compose build
-
-      # - name: Start Docker Containers
-      #   run: docker compose up -d
-
-      # - name: Find Container ID of appynox-gateway-ocelotgateway
-      #   id: find_container_id
-      #   run: echo "::set-output name=container_id::$(docker ps -qf name=appynox-gateway-ocelotgateway)"
-
-      # - name: Enter appynox-gateway-ocelotgateway Container and Check Health
-      #   run: |
-      #       container_id=${{ steps.find_container_id.outputs.container_id }}
-      #       echo "Container ID: $container_id"
-      #       docker exec -i $container_id bash -c "curl http://appynox-services-sso-webapi:7001/api/health"
-
-      # - name: Find Container ID of appynox-services-sso-webapi
-      #   id: find_sso_id
-      #   run: echo "::set-output name=container_id::$(docker ps -qf name=appynox-services-sso-webapi)"
-
-      # - name: Find Container ID of appynox-rabbitmq
-      #   id: fin_rabbitmq_id
-      #   run: echo "::set-output name=container_id::$(docker ps -qf name=appynox-rabbitmq)"
-
-      # - name: Wait 5 Minutes Before Printing Logs
-      #   run: sleep 300
-
-      # - name: Print Logs of appynox-services-sso-webapi
-      #   run: |
-      #     container_id=${{ steps.find_sso_id.outputs.container_id }}
-      #     echo "Container ID: $container_id"           
-      #     docker logs $container_id
-
-      # - name: Print Logs of appynox-rabbitmq
-      #   run: |
-      #     container_id=${{ steps.fin_rabbitmq_id.outputs.container_id }}
-      #     echo "Container ID: $container_id"           
-      #     docker logs $container_id
 
       - name: Run Integration Tests (SsoService)
         run: dotnet test ./src/Services/SsoService/Tests/IntegrationTests/AppyNox.Services.Sso.WebAPI.IntegrationTest --no-restore

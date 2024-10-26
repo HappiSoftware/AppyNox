@@ -8,11 +8,7 @@ namespace AppyNox.Services.Sso.WebAPI.Exceptions.Base;
 
 internal enum NoxSsoApiExceptionCode
 {
-    SignInError = 1000,
-
-    Teapot = 1001,
-
-    RefreshTokenInvalid = 1002,
+    RefreshTokenInvalid = 1000,
 }
 
 #endregion

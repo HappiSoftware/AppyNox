@@ -8,9 +8,9 @@ namespace AppyNox.Services.License.Application.Exceptions;
 
 internal enum NoxLicenseApplicationExceptionCode
 {
-    AssignKeyCommandError = 1000,
+    DtoMappingRegistryError = 900,
 
-    DtoMappingRegistryError = 1001
+    AssignKeyCommandError = 1000
 }
 
 #endregion

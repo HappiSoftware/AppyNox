@@ -11,8 +11,6 @@ internal enum NoxInfrastructureExceptionCode
 {
     DevelopmentError = 500,
 
-    Undefined = 990,
-
     CommitError = 1000,
 
     WrongIdError = 1001,
@@ -43,9 +41,8 @@ internal enum NoxInfrastructureExceptionCode
 
     AuthorizationFailed = 1014,
 
-    AuthorizationInvalidToken = 1015,
+    AuthorizationInvalidToken = 1015
 
-    PatchingDataError = 1016
 }
 
 #endregion

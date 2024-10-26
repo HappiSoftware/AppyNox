@@ -8,26 +8,27 @@ Nox is handling simple Auditable Data operations automatically. However for enab
 <summary>Click to expand the example</summary>
 
 ```cs
-namespace AppyNox.Services.Coupon.Domain.Entities
+using AppyNox.Services.Base.Domain.Interfaces;
+
+namespace AppyNox.Services.Coupon.Domain.Entities;
+
+public class Ticket : IAuditable // Omitted
 {
-    public class CouponEntity : IEntityWithGuid, IAuditableData
-    {
-        // omitted
+    // Omitted
 
-        #region [ IAuditableData ]
+    #region [ IAuditable ]
 
-        public string CreatedBy { get; set; } = string.Empty;
+    public string CreatedBy { get; } = string.Empty;
 
-        public DateTime CreationDate { get; set; }
+    public DateTime CreationDate { get; }
 
-        public string UpdatedBy { get; set; } = string.Empty;
+    public string? UpdatedBy { get; }
 
-        public DateTime? UpdateDate { get; set; }
+    public DateTime? UpdateDate { get; }
 
-        #endregion
+    #endregion
 
-        // omitted
-    }
+    // Omitted
 }
 ```
 
@@ -35,23 +36,25 @@ namespace AppyNox.Services.Coupon.Domain.Entities
 
 <br>
 
-2. **IAuditDto interface should be added to dto class.**
+2. **AuditInformation should be added to dto class.**
 
 <details>
 <summary>Click to expand the example</summary>
 
 ```cs
-namespace AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base
+using AppyNox.Services.Base.Application.Dtos;
+using AppyNox.Services.Coupon.Application.Dtos.TicketDtos.DetailLevel;
+
+namespace AppyNox.Services.Coupon.Application.Dtos.TicketDtos.Models.Basic;
+
+[TicketDetailLevel(TicketDataAccessDetailLevel.Simple)]
+public class TicketSimpleDto : TicketSimpleCreateDto, IAuditDto
 {
-    [CouponDetailLevel(CouponDataAccessDetailLevel.Simple)]
-    public class CouponSimpleDto : CouponSimpleCreateDto, IAuditDto
-    {
-        #region [ IAuditDto ]
+    #region [ Properties ]
 
-        public AuditInfo AuditInfo { get; set; } = null!;
+    public AuditInformation AuditInformation { get; set; } = default!;
 
-        #endregion
-    }
+    #endregion
 }
 ```
 
@@ -59,27 +62,30 @@ namespace AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base
 
 <br>
 
-3. **In Dto Mapping `MapAuditInfo` should be used**
+3. **In Dto Mapping `MapAuditInformation` should be used**
 
 <details>
 <summary>Click to expend the example</summary>
 
 ```cs
-namespace AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Mappings
+using AppyNox.Services.Base.Application.Extensions;
+using AppyNox.Services.Coupon.Application.Dtos.TicketDtos.Models.Basic;
+using AppyNox.Services.Coupon.Domain.Entities;
+using AutoMapper;
+
+namespace AppyNox.Services.Coupon.Application.Dtos.TicketDtos.Profiles;
+
+public class TicketProfile : Profile
 {
-    public class CouponMapping : Profile
+    #region [ Public Constructors ]
+
+    public TicketProfile()
     {
-        #region [ Public Constructors ]
-
-        public CouponMapping()
-        {
-            // omitted
-            CreateMap<CouponEntity, CouponSimpleDto>().MapAuditInfo().ReverseMap();
-            // omitted
-        }
-
-        #endregion
+        CreateMap<Ticket, TicketSimpleDto>().MapAuditInformation();
+        // Omitted
     }
+
+    #endregion
 }
 ```
 
@@ -88,5 +94,6 @@ namespace AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Mappings
 4. **During saving UnitOfWorkBase should be used.** <br>
    A UnitOfWork which inherits UnitOfWorkBase should be used.
 
-5. **During saving UserId should be passed to SaveAsynch** <br>
-   UnitOfWorkBase `SetCurrentUser(string userId)` should be called before calling `SaveChangesAsync()` or UserId should be passed to `SaveChangesAsync(string userId)`
+5. **During saving isSystem should be informed** <br>
+   If isSystem parameter is set to true, CreatedBy or UpdatedBy fields will be populated as `System`, if not (default is false) mentioned fields will be set to current user id.
+   This information is accessed from `NoxContext.UserId`. Keep in mind that if `NoxContext.UserId` is not set, mentioned fields will be set as `Unknown`.

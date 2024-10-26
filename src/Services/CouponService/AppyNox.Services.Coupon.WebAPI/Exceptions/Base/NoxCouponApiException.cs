@@ -1,5 +1,4 @@
 ﻿using AppyNox.Services.Base.API.Exceptions.Base;
-using AppyNox.Services.Base.Core.Common;
 using AppyNox.Services.Base.Core.Enums;
 using AppyNox.Services.Coupon.Domain;
 

@@ -36,8 +36,6 @@ internal enum NoxSsoInfrastructureExceptionCode
 
     RefreshTokenNotFound = 1013,
 
-    MessageDataNotDeserialized = 1014,
-
 }
 
 #endregion

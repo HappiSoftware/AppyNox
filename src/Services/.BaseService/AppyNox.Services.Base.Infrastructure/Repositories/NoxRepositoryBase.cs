@@ -114,7 +114,7 @@ public abstract class NoxRepositoryBase<TEntity> : INoxRepository<TEntity> where
 
             var query = _dbSet
             .AsQueryable()
-            .AsNoTracking();                      
+            .AsNoTracking();                
 
             // Validate and apply sorting
             if (!string.IsNullOrWhiteSpace(queryParameters.SortBy) && IsValidExpression(queryParameters.SortBy, _logger))

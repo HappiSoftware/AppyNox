@@ -8,13 +8,13 @@ namespace AppyNox.Services.Coupon.Application.Exceptions.Base;
 
 internal enum NoxCouponApplicationExceptionCode
 {
+    DtoMappingRegistryError = 900,
+
     IdsMismatch = 1000,
 
     UnexpectedUpdateCommandError = 1001,
 
-    UnexpectedDomainEventHandlerError = 1002,
-
-    DtoMappingRegistryError = 1003
+    UnexpectedDomainEventHandlerError = 1002
 }
 
 #endregion

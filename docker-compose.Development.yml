@@ -12,12 +12,10 @@ networks:
 
 services:
   appynox-rabbitmq-service:
-    image: rabbitmq:management
+    image: rabbitmq:3.13-management-alpine
     environment:
       RABBITMQ_DEFAULT_USER: HappiCorp
       RABBITMQ_DEFAULT_PASS: HappiCorp
-    command: >
-      bash -c "chmod 400 /var/lib/rabbitmq/.erlang.cookie && rabbitmq-server"
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     ports:
@@ -29,12 +27,10 @@ services:
 
 
   appynox-common-rabbitmq-service:
-    image: rabbitmq:management
+    image: rabbitmq:3.13-management-alpine
     environment:
       RABBITMQ_DEFAULT_USER: NoxFleetComm
       RABBITMQ_DEFAULT_PASS: NoxFleetComm
-    command: >
-      bash -c "chmod 400 /var/lib/rabbitmq/.erlang.cookie && rabbitmq-server"
     volumes:
       - common_rabbitmq_data:/var/lib/rabbitmq
     ports:
@@ -56,11 +52,11 @@ services:
 
 
   appynox-redis:
-    image: redis:latest
-    command: ["redis-server", "--aclfile", "/etc/redis/redis.acl"] 
+    image: redis:alpine
+    # command: ["redis-server", "--aclfile", "/etc/redis/redis.acl"] 
     volumes:
       - redis_data:/data
-      - ./redis.acl:/etc/redis/redis.acl
+      # - ./redis.acl:/etc/redis/redis.acl
     ports:
       - "6379:6379"
     networks:
@@ -86,4 +82,4 @@ services:
       - "8081:80"
     networks:
       - nox_network
-    restart: on-failure 
+    restart: on-failure
