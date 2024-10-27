@@ -11,10 +11,6 @@
 [![Docker](https://img.shields.io/badge/Docker-Latest-brightgreen.svg)](https://www.docker.com/)
 [![Docker Compose](https://img.shields.io/badge/Docker_Compose-Latest-brightgreen.svg)](https://docs.docker.com/compose/)
 [![Docker Swarm](https://img.shields.io/badge/Docker_Swarm-Latest-brightgreen.svg)](https://docs.docker.com/engine/swarm/)
-[![MassTransit](https://img.shields.io/badge/MassTransit-Latest-brightgreen.svg)](https://masstransit-project.com/)
-[![MediatR](https://img.shields.io/badge/MediatR-Latest-brightgreen.svg)](https://github.com/jbogard/MediatR)
-[![Quartz](https://img.shields.io/badge/Quartz-Latest-brightgreen.svg)](https://www.quartz-scheduler.net/)
-
 
 AppyNox is a cutting-edge microservice template emphasizing clean code, lightweight architecture, and adherence to best practices in software development. Designed with Onion Architecture, Domain-Driven Design (DDD), and Test-Driven Design (TDD) at its core, AppyNox integrates the latest versions of essential libraries and frameworks. The introduction of Docker Compose for building images and Docker Swarm for deployment enhances its robust infrastructure, making it ideal for building and managing microservices.
 
