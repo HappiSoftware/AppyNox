@@ -1,7 +1,6 @@
 - [Home](/)
 - Setup
   - [Installation](installation.md)
-  - [Getting Started](started.md)
   - [SonarQube](sonar.md)
 - Development Documentations
   - [Adding New Service](addingnewservice.md)
