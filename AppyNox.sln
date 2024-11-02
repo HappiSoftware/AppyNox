@@ -164,7 +164,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\build-and-test-multi-step.yml = .github\workflows\build-and-test-multi-step.yml
 		.github\workflows\build-and-test.yml = .github\workflows\build-and-test.yml
-		pr-checks.yml = pr-checks.yml
+		.github\workflows\pr-checks.yml = .github\workflows\pr-checks.yml
 		.github\workflows\publish-nuget.yml = .github\workflows\publish-nuget.yml
 	EndProjectSection
 EndProject
