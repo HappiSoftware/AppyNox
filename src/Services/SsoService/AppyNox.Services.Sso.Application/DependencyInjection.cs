@@ -1,10 +1,7 @@
 ﻿using AppyNox.Services.Base.Application;
-using AppyNox.Services.Base.Application.DtoUtilities;
 using AppyNox.Services.Base.Application.Interfaces.Loggers;
-using FluentValidation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using System.Reflection;
 
 namespace AppyNox.Services.Sso.Application
