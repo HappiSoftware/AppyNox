@@ -54,4 +54,4 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Run Unit Tests for ${{ matrix.service.name }}
-        run: dotnet test ${{ matrix.service.path }} --no-restore
+        run: dotnet test ${{ matrix.service.path }}
