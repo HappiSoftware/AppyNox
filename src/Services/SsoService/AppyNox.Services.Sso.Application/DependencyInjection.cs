@@ -20,7 +20,7 @@ namespace AppyNox.Services.Sso.Application
         /// Adds Sso services and AutoMapper configurations to the specified IServiceCollection.
         /// </summary>
         /// <param name="services">The IServiceCollection to add services to.</param>
-        /// <param name="configuration">The IConfiguration instance to access application settings.</param>
+        /// <param name="configuration">The IConfiguration instance to access application settings.</param> // test
         public static IServiceCollection AddSsoApplication(
             this IServiceCollection services,
             IConfiguration configuration,
