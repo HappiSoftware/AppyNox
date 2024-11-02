@@ -1,81 +1,47 @@
 name: PR Checks
-
 on:
   pull_request:
     branches: [master]
+  workflow_dispatch:
 
 env:
   DOTNET_VERSION: '8.0.x'
 
 jobs:
-  setup:
+  build-and-test:
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
         uses: actions/checkout@v4
-
+        
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
-      - name: Restore all dependencies
+      - name: Restore dependencies
         run: dotnet restore ./AppyNox.sln
 
-      - name: Cache .NET packages
-        id: cache
-        uses: actions/cache@v4
-        with:
-          path: ~/.nuget/packages
-          key: ${{ runner.os }}-dotnet-packages-${{ hashFiles('**/*.csproj') }}
-          restore-keys: |
-            ${{ runner.os }}-dotnet-packages-
+      - name: Build .NET Solution
+        run: dotnet build ./AppyNox.sln --configuration Release --no-restore
 
-  base-service-tests:
-    runs-on: ubuntu-latest
-    needs: setup
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v4
-
-      - name: Run BaseService Unit Tests
+      - name: Run Unit Tests (BaseService - Infrastructure)
         run: dotnet test ./src/Services/.BaseService/Tests/UnitTests/AppyNox.Services.Base.Infrastructure.UnitTest/ --no-restore
 
-  coupon-service-tests:
-    runs-on: ubuntu-latest
-    needs: setup
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v4
-
-      - name: Run CouponService Unit Tests (Infrastructure)
+      - name: Run Unit Tests (CouponService - Infrastructure)
         run: dotnet test ./src/Services/CouponService/Tests/UnitTests/AppyNox.Services.Coupon.Infrastructure.UnitTest/ --no-restore
 
-      - name: Run CouponService Unit Tests (Application)
+      - name: Run Unit Tests (CouponService - Application)
         run: dotnet test ./src/Services/CouponService/Tests/UnitTests/AppyNox.Services.Coupon.Application.UnitTest/ --no-restore
 
-  license-service-tests:
-    runs-on: ubuntu-latest
-    needs: setup
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v4
-
-      - name: Run LicenseService Unit Tests (Infrastructure)
+      - name: Run Unit Tests (LicenseService - Infrastructure)
         run: dotnet test ./src/Services/LicenseService/Tests/UnitTests/AppyNox.Services.License.Infrastructure.UnitTest/ --no-restore
 
-      - name: Run LicenseService Unit Tests (Application)
+      - name: Run Unit Tests (LicenseService - Application)
         run: dotnet test ./src/Services/LicenseService/Tests/UnitTests/AppyNox.Services.License.Application.UnitTest/ --no-restore
 
-  sso-service-tests:
-    runs-on: ubuntu-latest
-    needs: setup
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v4
-
-      - name: Run SsoService Unit Tests (Application)
+      - name: Run Unit Tests (SsoService - Application)
         run: dotnet test ./src/Services/SsoService/Tests/UnitTests/AppyNox.Services.Sso.Application.UnitTest/ --no-restore
 
-      - name: Run SsoService Unit Tests (WebAPI)
-        run: dotnet test ./src/Services/SsoService/Tests/UnitTests/AppyNox.Services.Sso.WebAPI.UnitTest/ --no-restore
+      - name: Run Unit Tests (SsoService - WebAPI)
+        run: dotnet test ./src/Services/SsoService/Tests/UnitTests/AppyNox.Services.Sso.WebAPI.UnitTest/ --no-restore 
