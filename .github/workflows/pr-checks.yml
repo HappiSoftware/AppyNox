@@ -3,6 +3,7 @@ name: PR Checks
 on:
   pull_request:
     branches: [master]
+  workflow_dispatch:
 
 env:
   DOTNET_VERSION: '8.0.x'
@@ -19,8 +20,11 @@ jobs:
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
-      - name: Restore all dependencies
+      - name: Restore dependencies
         run: dotnet restore ./AppyNox.sln
+
+      - name: Build .NET Solution
+        run: dotnet build ./AppyNox.sln --configuration Release --no-restore
 
       - name: Cache .NET packages
         id: cache
