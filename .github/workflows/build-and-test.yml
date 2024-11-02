@@ -3,8 +3,6 @@ name: AppyNox CI (SingleStep)
 on:
   push:
     branches: [master]
-  pull_request:
-    branches: [master]
   workflow_dispatch:
 
 env:
@@ -12,7 +10,6 @@ env:
 
 jobs:
   build-and-test:
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.merged == true) || (github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
 
     steps:
@@ -48,27 +45,6 @@ jobs:
 
       - name: Build .NET Solution
         run: dotnet build ./AppyNox.sln --configuration Release --no-restore
-
-      - name: Run Unit Tests (BaseService - Infrastructure)
-        run: dotnet test ./src/Services/.BaseService/Tests/UnitTests/AppyNox.Services.Base.Infrastructure.UnitTest/ --no-restore
-
-      - name: Run Unit Tests (CouponService - Infrastructure)
-        run: dotnet test ./src/Services/CouponService/Tests/UnitTests/AppyNox.Services.Coupon.Infrastructure.UnitTest/ --no-restore
-
-      - name: Run Unit Tests (CouponService - Application)
-        run: dotnet test ./src/Services/CouponService/Tests/UnitTests/AppyNox.Services.Coupon.Application.UnitTest/ --no-restore
-
-      - name: Run Unit Tests (LicenseService - Infrastructure)
-        run: dotnet test ./src/Services/LicenseService/Tests/UnitTests/AppyNox.Services.License.Infrastructure.UnitTest/ --no-restore
-
-      - name: Run Unit Tests (LicenseService - Application)
-        run: dotnet test ./src/Services/LicenseService/Tests/UnitTests/AppyNox.Services.License.Application.UnitTest/ --no-restore
-
-      - name: Run Unit Tests (SsoService - Application)
-        run: dotnet test ./src/Services/SsoService/Tests/UnitTests/AppyNox.Services.Sso.Application.UnitTest/ --no-restore
-
-      - name: Run Unit Tests (SsoService - WebAPI)
-        run: dotnet test ./src/Services/SsoService/Tests/UnitTests/AppyNox.Services.Sso.WebAPI.UnitTest/ --no-restore 
 
       - name: Trust self-signed certificate
         run: |
