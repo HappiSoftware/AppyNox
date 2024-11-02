@@ -10,8 +10,6 @@ env:
 jobs:
   setup:
     runs-on: ubuntu-latest
-    outputs:
-      dotnet-cache: ${{ steps.cache.outputs.cache-hit }}
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -30,6 +28,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-dotnet-packages-
 
+      - name: Restore all dependencies
+        run: dotnet restore
+
   base-service-tests:
     runs-on: ubuntu-latest
     needs: setup
@@ -37,7 +38,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
 
-      - name: Restore and Run BaseService Unit Tests
+      - name: Run BaseService Unit Tests
         run: dotnet test ./src/Services/.BaseService/Tests/UnitTests/AppyNox.Services.Base.Infrastructure.UnitTest/ --no-restore
 
   coupon-service-tests:
@@ -47,7 +48,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
 
-      - name: Restore and Run CouponService Unit Tests (Infrastructure)
+      - name: Run CouponService Unit Tests (Infrastructure)
         run: dotnet test ./src/Services/CouponService/Tests/UnitTests/AppyNox.Services.Coupon.Infrastructure.UnitTest/ --no-restore
 
       - name: Run CouponService Unit Tests (Application)
@@ -77,4 +78,4 @@ jobs:
         run: dotnet test ./src/Services/SsoService/Tests/UnitTests/AppyNox.Services.Sso.Application.UnitTest/ --no-restore
 
       - name: Run SsoService Unit Tests (WebAPI)
-        run: dotnet test ./src/Services/SsoService/Tests/UnitTests/AppyNox.Services.Sso.WebAPI.UnitTest/ --no-restore 
+        run: dotnet test ./src/Services/SsoService/Tests/UnitTests/AppyNox.Services.Sso.WebAPI.UnitTest/ --no-restore
