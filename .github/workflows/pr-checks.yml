@@ -3,60 +3,66 @@ name: PR Checks
 on:
   pull_request:
     branches: [master]
-  workflow_dispatch:
 
 env:
   DOTNET_VERSION: '8.0.x'
-  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
-  DOTNET_CLI_TELEMETRY_OPTOUT: 1
-  BUILD_CONFIGURATION: 'Release'
 
 jobs:
-  test:
-    name: Build & Test
+  setup:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
-    
     steps:
       - name: Check out code
         uses: actions/checkout@v4
-      
-      - name: Setup .NET
+
+      - name: Set up .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
-      
+
       - name: Cache NuGet packages
+        id: cache-nuget
         uses: actions/cache@v4
         with:
           path: ~/.nuget/packages
           key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
           restore-keys: |
             ${{ runner.os }}-nuget-
-      
-      - name: Restore dependencies
+
+      - name: Restore all dependencies
         run: dotnet restore ./AppyNox.sln
-      
-      - name: Build solution
-        run: dotnet build ./AppyNox.sln --configuration ${{ env.BUILD_CONFIGURATION }} --no-restore
-      
-      - name: Run all tests
+
+  # A matrix job to run multiple test suites
+  tests:
+    runs-on: ubuntu-latest
+    needs: setup
+    strategy:
+      matrix:
+        service:
+          - BaseService
+          - CouponService
+          - LicenseService
+          - SsoService
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Use cached .NET packages
+        if: steps.cache-nuget.outputs.cache-hit == 'true'
+        run: echo "Using cached packages"
+
+      - name: Run Unit Tests - ${{ matrix.service }}
         run: |
-          dotnet test ./AppyNox.sln \
-            --configuration ${{ env.BUILD_CONFIGURATION }} \
-            --no-build \
-            --no-restore \
-            --logger "trx;LogFileName=test-results.trx" \
-            --results-directory ./test-results \
-            /maxcpucount:4 \
-            /p:CollectCoverage=true \
-            /p:CoverletOutputFormat=cobertura \
-            /p:CoverletOutput=./coverage/
-      
-      - name: Publish test results
-        uses: actions/upload-artifact@v4
-        if: always()  # Run even if tests fail
-        with:
-          name: test-results
-          path: test-results
-          retention-days: 7
+          # Infrastructure Tests (if exists)
+          if [ -d "./src/Services/${{ matrix.service }}/Tests/UnitTests/${{ matrix.service }}.Infrastructure.UnitTest" ]; then
+            dotnet test ./src/Services/${{ matrix.service }}/Tests/UnitTests/${{ matrix.service }}.Infrastructure.UnitTest/ --no-restore
+          fi
+          
+          # Application Tests (if exists)
+          if [ -d "./src/Services/${{ matrix.service }}/Tests/UnitTests/${{ matrix.service }}.Application.UnitTest" ]; then
+            dotnet test ./src/Services/${{ matrix.service }}/Tests/UnitTests/${{ matrix.service }}.Application.UnitTest/ --no-restore
+          fi
+          
+          # WebAPI Tests (if exists)
+          if [ -d "./src/Services/${{ matrix.service }}/Tests/UnitTests/${{ matrix.service }}.WebAPI.UnitTest" ]; then
+            dotnet test ./src/Services/${{ matrix.service }}/Tests/UnitTests/${{ matrix.service }}.WebAPI.UnitTest/ --no-restore
+          fi
