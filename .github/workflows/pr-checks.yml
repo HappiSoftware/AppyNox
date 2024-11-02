@@ -8,181 +8,50 @@ env:
   DOTNET_VERSION: '8.0.x'
 
 jobs:
-  setup:
+  build-and-test:
     runs-on: ubuntu-latest
-    outputs:
-      cache-key: ${{ steps.create-cache-key.outputs.cache-key }}
     steps:
       - name: Check out code
         uses: actions/checkout@v4
-
-      - name: Create cache key
-        id: create-cache-key
-        run: echo "cache-key=${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}" >> $GITHUB_OUTPUT
-
+        
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
-
+          
       - name: Cache NuGet packages
         uses: actions/cache@v4
         with:
           path: ~/.nuget/packages
-          key: ${{ steps.create-cache-key.outputs.cache-key }}
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
           restore-keys: |
             ${{ runner.os }}-nuget-
 
       - name: Restore dependencies
         run: dotnet restore ./AppyNox.sln
 
-      - name: Build solution
+      - name: Build .NET Solution
         run: dotnet build ./AppyNox.sln --configuration Release --no-restore
 
-      # Cache build outputs
-      - name: Cache build outputs
-        uses: actions/cache@v4
-        with:
-          path: |
-            **/bin
-            **/obj
-          key: ${{ runner.os }}-build-${{ github.sha }}
-
-  base-service-tests:
-    needs: setup
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v4
-
-      - name: Set up .NET Core
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
-
-      # Restore NuGet packages from cache
-      - name: Cache NuGet packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.nuget/packages
-          key: ${{ needs.setup.outputs.cache-key }}
-          restore-keys: |
-            ${{ runner.os }}-nuget-
-
-      # Restore build outputs
-      - name: Restore build outputs
-        uses: actions/cache@v4
-        with:
-          path: |
-            **/bin
-            **/obj
-          key: ${{ runner.os }}-build-${{ github.sha }}
-
+      # Base Service Tests
       - name: Run BaseService Unit Tests
         run: dotnet test ./src/Services/.BaseService/Tests/UnitTests/AppyNox.Services.Base.Infrastructure.UnitTest/ --no-restore --no-build
 
-  coupon-service-tests:
-    needs: setup
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v4
-
-      - name: Set up .NET Core
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
-
-      # Restore NuGet packages from cache
-      - name: Cache NuGet packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.nuget/packages
-          key: ${{ needs.setup.outputs.cache-key }}
-          restore-keys: |
-            ${{ runner.os }}-nuget-
-
-      # Restore build outputs
-      - name: Restore build outputs
-        uses: actions/cache@v4
-        with:
-          path: |
-            **/bin
-            **/obj
-          key: ${{ runner.os }}-build-${{ github.sha }}
-
+      # Coupon Service Tests
       - name: Run CouponService Unit Tests (Infrastructure)
         run: dotnet test ./src/Services/CouponService/Tests/UnitTests/AppyNox.Services.Coupon.Infrastructure.UnitTest/ --no-restore --no-build
 
       - name: Run CouponService Unit Tests (Application)
         run: dotnet test ./src/Services/CouponService/Tests/UnitUnits/AppyNox.Services.Coupon.Application.UnitTest/ --no-restore --no-build
 
-  license-service-tests:
-    needs: setup
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v4
-
-      - name: Set up .NET Core
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
-
-      # Restore NuGet packages from cache
-      - name: Cache NuGet packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.nuget/packages
-          key: ${{ needs.setup.outputs.cache-key }}
-          restore-keys: |
-            ${{ runner.os }}-nuget-
-
-      # Restore build outputs
-      - name: Restore build outputs
-        uses: actions/cache@v4
-        with:
-          path: |
-            **/bin
-            **/obj
-          key: ${{ runner.os }}-build-${{ github.sha }}
-
+      # License Service Tests
       - name: Run LicenseService Unit Tests (Infrastructure)
         run: dotnet test ./src/Services/LicenseService/Tests/UnitTests/AppyNox.Services.License.Infrastructure.UnitTest/ --no-restore --no-build
 
       - name: Run LicenseService Unit Tests (Application)
         run: dotnet test ./src/Services/LicenseService/Tests/UnitTests/AppyNox.Services.License.Application.UnitTest/ --no-restore --no-build
 
-  sso-service-tests:
-    needs: setup
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v4
-
-      - name: Set up .NET Core
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
-
-      # Restore NuGet packages from cache
-      - name: Cache NuGet packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.nuget/packages
-          key: ${{ needs.setup.outputs.cache-key }}
-          restore-keys: |
-            ${{ runner.os }}-nuget-
-
-      # Restore build outputs
-      - name: Restore build outputs
-        uses: actions/cache@v4
-        with:
-          path: |
-            **/bin
-            **/obj
-          key: ${{ runner.os }}-build-${{ github.sha }}
-
+      # SSO Service Tests
       - name: Run SsoService Unit Tests (Application)
         run: dotnet test ./src/Services/SsoService/Tests/UnitTests/AppyNox.Services.Sso.Application.UnitTest/ --no-restore --no-build
 
