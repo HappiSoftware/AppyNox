@@ -1,4 +1,5 @@
 name: PR Checks
+
 on:
   pull_request:
     branches: [master]
@@ -8,7 +9,7 @@ env:
   DOTNET_VERSION: '8.0.x'
 
 jobs:
-  build-and-test:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
@@ -25,23 +26,32 @@ jobs:
       - name: Build .NET Solution
         run: dotnet build ./AppyNox.sln --configuration Release --no-restore
 
-      - name: Run Unit Tests (BaseService - Infrastructure)
-        run: dotnet test ./src/Services/.BaseService/Tests/UnitTests/AppyNox.Services.Base.Infrastructure.UnitTest/ --no-restore
+      - name: Cache .NET packages
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-dotnet-packages-${{ hashFiles('**/*.csproj') }}
+          restore-keys: |
+            ${{ runner.os }}-dotnet-packages-
 
-      - name: Run Unit Tests (CouponService - Infrastructure)
-        run: dotnet test ./src/Services/CouponService/Tests/UnitTests/AppyNox.Services.Coupon.Infrastructure.UnitTest/ --no-restore
+  unit-tests:
+    runs-on: ubuntu-latest
+    needs: build
+    strategy:
+      matrix:
+        service:
+          - { name: "BaseService", path: "./src/Services/.BaseService/Tests/UnitTests/AppyNox.Services.Base.Infrastructure.UnitTest/" }
+          - { name: "CouponService - Infrastructure", path: "./src/Services/CouponService/Tests/UnitTests/AppyNox.Services.Coupon.Infrastructure.UnitTest/" }
+          - { name: "CouponService - Application", path: "./src/Services/CouponService/Tests/UnitTests/AppyNox.Services.Coupon.Application.UnitTest/" }
+          - { name: "LicenseService - Infrastructure", path: "./src/Services/LicenseService/Tests/UnitTests/AppyNox.Services.License.Infrastructure.UnitTest/" }
+          - { name: "LicenseService - Application", path: "./src/Services/LicenseService/Tests/UnitTests/AppyNox.Services.License.Application.UnitTest/" }
+          - { name: "SsoService - Application", path: "./src/Services/SsoService/Tests/UnitTests/AppyNox.Services.Sso.Application.UnitTest/" }
+          - { name: "SsoService - WebAPI", path: "./src/Services/SsoService/Tests/UnitTests/AppyNox.Services.Sso.WebAPI.UnitTest/" }
 
-      - name: Run Unit Tests (CouponService - Application)
-        run: dotnet test ./src/Services/CouponService/Tests/UnitTests/AppyNox.Services.Coupon.Application.UnitTest/ --no-restore
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
 
-      - name: Run Unit Tests (LicenseService - Infrastructure)
-        run: dotnet test ./src/Services/LicenseService/Tests/UnitTests/AppyNox.Services.License.Infrastructure.UnitTest/ --no-restore
-
-      - name: Run Unit Tests (LicenseService - Application)
-        run: dotnet test ./src/Services/LicenseService/Tests/UnitTests/AppyNox.Services.License.Application.UnitTest/ --no-restore
-
-      - name: Run Unit Tests (SsoService - Application)
-        run: dotnet test ./src/Services/SsoService/Tests/UnitTests/AppyNox.Services.Sso.Application.UnitTest/ --no-restore
-
-      - name: Run Unit Tests (SsoService - WebAPI)
-        run: dotnet test ./src/Services/SsoService/Tests/UnitTests/AppyNox.Services.Sso.WebAPI.UnitTest/ --no-restore 
+      - name: Run Unit Tests for ${{ matrix.service.name }}
+        run: dotnet test ${{ matrix.service.path }}
