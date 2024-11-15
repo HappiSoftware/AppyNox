@@ -1,9 +1,11 @@
 using AppyNox.Services.Base.API;
+using AppyNox.Services.Base.API.Constants;
 using AppyNox.Services.Base.Infrastructure.Extensions;
 using AppyNox.Services.Coupon.Application;
 using AppyNox.Services.Coupon.Domain;
 using AppyNox.Services.Coupon.Infrastructure;
 using AppyNox.Services.Coupon.Infrastructure.Data;
+using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +25,7 @@ var app = builder.Build();
 
 app.ConfigureNoxApi(options =>
 {
+    options.Versions = [NoxVersions.v1_0, NoxVersions.v1_1];
     options.LocalizationServices = (localizerFactory) =>
     {
         localizerFactory.AddCouponDomainLocalizationService();

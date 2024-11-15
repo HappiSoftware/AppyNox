@@ -37,8 +37,6 @@ public class ProductRepositoryUnitTest(RepositoryFixture fixture) : IClassFixtur
         ProductRepository repository = new(context, _noxRepositoryLoggerStub);
         QueryParameters queryParameters = new()
         {
-            Access = string.Empty,
-            DetailLevel = "Simple",
             PageNumber = 1,
             PageSize = 1,
         };
@@ -57,8 +55,6 @@ public class ProductRepositoryUnitTest(RepositoryFixture fixture) : IClassFixtur
         ProductRepository repository = new(context, _noxRepositoryLoggerStub);
         QueryParameters queryParameters = new()
         {
-            Access = string.Empty,
-            DetailLevel = "Simple",
             PageNumber = 1,
             PageSize = 2,
         };
@@ -80,8 +76,6 @@ public class ProductRepositoryUnitTest(RepositoryFixture fixture) : IClassFixtur
         ProductRepository repository = new(context, _noxRepositoryLoggerStub);
         QueryParameters queryParameters = new()
         {
-            Access = string.Empty,
-            DetailLevel = "Simple",
             PageNumber = 2,
             PageSize = 1,
         };
@@ -102,8 +96,6 @@ public class ProductRepositoryUnitTest(RepositoryFixture fixture) : IClassFixtur
         ProductRepository repository = new(context, _noxRepositoryLoggerStub);
         QueryParameters queryParameters = new()
         {
-            Access = string.Empty,
-            DetailLevel = "Simple",
             PageNumber = 1,
             PageSize = 50,
         };
@@ -123,8 +115,6 @@ public class ProductRepositoryUnitTest(RepositoryFixture fixture) : IClassFixtur
         ProductRepository repository = new(context, _noxRepositoryLoggerStub);
         QueryParameters queryParameters = new()
         {
-            Access = string.Empty,
-            DetailLevel = "Simple",
             PageNumber = 5,
             PageSize = 5,
         };

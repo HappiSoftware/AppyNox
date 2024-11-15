@@ -1,8 +1,7 @@
 ﻿using AppyNox.Services.Base.API.Constants;
-using AppyNox.Services.Base.API.Helpers;
-using AppyNox.Services.Base.API.ViewModels;
 using AppyNox.Services.Base.Application.MediatR.Commands;
 using AppyNox.Services.Base.Infrastructure.Repositories.Common;
+using AppyNox.Services.License.Application.Dtos.LicenseDtos.Models;
 using AppyNox.Services.License.Application.MediatR.Commands;
 using AppyNox.Services.License.Application.Permission;
 using AppyNox.Services.License.Domain.Entities;
@@ -28,23 +27,23 @@ namespace AppyNox.Services.License.WebAPI.Controllers.v1_0
 
         [HttpGet]
         [Authorize(Permissions.Licenses.View)]
-        public async Task<IActionResult> GetAll([FromQuery] QueryParametersViewModel queryParameters)
+        public async Task<IActionResult> GetAll([FromQuery] QueryParameters queryParameters)
         {
-            return Ok(await _mediator.Send(new GetAllNoxEntitiesQuery<LicenseEntity>(queryParameters)));
+            return Ok(await _mediator.Send(new GetAllNoxEntitiesQuery<LicenseEntity, LicenseDto>(queryParameters)));
         }
 
         [HttpGet("{id}")]
         [Authorize(Permissions.Licenses.View)]
-        public async Task<IActionResult> GetById(Guid id, [FromQuery] QueryParametersViewModel queryParameters)
+        public async Task<IActionResult> GetById(Guid id, [FromQuery] QueryParameters queryParameters)
         {
-            return Ok(await _mediator.Send(new GetNoxEntityByIdQuery<LicenseEntity, LicenseId>(new LicenseId(id), queryParameters)));
+            return Ok(await _mediator.Send(new GetNoxEntityByIdQuery<LicenseEntity, LicenseId, LicenseDto>(new LicenseId(id), queryParameters)));
         }
 
         [HttpPost]
         [Authorize(Permissions.Licenses.Create)]
-        public async Task<IActionResult> Create([FromBody] dynamic licenseDto, string detailLevel = "Simple")
+        public async Task<IActionResult> Create([FromBody] LicenseCreateDto licenseDto)
         {
-            Guid result = await _mediator.Send(new CreateNoxEntityCommand<LicenseEntity>(licenseDto, detailLevel));
+            Guid result = await _mediator.Send(new CreateNoxEntityCommand<LicenseEntity, LicenseCreateDto>(licenseDto));
 
             return CreatedAtAction(nameof(GetById), new { id = result }, result);
         }

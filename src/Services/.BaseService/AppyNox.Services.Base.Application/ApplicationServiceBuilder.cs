@@ -1,6 +1,4 @@
-﻿using AppyNox.Services.Base.Application.DtoUtilities;
-using AppyNox.Services.Base.Application.Exceptions.Base;
-using AppyNox.Services.Base.Application.Interfaces.Loggers;
+﻿using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Application.MediatR.Behaviors;
 using FluentValidation;
 using MediatR;
@@ -24,8 +22,6 @@ public class ApplicationSetupOptions
     public bool UseFluentValidation { get; set; } = true;
     public bool UseDtoMappingRegistry { get; set; } = true;
     public bool UseMediatR { get; set; } = true;
-    public Func<IServiceProvider, IDtoMappingRegistryBase> DtoMappingRegistryFactory { get; set; }
-
 
 #nullable enable
 }
@@ -61,16 +57,6 @@ public static class ApplicationServiceBuilder
         {
             services.AddValidatorsFromAssembly(applicationAssembly);
             logger.LogInformation($"-{serviceName}- FluentValidation enabled...", false);
-        }
-
-        if (options.UseDtoMappingRegistry)
-        {
-            if (options.DtoMappingRegistryFactory is null)
-            {
-                throw new NoxApplicationException("DtoMappingRegistryFactory was null!");
-            }
-            services.AddSingleton(typeof(IDtoMappingRegistryBase), options.DtoMappingRegistryFactory);
-            logger.LogInformation($"-{serviceName}- DtoMappingRegistry enabled...", false);
         }
 
         if(options.UseMediatR)

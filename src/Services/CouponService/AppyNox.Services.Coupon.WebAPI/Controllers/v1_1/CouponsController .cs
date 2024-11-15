@@ -1,11 +1,10 @@
 ﻿using AppyNox.Services.Base.API.Constants;
 using AppyNox.Services.Base.API.Controllers;
-using AppyNox.Services.Base.API.ViewModels;
 using AppyNox.Services.Base.Application.MediatR.Commands;
 using AppyNox.Services.Base.Core.AsyncLocals;
 using AppyNox.Services.Base.Core.Common;
-using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
-using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Extended;
+using AppyNox.Services.Base.Infrastructure.Repositories.Common;
+using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models;
 using AppyNox.Services.Coupon.Application.MediatR.Commands;
 using AppyNox.Services.Coupon.Domain.Coupons;
 using AppyNox.Services.Coupon.Infrastructure.Authentication;
@@ -42,25 +41,32 @@ public class CouponsController(
 
     [HttpGet]
     [Authorize(Coupons.View)]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PaginatedList<CouponSimpleDto>))]
-    public async Task<IActionResult> GetAll([FromQuery] QueryParametersViewModelBasic queryParameters)
+    public async Task<IActionResult> GetAll([FromQuery] QueryParameters queryParameters)
     {
-        PaginatedList<object> response = await _mediator.Send(new GetAllNoxEntitiesQuery<Domain.Coupons.Coupon>(queryParameters));
+        PaginatedList<CouponDto> response = await _mediator.Send(new GetAllNoxEntitiesQuery<Domain.Coupons.Coupon, CouponDto>(queryParameters));
 
         return Ok(response);
     }
 
     [HttpGet("{id}")]
     [Authorize(Coupons.View)]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CouponSimpleDto))]
-    public async Task<IActionResult> GetById(Guid id, [FromQuery] QueryParametersViewModelBasic queryParameters)
+    public async Task<IActionResult> GetById(Guid id, [FromQuery] QueryParameters queryParameters)
     {
-        return base.Ok(await _mediator.Send(new GetNoxEntityByIdQuery<Domain.Coupons.Coupon, CouponId>(new CouponId(id), queryParameters)));
+        return base.Ok(await _mediator.Send(new GetNoxEntityByIdQuery<Domain.Coupons.Coupon, CouponId, CouponDto>(new CouponId(id), queryParameters)));
+    }
+
+    [HttpPost]
+    [Authorize(Coupons.Create)]
+    public async Task<IActionResult> Create([FromBody] CouponCompositeCreateDto couponDto)
+    {
+        Guid result = await _mediator.Send(new CreateNoxEntityCommand<Domain.Coupons.Coupon, CouponCompositeCreateDto>(couponDto));
+
+        return CreatedAtAction(nameof(GetById), new { id = result }, result);
     }
 
     [HttpPut("{id}")]
     [Authorize(Coupons.Edit)]
-    public async Task<IActionResult> Update(Guid id, [FromBody] CouponExtendedUpdateDto couponDto)
+    public async Task<IActionResult> Update(Guid id, [FromBody] CouponUpdateDto couponDto)
     {
         await _mediator.Send(new UpdateCouponCommand(id, couponDto));
         return NoContent();
@@ -102,11 +108,11 @@ public class CouponsController(
 
     [HttpGet]
     [Authorize(CouponCustomJwt.CustomView)]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PaginatedList<CouponSimpleDto>))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PaginatedList<CouponDto>))]
     [Route("/api/v{version:apiVersion}/coupons/getwithcustomjwt")]
-    public async Task<IActionResult> GetAllCustomAsync([FromQuery] QueryParametersViewModelBasic queryParameters)
+    public async Task<IActionResult> GetAllCustomAsync([FromQuery] QueryParameters queryParameters)
     {
-        PaginatedList<object> response = await _mediator.Send(new GetAllNoxEntitiesQuery<Domain.Coupons.Coupon>(queryParameters));
+        PaginatedList<CouponDto> response = await _mediator.Send(new GetAllNoxEntitiesQuery<Domain.Coupons.Coupon, CouponDto>(queryParameters));
 
         return Ok(response);
     }

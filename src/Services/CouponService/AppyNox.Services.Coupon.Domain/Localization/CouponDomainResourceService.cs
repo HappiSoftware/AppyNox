@@ -43,9 +43,9 @@ namespace AppyNox.Services.Coupon.Domain.Localization
         internal static LocalizedString AmountNotNull => GetMessage("AmountNotNull");
 
         /// <summary>
-        /// CouponDetail can not be null in bulk creation.
+        /// CouponDetail can not be null in composite creation.
         /// </summary>
-        internal static LocalizedString CouponDetailInBulkNotNull => GetMessage("CouponDetailInBulkNotNull");
+        internal static LocalizedString CouponDetailInComposeNotNull => GetMessage("CouponDetailInComposeNotNull");
 
         /// <summary>
         /// CouponDetailId is mandatory.
@@ -53,14 +53,14 @@ namespace AppyNox.Services.Coupon.Domain.Localization
         internal static LocalizedString CouponDetailIdMandatory => GetMessage("CouponDetailIdMandatory");
 
         /// <summary>
-        /// CouponDetailId should not be provided in bulk creation.
+        /// CouponDetailId should not be provided in composite creation.
         /// </summary>
-        internal static LocalizedString CouponDetailIdShouldBeEmptyInBulk => GetMessage("CouponDetailIdShouldBeEmptyInBulk");
+        internal static LocalizedString CouponDetailIdShouldBeEmptyInCompose => GetMessage("CouponDetailIdShouldBeEmptyInCompose");
 
         /// <summary>
-        /// CouponDetail should not be provided in bulk creation.
+        /// CouponDetail should not be provided in composite creation.
         /// </summary>
-        internal static LocalizedString CouponDetailShouldBeEmptyInBulk => GetMessage("CouponDetailShouldBeEmptyInBulk");
+        internal static LocalizedString CouponDetailShouldBeEmptyInCompose => GetMessage("CouponDetailShouldBeEmptyInCompose");
 
         #endregion
 

@@ -1,5 +1,5 @@
-﻿using AppyNox.Services.Coupon.Application.Dtos.CouponDetailDtos.Models.Basic;
-using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
+﻿using AppyNox.Services.Coupon.Application.Dtos.CouponDetailDtos.Models;
+using AppyNox.Services.Coupon.Application.Dtos.CouponDetailDtos.Models.ValueObjects;
 using AppyNox.Services.Coupon.Domain.Coupons;
 using AppyNox.Services.Coupon.Domain.Coupons.Builders;
 using AutoMapper;
@@ -12,7 +12,7 @@ public class CouponDetailProfile : Profile
 
     public CouponDetailProfile()
     {
-        CreateMap<CouponDetailBulkCreateDto, CouponDetail>()
+        CreateMap<CouponDetailCompositeCreateDto, CouponDetail>()
             .ConstructUsing((src, context) =>
             {
                 return new CouponDetailBuilder()
@@ -21,7 +21,7 @@ public class CouponDetailProfile : Profile
                     .Build();
             });
 
-        CreateMap<CouponDetail, CouponDetailSimpleDto>().ReverseMap();
+        CreateMap<CouponDetail, CouponDetailDto>().ReverseMap();
         CreateMap<CouponDetailId, CouponDetailIdDto>().ReverseMap();
     }
 

@@ -1,5 +1,4 @@
-﻿using AppyNox.Services.Base.Application.DtoUtilities;
-using AppyNox.Services.Base.Application.Exceptions.Base;
+﻿using AppyNox.Services.Base.Application.Exceptions.Base;
 using AppyNox.Services.Base.Application.Interfaces.Caches;
 using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Application.Interfaces.Repositories;
@@ -15,12 +14,11 @@ namespace AppyNox.Services.Base.Application.MediatR.Handlers.DDD;
 internal sealed class DeleteNoxEntityCommandHandler<TEntity, TId>(
         INoxRepository<TEntity> repository,
         IMapper mapper,
-        IDtoMappingRegistryBase dtoMappingRegistry,
         IServiceProvider serviceProvider,
         INoxApplicationLogger<DeleteNoxEntityCommandHandler<TEntity, TId>> logger,
         IUnitOfWork unitOfWork,
         ICacheService cacheService)
-        : BaseHandler<TEntity>(mapper, dtoMappingRegistry, serviceProvider),
+        : BaseHandler<TEntity>(mapper, serviceProvider),
         IRequestHandler<DeleteNoxEntityCommand<TEntity, TId>>
         where TEntity : class, IHasStronglyTypedId
         where TId : NoxId

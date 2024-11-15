@@ -4,6 +4,7 @@ using AppyNox.Services.Base.Application.Exceptions.Base;
 using AppyNox.Services.Base.IntegrationTests.URIs;
 using AppyNox.Services.Base.IntegrationTests.Wrapper;
 using AppyNox.Services.Base.IntegrationTests.Wrapper.Helpers;
+using AppyNox.Services.Sso.Application.DTOs.AccountDtos.Models;
 using AppyNox.Services.Sso.Application.DTOs.RefreshTokenDtos.Models;
 using AppyNox.Services.Sso.Infrastructure.Exceptions.Base;
 using AppyNox.Services.Sso.WebAPI.Exceptions.Base;
@@ -56,7 +57,7 @@ public class AuthenticationApiTest(SsoServiceFixture ssoApiTestFixture)
         string uri = $"{_serviceURIs.SsoServiceURI}/v{NoxVersions.v1_0}/authentication/connect/token";
         HttpResponseMessage response = await _client.PostAsync(uri, content);
 
-        NoxApiResponse wrappedResponse = await NoxResponseUnwrapper.UnwrapResponse(response, jsonSerializerOptions: _jsonSerializerOptions);
+        NoxApiResponse<LoginResultDto> wrappedResponse = await NoxResponseUnwrapper.UnwrapResponse<LoginResultDto>(response, jsonSerializerOptions: _jsonSerializerOptions);
 
         // Assert
         response.EnsureSuccessStatusCode();
@@ -64,22 +65,15 @@ public class AuthenticationApiTest(SsoServiceFixture ssoApiTestFixture)
         Assert.NotNull(wrappedResponse.Result);
         Assert.False(wrappedResponse.HasError);
 
-        string? resultDataObject = wrappedResponse.Result.Data?.ToString();
-        Assert.NotNull(resultDataObject);
-        string? token = string.Empty;
-        using (JsonDocument doc = JsonDocument.Parse(resultDataObject))
-        {
-            JsonElement root = doc.RootElement;
-            token = root.GetProperty("token").GetString();
-        }
-        Assert.False(string.IsNullOrEmpty(token));
+        Assert.NotNull(wrappedResponse.Result.Data);
+        Assert.False(string.IsNullOrEmpty(wrappedResponse.Result.Data.Token));
 
         #endregion
 
         #region [ Verify Token ]
 
         // Act
-        uri = $"{_serviceURIs.SsoServiceURI}/v{NoxVersions.v1_0}/authentication/verify-token/{token}?audience={audience}";
+        uri = $"{_serviceURIs.SsoServiceURI}/v{NoxVersions.v1_0}/authentication/verify-token/{wrappedResponse.Result.Data.Token}?audience={audience}";
         response = await _client.GetAsync(uri);
 
         // Assert
@@ -115,7 +109,7 @@ public class AuthenticationApiTest(SsoServiceFixture ssoApiTestFixture)
         string uri = $"{_serviceURIs.SsoServiceURI}/v{NoxVersions.v1_0}/authentication/connect/token";
         HttpResponseMessage response = await _client.PostAsync(uri, content);
 
-        NoxApiResponse wrappedResponse = await NoxResponseUnwrapper.UnwrapResponse(response, jsonSerializerOptions: _jsonSerializerOptions);
+        NoxApiResponse<NoxApiExceptionWrapObjectPOCO> wrappedResponse = await NoxResponseUnwrapper.UnwrapResponse<NoxApiExceptionWrapObjectPOCO>(response, jsonSerializerOptions: _jsonSerializerOptions);
         NoxApiExceptionWrapObjectPOCO? errorObject = (wrappedResponse.Result.Error as NoxApiExceptionWrapObjectPOCO);
 
         // Assert
@@ -153,7 +147,7 @@ public class AuthenticationApiTest(SsoServiceFixture ssoApiTestFixture)
         string uri = $"{_serviceURIs.SsoServiceURI}/v{NoxVersions.v1_0}/authentication/connect/token";
         HttpResponseMessage response = await _client.PostAsync(uri, content);
 
-        NoxApiResponse wrappedResponse = await NoxResponseUnwrapper.UnwrapResponse(response, jsonSerializerOptions: _jsonSerializerOptions);
+        NoxApiResponse<NoxApiValidationExceptionWrapObjectPOCO> wrappedResponse = await NoxResponseUnwrapper.UnwrapResponse<NoxApiValidationExceptionWrapObjectPOCO>(response, jsonSerializerOptions: _jsonSerializerOptions);
         NoxApiValidationExceptionWrapObjectPOCO? errorObject = (wrappedResponse.Result.Error as NoxApiValidationExceptionWrapObjectPOCO);
 
         // Assert
@@ -193,7 +187,7 @@ public class AuthenticationApiTest(SsoServiceFixture ssoApiTestFixture)
         string uri = $"{_serviceURIs.SsoServiceURI}/v{NoxVersions.v1_0}/authentication/connect/token";
         HttpResponseMessage response = await _client.PostAsync(uri, content);
 
-        NoxApiResponse wrappedResponse = await NoxResponseUnwrapper.UnwrapResponse(response, jsonSerializerOptions: _jsonSerializerOptions);
+        NoxApiResponse<LoginResultDto> wrappedResponse = await NoxResponseUnwrapper.UnwrapResponse<LoginResultDto>(response, jsonSerializerOptions: _jsonSerializerOptions);
 
         // Assert
         response.EnsureSuccessStatusCode();
@@ -201,16 +195,9 @@ public class AuthenticationApiTest(SsoServiceFixture ssoApiTestFixture)
         Assert.NotNull(wrappedResponse.Result);
         Assert.False(wrappedResponse.HasError);
 
-        string? resultDataObject = wrappedResponse.Result.Data?.ToString();
-        Assert.NotNull(resultDataObject);
-        string? token = string.Empty;
-        string? refreshToken = string.Empty;
-        using (JsonDocument doc = JsonDocument.Parse(resultDataObject))
-        {
-            JsonElement root = doc.RootElement;
-            token = root.GetProperty("token").GetString();
-            refreshToken = root.GetProperty("refreshToken").GetString();
-        }
+        Assert.NotNull(wrappedResponse.Result.Data);
+        string? token = wrappedResponse.Result.Data.Token;
+        string? refreshToken = wrappedResponse.Result.Data.RefreshToken;
         Assert.False(string.IsNullOrEmpty(token));
         Assert.False(string.IsNullOrEmpty(refreshToken));
 
@@ -237,7 +224,7 @@ public class AuthenticationApiTest(SsoServiceFixture ssoApiTestFixture)
             );
 
         HttpResponseMessage refreshResponse = await _client.PostAsync(uri, content);
-        NoxApiResponse refreshWrappedResponse = await NoxResponseUnwrapper.UnwrapResponse(refreshResponse, jsonSerializerOptions: _jsonSerializerOptions);
+        NoxApiResponse<LoginResultDto> refreshWrappedResponse = await NoxResponseUnwrapper.UnwrapResponse<LoginResultDto>(refreshResponse, jsonSerializerOptions: _jsonSerializerOptions);
 
         // Assert
         refreshResponse.EnsureSuccessStatusCode();
@@ -245,16 +232,10 @@ public class AuthenticationApiTest(SsoServiceFixture ssoApiTestFixture)
         Assert.NotNull(refreshWrappedResponse.Result);
         Assert.False(refreshWrappedResponse.HasError);
 
-        string? refreshResultDataObject = refreshWrappedResponse.Result.Data?.ToString();
-        Assert.NotNull(refreshResultDataObject);
-        string? newToken = string.Empty;
-        string? newRefreshToken = string.Empty;
-        using (JsonDocument doc = JsonDocument.Parse(refreshResultDataObject))
-        {
-            JsonElement root = doc.RootElement;
-            newToken = root.GetProperty("token").GetString();
-            newRefreshToken = root.GetProperty("refreshToken").GetString();
-        }
+        Assert.NotNull(refreshWrappedResponse.Result.Data);
+        string? newToken = refreshWrappedResponse.Result.Data.Token;
+        string? newRefreshToken = refreshWrappedResponse.Result.Data.RefreshToken;
+
         Assert.False(string.IsNullOrEmpty(newToken));
         Assert.False(string.IsNullOrEmpty(newRefreshToken));
         Assert.NotEqual(token, newToken);
@@ -296,7 +277,7 @@ public class AuthenticationApiTest(SsoServiceFixture ssoApiTestFixture)
             string loginUri = $"{_serviceURIs.SsoServiceURI}/v{NoxVersions.v1_0}/authentication/connect/token";
             HttpResponseMessage response = await _client.PostAsync(loginUri, loginContent);
 
-            NoxApiResponse wrappedResponse = await NoxResponseUnwrapper.UnwrapResponse(response, jsonSerializerOptions: _jsonSerializerOptions);
+            NoxApiResponse<LoginResultDto> wrappedResponse = await NoxResponseUnwrapper.UnwrapResponse<LoginResultDto>(response, jsonSerializerOptions: _jsonSerializerOptions);
 
             // Assert
             response.EnsureSuccessStatusCode();
@@ -304,15 +285,11 @@ public class AuthenticationApiTest(SsoServiceFixture ssoApiTestFixture)
             Assert.NotNull(wrappedResponse.Result);
             Assert.False(wrappedResponse.HasError);
 
-            string? resultDataObject = wrappedResponse.Result.Data?.ToString();
-            Assert.NotNull(resultDataObject);
+            Assert.NotNull(wrappedResponse.Result.Data);
 
-            using (JsonDocument doc = JsonDocument.Parse(resultDataObject))
-            {
-                JsonElement root = doc.RootElement;
-                token = useVerifiedToken ? root.GetProperty("token").GetString() ?? throw new Exception("token was null") : "dummyToken";
-                refreshToken = useVerifiedRefreshToken ? root.GetProperty("refreshToken").GetString() ?? throw new Exception("refresh token was null") : "dummyRefreshToken";
-            }
+            token = useVerifiedToken ? wrappedResponse.Result.Data.Token ?? throw new Exception("token was null") : "dummyToken";
+            refreshToken = useVerifiedRefreshToken ? wrappedResponse.Result.Data.RefreshToken ?? throw new Exception("refresh token was null") : "dummyRefreshToken";
+
             Assert.NotNull(token);
             Assert.NotNull(refreshToken);
         }
@@ -338,7 +315,7 @@ public class AuthenticationApiTest(SsoServiceFixture ssoApiTestFixture)
             );
 
         HttpResponseMessage refreshResponse = await _client.PostAsync(uri, content);
-        NoxApiResponse refreshWrappedResponse = await NoxResponseUnwrapper.UnwrapResponse(refreshResponse, jsonSerializerOptions: _jsonSerializerOptions);
+        NoxApiResponse<LoginResultDto> refreshWrappedResponse = await NoxResponseUnwrapper.UnwrapResponse<LoginResultDto>(refreshResponse, jsonSerializerOptions: _jsonSerializerOptions);
         NoxApiExceptionWrapObjectPOCO? wrapObjectPOCO = refreshWrappedResponse.Result.Error as NoxApiExceptionWrapObjectPOCO;
 
         // Assert
@@ -371,7 +348,7 @@ public class AuthenticationApiTest(SsoServiceFixture ssoApiTestFixture)
         string uri = $"{_serviceURIs.SsoServiceURI}/v{NoxVersions.v1_0}/authentication/refresh";
         HttpResponseMessage response = await _client.PostAsync(uri, content);
 
-        NoxApiResponse wrappedResponse = await NoxResponseUnwrapper.UnwrapResponse(response, jsonSerializerOptions: _jsonSerializerOptions);
+        NoxApiResponse<NoxApiValidationExceptionWrapObjectPOCO> wrappedResponse = await NoxResponseUnwrapper.UnwrapResponse<NoxApiValidationExceptionWrapObjectPOCO>(response, jsonSerializerOptions: _jsonSerializerOptions);
         NoxApiValidationExceptionWrapObjectPOCO? errorObject = (wrappedResponse.Result.Error as NoxApiValidationExceptionWrapObjectPOCO);
 
         // Assert

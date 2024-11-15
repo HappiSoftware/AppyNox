@@ -1,6 +1,5 @@
 ﻿using AppyNox.Services.Base.Application.Extensions;
-using AppyNox.Services.Coupon.Application.Dtos.TicketDtos.Models.Basic;
-using AppyNox.Services.Coupon.Application.Dtos.TicketDtos.Models.Extended;
+using AppyNox.Services.Coupon.Application.Dtos.TicketDtos.Models;
 using AppyNox.Services.Coupon.Domain.Entities;
 using AutoMapper;
 
@@ -12,11 +11,9 @@ public class TicketProfile : Profile
 
     public TicketProfile()
     {
-        CreateMap<Ticket, TicketSimpleDto>().MapAuditInformation();
-        CreateMap<Ticket, TicketExtendedDto>()
-            .IncludeBase<Ticket, TicketSimpleDto>();
-        CreateMap<TicketSimpleCreateDto, Ticket>();
-        CreateMap<TicketSimpleUpdateDto, Ticket>();
+        CreateMap<Ticket, TicketDto>().MapAuditInformation();
+        CreateMap<TicketCreateDto, Ticket>();
+        CreateMap<TicketUpdateDto, Ticket>();
     }
 
     #endregion

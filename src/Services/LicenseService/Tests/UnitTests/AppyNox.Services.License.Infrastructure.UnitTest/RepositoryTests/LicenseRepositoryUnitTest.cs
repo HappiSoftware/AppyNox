@@ -37,8 +37,6 @@ public class LicenseRepositoryUnitTest(RepositoryFixture fixture) : IClassFixtur
         LicenseRepository repository = new(context, _noxRepositoryLogger, unitOfWork);
         QueryParameters queryParameters = new()
         {
-            Access = string.Empty,
-            DetailLevel = "Simple",
             PageNumber = 1,
             PageSize = 1,
         };
@@ -58,8 +56,6 @@ public class LicenseRepositoryUnitTest(RepositoryFixture fixture) : IClassFixtur
         LicenseRepository repository = new(context, _noxRepositoryLogger, unitOfWork);
         QueryParameters queryParameters = new()
         {
-            Access = string.Empty,
-            DetailLevel = "Simple",
             PageNumber = 1,
             PageSize = 2,
         };
@@ -81,8 +77,6 @@ public class LicenseRepositoryUnitTest(RepositoryFixture fixture) : IClassFixtur
         LicenseRepository repository = new(context, _noxRepositoryLogger, unitOfWork);
         QueryParameters queryParameters = new()
         {
-            Access = string.Empty,
-            DetailLevel = "Simple",
             PageNumber = 2,
             PageSize = 1,
         };
@@ -105,8 +99,6 @@ public class LicenseRepositoryUnitTest(RepositoryFixture fixture) : IClassFixtur
         LicenseRepository repository = new(context, _noxRepositoryLogger, unitOfWork);
         QueryParameters queryParameters = new()
         {
-            Access = string.Empty,
-            DetailLevel = "Simple",
             PageNumber = 1,
             PageSize = 50,
         };
@@ -127,8 +119,6 @@ public class LicenseRepositoryUnitTest(RepositoryFixture fixture) : IClassFixtur
         LicenseRepository repository = new(context, _noxRepositoryLogger, unitOfWork);
         QueryParameters queryParameters = new()
         {
-            Access = string.Empty,
-            DetailLevel = "Simple",
             PageNumber = 5,
             PageSize = 5,
         };

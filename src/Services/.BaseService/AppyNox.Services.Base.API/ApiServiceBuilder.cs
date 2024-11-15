@@ -1,6 +1,5 @@
 ﻿using AppyNox.Services.Base.API.Constants;
 using AppyNox.Services.Base.API.Extensions;
-using AppyNox.Services.Base.API.Filters;
 using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Infrastructure.Extensions;
 using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
@@ -9,7 +8,6 @@ using Asp.Versioning.Conventions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Serilog;
@@ -28,7 +26,6 @@ public class ApiServiceOptions
     public bool UseConsulKV { get; set; }
     public Action<IServiceCollection, INoxLogger, IConfiguration> ConfigureLayers { get; set; }
     public IEnumerable<string> Versions { get; set; } = [NoxVersions.v1_0];
-    public bool UseDynamicRequestBodyOperationFilter { get; set; } = true;
 
 #nullable enable
 }
@@ -122,11 +119,6 @@ public static class ApiServiceBuilder
         var serviceName = builder.Configuration["Consul:ServiceName"];
         builder.Services.AddSwaggerGen(opt =>
         {
-            if(options.UseDynamicRequestBodyOperationFilter)
-            {
-                opt.OperationFilter<DynamicRequestBodyOperationFilter>();
-            }
-
             foreach(var version in options.Versions)
             {
                 opt.SwaggerDoc($"v{version}", new OpenApiInfo { Title = serviceName, Version = version });

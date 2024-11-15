@@ -1,6 +1,6 @@
 ﻿using AppyNox.Services.Base.Application.Extensions;
-using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
-using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Extended;
+using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models;
+using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.ValueObjects;
 using AppyNox.Services.Coupon.Domain.Coupons;
 using AppyNox.Services.Coupon.Domain.Coupons.Builders;
 using AutoMapper;
@@ -14,7 +14,7 @@ public class CouponProfile : Profile
 
     public CouponProfile()
     {
-        CreateMap<CouponBulkCreateDto, CouponAggreagete>()
+        CreateMap<CouponCompositeCreateDto, CouponAggreagete>()
             .ConstructUsing((src, context) =>
             {
                 return new CouponBuilder()
@@ -25,7 +25,7 @@ public class CouponProfile : Profile
                     .Build();
             });
 
-        CreateMap<CouponSimpleCreateDto, CouponAggreagete>()
+        CreateMap<CouponCreateDto, CouponAggreagete>()
             .ConstructUsing((src, context) =>
             {
                 return new CouponBuilder()
@@ -35,19 +35,7 @@ public class CouponProfile : Profile
                     .Build();
             });
 
-        CreateMap<CouponExtendedCreateDto, CouponAggreagete>()
-            .ConstructUsing((src, context) =>
-            {
-                return new CouponBuilder()
-                    .WithDetails(src.Code, src.Description, src.Detail)
-                    .WithAmount(context.Mapper.Map<Amount>(src.Amount))
-                    .WithCouponDetailId(context.Mapper.Map<CouponDetailId>(src.CouponDetailId))
-                    .Build();
-            });
-
-        CreateMap<CouponAggreagete, CouponSimpleDto>().MapAuditInformation();
-
-        CreateMap<CouponAggreagete, CouponWithAllRelationsDto>();
+        CreateMap<CouponAggreagete, CouponDto>().MapAuditInformation();
 
         CreateMap<CouponId, CouponIdDto>().ReverseMap();
 

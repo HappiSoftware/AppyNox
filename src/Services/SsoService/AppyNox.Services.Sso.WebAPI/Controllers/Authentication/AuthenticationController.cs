@@ -35,8 +35,6 @@ public class AuthenticationController(
 
     private readonly ICustomTokenManager _customTokenManager = customTokenManager;
 
-    private readonly IValidator<LoginDto> _loginDtoValidator = loginDtoValidator;
-
     private readonly IValidator<RefreshTokenDto> _refreshTokenDtoValidator = refreshTokenDtoValidator;
     
     private readonly IMediator _mediator = mediator;
@@ -47,11 +45,11 @@ public class AuthenticationController(
 
     [HttpPost]
     [Route("connect/token")]
-    public async Task<NoxApiResponse> Authenticate([FromBody] LoginDto userCredential)
+    public async Task<NoxApiResponse<LoginResultDto>> Authenticate([FromBody] LoginDto userCredential)
     {
         var result = await _mediator.Send(new AuthenticateCommand(userCredential));
 
-        return new NoxApiResponse(new { result.Token, result.RefreshToken }, NoxSsoApiResourceService.SignInSuccessful);
+        return new NoxApiResponse<LoginResultDto>(new LoginResultDto() { Token = result.Token, RefreshToken = result.RefreshToken }, NoxSsoApiResourceService.SignInSuccessful);
     }
 
     [HttpGet]
@@ -63,7 +61,7 @@ public class AuthenticationController(
     }
 
     [HttpPost("refresh")]
-    public async Task<IActionResult> Refresh([FromBody] RefreshTokenDto model)
+    public async Task<NoxApiResponse<LoginResultDto>> Refresh([FromBody] RefreshTokenDto model)
     {
         var validationResult = await _refreshTokenDtoValidator.ValidateAsync(model);
         if (!validationResult.IsValid)
@@ -96,7 +94,7 @@ public class AuthenticationController(
         var newRefreshToken = _customTokenManager.CreateRefreshToken();
         await _customUserManager.SaveRefreshToken(userId, newRefreshToken);
 
-        return Ok(new { Token = newJwtToken, RefreshToken = newRefreshToken });
+        return new NoxApiResponse<LoginResultDto>(new LoginResultDto() { Token = newJwtToken, RefreshToken = newRefreshToken });
     }
 
     #endregion

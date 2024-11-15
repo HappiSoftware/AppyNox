@@ -1,8 +1,7 @@
 ﻿using AppyNox.Services.Base.API.Constants;
-using AppyNox.Services.Base.API.Helpers;
-using AppyNox.Services.Base.API.ViewModels;
 using AppyNox.Services.Base.Application.MediatR.Commands;
 using AppyNox.Services.Base.Infrastructure.Repositories.Common;
+using AppyNox.Services.License.Application.Dtos.ProductDtos.Models;
 using AppyNox.Services.License.Application.Permission;
 using AppyNox.Services.License.Domain.Entities;
 using Asp.Versioning;
@@ -27,23 +26,23 @@ namespace AppyNox.Services.License.WebAPI.Controllers.v1_0
 
         [HttpGet]
         [Authorize(Permissions.Products.View)]
-        public async Task<IActionResult> GetAll([FromQuery] QueryParametersViewModel queryParameters)
+        public async Task<IActionResult> GetAll([FromQuery] QueryParameters queryParameters)
         {
-            return Ok(await _mediator.Send(new GetAllNoxEntitiesQuery<ProductEntity>(queryParameters)));
+            return Ok(await _mediator.Send(new GetAllNoxEntitiesQuery<ProductEntity, ProductDto>(queryParameters)));
         }
 
         [HttpGet("{id}")]
         [Authorize(Permissions.Products.View)]
-        public async Task<IActionResult> GetById(Guid id, [FromQuery] QueryParametersViewModel queryParameters)
+        public async Task<IActionResult> GetById(Guid id, [FromQuery] QueryParameters queryParameters)
         {
-            return Ok(await _mediator.Send(new GetNoxEntityByIdQuery<ProductEntity, ProductId>(new ProductId(id), queryParameters)));
+            return Ok(await _mediator.Send(new GetNoxEntityByIdQuery<ProductEntity, ProductId, ProductDto>(new ProductId(id), queryParameters)));
         }
 
         [HttpPost]
         [Authorize(Permissions.Products.Create)]
-        public async Task<IActionResult> Create([FromBody] dynamic productDto, string detailLevel = "Simple")
+        public async Task<IActionResult> Create([FromBody] ProductCreateDto productDto)
         {
-            Guid result = await _mediator.Send(new CreateNoxEntityCommand<ProductEntity>(productDto, detailLevel));
+            Guid result = await _mediator.Send(new CreateNoxEntityCommand<ProductEntity, ProductCreateDto>(productDto));
 
             return CreatedAtAction(nameof(GetById), new { id = result }, result);
         }

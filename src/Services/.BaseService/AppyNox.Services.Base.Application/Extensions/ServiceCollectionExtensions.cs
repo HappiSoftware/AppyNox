@@ -22,24 +22,24 @@ public static class ServiceCollectionExtensions
     /// <typeparam name="TEntity"></typeparam>
     /// <param name="services"></param>
     /// <returns>The updated <see cref="IServiceCollection"/> after registration.</returns>
-    public static IServiceCollection AddAnemicEntityCommands<TEntity>(this IServiceCollection services)
+    public static IServiceCollection AddAnemicEntityCommands<TEntity, TCreateDto, TDto, TUpdateDto>(this IServiceCollection services)
     where TEntity : class, IEntityWithGuid
     {
         // Register GetAllEntitiesQueryHandler
-        services.AddTransient<IRequestHandler<GetAllEntitiesQuery<TEntity>, PaginatedList<object>>,
-            GetAllEntitiesQueryHandler<TEntity>>();
+        services.AddTransient<IRequestHandler<GetAllEntitiesQuery<TEntity, TDto>, PaginatedList<TDto>>,
+            GetAllEntitiesQueryHandler<TEntity, TDto>>();
 
         // Register GetEntityByIdQueryHandler
-        services.AddTransient<IRequestHandler<GetEntityByIdQuery<TEntity>, object>,
-            GetEntityByIdQueryHandler<TEntity>>();
+        services.AddTransient<IRequestHandler<GetEntityByIdQuery<TEntity, TDto>, TDto>,
+            GetEntityByIdQueryHandler<TEntity, TDto>>();
 
         // Register CreateEntityCommandHandler
-        services.AddTransient<IRequestHandler<CreateEntityCommand<TEntity>, Guid>,
-            CreateEntityCommandHandler<TEntity>>();
+        services.AddTransient<IRequestHandler<CreateEntityCommand<TEntity, TCreateDto>, Guid>,
+            CreateEntityCommandHandler<TEntity, TCreateDto>>();
 
         // Register UpdateEntityCommandHandler
-        services.AddTransient<IRequestHandler<UpdateEntityCommand<TEntity>>,
-            UpdateEntityCommandHandler<TEntity>>();
+        services.AddTransient<IRequestHandler<UpdateEntityCommand<TEntity, TUpdateDto>>,
+            UpdateEntityCommandHandler<TEntity, TUpdateDto>>();
 
         // Register DeleteEntityCommandHandler
         services.AddTransient<IRequestHandler<DeleteEntityCommand<TEntity>>,
@@ -61,25 +61,36 @@ public static class ServiceCollectionExtensions
     /// <typeparam name="TId"></typeparam>
     /// <param name="services"></param>
     /// <returns>The updated <see cref="IServiceCollection"/> after registration.</returns>
-    public static IServiceCollection AddNoxEntityCommands<TEntity, TId>(this IServiceCollection services)
+    public static IServiceCollection AddNoxEntityCommands<TEntity, TId, TCreateDto, TDto>(this IServiceCollection services)
         where TEntity : class, IHasStronglyTypedId
         where TId : NoxId
     {
         // Register GetAllNoxEntitiesQueryHandler
-        services.AddTransient<IRequestHandler<GetAllNoxEntitiesQuery<TEntity>, PaginatedList<object>>,
-            GetAllNoxEntitiesQueryHandler<TEntity>>();
+        services.AddTransient<IRequestHandler<GetAllNoxEntitiesQuery<TEntity, TDto>, PaginatedList<TDto>>,
+            GetAllNoxEntitiesQueryHandler<TEntity, TDto>>();
 
         // Register GetNoxEntityByIdQueryHandler
-        services.AddTransient<IRequestHandler<GetNoxEntityByIdQuery<TEntity, TId>, object>,
-            GetNoxEntityByIdQueryHandler<TEntity, TId>>();
+        services.AddTransient<IRequestHandler<GetNoxEntityByIdQuery<TEntity, TId, TDto>, TDto>,
+            GetNoxEntityByIdQueryHandler<TEntity, TId, TDto>>();
 
         // Register CreateNoxEntityCommandHandler
-        services.AddTransient<IRequestHandler<CreateNoxEntityCommand<TEntity>, Guid>,
-            CreateNoxEntityCommandHandler<TEntity>>();
+        services.AddTransient<IRequestHandler<CreateNoxEntityCommand<TEntity, TCreateDto>, Guid>,
+            CreateNoxEntityCommandHandler<TEntity, TCreateDto>>();
 
         // Register DeleteNoxEntityCommandHandler
         services.AddTransient<IRequestHandler<DeleteNoxEntityCommand<TEntity, TId>>,
             DeleteNoxEntityCommandHandler<TEntity, TId>>();
+
+        return services;
+    }
+
+    public static IServiceCollection AddNoxEntityCompositeCreateCommand<TEntity, TId, TCreateDto, TDto>(this IServiceCollection services)
+    where TEntity : class, IHasStronglyTypedId
+    where TId : NoxId
+    {
+        // Register CreateNoxEntityCommandHandler
+        services.AddTransient<IRequestHandler<CreateNoxEntityCommand<TEntity, TCreateDto>, Guid>,
+            CreateNoxEntityCommandHandler<TEntity, TCreateDto>>();
 
         return services;
     }

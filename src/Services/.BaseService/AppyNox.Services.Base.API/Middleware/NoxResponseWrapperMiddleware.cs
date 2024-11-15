@@ -56,16 +56,16 @@ public class NoxResponseWrapperMiddleware(RequestDelegate next,
                 {
                     if (string.IsNullOrEmpty(noxApiResponse?.Message))
                     {
-                        noxApiResponse!.Message = NoxApiResourceService.RequestSuccessful.Format(context.Request.Method);
+                        noxApiResponse.Message = NoxApiResourceService.RequestSuccessful.Format(context.Request.Method);
                     }
                     await WriteResponseAsync(context, originalBodyStream, noxApiResponse);
                 }
                 else
                 {
                     object? resultBody = DeserializeJson(bodyAsText);
-                    NoxApiResultObject result = new(resultBody, null);
+                    NoxApiResultObject<object> result = new(resultBody, null);
                     string message = NoxApiResourceService.RequestSuccessful.Format(context.Request.Method);
-                    NoxApiResponse wrappedResponse = new(result, message, _options.ApiVersion, false, context.Response.StatusCode);
+                    NoxApiResponse<object> wrappedResponse = new(result, message, _options.ApiVersion, false, context.Response.StatusCode);
                     await WriteResponseAsync(context, originalBodyStream, wrappedResponse);
                 }
             }
@@ -73,8 +73,8 @@ public class NoxResponseWrapperMiddleware(RequestDelegate next,
             {
                 string apiError = WrapUnsuccessfulError(context.Response.StatusCode);
                 string message = NoxApiResourceService.RequestUnsuccessful.Format(context.Request.Method);
-                NoxApiResultObject errorResponse = new(null, apiError);
-                NoxApiResponse wrappedResponse = new(errorResponse, message, _options.ApiVersion, true, context.Response.StatusCode);
+                NoxApiResultObject<string> errorResponse = new(null, apiError);
+                NoxApiResponse<dynamic> wrappedResponse = new(errorResponse, message, _options.ApiVersion, true, context.Response.StatusCode);
                 await WriteResponseAsync(context, originalBodyStream, wrappedResponse);
             }
         }
@@ -130,12 +130,12 @@ public class NoxResponseWrapperMiddleware(RequestDelegate next,
         }
     }
 
-    private (bool, NoxApiResponse?) TryGetNoxApiResponse(string responseBody)
+    private (bool, NoxApiResponse<dynamic>?) TryGetNoxApiResponse(string responseBody)
     {
         try
         {
-            NoxApiResponsePOCO? response = JsonSerializer.Deserialize<NoxApiResponsePOCO>(responseBody, _jsonSerializeOptions);
-            return (response != null && response.Result != null, new NoxApiResponse(response!.Result!, response.Message, response.Version, response.HasError, response.Code));
+            NoxApiResponsePOCO<object>? response = JsonSerializer.Deserialize<NoxApiResponsePOCO<object>>(responseBody, _jsonSerializeOptions);
+            return (response != null && response.Result != null, new NoxApiResponse<dynamic>(response!.Result!, response.Message, response.Version, response.HasError, response.Code));
         }
         catch
         {
@@ -151,20 +151,20 @@ public class NoxResponseWrapperMiddleware(RequestDelegate next,
             ? new NoxApiValidationExceptionWrapObject(exception, correlationId, fluentException.ValidationResult.Errors.AsEnumerable())
             : new NoxApiExceptionWrapObject(exception, correlationId);
 
-        NoxApiResultObject errorResponse = new(null, errorResponseBody);
-        NoxApiResponse wrappedResponse = new(errorResponse, NoxApiResourceService.NoxExceptionThrown, _options.ApiVersion, true, exception.StatusCode);
+        NoxApiResultObject<dynamic> errorResponse = new(null, errorResponseBody);
+        NoxApiResponse<dynamic> wrappedResponse = new(errorResponse, NoxApiResourceService.NoxExceptionThrown, _options.ApiVersion, true, exception.StatusCode);
         await WriteResponseAsync(context, originalBodyStream, wrappedResponse);
     }
 
     private async Task HandleUnknownExceptionAsync(HttpContext context, Exception exception, Stream originalBodyStream)
     {
         var errorResponseBody = new { exception.Message, exception.StackTrace };
-        NoxApiResultObject errorResponse = new(null, errorResponseBody);
-        NoxApiResponse wrappedResponse = new(errorResponse, NoxApiResourceService.UnknownExceptionThrown, _options.ApiVersion, true, StatusCodes.Status500InternalServerError);
+        NoxApiResultObject<dynamic> errorResponse = new(null, errorResponseBody);
+        NoxApiResponse<dynamic> wrappedResponse = new(errorResponse, NoxApiResourceService.UnknownExceptionThrown, _options.ApiVersion, true, StatusCodes.Status500InternalServerError);
         await WriteResponseAsync(context, originalBodyStream, wrappedResponse);
     }
 
-    private async Task WriteResponseAsync(HttpContext context, Stream originalBodyStream, NoxApiResponse response)
+    private async Task WriteResponseAsync(HttpContext context, Stream originalBodyStream, NoxApiResponse<dynamic> response)
     {
         context.Response.StatusCode = response.Code;
 

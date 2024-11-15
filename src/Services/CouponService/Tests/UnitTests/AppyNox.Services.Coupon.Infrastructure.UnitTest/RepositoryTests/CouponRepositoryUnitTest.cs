@@ -68,8 +68,6 @@ public class CouponRepositoryUnitTest : IClassFixture<RepositoryFixture>
         var repository = new CouponRepository(context, _couponRepositoryLogger, _noxRepositoryBaseLogger, _cacheService);
         QueryParameters queryParameters = new()
         {
-            Access = string.Empty,
-            DetailLevel = "Simple",
             PageNumber = 1,
             PageSize = 1,
         };
@@ -89,8 +87,6 @@ public class CouponRepositoryUnitTest : IClassFixture<RepositoryFixture>
         var repository = new CouponRepository(context, _couponRepositoryLogger, _noxRepositoryBaseLogger, _cacheService);
         QueryParameters queryParameters = new()
         {
-            Access = string.Empty,
-            DetailLevel = "WithAllRelations",
             PageNumber = 1,
             PageSize = 2,
             SortBy = "code asc, CouponDetail.Detail desc"
@@ -115,8 +111,6 @@ public class CouponRepositoryUnitTest : IClassFixture<RepositoryFixture>
         var repository = new CouponRepository(context, _couponRepositoryLogger, _noxRepositoryBaseLogger, _cacheService);
         QueryParameters queryParameters = new()
         {
-            Access = string.Empty,
-            DetailLevel = "WithAllRelations",
             PageNumber = 1,
             PageSize = 2,
             SortBy = sortBy
@@ -138,8 +132,6 @@ public class CouponRepositoryUnitTest : IClassFixture<RepositoryFixture>
         var repository = new CouponRepository(context, _couponRepositoryLogger, _noxRepositoryBaseLogger, _cacheService);
         QueryParameters queryParameters = new()
         {
-            Access = string.Empty,
-            DetailLevel = "WithAllRelations",
             PageNumber = 1,
             PageSize = 2,
             SortBy = sortBy
@@ -171,8 +163,6 @@ public class CouponRepositoryUnitTest : IClassFixture<RepositoryFixture>
         var repository = new CouponRepository(context, _couponRepositoryLogger, _noxRepositoryBaseLogger, _cacheService);
         QueryParameters queryParameters = new()
         {
-            Access = string.Empty,
-            DetailLevel = "WithAllRelations",
             PageNumber = 1,
             PageSize = 2,
             SortBy = sort
@@ -201,8 +191,6 @@ public class CouponRepositoryUnitTest : IClassFixture<RepositoryFixture>
         var repository = new CouponRepository(context, _couponRepositoryLogger, _noxRepositoryBaseLogger, _cacheService);
         QueryParameters queryParameters = new()
         {
-            Access = string.Empty,
-            DetailLevel = "WithAllRelations",
             PageNumber = 1,
             PageSize = 3,
             Filter = filter
@@ -225,8 +213,6 @@ public class CouponRepositoryUnitTest : IClassFixture<RepositoryFixture>
         var repository = new CouponRepository(context, _couponRepositoryLogger, _noxRepositoryBaseLogger, _cacheService);
         QueryParameters queryParameters = new()
         {
-            Access = string.Empty,
-            DetailLevel = "WithAllRelations",
             PageNumber = 1,
             PageSize = 2,
             Filter = filter
@@ -250,8 +236,6 @@ public class CouponRepositoryUnitTest : IClassFixture<RepositoryFixture>
         var repository = new CouponRepository(context, _couponRepositoryLogger, _noxRepositoryBaseLogger, _cacheService);
         QueryParameters queryParameters = new()
         {
-            Access = string.Empty,
-            DetailLevel = "WithAllRelations",
             PageNumber = 1,
             PageSize = 2,
             Filter = filter
@@ -273,8 +257,6 @@ public class CouponRepositoryUnitTest : IClassFixture<RepositoryFixture>
         var repository = new CouponRepository(context, _couponRepositoryLogger, _noxRepositoryBaseLogger, _cacheService);
         QueryParameters queryParameters = new()
         {
-            Access = string.Empty,
-            DetailLevel = "Simple",
             PageNumber = 1,
             PageSize = 2,
         };
@@ -296,8 +278,6 @@ public class CouponRepositoryUnitTest : IClassFixture<RepositoryFixture>
         var repository = new CouponRepository(context, _couponRepositoryLogger, _noxRepositoryBaseLogger, _cacheService);
         QueryParameters queryParameters = new()
         {
-            Access = string.Empty,
-            DetailLevel = "Simple",
             PageNumber = 2,
             PageSize = 1,
         };
@@ -320,8 +300,6 @@ public class CouponRepositoryUnitTest : IClassFixture<RepositoryFixture>
         var repository = new CouponRepository(context, _couponRepositoryLogger, _noxRepositoryBaseLogger, _cacheService);
         QueryParameters queryParameters = new()
         {
-            Access = string.Empty,
-            DetailLevel = "Simple",
             PageNumber = 1,
             PageSize = 50,
         };
@@ -343,8 +321,6 @@ public class CouponRepositoryUnitTest : IClassFixture<RepositoryFixture>
         var repository = new CouponRepository(context, _couponRepositoryLogger, _noxRepositoryBaseLogger, _cacheService);
         QueryParameters queryParameters = new()
         {
-            Access = string.Empty,
-            DetailLevel = "Simple",
             PageNumber = 5,
             PageSize = 5,
         };

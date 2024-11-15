@@ -2,7 +2,7 @@
 
 namespace AppyNox.Services.Base.API.Wrappers;
 
-internal class NoxApiResponsePOCO
+internal class NoxApiResponsePOCO<TData>
 {
     #region [ Properties ]
 
@@ -14,7 +14,7 @@ internal class NoxApiResponsePOCO
 
     public int Code { get; set; }
 
-    public NoxApiResultObject Result { get; set; } = null!;
+    public NoxApiResultObject<TData> Result { get; set; } = null!;
 
     #endregion
 }

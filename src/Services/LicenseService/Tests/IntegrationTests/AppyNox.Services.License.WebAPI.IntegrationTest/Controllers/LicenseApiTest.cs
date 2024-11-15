@@ -1,8 +1,9 @@
 ﻿using AppyNox.Services.Base.API.Constants;
+using AppyNox.Services.Base.API.Wrappers;
 using AppyNox.Services.Base.Core.Common;
 using AppyNox.Services.Base.IntegrationTests.URIs;
 using AppyNox.Services.Base.IntegrationTests.Wrapper.Helpers;
-using AppyNox.Services.License.Application.Dtos.LicenseDtos.Models.Base;
+using AppyNox.Services.License.Application.Dtos.LicenseDtos.Models;
 using AppyNox.Services.License.Domain.Entities;
 using AppyNox.Services.License.WebAPI.IntegrationTest.Fixtures;
 using System.Linq.Dynamic.Core;
@@ -37,14 +38,13 @@ namespace AppyNox.Services.License.WebAPI.IntegrationTest.Controllers
             // Act
             var response = await _client.GetAsync($"{_serviceURIs.LicenseServiceURI}/v{NoxVersions.v1_0}/licenses");
 
-            var jsonResponse = await response.Content.ReadAsStringAsync();
-
-            var licenses = NoxResponseUnwrapper.UnwrapData<PaginatedList<LicenseSimpleDto>>(jsonResponse, jsonSerializerOptions: _jsonSerializerOptions);
+            var wrappedResponse= await NoxResponseUnwrapper.UnwrapResponse<PaginatedList<LicenseDto>>(response, jsonSerializerOptions: _jsonSerializerOptions);
 
             // Assert
             response.EnsureSuccessStatusCode();
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.NotNull(licenses.Items);
+            Assert.NotNull(wrappedResponse.Result.Data);
+            Assert.NotNull(wrappedResponse.Result.Data.Items);
         }
 
         [Fact]
@@ -69,13 +69,12 @@ namespace AppyNox.Services.License.WebAPI.IntegrationTest.Controllers
 
             // Act
             var response = await _client.GetAsync(requestUri);
-            var jsonResponse = await response.Content.ReadAsStringAsync();
-            var licenseObj = NoxResponseUnwrapper.UnwrapData<LicenseSimpleDto>(jsonResponse, jsonSerializerOptions: _jsonSerializerOptions);
+            var noxApiResponse = await NoxResponseUnwrapper.UnwrapResponse<LicenseDto>(response, jsonSerializerOptions: _jsonSerializerOptions);
 
             // Assert
             response.EnsureSuccessStatusCode();
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.NotNull(licenseObj);
+            Assert.NotNull(noxApiResponse.Result.Data);
 
             #endregion
         }
@@ -89,26 +88,36 @@ namespace AppyNox.Services.License.WebAPI.IntegrationTest.Controllers
             // Arrange
             var requestUri = $"{_serviceURIs.LicenseServiceURI}/v{NoxVersions.v1_0}/licenses";
             var uniqueCode = "ffff2";
-            var requestBody = new
+            LicenseCreateDto dto = new()
             {
-                code = uniqueCode,
-                description = "string",
-                licenseKey = "4547a28a-ce2c-4d84-b791-466d7aedd2bb",
-                expirationDate = "2025-01-03T20:30:02.928Z",
-                maxUsers = 2,
-                maxMacAddresses = 3,
-                productId = new
+                Code = uniqueCode,
+                Description = "string",
+                LicenseKey = "4547a28a-ce2c-4d84-b791-466d7aedd2bb",
+                ExpirationDate = DateTime.Now,
+                MaxUsers = 2,
+                MaxMacAddresses = 3,
+                ProductId = new()
                 {
-                    value = "9991492a-118c-4f20-ac8c-76410d57957c"
+                    Value = new Guid("9991492a-118c-4f20-ac8c-76410d57957c")
                 }
             };
-            var jsonRequest = JsonSerializer.Serialize(requestBody);
+            var jsonRequest = JsonSerializer.Serialize(new
+            {
+                dto.Code,
+                dto.Description,
+                dto.LicenseKey,
+                ExpirationDate = dto.ExpirationDate.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
+                dto.MaxUsers,
+                dto.MaxMacAddresses,
+                dto.ProductId
+            });
             var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
 
             // Act
             HttpResponseMessage response = await _client.PostAsync(requestUri, content);
-            string jsonResponse = await response.Content.ReadAsStringAsync();
-            Guid id = NoxResponseUnwrapper.UnwrapData<Guid>(jsonResponse, _jsonSerializerOptions);
+            var jsonData = response.Content.ReadAsStringAsync();
+            NoxApiResponse<Guid> wrappedResponse = await NoxResponseUnwrapper.UnwrapResponse<Guid>(response, _jsonSerializerOptions);
+            Guid id = wrappedResponse.Result.Data;
 
             // Assert
             response.EnsureSuccessStatusCode();

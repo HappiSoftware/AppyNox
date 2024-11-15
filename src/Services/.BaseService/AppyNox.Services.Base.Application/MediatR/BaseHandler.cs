@@ -1,8 +1,5 @@
-﻿using AppyNox.Services.Base.Application.DtoUtilities;
-using AppyNox.Services.Base.Application.Exceptions;
+﻿using AppyNox.Services.Base.Application.Exceptions;
 using AppyNox.Services.Base.Application.Interfaces.Caches;
-using AppyNox.Services.Base.Application.Interfaces.Loggers;
-using AppyNox.Services.Base.Application.Interfaces.Repositories;
 using AutoMapper;
 using FluentValidation;
 using FluentValidation.Internal;
@@ -12,14 +9,11 @@ namespace AppyNox.Services.Base.Application.MediatR;
 
 public abstract class BaseHandler<TEntity>(
         IMapper mapper,
-        IDtoMappingRegistryBase dtoMappingRegistry,
         IServiceProvider serviceProvider)
 {
     #region [ Fields ]
 
     protected readonly IMapper Mapper = mapper;
-
-    protected readonly IDtoMappingRegistryBase DtoMappingRegistry = dtoMappingRegistry;
 
     protected readonly IServiceProvider ServiceProvider = serviceProvider;
 
@@ -35,32 +29,20 @@ public abstract class BaseHandler<TEntity>(
     #region [ Protected Methods ]
 
     /// <summary>
-    /// Gets the type of DTO (Data Transfer Object) based on the specified query parameters.
-    /// </summary>
-    /// <param name="queryParameters">The query parameters specifying access type, entity type, and detail level.</param>
-    /// <returns>The type of DTO mapped for the given query parameters.</returns>
-
-    protected Type GetDtoType(IQueryParameters queryParameters)
-    {
-        return DtoMappingRegistry.GetDtoType(queryParameters.AccessType, EntityType, queryParameters.DetailLevel); ;
-    }
-
-    /// <summary>
     /// Performs validation on a given DTO using FluentValidation
     /// </summary>
-    /// <param name="dtoType">The type of the DTO to validate</param>
     /// <param name="dtoObject">The DTO object to validate</param>
     /// <exception cref="ValidatorNotFoundException">Thrown if validator for the DTO is not found in Dependency Injection Container</exception>
     /// <exception cref="NoxFluentValidationException">Thrown if DTO validation is not succeed</exception>
-    protected void FluentValidate(Type dtoType, dynamic dtoObject)
+    protected void FluentValidate<TDto>(TDto dtoObject)
     {
-        Type genericType = typeof(IValidator<>).MakeGenericType(dtoType);
-        IValidator validator = ServiceProvider.GetService(genericType) as IValidator ?? throw new ValidatorNotFoundException(dtoType);
-        var context = new ValidationContext<object>(dtoObject, new PropertyChain(), new DefaultValidatorSelector());
+        Type genericType = typeof(IValidator<TDto>);
+        IValidator validator = ServiceProvider.GetService(genericType) as IValidator ?? throw new ValidatorNotFoundException(typeof(TDto));
+        var context = new ValidationContext<TDto>(dtoObject, new PropertyChain(), new DefaultValidatorSelector());
         var validationResult = validator.Validate(context);
         if (!validationResult.IsValid)
         {
-            throw new NoxFluentValidationException(dtoType, validationResult);
+            throw new NoxFluentValidationException(typeof(TDto), validationResult);
         }
     }
 

@@ -1,4 +1,4 @@
-﻿using AppyNox.Services.License.Application.Dtos.ProductDtos.Models.Base;
+﻿using AppyNox.Services.License.Application.Dtos.ProductDtos.Models;
 using AppyNox.Services.License.Application.Validators.Product.Create;
 
 namespace AppyNox.Services.License.Application.UnitTest.FluentValidation
@@ -48,9 +48,9 @@ namespace AppyNox.Services.License.Application.UnitTest.FluentValidation
 
         #region [ Private Methods ]
 
-        private static ProductSimpleCreateDto CreateValidDto()
+        private static ProductCreateDto CreateValidDto()
         {
-            return new ProductSimpleCreateDto
+            return new ProductCreateDto
             {
                 Name = "ValidName",
                 Code = "PROD1"

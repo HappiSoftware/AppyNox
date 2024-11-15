@@ -1,8 +1,9 @@
 ﻿using AppyNox.Services.Base.API.Constants;
+using AppyNox.Services.Base.API.Wrappers;
 using AppyNox.Services.Base.Core.Common;
 using AppyNox.Services.Base.IntegrationTests.URIs;
 using AppyNox.Services.Base.IntegrationTests.Wrapper.Helpers;
-using AppyNox.Services.License.Application.Dtos.ProductDtos.Models.Base;
+using AppyNox.Services.License.Application.Dtos.ProductDtos.Models;
 using AppyNox.Services.License.Domain.Entities;
 using AppyNox.Services.License.WebAPI.IntegrationTest.Fixtures;
 using System.Linq.Dynamic.Core;
@@ -37,14 +38,13 @@ namespace AppyNox.Services.License.WebAPI.IntegrationTest.Controllers
             // Act
             var response = await _client.GetAsync($"{_serviceURIs.LicenseServiceURI}/v{NoxVersions.v1_0}/products");
 
-            var jsonResponse = await response.Content.ReadAsStringAsync();
-
-            var products = NoxResponseUnwrapper.UnwrapData<PaginatedList<ProductSimpleDto>>(jsonResponse, jsonSerializerOptions: _jsonSerializerOptions);
+            var wrappedResponse = await NoxResponseUnwrapper.UnwrapResponse<PaginatedList<ProductDto>>(response, jsonSerializerOptions: _jsonSerializerOptions);
 
             // Assert
             response.EnsureSuccessStatusCode();
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.NotNull(products.Items);
+            Assert.NotNull(wrappedResponse.Result.Data);
+            Assert.NotNull(wrappedResponse.Result.Data.Items);
         }
 
         [Fact]
@@ -69,13 +69,12 @@ namespace AppyNox.Services.License.WebAPI.IntegrationTest.Controllers
 
             // Act
             var response = await _client.GetAsync(requestUri);
-            var jsonResponse = await response.Content.ReadAsStringAsync();
-            var productObj = NoxResponseUnwrapper.UnwrapData<ProductSimpleDto>(jsonResponse, jsonSerializerOptions: _jsonSerializerOptions);
+            var wrappedResponse = await NoxResponseUnwrapper.UnwrapResponse<ProductDto>(response, jsonSerializerOptions: _jsonSerializerOptions);
 
             // Assert
             response.EnsureSuccessStatusCode();
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.NotNull(productObj);
+            Assert.NotNull(wrappedResponse.Result.Data);
 
             #endregion
         }
@@ -88,18 +87,18 @@ namespace AppyNox.Services.License.WebAPI.IntegrationTest.Controllers
 
             // Arrange
             var requestUri = $"{_serviceURIs.LicenseServiceURI}/v{NoxVersions.v1_0}/products";
-            var requestBody = new
+            ProductCreateDto dto = new()
             {
-                name = "NewProduct",
-                code = "drop1"
+                Name = "NewProduct",
+                Code = "drop1"
             };
-            var jsonRequest = JsonSerializer.Serialize(requestBody);
+            var jsonRequest = JsonSerializer.Serialize(dto);
             var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
 
             // Act
             HttpResponseMessage response = await _client.PostAsync(requestUri, content);
-            string jsonResponse = await response.Content.ReadAsStringAsync();
-            Guid id = NoxResponseUnwrapper.UnwrapData<Guid>(jsonResponse, _jsonSerializerOptions);
+            NoxApiResponse<Guid> wrappedResponse = await NoxResponseUnwrapper.UnwrapResponse<Guid>(response, _jsonSerializerOptions);
+            Guid id = wrappedResponse.Result.Data;
 
             // Assert
             response.EnsureSuccessStatusCode();

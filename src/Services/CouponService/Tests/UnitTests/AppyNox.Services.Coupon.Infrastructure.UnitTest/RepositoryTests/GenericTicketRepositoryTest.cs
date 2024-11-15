@@ -5,7 +5,7 @@ using AppyNox.Services.Base.Infrastructure.Repositories;
 using AppyNox.Services.Base.Infrastructure.Repositories.Common;
 using AppyNox.Services.Base.Infrastructure.UnitTests.Fixtures;
 using AppyNox.Services.Base.Infrastructure.UnitTests.Stubs;
-using AppyNox.Services.Coupon.Application.Dtos.TicketDtos.Models.Basic;
+using AppyNox.Services.Coupon.Application.Dtos.TicketDtos.Models;
 using AppyNox.Services.Coupon.Domain.Entities;
 using AppyNox.Services.Coupon.Domain.Localization;
 using AppyNox.Services.Coupon.Infrastructure.Data;
@@ -60,8 +60,6 @@ public class GenericTicketRepositoryTest : IClassFixture<RepositoryFixture>
         var repository = new GenericRepository<Ticket>(context, _genericRepositoryLogger);
         QueryParameters queryParameters = new()
         {
-            Access = string.Empty,
-            DetailLevel = CommonDetailLevels.Simple,
             PageNumber = 1,
             PageSize = 1,
         };
@@ -81,8 +79,6 @@ public class GenericTicketRepositoryTest : IClassFixture<RepositoryFixture>
         var repository = new GenericRepository<Ticket>(context, _genericRepositoryLogger);
         QueryParameters queryParameters = new()
         {
-            Access = string.Empty,
-            DetailLevel = "Simple",
             PageNumber = 1,
             PageSize = 2,
         };
@@ -104,8 +100,6 @@ public class GenericTicketRepositoryTest : IClassFixture<RepositoryFixture>
         var repository = new GenericRepository<Ticket>(context, _genericRepositoryLogger);
         QueryParameters queryParameters = new()
         {
-            Access = string.Empty,
-            DetailLevel = "Simple",
             PageNumber = 2,
             PageSize = 1,
         };
@@ -129,8 +123,6 @@ public class GenericTicketRepositoryTest : IClassFixture<RepositoryFixture>
         var repository = new GenericRepository<Ticket>(context, _genericRepositoryLogger);
         QueryParameters queryParameters = new()
         {
-            Access = string.Empty,
-            DetailLevel = "Simple",
             PageNumber = 1,
             PageSize = 50,
         };
@@ -152,8 +144,6 @@ public class GenericTicketRepositoryTest : IClassFixture<RepositoryFixture>
         var repository = new GenericRepository<Ticket>(context, _genericRepositoryLogger);
         QueryParameters queryParameters = new()
         {
-            Access = string.Empty,
-            DetailLevel = "Simple",
             PageNumber = 5,
             PageSize = 5,
         };
@@ -270,7 +260,7 @@ public class GenericTicketRepositoryTest : IClassFixture<RepositoryFixture>
         DateTime reportDate = existingTicket.ReportDate;
 
         // Create the update dto
-        TicketSimpleUpdateDto ticketSimpleUpdateDto = new() { Id = id, Content = content, Title = title};
+        TicketUpdateDto ticketSimpleUpdateDto = new() { Id = id, Content = content, Title = title};
 
         repository.Update(existingTicket, ticketSimpleUpdateDto);
         await unitOfWork.SaveChangesAsync();
