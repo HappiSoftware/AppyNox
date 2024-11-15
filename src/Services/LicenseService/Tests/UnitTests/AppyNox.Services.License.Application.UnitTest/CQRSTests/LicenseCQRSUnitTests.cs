@@ -6,8 +6,7 @@ using AppyNox.Services.Base.Application.UnitTests.Stubs;
 using AppyNox.Services.Base.Core.AsyncLocals;
 using AppyNox.Services.Base.Core.Common;
 using AppyNox.Services.Base.Core.Extensions;
-using AppyNox.Services.License.Application.Dtos.LicenseDtos.DetailLevel;
-using AppyNox.Services.License.Application.Dtos.LicenseDtos.Models.Base;
+using AppyNox.Services.License.Application.Dtos.LicenseDtos.Models;
 using AppyNox.Services.License.Application.Dtos.ProductDtos.Models.Base;
 using AppyNox.Services.License.Domain.Entities;
 using MediatR;
@@ -70,7 +69,7 @@ namespace AppyNox.Services.License.Application.UnitTest.CQRSTests
                 new ProductId(Guid.NewGuid())
             );
 
-            LicenseSimpleDto licenseSimpleDto = new()
+            LicenseDto licenseSimpleDto = new()
             {
                 Code = "code",
                 Description = "description",
@@ -101,7 +100,7 @@ namespace AppyNox.Services.License.Application.UnitTest.CQRSTests
         public async Task GetAllEntitiesQuery_ShouldSuccess()
         {
             // Act
-            var result = await _mediator.Send(new GetAllNoxEntitiesQuery<LicenseEntity>(_fixture.MockQueryParameters.Object));
+            var result = await _mediator.Send(new GetAllNoxEntitiesQuery<LicenseEntity, LicenseDto>(_fixture.MockQueryParameters.Object));
 
             // Assert
             Assert.NotNull(result);
@@ -111,35 +110,35 @@ namespace AppyNox.Services.License.Application.UnitTest.CQRSTests
         public async Task GetEntityByIdQuery_ShouldSuccess()
         {
             // Act
-            var result = await _mediator.Send(new GetNoxEntityByIdQuery<LicenseEntity, LicenseId>(It.IsAny<LicenseId>(), _fixture.MockQueryParameters.Object));
+            var result = await _mediator.Send(new GetNoxEntityByIdQuery<LicenseEntity, LicenseId, LicenseDto>(It.IsAny<LicenseId>(), _fixture.MockQueryParameters.Object));
 
             // Assert
             Assert.NotNull(result);
-            Assert.True(result is LicenseSimpleDto);
+            Assert.True(result is LicenseDto);
         }
 
         [Fact]
         public async Task CreateEntityCommand_ShouldSuccess()
         {
             // Prepare
-            string jsonData = @"{
-              ""code"": ""LK002"",
-              ""expirationDate"": ""2025-01-03T20:30:02.928Z"",
-              ""licenseKey"": ""00b7fb79-9a1c-4786-abb9-1ea9bd7f379esssssssssssssss"",
-              ""description"": ""new description"",
-              ""maxUsers"" : 4,
-              ""maxMacAddresses"" : 3,
-              ""productId"" : {
-                ""value"" : ""9991492a-118c-4f20-ac8c-76410d57957c""
-              }
-            }";
-            JsonDocument jsonDocument = JsonDocument.Parse(jsonData);
-            JsonElement root = jsonDocument.RootElement;
+            LicenseCreateDto dto = new()
+            {
+                Code = "LK002",
+                ExpirationDate = DateTime.UtcNow,
+                LicenseKey = Guid.NewGuid().ToString(),
+                Description = "Description",
+                MaxUsers = 4,
+                MaxMacAddresses = 3,
+                ProductId = new()
+                {
+                    Value = Guid.NewGuid()
+                }
+            };
             NoxContext.UserId = Guid.Parse("a8bfc75b-2ac3-47e2-b013-8b8a1efba45d");
 
             // Act
             var result = await _mediator
-                .Send(new CreateNoxEntityCommand<LicenseEntity>(root, LicenseCreateDetailLevel.Simple.GetDisplayName()));
+                .Send(new CreateNoxEntityCommand<LicenseEntity, LicenseCreateDto>(dto));
 
             // Assert
             Assert.True(Guid.TryParse(result.ToString(), out _));

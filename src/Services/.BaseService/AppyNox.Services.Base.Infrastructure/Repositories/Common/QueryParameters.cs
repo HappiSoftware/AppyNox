@@ -1,6 +1,4 @@
-﻿using AppyNox.Services.Base.Core.Enums;
-
-namespace AppyNox.Services.Base.Infrastructure.Repositories.Common;
+﻿namespace AppyNox.Services.Base.Infrastructure.Repositories.Common;
 
 /// <summary>
 /// Represents specific query parameters for data retrieval.

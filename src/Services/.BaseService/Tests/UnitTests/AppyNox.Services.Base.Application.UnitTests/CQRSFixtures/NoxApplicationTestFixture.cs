@@ -3,10 +3,11 @@ using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Application.Interfaces.Repositories;
 using AppyNox.Services.Base.Application.Localization;
 using AppyNox.Services.Base.Application.UnitTests.Stubs;
-using AppyNox.Services.Base.Core.Enums;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
 using Moq;
+using Serilog;
+using Serilog.Sinks.InMemory;
 
 namespace AppyNox.Services.Base.Application.UnitTests.CQRSFixtures;
 
@@ -40,21 +41,28 @@ public class NoxApplicationTestFixture : IDisposable
         MockQueryParameters = new Mock<IQueryParameters>();
         MockQueryParameters.Setup(p => p.PageNumber).Returns(1);
         MockQueryParameters.Setup(p => p.PageSize).Returns(10);
-        MockQueryParameters.Setup(p => p.AccessType).Returns(DtoLevelMappingTypes.DataAccess);
-        MockQueryParameters.Setup(p => p.Access).Returns(string.Empty);
-        MockQueryParameters.Setup(p => p.DetailLevel).Returns("Simple");
 
         #endregion
 
         #region [ Localization ]
 
-        var localizer = new Mock<IStringLocalizer>();
-        localizer.Setup(l => l[It.IsAny<string>()]).Returns(new LocalizedString("key", "mock value"));
+        InMemorySink inMemorySink = new();
+        Log.Logger = new LoggerConfiguration()
+            .WriteTo.Sink(inMemorySink)
+            .CreateLogger();
 
-        var localizerFactory = new Mock<IStringLocalizerFactory>();
-        localizerFactory.Setup(lf => lf.Create(typeof(NoxApplicationResourceService))).Returns(localizer.Object);
+        ServiceCollection.AddLogging(builder =>
+        {
+            builder.AddSerilog();
+        });
 
-        NoxApplicationResourceService.Initialize(localizerFactory.Object);
+        ServiceCollection.AddScoped(typeof(INoxApplicationLogger<>), typeof(NoxApplicationLoggerStub<>));
+
+        ServiceCollection.AddLocalization();
+
+        var serviceProvider = ServiceCollection.BuildServiceProvider();
+        var factory = serviceProvider.GetRequiredService<IStringLocalizerFactory>();
+        NoxApplicationResourceService.Initialize(factory);
 
         #endregion
 

@@ -3,21 +3,16 @@ using AppyNox.Services.Base.API.Wrappers;
 using AppyNox.Services.Base.Application.Exceptions.Base;
 using AppyNox.Services.Base.Core.Common;
 using AppyNox.Services.Base.Infrastructure.Repositories;
-using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
 using AppyNox.Services.Base.IntegrationTests.Stubs;
 using AppyNox.Services.Base.IntegrationTests.URIs;
 using AppyNox.Services.Base.IntegrationTests.Wrapper;
 using AppyNox.Services.Base.IntegrationTests.Wrapper.Helpers;
-using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
-using AppyNox.Services.Coupon.Application.Dtos.TicketDtos.Models.Basic;
-using AppyNox.Services.Coupon.Application.Dtos.TicketDtos.Models.Extended;
+using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models;
+using AppyNox.Services.Coupon.Application.Dtos.TicketDtos.Models;
 using AppyNox.Services.Coupon.Domain.Entities;
 using AppyNox.Services.Coupon.Infrastructure.Repositories;
 using AppyNox.Services.Coupon.WebAPI.IntegrationTest.Fixtures;
-using Castle.Core.Logging;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using Moq;
 using System.Linq.Dynamic.Core;
 using System.Net;
 using System.Text;
@@ -50,14 +45,13 @@ public class TicketApiTest(CouponServiceFixture couponApiTestFixture)
         // Act
         var response = await _client.GetAsync($"{_serviceURIs.CouponServiceURI}/v{NoxVersions.v1_0}/tickets");
 
-        var jsonResponse = await response.Content.ReadAsStringAsync();
-
-        var coupons = NoxResponseUnwrapper.UnwrapData<PaginatedList<TicketExtendedDto>>(jsonResponse, _jsonSerializerOptions);
+        var wrappedResponse = await NoxResponseUnwrapper.UnwrapResponse<PaginatedList<TicketDto>>(response, _jsonSerializerOptions);
 
         // Assert
         response.EnsureSuccessStatusCode();
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        Assert.NotNull(coupons.Items);
+        Assert.NotNull(wrappedResponse.Result.Data);
+        Assert.NotNull(wrappedResponse.Result.Data.Items);
     }
 
     [Fact]
@@ -82,13 +76,12 @@ public class TicketApiTest(CouponServiceFixture couponApiTestFixture)
 
         // Act
         var response = await _client.GetAsync(requestUri);
-        var jsonResponse = await response.Content.ReadAsStringAsync();
-        var ticketObj = NoxResponseUnwrapper.UnwrapData<CouponSimpleDto>(jsonResponse, _jsonSerializerOptions);
+        var wrappedResponse = await NoxResponseUnwrapper.UnwrapResponse<TicketDto>(response, _jsonSerializerOptions);
 
         // Assert
         response.EnsureSuccessStatusCode();
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        Assert.NotNull(ticketObj);
+        Assert.NotNull(wrappedResponse.Result.Data);
 
         #endregion
     }
@@ -102,7 +95,7 @@ public class TicketApiTest(CouponServiceFixture couponApiTestFixture)
         // Arrange
         var requestUri = $"{_serviceURIs.CouponServiceURI}/v{NoxVersions.v1_0}/tickets";
 
-        TicketSimpleCreateDto ticketSimpleCreateDto = new()
+        TicketCreateDto ticketSimpleCreateDto = new()
         {
             Title = "new title",
             Content = "new content",
@@ -113,8 +106,8 @@ public class TicketApiTest(CouponServiceFixture couponApiTestFixture)
 
         // Act
         HttpResponseMessage response = await _client.PostAsync(requestUri, content);
-        string jsonResponse = await response.Content.ReadAsStringAsync();
-        Guid id = NoxResponseUnwrapper.UnwrapData<Guid>(jsonResponse, _jsonSerializerOptions);
+        NoxApiResponse<Guid> wrappedResponse = await NoxResponseUnwrapper.UnwrapResponse<Guid>(response, _jsonSerializerOptions);
+        Guid id = wrappedResponse.Result.Data;
 
         // Assert
         response.EnsureSuccessStatusCode();
@@ -143,7 +136,7 @@ public class TicketApiTest(CouponServiceFixture couponApiTestFixture)
         // Arrange
         var requestUri = $"{_serviceURIs.CouponServiceURI}/v{NoxVersions.v1_0}/tickets";
 
-        TicketSimpleCreateDto ticketSimpleCreateDto = new()
+        TicketCreateDto ticketSimpleCreateDto = new()
         {
             Title = string.Empty,
             Content = "new content"
@@ -153,7 +146,7 @@ public class TicketApiTest(CouponServiceFixture couponApiTestFixture)
 
         // Act
         HttpResponseMessage response = await _client.PostAsync(requestUri, content);
-        NoxApiResponse unwrappedResponse = await NoxResponseUnwrapper.UnwrapResponse(response, _jsonSerializerOptions);
+        NoxApiResponse<NoxApiExceptionWrapObjectPOCO> unwrappedResponse = await NoxResponseUnwrapper.UnwrapResponse<NoxApiExceptionWrapObjectPOCO>(response, _jsonSerializerOptions);
 
         // Assert
         Assert.True(unwrappedResponse.HasError);
@@ -201,7 +194,7 @@ public class TicketApiTest(CouponServiceFixture couponApiTestFixture)
         string updatedTitle = "updated title";
         string updatedContent = "updated content";
 
-        TicketSimpleUpdateDto ticketSimpleUpdateDto = new()
+        TicketUpdateDto ticketSimpleUpdateDto = new()
         {
             Title = updatedTitle,
             Content = updatedContent,

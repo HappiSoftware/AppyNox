@@ -117,4 +117,34 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AmountNotNull" xml:space="preserve">
+    <value>Amount must be set before it can be accessed.</value>
+  </data>
+  <data name="CodeNotNull" xml:space="preserve">
+    <value>Code must be set before it can be accessed.</value>
+  </data>
+  <data name="CouponDetailIdMandatory" xml:space="preserve">
+    <value>CouponDetailId is mandatory.</value>
+  </data>
+  <data name="CouponDetailIdNotNull" xml:space="preserve">
+    <value>CouponDetailId must be set before it can be accessed.</value>
+  </data>
+  <data name="CouponDetailIdShouldBeEmptyInCompose" xml:space="preserve">
+    <value>CouponDetailId should not be provided in composite creation.</value>
+  </data>
+  <data name="CouponDetailInComposeNotNull" xml:space="preserve">
+    <value>CouponDetail can not be null in composite creation.</value>
+  </data>
+  <data name="CouponDetailNotNull" xml:space="preserve">
+    <value>CouponDetail must be set before it can be accessed.</value>
+  </data>
+  <data name="CouponDetailShouldBeEmptyInCompose" xml:space="preserve">
+    <value>CouponDetail should not be provided in composite creation.</value>
+  </data>
+  <data name="TagNotNull" xml:space="preserve">
+    <value>Tag must be set before it can be accessed.</value>
+  </data>
+  <data name="TagsNotNull" xml:space="preserve">
+    <value>CouponDetailTags must be set before it can be accessed.</value>
+  </data>
 </root>

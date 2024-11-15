@@ -27,4 +27,8 @@
 	  <ProjectReference Include="..\..\..\AppyNox.Services.License.Application\AppyNox.Services.License.Application.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="DtoTests\" />
+	</ItemGroup>
+
 </Project>

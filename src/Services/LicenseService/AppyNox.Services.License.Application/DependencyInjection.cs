@@ -1,10 +1,9 @@
 ﻿using AppyNox.Services.Base.Application;
-using AppyNox.Services.Base.Application.DtoUtilities;
 using AppyNox.Services.Base.Application.Extensions;
 using AppyNox.Services.Base.Application.Interfaces.Loggers;
-using AppyNox.Services.License.Application.Dtos.DtoUtilities;
+using AppyNox.Services.License.Application.Dtos.LicenseDtos.Models;
+using AppyNox.Services.License.Application.Dtos.ProductDtos.Models;
 using AppyNox.Services.License.Domain.Entities;
-using FluentValidation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
@@ -24,12 +23,11 @@ namespace AppyNox.Services.License.Application
                 options.UseAutoMapper = true;
                 options.UseFluentValidation = true;
                 options.UseDtoMappingRegistry = true;
-                options.DtoMappingRegistryFactory = provider => new DtoMappingRegistry();
                 options.UseMediatR = true;
             });
 
-            services.AddNoxEntityCommands<LicenseEntity, LicenseId>();
-            services.AddNoxEntityCommands<ProductEntity, ProductId>();
+            services.AddNoxEntityCommands<LicenseEntity, LicenseId, LicenseCreateDto, LicenseDto>();
+            services.AddNoxEntityCommands<ProductEntity, ProductId, ProductCreateDto, ProductDto>();
 
             return services;
         }

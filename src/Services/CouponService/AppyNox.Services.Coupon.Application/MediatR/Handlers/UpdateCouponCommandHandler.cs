@@ -1,10 +1,9 @@
 ﻿using AppyNox.Services.Base.Application.Exceptions;
 using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Application.Interfaces.Repositories;
-using AppyNox.Services.Base.Core.AsyncLocals;
 using AppyNox.Services.Base.Core.Exceptions.Base;
-using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
-using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Extended;
+using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models;
+using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.ValueObjects;
 using AppyNox.Services.Coupon.Application.Exceptions.Base;
 using AppyNox.Services.Coupon.Application.MediatR.Commands;
 using AppyNox.Services.Coupon.Domain.Coupons;
@@ -19,7 +18,7 @@ namespace AppyNox.Services.Coupon.Application.MediatR.Handlers;
 public class UpdateCouponCommandHandler(
         INoxRepository<CouponRoot> repository,
         IMapper mapper,
-        IValidator<CouponExtendedUpdateDto> validator,
+        IValidator<CouponUpdateDto> validator,
         INoxApplicationLogger<UpdateCouponCommandHandler> logger,
         IUnitOfWork unitOfWork)
 
@@ -35,7 +34,7 @@ public class UpdateCouponCommandHandler(
 
     private readonly INoxApplicationLogger<UpdateCouponCommandHandler> _logger = logger;
 
-    private readonly IValidator<CouponExtendedUpdateDto> _validator = validator;
+    private readonly IValidator<CouponUpdateDto> _validator = validator;
 
     #endregion
 
@@ -56,7 +55,7 @@ public class UpdateCouponCommandHandler(
             var validationResult = _validator.Validate(request.Dto);
             if (!validationResult.IsValid)
             {
-                throw new NoxFluentValidationException(typeof(CouponExtendedUpdateDto), validationResult);
+                throw new NoxFluentValidationException(typeof(CouponUpdateDto), validationResult);
             }
 
             #endregion

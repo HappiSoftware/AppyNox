@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace AppyNox.Services.Base.API.Wrappers;
 
-public class NoxApiResponse
+public class NoxApiResponse<TData>
 {
     #region [ Properties ]
 
@@ -25,18 +25,18 @@ public class NoxApiResponse
     public int Code { get; internal set; }
 
     [JsonPropertyName("result")]
-    public NoxApiResultObject Result { get; set; }
+    public NoxApiResultObject<TData> Result { get; set; }
 
     #endregion
 
     #region [ Constructors ]
 
-    public NoxApiResponse(object result, string message = "", string version = "1.0", bool hasError = false, int code = (int)HttpStatusCode.OK)
-        : this(new NoxApiResultObject(result, null), message, version, hasError, code)
+    public NoxApiResponse(TData result, string message = "", string version = "1.0", bool hasError = false, int code = (int)HttpStatusCode.OK)
+        : this(new NoxApiResultObject<TData>(result, null), message, version, hasError, code)
     {
     }
 
-    internal NoxApiResponse(NoxApiResultObject result, string message, string version, bool hasError, int code)
+    internal NoxApiResponse(NoxApiResultObject<TData> result, string message, string version, bool hasError, int code)
     {
         Result = result;
         Message = message;
@@ -45,7 +45,7 @@ public class NoxApiResponse
         Code = code;
     }
 
-    internal NoxApiResponse(NoxApiResponsePOCO noxApiResponsePOCO)
+    internal NoxApiResponse(NoxApiResponsePOCO<TData> noxApiResponsePOCO)
     {
         Result = noxApiResponsePOCO.Result;
         Message = noxApiResponsePOCO.Message;

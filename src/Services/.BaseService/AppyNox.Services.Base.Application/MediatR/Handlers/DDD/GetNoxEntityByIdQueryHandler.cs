@@ -1,5 +1,4 @@
-﻿using AppyNox.Services.Base.Application.DtoUtilities;
-using AppyNox.Services.Base.Application.Exceptions.Base;
+﻿using AppyNox.Services.Base.Application.Exceptions.Base;
 using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Application.Interfaces.Repositories;
 using AppyNox.Services.Base.Application.MediatR.Commands;
@@ -11,14 +10,13 @@ using MediatR;
 
 namespace AppyNox.Services.Base.Application.MediatR.Handlers.DDD;
 
-internal class GetNoxEntityByIdQueryHandler<TEntity, TId>(
+internal class GetNoxEntityByIdQueryHandler<TEntity, TId, TDto>(
         INoxRepository<TEntity> repository,
         IMapper mapper,
-        IDtoMappingRegistryBase dtoMappingRegistry,
         IServiceProvider serviceProvider,
-        INoxApplicationLogger<GetNoxEntityByIdQueryHandler<TEntity, TId>> logger)
-        : BaseHandler<TEntity>(mapper, dtoMappingRegistry, serviceProvider),
-        IRequestHandler<GetNoxEntityByIdQuery<TEntity, TId>, object>
+        INoxApplicationLogger<GetNoxEntityByIdQueryHandler<TEntity, TId, TDto>> logger)
+        : BaseHandler<TEntity>(mapper, serviceProvider),
+        IRequestHandler<GetNoxEntityByIdQuery<TEntity, TId, TDto>, TDto>
         where TEntity : class, IHasStronglyTypedId
         where TId : NoxId
 {
@@ -32,14 +30,13 @@ internal class GetNoxEntityByIdQueryHandler<TEntity, TId>(
 
     #region [ Public Methods ]
 
-    public async Task<object> Handle(GetNoxEntityByIdQuery<TEntity, TId> request, CancellationToken cancellationToken)
+    public async Task<TDto> Handle(GetNoxEntityByIdQuery<TEntity, TId, TDto> request, CancellationToken cancellationToken)
     {
         try
         {
             logger.LogInformation($"Fetching entity of type {typeof(TEntity).Name} with ID: {request.Id}.");
-            var dtoType = GetDtoType(request.QueryParameters);
-            var entity = await _repository.GetByIdAsync(request.Id, request.QueryParameters.IncludeDeleted, request.Track);
-            return _mapper.Map(entity, typeof(TEntity), dtoType);
+            TEntity entity = await _repository.GetByIdAsync(request.Id, request.QueryParameters.IncludeDeleted, request.Track);
+            return _mapper.Map<TDto>(entity);
         }
         catch (Exception ex) when (ex is INoxException)
         {

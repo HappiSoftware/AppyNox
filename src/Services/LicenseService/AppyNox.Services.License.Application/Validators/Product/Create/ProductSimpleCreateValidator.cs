@@ -1,10 +1,10 @@
 ﻿using AppyNox.Services.Base.Application.Validators;
-using AppyNox.Services.License.Application.Dtos.ProductDtos.Models.Base;
+using AppyNox.Services.License.Application.Dtos.ProductDtos.Models;
 using FluentValidation;
 
 namespace AppyNox.Services.License.Application.Validators.Product.Create
 {
-    public class ProductSimpleCreateValidator : DtoValidatorBase<ProductSimpleCreateDto>
+    public class ProductSimpleCreateValidator : DtoValidatorBase<ProductCreateDto>
     {
         #region [ Public Constructors ]
 

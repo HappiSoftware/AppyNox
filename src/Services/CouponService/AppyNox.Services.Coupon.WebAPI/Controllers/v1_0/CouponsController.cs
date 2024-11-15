@@ -1,13 +1,12 @@
-﻿using AppyNox.Services.Base.API.Attributes;
-using AppyNox.Services.Base.API.Constants;
+﻿using AppyNox.Services.Base.API.Constants;
 using AppyNox.Services.Base.API.Controllers;
-using AppyNox.Services.Base.API.ViewModels;
+using AppyNox.Services.Base.API.Wrappers;
 using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Application.MediatR;
 using AppyNox.Services.Base.Application.MediatR.Commands;
-using AppyNox.Services.Base.Core.Enums;
+using AppyNox.Services.Base.Infrastructure.Repositories.Common;
+using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models;
 using AppyNox.Services.Coupon.Domain.Coupons;
-using AppyNox.Services.Coupon.Domain.Coupons.Builders;
 using Asp.Versioning;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -32,27 +31,23 @@ public class CouponsController(IMediator mediator, INoxApiLogger<CouponsControll
 
     [HttpGet]
     [Authorize(Coupons.View)]
-    [SwaggerDynamicRequestBody(typeof(CouponAggreagate), DtoLevelMappingTypes.DataAccess, true)]
-    public async Task<IActionResult> GetAll([FromQuery] QueryParametersViewModel queryParameters)
+    public async Task<ActionResult<NoxApiResponse<IEnumerable<CouponDto>>>> GetAll([FromQuery] QueryParameters queryParameters)
     {
-        logger.LogInformation("sa");
-        return base.Ok(await _mediator.Send(new GetAllNoxEntitiesQuery<CouponAggreagate>(queryParameters)));
+        return base.Ok(await _mediator.Send(new GetAllNoxEntitiesQuery<CouponAggreagate, CouponDto>(queryParameters)));
     }
 
     [HttpGet("{id}")]
     [Authorize(Coupons.View)]
-    [SwaggerDynamicRequestBody(typeof(CouponAggreagate), DtoLevelMappingTypes.DataAccess)]
-    public async Task<IActionResult> GetById(Guid id, [FromQuery] QueryParametersViewModel queryParameters)
+    public async Task<IActionResult> GetById(Guid id, [FromQuery] QueryParameters queryParameters)
     {
-        return base.Ok(await _mediator.Send(new GetNoxEntityByIdQuery<CouponAggreagate, CouponId>(new CouponId(id), queryParameters)));
+        return base.Ok(await _mediator.Send(new GetNoxEntityByIdQuery<CouponAggreagate, CouponId, CouponDto>(new CouponId(id), queryParameters)));
     }
 
     [HttpPost]
     [Authorize(Coupons.Create)]
-    [SwaggerDynamicRequestBody(typeof(CouponAggreagate), DtoLevelMappingTypes.Create)]
-    public async Task<IActionResult> Create([FromBody] dynamic couponDto, string detailLevel = "Simple")
+    public async Task<IActionResult> Create([FromBody] CouponCreateDto couponDto)
     {
-        Guid result = await _mediator.Send(new CreateNoxEntityCommand<CouponAggreagate>(couponDto, detailLevel));
+        Guid result = await _mediator.Send(new CreateNoxEntityCommand<CouponAggreagate, CouponCreateDto>(couponDto));
 
         return CreatedAtAction(nameof(GetById), new { id = result }, result);
     }
@@ -61,19 +56,20 @@ public class CouponsController(IMediator mediator, INoxApiLogger<CouponsControll
     [Authorize(Coupons.Delete)]
     public async Task<IActionResult> Delete(Guid id)
     {
-        var t1 = new NoxCommandAction(TestBeh);
-        var t2 = new NoxCommandAction(TestBeh2);
+        var t1 = new NoxCommandAction(NoxCommandActionMethodTest1);
+        var t2 = new NoxCommandAction(NoxCommandActionMethodTest2);
         NoxCommandExtensions extensions = new(t1, t2);
         await _mediator.Send(new DeleteNoxEntityCommand<CouponAggreagate, CouponId>(new CouponId(id), false, extensions));
         return NoContent();
     }
 
-    private void TestBeh()
+    // Below methods are for manual testing
+    private void NoxCommandActionMethodTest1()
     {
         Console.WriteLine(1);
     }
 
-    private void TestBeh2()
+    private void NoxCommandActionMethodTest2()
     {
         Console.WriteLine(2);
     }

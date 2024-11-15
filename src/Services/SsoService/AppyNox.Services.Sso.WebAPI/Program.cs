@@ -17,7 +17,6 @@ await builder.AddApiServices(options =>
 {
     options.SetupHostName = "CouponHost";
     options.UseConsulKV = true;
-    options.UseDynamicRequestBodyOperationFilter = false;
     options.ConfigureLayers = (services, logger, configuration) =>
     {
         services

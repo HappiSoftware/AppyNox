@@ -1,23 +1,24 @@
 ﻿using AppyNox.Services.Base.Application.Exceptions.Base;
 using AppyNox.Services.Base.Application.Interfaces.Caches;
 using AppyNox.Services.Base.Application.Interfaces.Repositories;
+using AppyNox.Services.Base.Application.Localization;
 using AppyNox.Services.Base.Application.MediatR;
 using AppyNox.Services.Base.Application.MediatR.Commands;
 using AppyNox.Services.Base.Application.UnitTests.CQRSFixtures;
 using AppyNox.Services.Base.Application.UnitTests.Stubs;
 using AppyNox.Services.Base.Core.AsyncLocals;
 using AppyNox.Services.Base.Core.Common;
-using AppyNox.Services.Base.Core.Extensions;
-using AppyNox.Services.Coupon.Application.Dtos.CouponDetailDtos.Models.Basic;
-using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.DetailLevel;
-using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
+using AppyNox.Services.Coupon.Application.Dtos.CouponDetailDtos.Models.ValueObjects;
+using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models;
+using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.ValueObjects;
 using AppyNox.Services.Coupon.Domain.Coupons;
 using AppyNox.Services.Coupon.Domain.Coupons.Builders;
+using AppyNox.Services.Coupon.Domain.Localization;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Localization;
 using Moq;
-using System;
 using System.Text.Json;
 using CouponAggregate = AppyNox.Services.Coupon.Domain.Coupons.Coupon;
 using NCEHelper = AppyNox.Services.Base.Application.UnitTests.Helpers.NoxCommandExtensionsHelper;
@@ -67,7 +68,7 @@ public class CouponDddCQRSUnitTest : IClassFixture<NoxApplicationTestFixture>
 
         CouponDetail newDetail = new CouponDetailBuilder().WithDetails("test01", "testdetail").Build();
         CouponAggregate couponEntity = new CouponBuilder().WithDetails("code", "description", "detail").WithAmount(10, 15).WithCouponDetail(newDetail).MarkAsBulkCreate().Build();
-        CouponSimpleDto couponSimpleDto = new()
+        CouponDto couponSimpleDto = new()
         {
             Code = "code",
             Description = "description",
@@ -84,6 +85,12 @@ public class CouponDddCQRSUnitTest : IClassFixture<NoxApplicationTestFixture>
             .ReturnsAsync(couponEntity);
 
         #endregion
+
+        #region [ Localizer ]
+
+        InitializeRealLocalizer();
+
+        #endregion
     }
 
     #endregion
@@ -94,7 +101,7 @@ public class CouponDddCQRSUnitTest : IClassFixture<NoxApplicationTestFixture>
     public async Task GetAllEntitiesQuery_ShouldSuccess()
     {
         // Act
-        var result = await _mediator.Send(new GetAllNoxEntitiesQuery<CouponAggregate>(_fixture.MockQueryParameters.Object));
+        var result = await _mediator.Send(new GetAllNoxEntitiesQuery<CouponAggregate, CouponDto>(_fixture.MockQueryParameters.Object));
 
         // Assert
         Assert.NotNull(result);
@@ -107,7 +114,7 @@ public class CouponDddCQRSUnitTest : IClassFixture<NoxApplicationTestFixture>
         NoxCommandExtensions extensions = new([new(NCEHelper.DummyMethod1, RunType.Before), new(NCEHelper.DummyMethod2, RunType.After, suspendOnFailure: false)]);
 
         // Act
-        var result = await _mediator.Send(new GetAllNoxEntitiesQuery<CouponAggregate>(_fixture.MockQueryParameters.Object, extensions));
+        var result = await _mediator.Send(new GetAllNoxEntitiesQuery<CouponAggregate, CouponDto>(_fixture.MockQueryParameters.Object, extensions));
 
         // Assert
         Assert.NotNull(result);
@@ -123,7 +130,7 @@ public class CouponDddCQRSUnitTest : IClassFixture<NoxApplicationTestFixture>
         NoxCommandExtensions extensions = new([new(NCEHelper.DummyMethod1), new(NCEHelper.DummyMethod2, RunType.After)]);
 
         // Act
-        var exception = await Assert.ThrowsAsync<NoxApplicationException>(() => _mediator.Send(new GetAllNoxEntitiesQuery<CouponAggregate>(_fixture.MockQueryParameters.Object, extensions)));
+        var exception = await Assert.ThrowsAsync<NoxApplicationException>(() => _mediator.Send(new GetAllNoxEntitiesQuery<CouponAggregate, CouponDto>(_fixture.MockQueryParameters.Object, extensions)));
 
         // Assert
         Assert.Equal(RunStatus.Finished, extensions.Actions[0].Status);
@@ -136,11 +143,11 @@ public class CouponDddCQRSUnitTest : IClassFixture<NoxApplicationTestFixture>
     public async Task GetEntityByIdQuery_ShouldSuccess()
     {
         // Act
-        var result = await _mediator.Send(new GetNoxEntityByIdQuery<CouponAggregate, CouponId>(It.IsAny<CouponId>(), _fixture.MockQueryParameters.Object));
+        var result = await _mediator.Send(new GetNoxEntityByIdQuery<CouponAggregate, CouponId, CouponDto>(It.IsAny<CouponId>(), _fixture.MockQueryParameters.Object));
 
         // Assert
         Assert.NotNull(result);
-        Assert.True(result is CouponSimpleDto);
+        Assert.True(result is CouponDto);
     }
 
     [Fact]
@@ -150,11 +157,11 @@ public class CouponDddCQRSUnitTest : IClassFixture<NoxApplicationTestFixture>
         NoxCommandExtensions extensions = new([new(NCEHelper.DummyMethod1, RunType.Before), new(NCEHelper.DummyMethod2, RunType.After, suspendOnFailure: false)]);
 
         // Act
-        var result = await _mediator.Send(new GetNoxEntityByIdQuery<CouponAggregate, CouponId>(It.IsAny<CouponId>(), _fixture.MockQueryParameters.Object, Extensions: extensions));
+        var result = await _mediator.Send(new GetNoxEntityByIdQuery<CouponAggregate, CouponId, CouponDto>(It.IsAny<CouponId>(), _fixture.MockQueryParameters.Object, Extensions: extensions));
 
         // Assert
         Assert.NotNull(result);
-        Assert.True(result is CouponSimpleDto);
+        Assert.True(result is CouponDto);
         Assert.Equal(RunStatus.Finished, extensions.Actions[0].Status);
         Assert.Equal(RunStatus.ExitedWithError, extensions.Actions[1].Status);
         Assert.Equal("B0MA0", string.Concat(extensions.RunOrderHistory));
@@ -164,34 +171,34 @@ public class CouponDddCQRSUnitTest : IClassFixture<NoxApplicationTestFixture>
     public async Task CreateEntityCommand_ShouldSuccess()
     {
         // Prepare
-        string jsonData = @"
+        CouponCompositeCreateDto dto = new()
         {
-          ""code"": ""fffj9"",
-          ""amount"":{
-            ""discountAmount"": 2,
-            ""minAmount"": 13
-          },
-          ""description"": ""string"",
-          ""couponDetail"" : {
-            ""detail"" : ""details detail"",
-            ""code"":""deta1"",
-            ""couponDetailTags"": [
-                {
-                    ""tag"" : ""tag1""
-                },
-                {
-                    ""tag"":""tag2""
-                }
-            ]
-          }
-        }";
-        JsonDocument jsonDocument = JsonDocument.Parse(jsonData);
-        JsonElement root = jsonDocument.RootElement;
+            Code = "fffj9",
+            Amount = new()
+            {
+                DiscountAmount = 2,
+                MinAmount = 13
+            },
+            Description = "Description",
+            CouponDetail = new()
+            {
+                Code = "Deta1",
+                CouponDetailTags = [
+                    new()
+                    {
+                        Tag = "Tag1"
+                    },
+                    new()
+                    {
+                        Tag = "Tag2"
+                    }
+                ]
+            }
+        };
         NoxContext.UserId = Guid.Parse("a8bfc75b-2ac3-47e2-b013-8b8a1efba45d");
 
         // Act
-        var result = await _mediator
-            .Send<Guid>(new CreateNoxEntityCommand<CouponAggregate>(root, CouponCreateDetailLevel.Bulk.GetDisplayName()));
+        var result = await _mediator.Send(new CreateNoxEntityCommand<CouponAggregate, CouponCompositeCreateDto>(dto));
 
         // Assert
         Assert.True(Guid.TryParse(result.ToString(), out _));
@@ -204,34 +211,34 @@ public class CouponDddCQRSUnitTest : IClassFixture<NoxApplicationTestFixture>
         NoxCommandExtensions extensions = new([new(NCEHelper.DummyMethod1, RunType.Before), new(NCEHelper.DummyMethod2, RunType.After, suspendOnFailure: false)]);
 
         // Prepare
-        string jsonData = @"
+        CouponCompositeCreateDto dto = new()
         {
-          ""code"": ""fffj9"",
-          ""amount"":{
-            ""discountAmount"": 2,
-            ""minAmount"": 13
-          },
-          ""description"": ""string"",
-          ""couponDetail"" : {
-            ""detail"" : ""details detail"",
-            ""code"":""deta1"",
-            ""couponDetailTags"": [
-                {
-                    ""tag"" : ""tag1""
-                },
-                {
-                    ""tag"":""tag2""
-                }
-            ]
-          }
-        }";
-        JsonDocument jsonDocument = JsonDocument.Parse(jsonData);
-        JsonElement root = jsonDocument.RootElement;
+            Code = "fffj9",
+            Amount = new()
+            {
+                DiscountAmount = 2,
+                MinAmount = 13
+            },
+            Description = "Description",
+            CouponDetail = new()
+            {
+                Code = "Deta1",
+                CouponDetailTags = [
+                    new()
+                    {
+                        Tag = "Tag1"
+                    },
+                    new()
+                    {
+                        Tag = "Tag2"
+                    }
+                ]
+            }
+        };
         NoxContext.UserId = Guid.Parse("a8bfc75b-2ac3-47e2-b013-8b8a1efba45d");
 
         // Act
-        var result = await _mediator
-            .Send<Guid>(new CreateNoxEntityCommand<CouponAggregate>(root, CouponCreateDetailLevel.Bulk.GetDisplayName(), extensions));
+        var result = await _mediator.Send(new CreateNoxEntityCommand<CouponAggregate, CouponCompositeCreateDto>(dto, extensions));
 
         // Assert
         Assert.True(Guid.TryParse(result.ToString(), out _));
@@ -348,4 +355,11 @@ public class CouponDddCQRSUnitTest : IClassFixture<NoxApplicationTestFixture>
     }
 
     #endregion
+
+    private void InitializeRealLocalizer()
+    {
+        var factory = _serviceProvider.GetRequiredService<IStringLocalizerFactory>();
+        CouponDomainResourceService.Initialize(factory);
+    }
+
 }

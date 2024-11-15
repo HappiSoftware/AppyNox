@@ -7,7 +7,7 @@ using AppyNox.Services.Base.Application.UnitTests.CQRSFixtures;
 using AppyNox.Services.Base.Application.UnitTests.Stubs;
 using AppyNox.Services.Base.Core.AsyncLocals;
 using AppyNox.Services.Base.Core.Common;
-using AppyNox.Services.Coupon.Application.Dtos.TicketDtos.Models.Basic;
+using AppyNox.Services.Coupon.Application.Dtos.TicketDtos.Models;
 using AppyNox.Services.Coupon.Domain.Entities;
 using MediatR;
 using Microsoft.Extensions.Configuration;
@@ -61,7 +61,7 @@ public class TicketAnemicCQRSUnitTest : IClassFixture<NoxApplicationTestFixture>
 
         TicketTag mockTag = new();
         Ticket mockTicket = new();
-        TicketSimpleDto mockTicketSimpleDto = new();
+        TicketDto mockTicketSimpleDto = new();
 
         mockRepository.Setup(repo => repo.GetAllAsync(It.IsAny<IQueryParameters>(), It.IsAny<ICacheService>()))
             .ReturnsAsync(new Mock<PaginatedList<Ticket>>().Object);
@@ -83,7 +83,7 @@ public class TicketAnemicCQRSUnitTest : IClassFixture<NoxApplicationTestFixture>
     public async Task GetAllEntitiesQuery_ShouldSuccess()
     {
         // Act
-        var result = await _mediator.Send(new GetAllEntitiesQuery<Ticket>(_fixture.MockQueryParameters.Object));
+        var result = await _mediator.Send(new GetAllEntitiesQuery<Ticket, TicketDto>(_fixture.MockQueryParameters.Object));
 
         // Assert
         Assert.NotNull(result);
@@ -96,7 +96,7 @@ public class TicketAnemicCQRSUnitTest : IClassFixture<NoxApplicationTestFixture>
         NoxCommandExtensions extensions = new([new(NCEHelper.DummyMethod1, RunType.Before), new(NCEHelper.DummyMethod2, RunType.After, suspendOnFailure: false)]);
 
         // Act
-        var result = await _mediator.Send(new GetAllEntitiesQuery<Ticket>(_fixture.MockQueryParameters.Object, extensions));
+        var result = await _mediator.Send(new GetAllEntitiesQuery<Ticket, TicketDto>(_fixture.MockQueryParameters.Object, extensions));
 
         // Assert
         Assert.NotNull(result);
@@ -109,11 +109,11 @@ public class TicketAnemicCQRSUnitTest : IClassFixture<NoxApplicationTestFixture>
     public async Task GetEntityByIdQuery_ShouldSuccess()
     {
         // Act
-        var result = await _mediator.Send(new GetEntityByIdQuery<Ticket>(It.IsAny<Guid>(), _fixture.MockQueryParameters.Object));
+        var result = await _mediator.Send(new GetEntityByIdQuery<Ticket, TicketDto>(It.IsAny<Guid>(), _fixture.MockQueryParameters.Object));
 
         // Assert
         Assert.NotNull(result);
-        Assert.True(result is TicketSimpleDto);
+        Assert.True(result is TicketDto);
     }
     [Fact]
     public async Task GetEntityByIdQuery_ShouldCallActions()
@@ -122,11 +122,11 @@ public class TicketAnemicCQRSUnitTest : IClassFixture<NoxApplicationTestFixture>
         NoxCommandExtensions extensions = new([new(NCEHelper.DummyMethod1, RunType.Before), new(NCEHelper.DummyMethod2, RunType.After, suspendOnFailure: false)]);
 
         // Act
-        var result = await _mediator.Send(new GetEntityByIdQuery<Ticket>(It.IsAny<Guid>(), _fixture.MockQueryParameters.Object, Extensions: extensions));
+        var result = await _mediator.Send(new GetEntityByIdQuery<Ticket, TicketDto>(It.IsAny<Guid>(), _fixture.MockQueryParameters.Object, Extensions: extensions));
 
         // Assert
         Assert.NotNull(result);
-        Assert.True(result is TicketSimpleDto);
+        Assert.True(result is TicketDto);
         Assert.Equal(RunStatus.Finished, extensions.Actions[0].Status);
         Assert.Equal(RunStatus.ExitedWithError, extensions.Actions[1].Status);
         Assert.Equal("B0MA0", string.Concat(extensions.RunOrderHistory));
@@ -136,18 +136,16 @@ public class TicketAnemicCQRSUnitTest : IClassFixture<NoxApplicationTestFixture>
     public async Task CreateEntityCommand_ShouldSuccess()
     {
         // Prepare
-        string jsonData = @"{
-            ""title"":""Title nwe2"",
-            ""content"": ""Ticket content new2"",
-            ""reportDate"": ""2024-06-16T11:36:05.3303319Z""
-        }";
-        JsonDocument jsonDocument = JsonDocument.Parse(jsonData);
-        JsonElement root = jsonDocument.RootElement;
+        TicketCreateDto dto = new()
+        {
+            Title = "Title new",
+            Content = "Ticket content new",
+            ReportDate = DateTime.Now,
+        };
         NoxContext.UserId = Guid.Parse("a8bfc75b-2ac3-47e2-b013-8b8a1efba45d");
 
         // Act
-        var result = await _mediator
-            .Send<Guid>(new CreateEntityCommand<Ticket>(root, CommonDetailLevels.Simple));
+        var result = await _mediator.Send(new CreateEntityCommand<Ticket, TicketCreateDto>(dto));
 
         // Assert
         Assert.True(Guid.TryParse(result.ToString(), out _));
@@ -159,18 +157,16 @@ public class TicketAnemicCQRSUnitTest : IClassFixture<NoxApplicationTestFixture>
         // Prepare
         NoxCommandExtensions extensions = new([new(NCEHelper.DummyMethod1, RunType.Before), new(NCEHelper.DummyMethod2, RunType.After, suspendOnFailure: false)]);
 
-        string jsonData = @"{
-            ""title"":""Title nwe2"",
-            ""content"": ""Ticket content new2"",
-            ""reportDate"": ""2024-06-16T11:36:05.3303319Z""
-        }";
-        JsonDocument jsonDocument = JsonDocument.Parse(jsonData);
-        JsonElement root = jsonDocument.RootElement;
+        TicketCreateDto dto = new()
+        {
+            Title = "Title new",
+            Content = "Ticket content new",
+            ReportDate = DateTime.Now,
+        };
         NoxContext.UserId = Guid.Parse("a8bfc75b-2ac3-47e2-b013-8b8a1efba45d");
 
         // Act
-        var result = await _mediator
-            .Send<Guid>(new CreateEntityCommand<Ticket>(root, CommonDetailLevels.Simple, extensions));
+        var result = await _mediator.Send(new CreateEntityCommand<Ticket, TicketCreateDto>(dto, extensions));
 
         // Assert
         Assert.True(Guid.TryParse(result.ToString(), out _));
@@ -184,22 +180,18 @@ public class TicketAnemicCQRSUnitTest : IClassFixture<NoxApplicationTestFixture>
     {
         // Prepare
         Guid id = new();
-        var updateBody = new
+        TicketUpdateDto dto = new()
         {
             Id = id,
             Title = "t1",
             Content = "c1"
         };
 
-        string jsonString = JsonSerializer.Serialize(updateBody);
-        JsonDocument jsonDocument = JsonDocument.Parse(jsonString);
-        JsonElement root = jsonDocument.RootElement;
-
         NoxContext.UserId = Guid.Parse("a8bfc75b-2ac3-47e2-b013-8b8a1efba45d");
 
         // Act
         var result = _mediator
-            .Send(new UpdateEntityCommand<Ticket>(id, root, CommonDetailLevels.Simple));
+            .Send(new UpdateEntityCommand<Ticket, TicketUpdateDto>(id, dto));
 
         // Assert
         Assert.NotNull(result);
@@ -213,22 +205,18 @@ public class TicketAnemicCQRSUnitTest : IClassFixture<NoxApplicationTestFixture>
         NoxCommandExtensions extensions = new([new(NCEHelper.DummyMethod1, RunType.Before), new(NCEHelper.DummyMethod2, RunType.After, suspendOnFailure: false)]);
 
         Guid id = new();
-        var updateBody = new
+        TicketUpdateDto dto = new()
         {
             Id = id,
             Title = "t1",
             Content = "c1"
         };
 
-        string jsonString = JsonSerializer.Serialize(updateBody);
-        JsonDocument jsonDocument = JsonDocument.Parse(jsonString);
-        JsonElement root = jsonDocument.RootElement;
-
         NoxContext.UserId = Guid.Parse("a8bfc75b-2ac3-47e2-b013-8b8a1efba45d");
 
         // Act
         var result = _mediator
-            .Send(new UpdateEntityCommand<Ticket>(id, root, CommonDetailLevels.Simple, extensions));
+            .Send(new UpdateEntityCommand<Ticket, TicketUpdateDto>(id, dto, extensions));
 
         // Assert
         Assert.NotNull(result);

@@ -1,10 +1,14 @@
 using AppyNox.Services.Base.API.Constants;
+using AppyNox.Services.Base.API.Wrappers;
 using AppyNox.Services.Base.Infrastructure.Repositories;
 using AppyNox.Services.Base.IntegrationTests.Stubs;
 using AppyNox.Services.Base.IntegrationTests.URIs;
-using AppyNox.Services.Coupon.Application.Dtos.CouponDetailDtos.Models.Basic;
-using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Base;
-using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.Extended;
+using AppyNox.Services.Base.IntegrationTests.Wrapper.Helpers;
+using AppyNox.Services.Coupon.Application.Dtos.CouponDetailDtos.Models;
+using AppyNox.Services.Coupon.Application.Dtos.CouponDetailDtos.Models.ValueObjects;
+using AppyNox.Services.Coupon.Application.Dtos.CouponDetailTagDtos.Models;
+using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models;
+using AppyNox.Services.Coupon.Application.Dtos.CouponDtos.Models.ValueObjects;
 using AppyNox.Services.Coupon.Domain.Coupons;
 using AppyNox.Services.Coupon.Domain.Coupons.Builders;
 using AppyNox.Services.Coupon.Infrastructure.Repositories;
@@ -68,7 +72,7 @@ public class CouponApiTestV1_1(CouponServiceFixture couponApiTestFixture)
         int minimumAmount = coupon.Amount.MinAmount + 10;
         string detail = "This detail is modified";
 
-        CouponExtendedUpdateDto couponExtendedUpdateDto = new()
+        CouponUpdateDto couponExtendedUpdateDto = new()
         {
             Code = "test1",
             Amount = new AmountDto()
@@ -111,6 +115,63 @@ public class CouponApiTestV1_1(CouponServiceFixture couponApiTestFixture)
         Assert.Equal(updatedCoupon.Detail, detail);
         Assert.NotNull(updateDate);
         Assert.False(string.IsNullOrEmpty(updatedBy));
+
+        #endregion
+    }
+
+    [Fact]
+    [Order(2)]
+    public async Task CompositeCreate_ShouldAddNewCoupon()
+    {
+        #region [ Create Coupon ]
+
+        // Arrange
+        var requestUri = $"{_serviceURIs.CouponServiceURI}/v{NoxVersions.v1_1}/coupons";
+
+        CouponCompositeCreateDto couponSimpleCreateDto = new()
+        {
+            Code = "ffff2",
+            Amount = new AmountDto()
+            {
+                MinAmount = 12,
+                DiscountAmount = 2,
+            },
+            Description = "string",
+            CouponDetail = new CouponDetailCompositeCreateDto()
+            {
+                Code = "test1",
+                Detail = "testdetail",
+                CouponDetailTags =
+                [
+                    new CouponDetailTagCompositeCreateDto
+                    {
+                        Tag = "DummyTag"
+                    }
+                ]
+            }
+        };
+        var jsonRequest = JsonSerializer.Serialize(couponSimpleCreateDto);
+        var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+
+        // Act
+        HttpResponseMessage response = await _client.PostAsync(requestUri, content);
+        NoxApiResponse<Guid> wrappedResponse = await NoxResponseUnwrapper.UnwrapResponse<Guid>(response, _jsonSerializerOptions);
+        Guid id = wrappedResponse.Result.Data;
+
+        // Assert
+        response.EnsureSuccessStatusCode();
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+        Assert.NotEqual(id, Guid.Empty);
+
+        #endregion
+
+        #region [ Get Coupons ]
+
+        // Act
+        var coupon = _couponApiTestFixture.DbContext.Coupons.Where("Id == @0", new CouponId(id)).FirstOrDefault();
+
+        // Assert
+        Assert.NotNull(coupon);
 
         #endregion
     }

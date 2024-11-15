@@ -1,13 +1,9 @@
 ﻿using AppyNox.Services.Base.Application.Dtos;
-using AppyNox.Services.Base.Application.DtoUtilities;
 using AppyNox.Services.Base.Application.Exceptions.Base;
 using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Application.Interfaces.Repositories;
 using AppyNox.Services.Base.Application.Localization;
 using AppyNox.Services.Base.Application.MediatR.Commands;
-using AppyNox.Services.Base.Core.AsyncLocals;
-using AppyNox.Services.Base.Core.Common;
-using AppyNox.Services.Base.Core.Enums;
 using AppyNox.Services.Base.Core.Exceptions.Base;
 using AppyNox.Services.Base.Core.Extensions;
 using AppyNox.Services.Base.Domain.Interfaces;
@@ -15,19 +11,17 @@ using AutoMapper;
 using MediatR;
 using System.Dynamic;
 using System.Net;
-using System.Text.Json;
 
 namespace AppyNox.Services.Base.Application.MediatR.Handlers.Anemic;
 
-internal class UpdateEntityCommandHandler<TEntity>(
+internal class UpdateEntityCommandHandler<TEntity, TDto>(
         IGenericRepository<TEntity> repository,
         IMapper mapper,
-        IDtoMappingRegistryBase dtoMappingRegistry,
         IServiceProvider serviceProvider,
-        INoxApplicationLogger<UpdateEntityCommandHandler<TEntity>> logger,
+        INoxApplicationLogger<UpdateEntityCommandHandler<TEntity, TDto>> logger,
         IUnitOfWork unitOfWork)
-        : BaseHandler<TEntity>(mapper, dtoMappingRegistry, serviceProvider),
-        IRequestHandler<UpdateEntityCommand<TEntity>>
+        : BaseHandler<TEntity>(mapper, serviceProvider),
+        IRequestHandler<UpdateEntityCommand<TEntity, TDto>>
         where TEntity : class, IEntityWithGuid
 {
     #region [ Fields ]
@@ -40,27 +34,20 @@ internal class UpdateEntityCommandHandler<TEntity>(
 
     #region [ Public Methods ]
 
-    public async Task Handle(UpdateEntityCommand<TEntity> request, CancellationToken cancellationToken)
+    public async Task Handle(UpdateEntityCommand<TEntity, TDto> request, CancellationToken cancellationToken)
     {
         try
         {
-            #region [ Dynamic Dto Convertion ]
-
-            Type dtoType = DtoMappingRegistry.GetDtoType(DtoLevelMappingTypes.Update, typeof(TEntity), request.DetailLevel);
-            dynamic dtoObject = JsonSerializer.Deserialize(request.Dto, dtoType, options: JsonSerializerOptions);
-
-            #endregion
-
             #region [ Controls Before Update ]
 
-            if (dtoObject is not IUpdateDto)
+            if (request.Dto is not IUpdateDto)
             {
                 throw new NoxApplicationException(
                     NoxApplicationResourceService.IUpdateDtoNullId,
                     (int)NoxApplicationExceptionCode.IUpdateDtoNullId,
                     (int)HttpStatusCode.UnprocessableContent);
             }
-            if (dtoObject is IUpdateDto updateDto && !updateDto.Id.Equals(request.Id))
+            if (request.Dto is IUpdateDto updateDto && !updateDto.Id.Equals(request.Id))
             {
                 throw new NoxApplicationException(
                     NoxApplicationResourceService.MismatchedIdInUpdate.Format(updateDto.Id, request.Id),
@@ -77,11 +64,11 @@ internal class UpdateEntityCommandHandler<TEntity>(
 
             #region [ FluentValidation ]
 
-            FluentValidate(dtoType, dtoObject);
+            FluentValidate(request.Dto);
 
             #endregion
 
-            _repository.Update(existingEntity, dtoObject);
+            _repository.Update(existingEntity, request.Dto);
             await _unitOfWork.SaveChangesAsync();
         }
         catch (Exception ex) when (ex is INoxException)

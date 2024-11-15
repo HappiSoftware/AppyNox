@@ -117,4 +117,34 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AmountNotNull" xml:space="preserve">
+    <value>Tutarın erişilebilmesi için önceden ayarlanması gerekir.</value>
+  </data>
+  <data name="CodeNotNull" xml:space="preserve">
+    <value>Kodun erişilebilmesi için ayarlanması gerekir.</value>
+  </data>
+  <data name="CouponDetailIdMandatory" xml:space="preserve">
+    <value>CouponDetailId zorunludur.</value>
+  </data>
+  <data name="CouponDetailIdNotNull" xml:space="preserve">
+    <value>CouponDetailId'nin erişilebilmesi için ayarlanması gerekir.</value>
+  </data>
+  <data name="CouponDetailIdShouldBeEmptyInCompose" xml:space="preserve">
+    <value>Bileşik oluşturmada CouponDetailId sağlanmamalıdır.</value>
+  </data>
+  <data name="CouponDetailInComposeNotNull" xml:space="preserve">
+    <value>CouponDetail bileşik oluşturmada boş olamaz.</value>
+  </data>
+  <data name="CouponDetailNotNull" xml:space="preserve">
+    <value>CouponDetail'e erişilebilmesi için ayarlanması gerekir.</value>
+  </data>
+  <data name="CouponDetailShouldBeEmptyInCompose" xml:space="preserve">
+    <value>Bileşik oluşturmada CouponDetail sağlanmamalıdır.</value>
+  </data>
+  <data name="TagNotNull" xml:space="preserve">
+    <value>Etiketin erişilebilmesi için ayarlanması gerekir.</value>
+  </data>
+  <data name="TagsNotNull" xml:space="preserve">
+    <value>CouponDetailTag'lerin erişilebilmesi için ayarlanması gerekir.</value>
+  </data>
 </root>

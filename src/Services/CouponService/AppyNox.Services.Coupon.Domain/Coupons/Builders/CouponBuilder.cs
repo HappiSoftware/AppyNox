@@ -111,12 +111,12 @@ public sealed class CouponBuilder()
     {
         if (BulkCreate && _couponDetail == null)
         {
-            throw new DomainException(CouponDomainResourceService.CouponDetailInBulkNotNull,
+            throw new DomainException(CouponDomainResourceService.CouponDetailInComposeNotNull,
                                       (int)ExceptionCode.CouponBuilderValidation);
         }
         if (BulkCreate && (_couponDetailId != null && !_couponDetailId.Value.Equals(Guid.Empty)))
         {
-            throw new DomainException(CouponDomainResourceService.CouponDetailIdShouldBeEmptyInBulk,
+            throw new DomainException(CouponDomainResourceService.CouponDetailIdShouldBeEmptyInCompose,
                                       (int)ExceptionCode.CouponBuilderValidation);
         }
         if (!BulkCreate && (_couponDetailId == null || _couponDetailId.Value.Equals(Guid.Empty)))
@@ -126,7 +126,7 @@ public sealed class CouponBuilder()
         }
         if (!BulkCreate && _couponDetail != null)
         {
-            throw new DomainException(CouponDomainResourceService.CouponDetailShouldBeEmptyInBulk,
+            throw new DomainException(CouponDomainResourceService.CouponDetailShouldBeEmptyInCompose,
                                       (int)ExceptionCode.CouponBuilderValidation);
         }
     }

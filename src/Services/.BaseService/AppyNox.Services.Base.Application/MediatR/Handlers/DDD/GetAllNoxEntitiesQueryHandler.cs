@@ -1,5 +1,4 @@
-﻿using AppyNox.Services.Base.Application.DtoUtilities;
-using AppyNox.Services.Base.Application.Exceptions.Base;
+﻿using AppyNox.Services.Base.Application.Exceptions.Base;
 using AppyNox.Services.Base.Application.Interfaces.Caches;
 using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Application.Interfaces.Repositories;
@@ -12,15 +11,14 @@ using MediatR;
 
 namespace AppyNox.Services.Base.Application.MediatR.Handlers.DDD;
 
-internal class GetAllNoxEntitiesQueryHandler<TEntity>(
+internal class GetAllNoxEntitiesQueryHandler<TEntity, TDto>(
         INoxRepository<TEntity> repository,
         IMapper mapper,
-        IDtoMappingRegistryBase dtoMappingRegistry,
         IServiceProvider serviceProvider,
-        INoxApplicationLogger<GetAllNoxEntitiesQueryHandler<TEntity>> logger,
+        INoxApplicationLogger<GetAllNoxEntitiesQueryHandler<TEntity, TDto>> logger,
         ICacheService cacheService)
-        : BaseHandler<TEntity>(mapper, dtoMappingRegistry, serviceProvider),
-        IRequestHandler<GetAllNoxEntitiesQuery<TEntity>, PaginatedList<object>>
+        : BaseHandler<TEntity>(mapper, serviceProvider),
+        IRequestHandler<GetAllNoxEntitiesQuery<TEntity, TDto>, PaginatedList<TDto>>
         where TEntity : class, IHasStronglyTypedId
 {
     #region [ Fields ]
@@ -35,16 +33,15 @@ internal class GetAllNoxEntitiesQueryHandler<TEntity>(
 
     #region [ Public Methods ]
 
-    public async Task<PaginatedList<object>> Handle(GetAllNoxEntitiesQuery<TEntity> request, CancellationToken cancellationToken)
+    public async Task<PaginatedList<TDto>> Handle(GetAllNoxEntitiesQuery<TEntity, TDto> request, CancellationToken cancellationToken)
     {
         try
         {
             logger.LogInformation($"Fetching entities of type '{typeof(TEntity).Name}'");
-            var dtoType = GetDtoType(request.QueryParameters);
             var paginatedEntityList = await _repository.GetAllAsync(request.QueryParameters, _cacheService);
-            var mappedItems = _mapper.Map(paginatedEntityList.Items, paginatedEntityList.Items.GetType(), typeof(IEnumerable<>).MakeGenericType(dtoType))
-                as IEnumerable<object>;
-            return new PaginatedList<object>
+            var mappedItems = _mapper.Map<IEnumerable<TDto>>(paginatedEntityList.Items);
+
+            return new PaginatedList<TDto>
             {
                 Items = mappedItems!, // risky
                 ItemsCount = paginatedEntityList.ItemsCount,

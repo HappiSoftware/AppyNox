@@ -1,28 +1,24 @@
-﻿using AppyNox.Services.Base.Application.DtoUtilities;
-using AppyNox.Services.Base.Application.Exceptions.Base;
+﻿using AppyNox.Services.Base.Application.Exceptions.Base;
 using AppyNox.Services.Base.Application.Interfaces.Caches;
 using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Application.Interfaces.Repositories;
 using AppyNox.Services.Base.Application.MediatR.Commands;
-using AppyNox.Services.Base.Core.Enums;
 using AppyNox.Services.Base.Core.Exceptions.Base;
 using AppyNox.Services.Base.Domain.Interfaces;
 using AutoMapper;
 using MediatR;
-using System.Text.Json;
 
 namespace AppyNox.Services.Base.Application.MediatR.Handlers.Anemic;
 
-internal sealed class CreateEntityCommandHandler<TEntity>(
+internal sealed class CreateEntityCommandHandler<TEntity, TDto>(
         IGenericRepository<TEntity> repository,
         IMapper mapper,
-        IDtoMappingRegistryBase dtoMappingRegistry,
         IServiceProvider serviceProvider,
-        INoxApplicationLogger<CreateEntityCommandHandler<TEntity>> logger,
+        INoxApplicationLogger<CreateEntityCommandHandler<TEntity, TDto>> logger,
         IUnitOfWork unitOfWork,
         ICacheService cacheService)
-        : BaseHandler<TEntity>(mapper, dtoMappingRegistry, serviceProvider),
-        IRequestHandler<CreateEntityCommand<TEntity>, Guid>
+        : BaseHandler<TEntity>(mapper, serviceProvider),
+        IRequestHandler<CreateEntityCommand<TEntity, TDto>, Guid>
         where TEntity : class, IEntityWithGuid
 {
     #region [ Fields ]
@@ -37,27 +33,19 @@ internal sealed class CreateEntityCommandHandler<TEntity>(
 
     #region [ Public Methods ]
 
-    public async Task<Guid> Handle(CreateEntityCommand<TEntity> request, CancellationToken cancellationToken)
+    public async Task<Guid> Handle(CreateEntityCommand<TEntity, TDto> request, CancellationToken cancellationToken)
     {
         try
         {
             logger.LogInformation($"Adding new entity of type '{typeof(TEntity).Name}'");
-            Type entityType = typeof(TEntity);
-
-            #region [ Dynamic Dto Convertion ]
-
-            Type dtoType = DtoMappingRegistry.GetDtoType(DtoLevelMappingTypes.Create, entityType, request.DetailLevel);
-            dynamic? dtoObject = JsonSerializer.Deserialize(request.Dto, dtoType, options: JsonSerializerOptions);
-
-            #endregion
 
             #region [ FluentValidation ]
 
-            FluentValidate(dtoType, dtoObject);
+            FluentValidate(request.Dto);
 
             #endregion
 
-            TEntity mappedEntity = Mapper.Map(dtoObject, dtoType, entityType);
+            TEntity mappedEntity = Mapper.Map<TEntity>(request.Dto);
             await _repository.AddAsync(mappedEntity);
             await _unitOfWork.SaveChangesAsync();
             await UpdateTotalCountOnCache(_cacheService, $"total-count-{typeof(TEntity).Name}", true);

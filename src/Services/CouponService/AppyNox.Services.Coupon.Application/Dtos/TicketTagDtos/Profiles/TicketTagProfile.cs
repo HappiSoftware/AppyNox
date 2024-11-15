@@ -1,4 +1,4 @@
-﻿using AppyNox.Services.Coupon.Application.Dtos.TicketTagDtos.Models.Basic;
+﻿using AppyNox.Services.Coupon.Application.Dtos.TicketTagDtos.Models;
 using AppyNox.Services.Coupon.Domain.Entities;
 using AutoMapper;
 
@@ -10,9 +10,9 @@ public class TicketTagProfile : Profile
 
     public TicketTagProfile()
     {
-        CreateMap<TicketTag, TicketTagSimpleDto>();
-        CreateMap<TicketTagSimpleCreateDto, TicketTag>();
-        CreateMap<TicketTagSimpleUpdateDto, TicketTag>();
+        CreateMap<TicketTag, TicketTagDto>();
+        CreateMap<TicketTagCreateDto, TicketTag>();
+        CreateMap<TicketTagUpdateDto, TicketTag>();
     }
 
     #endregion
