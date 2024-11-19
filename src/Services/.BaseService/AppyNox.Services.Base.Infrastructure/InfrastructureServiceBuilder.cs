@@ -5,7 +5,6 @@ using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Core.Common;
 using AppyNox.Services.Base.Infrastructure.Authentication;
 using AppyNox.Services.Base.Infrastructure.BackgroundJobs;
-using AppyNox.Services.Base.Infrastructure.Configuration;
 using AppyNox.Services.Base.Infrastructure.Data;
 using AppyNox.Services.Base.Infrastructure.Data.Interceptors;
 using AppyNox.Services.Base.Infrastructure.HostedServices;
@@ -17,14 +16,11 @@ using Consul;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Tokens;
 using Quartz;
-using Serilog;
 using StackExchange.Redis;
 using System.ComponentModel.DataAnnotations;
 using ValidationResult = System.ComponentModel.DataAnnotations.ValidationResult;
@@ -56,8 +52,8 @@ public class InfrastructureSetupOptions
 
 public static class InfrastructureServiceBuilder
 {
-    public static IServiceCollection AddInfrastructureServices<TContext>(
-        this IServiceCollection services,
+    public static IHostApplicationBuilder AddInfrastructureServices<TContext>(
+        this IHostApplicationBuilder builder,
         INoxLogger logger,
         Action<InfrastructureSetupOptions> configureOptions) where TContext : DbContext, INoxDatabaseContext
     {
@@ -73,6 +69,7 @@ public static class InfrastructureServiceBuilder
             var errors = string.Join(", ", validationResults.Select(vr => vr.ErrorMessage));
             throw new InvalidOperationException($"Invalid options: {errors}");
         }
+        IServiceCollection services = builder.Services;
 
         services.AddSingleton(typeof(INoxApplicationLogger<>), typeof(NoxApplicationLogger<>));
         services.AddSingleton(typeof(INoxInfrastructureLogger<>), typeof(NoxInfrastructureLogger<>));
@@ -102,7 +99,7 @@ public static class InfrastructureServiceBuilder
 
         if (options.UseRedis)
         {
-            services.ConfigureRedis(options.Configuration);
+            builder.ConfigureRedis();
             logger.LogInformation($"-{serviceName}- Redis enabled...", false);
         }
 
@@ -118,7 +115,7 @@ public static class InfrastructureServiceBuilder
         }
 
         logger.LogInformation($"-{serviceName}- Finished Adding Infrastructure Services, finalizing...", false);
-        return services;
+        return builder;
     }
 
     #region [ Builders ]
@@ -184,17 +181,11 @@ public static class InfrastructureServiceBuilder
         return services;
     }
 
-    private static IServiceCollection ConfigureRedis(this IServiceCollection services, IConfiguration configuration)
+    private static IServiceCollection ConfigureRedis(this IHostApplicationBuilder builder)
     {
-        RedisConfiguration? redisConfig = configuration.GetSection("Redis").Get<RedisConfiguration>();
-        if (redisConfig == null || string.IsNullOrWhiteSpace(redisConfig.ConnectionString))
-        {
-            throw new InvalidOperationException("Redis configuration is missing or invalid.");
-        }
-
-        services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(redisConfig.ConnectionString));
-        services.AddSingleton<ICacheService, RedisCacheService>();
-        return services;
+        builder.AddRedisClient("appynox-cache");
+        builder.Services.AddSingleton<ICacheService, RedisCacheService>();
+        return builder.Services;
     }
 
     private static IServiceCollection AddJwtAuthentication(this IServiceCollection services, string serviceName, InfrastructureSetupOptions options, INoxLogger logger)
@@ -227,14 +218,6 @@ public static class InfrastructureServiceBuilder
 
     private static IServiceCollection AddMassTransit(this IServiceCollection services, string serviceName, InfrastructureSetupOptions options, INoxLogger logger)
     {
-        string hostUrl = options.Configuration["MessageBroker:Host"]
-                ?? throw new InvalidOperationException("MessageBroker:Host is not defined!");
-
-        string username = options.Configuration["MessageBroker:Username"]
-            ?? throw new InvalidOperationException("MessageBroker:Username is not defined!");
-        string password = options.Configuration["MessageBroker:Password"]
-            ?? throw new InvalidOperationException("MessageBroker:Password is not defined!");
-
         services.AddMassTransit(busConfigurator =>
         {
             options.MassTransitConfiguration?.Invoke(busConfigurator);
@@ -253,14 +236,9 @@ public static class InfrastructureServiceBuilder
 
                 configurator.UseConsumeFilter(typeof(NoxContextConsumeFilter<>), context);
 
-                configurator.Host(
-                        new Uri(hostUrl),
-                        h =>
-                        {
-                            h.Username(username);
-                            h.Password(password);
-                        }
-                    );
+                var configService = context.GetRequiredService<IConfiguration>();
+                var connectionString = configService.GetConnectionString("appynox-rabbitmq");
+                configurator.Host(connectionString);
 
                 options.RabbitMqConfiguration?.Invoke((context, configurator));
 

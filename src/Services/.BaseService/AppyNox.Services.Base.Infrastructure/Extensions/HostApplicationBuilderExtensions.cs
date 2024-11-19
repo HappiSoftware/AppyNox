@@ -1,13 +1,8 @@
-﻿using AppyNox.Services.Base.Application.Interfaces.Caches;
-using AppyNox.Services.Base.Infrastructure.Configuration;
-using AppyNox.Services.Base.Infrastructure.Exceptions.Base;
-using AppyNox.Services.Base.Infrastructure.Services.CacheServices;
+﻿using AppyNox.Services.Base.Infrastructure.Exceptions.Base;
 using Consul;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using StackExchange.Redis;
 using System.Net;
 using System.Text;
 using System.Text.Json;
@@ -24,23 +19,6 @@ public static class HostApplicationBuilderExtensions
     #endregion
 
     #region [ Public Methods ]
-
-    public static void AddMassTransitWithRabbitMq(this IHostApplicationBuilder builder)
-    {
-        builder.Services.AddMassTransit(busConfigurator =>
-        {
-            busConfigurator.UsingRabbitMq((context, configurator) =>
-            {
-                configurator.Host(new Uri(builder.Configuration["MessageBroker:Host"]!), h =>
-                {
-                    h.Username(builder.Configuration["MessageBroker:Username"]!);
-                    h.Password(builder.Configuration["MessageBroker:Password"]!);
-                });
-
-                configurator.ConfigureEndpoints(context);
-            });
-        });
-    }
 
     /// <summary>
     /// Adds and loads configuration settings from Consul for a specified microservice. This method initializes a Consul

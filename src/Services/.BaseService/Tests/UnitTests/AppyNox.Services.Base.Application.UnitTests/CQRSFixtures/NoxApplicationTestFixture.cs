@@ -5,6 +5,7 @@ using AppyNox.Services.Base.Application.Localization;
 using AppyNox.Services.Base.Application.UnitTests.Stubs;
 using AppyNox.Services.Base.Core.Enums;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Localization;
 using Moq;
 
@@ -20,6 +21,8 @@ public class NoxApplicationTestFixture : IDisposable
 
     public readonly IServiceCollection ServiceCollection;
 
+    public readonly StubHostApplicationBuilder Builder;
+
     public readonly Mock<IQueryParameters> MockQueryParameters;
 
     public bool DIInitialized { get; set; } = false;
@@ -30,7 +33,8 @@ public class NoxApplicationTestFixture : IDisposable
 
     public NoxApplicationTestFixture()
     {
-        ServiceCollection = new ServiceCollection();
+        Builder = new();
+        ServiceCollection = Builder.Services;
         ServiceCollection.AddScoped(typeof(INoxApplicationLogger<>), typeof(NoxApplicationLoggerStub<>));
         
         _unitOfWork = new();

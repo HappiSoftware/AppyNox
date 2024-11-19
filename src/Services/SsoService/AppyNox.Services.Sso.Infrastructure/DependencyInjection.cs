@@ -22,6 +22,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using System.Reflection;
 
@@ -38,14 +39,15 @@ public static class DependencyInjection
     /// Adds sso infrastructure services.
     /// </summary>
     /// <param name="configuration">The IConfiguration instance to access application settings.</param>
-    public static IServiceCollection AddSsoInfrastructure(
-        this IServiceCollection services,
+    public static IHostApplicationBuilder AddSsoInfrastructure(
+        this IHostApplicationBuilder builder,
         IConfiguration configuration,
         INoxLogger noxLogger,
         bool isWeb = false
     )
     {
-        services.AddInfrastructureServices<IdentityDatabaseContext>(noxLogger, options =>
+        IServiceCollection services = builder.Services;
+        builder.AddInfrastructureServices<IdentityDatabaseContext>(noxLogger, options =>
         {
             options.Assembly = Assembly.GetExecutingAssembly().GetName().Name;
             options.UseOutBoxMessageMechanism = true;
@@ -144,14 +146,9 @@ public static class DependencyInjection
             busConfigurator.UsingRabbitMq(
                 (context, configurator) =>
                 {
-                    configurator.Host(
-                        new Uri(configuration["NoxMessageBroker:Host"]!),
-                        h =>
-                        {
-                            h.Username(configuration["NoxMessageBroker:Username"]!);
-                            h.Password(configuration["NoxMessageBroker:Password"]!);
-                        }
-                    );
+                    var configService = context.GetRequiredService<IConfiguration>();
+                    var connectionString = configService.GetConnectionString("external-rabbitmq");
+                    configurator.Host(connectionString);
 
                     // Apply filters to the send and publish pipelines
                     configurator.ConfigureSend(sendConfig =>
@@ -211,7 +208,7 @@ public static class DependencyInjection
         );
         services.AddScoped<IDatabaseChecks, ValidatorDatabaseChecker>();
 
-        return services;
+        return builder;
     }
 
     #endregion

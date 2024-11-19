@@ -48,7 +48,7 @@ namespace AppyNox.Services.License.Application.UnitTest.CQRSTests
                 IConfiguration configuration = new ConfigurationBuilder()
                     .AddInMemoryCollection(inMemorySettings!)
                     .Build();
-                _fixture.ServiceCollection.AddLicenseApplication(configuration, logger);
+                _fixture.Builder.AddLicenseApplication(configuration, logger);
                 _fixture.ServiceCollection.AddScoped(typeof(INoxRepository<LicenseEntity>), _ => mockRepository.Object);
                 _fixture.DIInitialized = true;
             }

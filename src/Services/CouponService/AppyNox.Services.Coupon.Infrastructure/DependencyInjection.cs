@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace AppyNox.Services.Coupon.Infrastructure;
 
@@ -21,13 +22,14 @@ public static class DependencyInjection
     /// <summary>
     /// Centralized Dependency Injection For Infrastructure Layer.
     /// </summary>
-    /// <param name="services"></param>
+    /// <param name="builder"></param>
     /// <param name="configuration"></param>
     /// <param name="logger"></param>
     /// <returns></returns>
-    public static IServiceCollection AddCouponInfrastructure(this IServiceCollection services, IConfiguration configuration, INoxLogger logger)
+    public static IHostApplicationBuilder AddCouponInfrastructure(this IHostApplicationBuilder builder, IConfiguration configuration, INoxLogger logger)
     {
-        services.AddInfrastructureServices<CouponDbContext>(logger, options =>
+        IServiceCollection services = builder.Services;
+        builder.AddInfrastructureServices<CouponDbContext>(logger, options =>
         {
             options.Assembly = "AppyNox.Services.Coupon.Infrastructure";
             options.UseOutBoxMessageMechanism = true;
@@ -76,7 +78,7 @@ public static class DependencyInjection
         services.AddScoped<ICouponTokenManager, CouponTokenManager>();
         logger.LogInformation("Registered Fleet JWT Configuration.", false);
 
-        return services;
+        return builder;
     }
 
     #endregion

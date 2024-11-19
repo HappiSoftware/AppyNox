@@ -55,7 +55,7 @@ public class CouponDddCQRSUnitTest : IClassFixture<NoxApplicationTestFixture>
                 .AddInMemoryCollection(inMemorySettings!)
                 .Build();
 
-            _fixture.ServiceCollection.AddCouponApplication(configuration, logger);
+            _fixture.Builder.AddCouponApplication(configuration, logger);
             _fixture.ServiceCollection.AddScoped(typeof(INoxRepository<CouponAggregate>), _ => mockRepository.Object);
             _fixture.DIInitialized = true;
         }

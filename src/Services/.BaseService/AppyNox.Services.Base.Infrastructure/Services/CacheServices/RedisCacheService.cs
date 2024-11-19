@@ -3,20 +3,11 @@ using StackExchange.Redis;
 
 namespace AppyNox.Services.Base.Infrastructure.Services.CacheServices;
 
-public class RedisCacheService : ICacheService
+public class RedisCacheService(IConnectionMultiplexer redis) : ICacheService
 {
     #region [ Fields ]
 
-    private readonly IConnectionMultiplexer _redis;
-
-    #endregion
-
-    #region [ Public Constructors ]
-
-    public RedisCacheService(IConnectionMultiplexer redis)
-    {
-        _redis = redis;
-    }
+    private readonly IConnectionMultiplexer _redis = redis;
 
     #endregion
 

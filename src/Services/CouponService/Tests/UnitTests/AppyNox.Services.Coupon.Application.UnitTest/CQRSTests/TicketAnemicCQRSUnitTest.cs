@@ -49,7 +49,7 @@ public class TicketAnemicCQRSUnitTest : IClassFixture<NoxApplicationTestFixture>
                 .AddInMemoryCollection(inMemorySettings!)
                 .Build();
 
-            _fixture.ServiceCollection.AddCouponApplication(configuration, logger);
+            _fixture.Builder.AddCouponApplication(configuration, logger);
             _fixture.ServiceCollection.AddScoped(typeof(IGenericRepository<Ticket>), _ => mockRepository.Object);
             _fixture.DIInitialized = true;
         }

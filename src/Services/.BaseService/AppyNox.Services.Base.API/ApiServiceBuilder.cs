@@ -9,7 +9,6 @@ using Asp.Versioning.Conventions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Serilog;
@@ -26,7 +25,7 @@ public class ApiServiceOptions
     [Required]
     public string SetupHostName { get; set; }
     public bool UseConsulKV { get; set; }
-    public Action<IServiceCollection, INoxLogger, IConfiguration> ConfigureLayers { get; set; }
+    public Action<INoxLogger, IConfiguration> ConfigureLayers { get; set; }
     public IEnumerable<string> Versions { get; set; } = [NoxVersions.v1_0];
     public bool UseDynamicRequestBodyOperationFilter { get; set; } = true;
 
@@ -65,7 +64,7 @@ public static class ApiServiceBuilder
         builder.ConfigureServices();
         logger.LogInformation($"-{serviceName}- Services configured...", false);
 
-        options.ConfigureLayers?.Invoke(builder.Services, logger, configuration);
+        options.ConfigureLayers?.Invoke(logger, configuration);
         logger.LogInformation($"-{serviceName}- Layers configured...", false);
 
         builder.ConfigureSwagger(options);

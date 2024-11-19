@@ -6,6 +6,7 @@ using AppyNox.Services.Coupon.Domain.Coupons;
 using AppyNox.Services.Coupon.Domain.Entities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using System.Reflection;
 
 namespace AppyNox.Services.Coupon.Application;
@@ -14,8 +15,9 @@ public static class DependencyInjection
 {
     #region [ Public Methods ]
 
-    public static IServiceCollection AddCouponApplication(this IServiceCollection services, IConfiguration configuration, INoxLogger logger)
+    public static IHostApplicationBuilder AddCouponApplication(this IHostApplicationBuilder builder, IConfiguration configuration, INoxLogger logger)
     {
+        IServiceCollection services = builder.Services;
         services.AddApplicationServices(logger, options =>
         {
             options.Assembly = Assembly.GetExecutingAssembly().GetName().Name;
@@ -30,7 +32,7 @@ public static class DependencyInjection
         services.AddNoxEntityCommands<Domain.Coupons.Coupon, CouponId>();
         services.AddAnemicEntityCommands<Ticket>();
 
-        return services;
+        return builder;
     }
 
     #endregion
