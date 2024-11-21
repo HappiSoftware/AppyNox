@@ -6,9 +6,9 @@ using AppyNox.Services.Base.Infrastructure.Extensions;
 using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
 using Asp.Versioning;
 using Asp.Versioning.Conventions;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Serilog;
@@ -34,7 +34,7 @@ public class ApiServiceOptions
 
 public static class ApiServiceBuilder
 {
-    public async static Task<WebApplicationBuilder> AddApiServices(this WebApplicationBuilder builder,
+    public async static Task<IHostApplicationBuilder> AddApiServices(this IHostApplicationBuilder builder,
         Action<ApiServiceOptions> configureOptions)
     {
         ApiServiceOptions options = new();
@@ -51,7 +51,7 @@ public static class ApiServiceBuilder
         }
 
         var configuration = builder.Configuration;
-        NoxLogger<WebApplicationBuilder> logger = builder.SetUpLogger();
+        NoxLogger<IHostApplicationBuilder> logger = builder.SetUpLogger();
 
         if (options.UseConsulKV)
         {
@@ -73,23 +73,56 @@ public static class ApiServiceBuilder
         return builder;
     }
 
-    private static NoxLogger<WebApplicationBuilder> SetUpLogger(this WebApplicationBuilder builder)
+    private static NoxLogger<IHostApplicationBuilder> SetUpLogger(this IHostApplicationBuilder builder)
     {
-        Log.Logger = new LoggerConfiguration()
-        .ReadFrom.Configuration(builder.Configuration)
-        .CreateLogger();
+        string seqServerUrl = builder.Configuration.GetConnectionString("appynox-seq") ?? 
+            throw new Exception("Seq connection string could not found.");
 
-        builder.Host.UseSerilog(Log.Logger);
+        var logger = Log.Logger = new LoggerConfiguration()
+            .ReadFrom.Configuration(builder.Configuration)
+            .WriteTo.Seq(seqServerUrl)
+            // TODO below comes from this thread: https://stackoverflow.com/questions/78369387/how-to-wire-up-serilog-to-net-aspire
+            .WriteTo.OpenTelemetry(options =>
+            {
+                options.Endpoint = builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"];
+                var headers = builder.Configuration["OTEL_EXPORTER_OTLP_HEADERS"]?.Split(',') ?? [];
+                foreach (var header in headers)
+                {
+                    var (key, value) = header.Split('=') switch
+                    {
+                    [string k, string v] => (k, v),
+                        var v => throw new Exception($"Invalid header format {v}")
+                    };
+
+                    options.Headers.Add(key, value);
+                }
+                options.ResourceAttributes.Add("service.name", "apiservice");
+
+                //To remove the duplicate issue, we can use the below code to get the key and value from the configuration
+                var (otelResourceAttribute, otelResourceAttributeValue) = builder.Configuration["OTEL_RESOURCE_ATTRIBUTES"]?.Split('=') switch
+                {
+                [string k, string v] => (k, v),
+                    _ => throw new Exception($"Invalid header format {builder.Configuration["OTEL_RESOURCE_ATTRIBUTES"]}")
+                };
+
+                options.ResourceAttributes.Add(otelResourceAttribute, otelResourceAttributeValue);
+
+            })
+            .CreateLogger();
+        builder.AddSeqEndpoint("seq");
+
+        builder.Logging.AddSerilog(logger);
 
         var loggerFactory = LoggerFactory.Create(builder =>
         {
             builder.AddSerilog(Log.Logger);
         });
-        var logger = loggerFactory.CreateLogger<WebApplicationBuilder>();
-        return new(logger, $"{builder.Configuration["Consul:ServiceName"]}Host");
+
+        var ilogger = loggerFactory.CreateLogger<IHostApplicationBuilder>();
+        return new(ilogger, $"{builder.Configuration["Consul:ServiceName"]}Host");
     }
 
-    private static void ConfigureServices(this WebApplicationBuilder builder)
+    private static void ConfigureServices(this IHostApplicationBuilder builder)
     {
         // Add services to the container.
         builder.Services.AddControllers().AddJsonOptions(options =>
@@ -116,7 +149,7 @@ public static class ApiServiceBuilder
         builder.ConfigureLocalization();
     }
 
-    private static void ConfigureSwagger(this WebApplicationBuilder builder, ApiServiceOptions options)
+    private static void ConfigureSwagger(this IHostApplicationBuilder builder, ApiServiceOptions options)
     {
         var serviceName = builder.Configuration["Consul:ServiceName"];
         builder.Services.AddSwaggerGen(opt =>

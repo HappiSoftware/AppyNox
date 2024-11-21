@@ -17,12 +17,14 @@ using MassTransit;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Quartz;
 using StackExchange.Redis;
 using System.ComponentModel.DataAnnotations;
+using System.Text;
 using ValidationResult = System.ComponentModel.DataAnnotations.ValidationResult;
 
 namespace AppyNox.Services.Base.Infrastructure;
@@ -34,6 +36,8 @@ public class InfrastructureSetupOptions
     public string Assembly { get; set; }
     [Required]
     public IConfiguration Configuration { get; set; }
+    [Required]
+    public string AspireDb { get; set; }
     public bool UseOutBoxMessageMechanism { get; set; } = false;
     public int OutBoxMessageJobIntervalSeconds { get; set; } = 30;
     public bool UseEncryption { get; set; } = false;
@@ -82,7 +86,7 @@ public static class InfrastructureServiceBuilder
             logger.LogInformation($"-{serviceName}- Consul enabled...", false);
         }
 
-        services.ConfigureDatabase<TContext>(options);
+        builder.ConfigureDatabase<TContext>(options);
         logger.LogInformation($"-{serviceName}- Database connection enabled...", false);
 
         if (options.UseEncryption)
@@ -134,35 +138,37 @@ public static class InfrastructureServiceBuilder
         return services;
     }
 
-    private static IServiceCollection ConfigureDatabase<TContext>(this IServiceCollection services, InfrastructureSetupOptions options)
+    private static IHostApplicationBuilder ConfigureDatabase<TContext>(this IHostApplicationBuilder builder, InfrastructureSetupOptions options)
         where TContext : DbContext, INoxDatabaseContext
     {
-        string? connectionString = options.Configuration.GetConnectionString("DefaultConnection");
-
         if (options.UseOutBoxMessageMechanism)
         {
-            services.AddSingleton<ConvertDomainEventsToOutboxMessagesInterceptor>();
+            builder.Services.AddSingleton<ConvertDomainEventsToOutboxMessagesInterceptor>();
         }
 
-        services.AddDbContext<TContext>((sp, opt) =>
+        builder.AddNpgsqlDbContext<TContext>(
+        options.AspireDb,
+        configureDbContextOptions: opt =>
         {
-            opt.UseNpgsql(connectionString, sqlOptions =>
+            opt.UseNpgsql(npgsqlOptions =>
             {
-                sqlOptions.MigrationsAssembly(options.Assembly);
+                opt.UseLazyLoadingProxies();
+                npgsqlOptions.MigrationsAssembly(options.Assembly);
+
                 if (options.UseOutBoxMessageMechanism)
                 {
-                    ConvertDomainEventsToOutboxMessagesInterceptor outboxMessageInterceptor = sp.GetService<ConvertDomainEventsToOutboxMessagesInterceptor>()
+                    var outboxMessageInterceptor = builder.Services.BuildServiceProvider()
+                        .GetService<ConvertDomainEventsToOutboxMessagesInterceptor>()
                         ?? throw new ArgumentException("ConvertDomainEventsToOutboxMessagesInterceptor was null!");
 
-                    opt.UseNpgsql(connectionString).AddInterceptors(outboxMessageInterceptor);
-                }
-                else
-                {
-                    opt.UseNpgsql(connectionString);
+                    opt.AddInterceptors(outboxMessageInterceptor);
                 }
             });
         });
-        return services;
+
+        builder.EnrichNpgsqlDbContext<TContext>();
+
+        return builder;
     }
 
     private static IServiceCollection ConfigureOutBoxMessageJob<TContext>(this IServiceCollection services, InfrastructureSetupOptions options)

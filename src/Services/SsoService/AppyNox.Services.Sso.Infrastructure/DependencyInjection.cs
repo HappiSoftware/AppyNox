@@ -47,9 +47,12 @@ public static class DependencyInjection
     )
     {
         IServiceCollection services = builder.Services;
+        builder.AddNpgsqlDbContext<IdentitySagaDatabaseContext>("appynox-sso-saga-db"); // Register saga db first, we will call ExistingDbContext for MassTransit
+
         builder.AddInfrastructureServices<IdentityDatabaseContext>(noxLogger, options =>
         {
             options.Assembly = Assembly.GetExecutingAssembly().GetName().Name;
+            options.AspireDb = "appynox-sso-db";
             options.UseOutBoxMessageMechanism = true;
             options.OutBoxMessageJobIntervalSeconds = 10;
             options.UseEncryption = false;
@@ -81,14 +84,7 @@ public static class DependencyInjection
                     .EntityFrameworkRepository(r =>
                     {
                         r.ConcurrencyMode = ConcurrencyMode.Pessimistic;
-                        r.AddDbContext<DbContext, IdentitySagaDatabaseContext>(
-                            (provider, builder) =>
-                            {
-                                builder.UseNpgsql(
-                                    configuration.GetConnectionString("SagaConnection")
-                                );
-                            }
-                        );
+                        r.ExistingDbContext<IdentitySagaDatabaseContext>();
                         r.UsePostgres();
                     });
 
@@ -202,10 +198,6 @@ public static class DependencyInjection
 
         #endregion
 
-        services.AddDbContext<IdentitySagaDatabaseContext>(
-            options => options.UseNpgsql(configuration.GetConnectionString("SagaConnection")),
-            ServiceLifetime.Scoped
-        );
         services.AddScoped<IDatabaseChecks, ValidatorDatabaseChecker>();
 
         return builder;

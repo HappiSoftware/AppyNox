@@ -1,17 +1,16 @@
 ﻿using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.Base.Application.Interfaces.Repositories;
 using AppyNox.Services.Base.Infrastructure;
-using AppyNox.Services.Base.Infrastructure.Authentication;
 using AppyNox.Services.Coupon.Application.Permission;
 using AppyNox.Services.Coupon.Infrastructure.Authentication;
 using AppyNox.Services.Coupon.Infrastructure.Data;
 using AppyNox.Services.Coupon.Infrastructure.Repositories;
 using AppyNox.Services.License.Client;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System.Reflection;
 
 namespace AppyNox.Services.Coupon.Infrastructure;
 
@@ -31,7 +30,8 @@ public static class DependencyInjection
         IServiceCollection services = builder.Services;
         builder.AddInfrastructureServices<CouponDbContext>(logger, options =>
         {
-            options.Assembly = "AppyNox.Services.Coupon.Infrastructure";
+            options.Assembly = Assembly.GetExecutingAssembly().GetName().Name;
+            options.AspireDb = "appynox-coupon-db";
             options.UseOutBoxMessageMechanism = true;
             options.OutBoxMessageJobIntervalSeconds = 10;
             options.UseEncryption = true;

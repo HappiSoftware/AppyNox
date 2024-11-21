@@ -24,6 +24,7 @@ namespace AppyNox.Services.License.Infrastructure
             builder.AddInfrastructureServices<LicenseDatabaseContext>(logger, options =>
             {
                 options.Assembly = Assembly.GetExecutingAssembly().GetName().Name;
+                options.AspireDb = "appynox-license-db";
                 options.UseOutBoxMessageMechanism = true;
                 options.OutBoxMessageJobIntervalSeconds = 10;
                 options.UseConsul = true;
