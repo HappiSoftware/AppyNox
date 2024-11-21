@@ -1,19 +1,14 @@
 using AppyNox.Services.Base.Application.Extensions;
-using AppyNox.Services.Base.Application.Interfaces.Loggers;
-using AppyNox.Services.Base.Core.Constants;
 using AppyNox.Services.Base.Infrastructure.Extensions;
 using AppyNox.Services.Base.Infrastructure.Services.LoggerService;
-using AppyNox.Services.Sso.Infrastructure.Hubs;
-using AppyNox.Services.Sso.Infrastructure.Localization;
-using AppyNox.Services.Sso.Server.UI.Components;
-using AppyNox.Services.Sso.Server.UI.Middlewares;
-using Microsoft.Extensions.Localization;
-using MudBlazor.Services;
-using Serilog;
 using AppyNox.Services.Sso.Application;
 using AppyNox.Services.Sso.Infrastructure;
+using AppyNox.Services.Sso.Infrastructure.Hubs;
 using AppyNox.Services.Sso.Server.UI;
+using AppyNox.Services.Sso.Server.UI.Components;
 using AppyNox.Services.Sso.Server.UI.Localization;
+using Microsoft.Extensions.Localization;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -53,7 +48,7 @@ NoxLogger<WebApplicationBuilder> noxLogger = new(logger, "SsoServerUiHost");
 #region [ Dependency Injection For Layers ]
 
 noxLogger.LogInformation("Registering DI's for layers.");
-builder.Services.AddSsoApplication(configuration, noxLogger)
+builder.AddSsoApplication(configuration, noxLogger)
     .AddSsoInfrastructure(configuration, noxLogger, true)
     .AddServerUI(builder.Configuration);
 noxLogger.LogInformation("Registering DI's for layers completed.");

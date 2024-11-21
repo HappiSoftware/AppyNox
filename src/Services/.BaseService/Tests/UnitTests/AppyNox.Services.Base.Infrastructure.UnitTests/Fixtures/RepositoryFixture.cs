@@ -44,6 +44,7 @@ namespace AppyNox.Services.Base.Infrastructure.UnitTests.Fixtures
             var databaseName = Guid.NewGuid().ToString(); // Unique database name
             var options = new DbContextOptionsBuilder<TContext>()
                 .UseInMemoryDatabase(databaseName)
+                .UseLazyLoadingProxies()
                 .Options;
 
             // Using Activator to create an instance of TContext

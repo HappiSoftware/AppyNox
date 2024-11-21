@@ -1,12 +1,11 @@
 ﻿using AppyNox.Services.Base.Application;
-using AppyNox.Services.Base.Application.DtoUtilities;
 using AppyNox.Services.Base.Application.Extensions;
 using AppyNox.Services.Base.Application.Interfaces.Loggers;
 using AppyNox.Services.License.Application.Dtos.DtoUtilities;
 using AppyNox.Services.License.Domain.Entities;
-using FluentValidation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using System.Reflection;
 
 namespace AppyNox.Services.License.Application
@@ -15,8 +14,9 @@ namespace AppyNox.Services.License.Application
     {
         #region [ Public Methods ]
 
-        public static IServiceCollection AddLicenseApplication(this IServiceCollection services, IConfiguration configuration, INoxLogger logger)
+        public static IHostApplicationBuilder AddLicenseApplication(this IHostApplicationBuilder builder, IConfiguration configuration, INoxLogger logger)
         {
+            IServiceCollection services = builder.Services;
             services.AddApplicationServices(logger, options =>
             {
                 options.Assembly = Assembly.GetExecutingAssembly().GetName().Name;
@@ -31,7 +31,7 @@ namespace AppyNox.Services.License.Application
             services.AddNoxEntityCommands<LicenseEntity, LicenseId>();
             services.AddNoxEntityCommands<ProductEntity, ProductId>();
 
-            return services;
+            return builder;
         }
 
         #endregion

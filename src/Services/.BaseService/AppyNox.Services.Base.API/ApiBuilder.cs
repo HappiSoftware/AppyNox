@@ -50,6 +50,8 @@ public static class ApiBuilder
         {
             PerformAutoMapperChecks(app);
         }
+
+        app.MapDefaultEndpoints();
     }
 
     private static void ConfigureLocalization(this WebApplication app, ApiOptions options)

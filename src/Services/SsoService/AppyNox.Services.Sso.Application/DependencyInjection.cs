@@ -1,10 +1,8 @@
 ﻿using AppyNox.Services.Base.Application;
-using AppyNox.Services.Base.Application.DtoUtilities;
 using AppyNox.Services.Base.Application.Interfaces.Loggers;
-using FluentValidation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Hosting;
 using System.Reflection;
 
 namespace AppyNox.Services.Sso.Application
@@ -19,14 +17,15 @@ namespace AppyNox.Services.Sso.Application
         /// <summary>
         /// Adds Sso services and AutoMapper configurations to the specified IServiceCollection.
         /// </summary>
-        /// <param name="services">The IServiceCollection to add services to.</param>
+        /// <param name="builder">The IServiceCollection to add services to.</param>
         /// <param name="configuration">The IConfiguration instance to access application settings.</param>
-        public static IServiceCollection AddSsoApplication(
-            this IServiceCollection services,
+        public static IHostApplicationBuilder AddSsoApplication(
+            this IHostApplicationBuilder builder,
             IConfiguration configuration,
             INoxLogger logger
         )
         {
+            IServiceCollection services = builder.Services;
             services.AddApplicationServices(logger, options =>
             {
                 options.Assembly = Assembly.GetExecutingAssembly().GetName().Name;
@@ -37,7 +36,7 @@ namespace AppyNox.Services.Sso.Application
                 options.UseMediatR = true;
             });
 
-            return services;
+            return builder;
         }
 
         #endregion

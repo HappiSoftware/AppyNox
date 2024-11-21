@@ -6,7 +6,6 @@ using AppyNox.Services.Sso.Server.UI.Services;
 using AppyNox.Services.Sso.Server.UI.Services.Layout;
 using AppyNox.Services.Sso.Server.UI.Services.UserPreferences;
 using Microsoft.AspNetCore.HttpOverrides;
-using MudBlazor;
 using MudBlazor.Services;
 using MudExtensions.Services;
 
@@ -14,8 +13,9 @@ namespace AppyNox.Services.Sso.Server.UI;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddServerUI(this IServiceCollection services, IConfiguration config)
+    public static IHostApplicationBuilder AddServerUI(this IHostApplicationBuilder builder, IConfiguration config)
     {
+        IServiceCollection services = builder.Services;
         services.AddRazorComponents().AddInteractiveServerComponents();
         services.AddSignalR();
         services.AddCascadingAuthenticationState();
@@ -67,6 +67,6 @@ public static class DependencyInjection
             options.ForwardedHeaders =
                 ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
         });
-        return services;
+        return builder;
     }
 }

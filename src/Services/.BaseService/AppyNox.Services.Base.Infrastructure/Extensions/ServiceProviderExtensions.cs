@@ -22,7 +22,13 @@ public static class DependencyInjectionHelper
     {
         using var scope = serviceProvider.CreateScope();
         var _db = scope.ServiceProvider.GetRequiredService<TDbContext>();
+        var dbConnection = _db.Database.GetDbConnection();
+        var connectionString = dbConnection.ConnectionString;
 
+        // Display the connection string and database name
+        Console.WriteLine($"Applying migrations for {typeof(TDbContext).Name}");
+        Console.WriteLine($"Connection string: {connectionString}");
+        Console.WriteLine($"Database: {dbConnection.Database}");
         if (_db.Database.GetPendingMigrations().Any())
         {
             _db.Database.Migrate();

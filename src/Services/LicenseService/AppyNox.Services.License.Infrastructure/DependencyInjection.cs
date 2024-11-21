@@ -9,6 +9,7 @@ using AppyNox.Services.License.Infrastructure.Repositories;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using System.Reflection;
 
 namespace AppyNox.Services.License.Infrastructure
@@ -17,11 +18,13 @@ namespace AppyNox.Services.License.Infrastructure
     {
         #region [ Public Methods ]
 
-        public static IServiceCollection AddLicenseInfrastructure(this IServiceCollection services, IConfiguration configuration, INoxLogger logger)
+        public static IHostApplicationBuilder AddLicenseInfrastructure(this IHostApplicationBuilder builder, IConfiguration configuration, INoxLogger logger)
         {
-            services.AddInfrastructureServices<LicenseDatabaseContext>(logger, options =>
+            IServiceCollection services = builder.Services;
+            builder.AddInfrastructureServices<LicenseDatabaseContext>(logger, options =>
             {
                 options.Assembly = Assembly.GetExecutingAssembly().GetName().Name;
+                options.AspireDb = "appynox-license-db";
                 options.UseOutBoxMessageMechanism = true;
                 options.OutBoxMessageJobIntervalSeconds = 10;
                 options.UseConsul = true;
@@ -67,7 +70,7 @@ namespace AppyNox.Services.License.Infrastructure
             services.AddScoped<ILicenseRepository, LicenseRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-            return services;
+            return builder;
         }
 
         #endregion

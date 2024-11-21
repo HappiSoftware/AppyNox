@@ -34,6 +34,7 @@ namespace AppyNox.Services.Sso.Infrastructure.Data
     {
 
         private readonly IEncryptionService? _encryptionService = encryptionService;
+
         #region [ Properties ]
 
         public DbSet<Company> Companies { get; set; }

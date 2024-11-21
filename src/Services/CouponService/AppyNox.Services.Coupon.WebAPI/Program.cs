@@ -11,9 +11,9 @@ await builder.AddApiServices(options =>
 {
     options.SetupHostName = "CouponHost";
     options.UseConsulKV = true;
-    options.ConfigureLayers = (services, logger, configuration) =>
+    options.ConfigureLayers = (logger, configuration) =>
     {
-        services
+        builder
             .AddCouponApplication(configuration, logger)
             .AddCouponInfrastructure(configuration, logger);
     };
